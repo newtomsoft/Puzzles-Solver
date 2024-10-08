@@ -1,0 +1,3 @@
+﻿# todo
+class KakuroConquestGridProvider:
+    pass
