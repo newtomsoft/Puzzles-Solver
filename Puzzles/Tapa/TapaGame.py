@@ -140,7 +140,7 @@ class TapaGame:
 
     def _init_adjacent_cells(self):
         neighbors_count = 8
-        self.adjacent_cells = {cells_count: Grid.get_adjacent_combinations(neighbors_count, cells_count, True) for cells_count in range(max_cells_count + 1)}
+        self.adjacent_cells = {cells_count: Grid.get_adjacent_combinations(neighbors_count, cells_count, True) for cells_count in range(neighbors_count + 1)}
 
     @staticmethod
     def _combine_with_gap(blocks1: list[list[bool]], blocks2: list[list[bool]]) -> list[list[bool]]:

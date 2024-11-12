@@ -1,6 +1,6 @@
-﻿from Grid import Grid
+﻿from BinairoGame import BinairoGame
+from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
-from BinairoGame import BinairoGame
 
 
 class BinairoMainConsole:

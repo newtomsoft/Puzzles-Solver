@@ -7,13 +7,13 @@ def remove_ansi_escape_sequences(text):
 
 
 console_back_ground_colors = {
-    0: "\033[41m",  # Red background
-    1: "\033[42m",  # Green background
+    0: "\033[40m",  # Black background
+    1: "\033[107m",  # White background
     2: "\033[43m",  # Yellow background
     3: "\033[44m",  # Blue background
     4: "\033[45m",  # Magenta background
     5: "\033[48;5;164m",  # Light blue background
-    6: "\033[107m",  # White background
+    6: "\033[42m",  # Green background
     7: "\033[48;5;162m",  # Pink background
     8: "\033[101m",  # Light red background
     9: "\033[102m",  # Light green background
@@ -23,7 +23,7 @@ console_back_ground_colors = {
     13: "\033[48;5;226m",  # Light yellow background
     14: "\033[48;5;27m",  # Light blue background
     15: "\033[48;5;160m",  # Red background
-    16: "\033[40m",  # Black background
+    16: "\033[41m",  # Red background
     17: "\033[107m",  # Light grey background
     18: "\033[46m",  # Cyan background
     19: "\033[48;5;165m",  # Light magenta background

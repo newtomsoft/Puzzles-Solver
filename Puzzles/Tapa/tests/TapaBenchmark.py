@@ -566,12 +566,15 @@ class TapaBenchmark:
             assert solution is not None
             x = int(re.sub(r'\D', '', str(x))) if isinstance(x, str) else x
             assert attempts < 2 * x
+            print("*", end="")
+        print(" ", end="")
 
     def benchmark(self, x, loops_count):
         print(f"Starting benchmark for {x}x{x} grids")
         grids = self.grids_by_size[x]
         print(f"  runs {loops_count} loops of {len(grids)} boards")
         execution_time = timeit.timeit(lambda: self.loop_game_xxx(x), number=loops_count)
+        print()
         print(f"  Average execution time : {execution_time / loops_count / len(grids):.3f} seconds")
         print("Benchmark finished")
         print("----------------------\n")
@@ -579,12 +582,12 @@ class TapaBenchmark:
 
     def run_benchmarks(self):
         size_loops_time = dict()
-        size_loops_time[6] = [2, self.benchmark(6, 2)]
-        size_loops_time['6h'] = [2, self.benchmark('6h', 2)]
-        size_loops_time[10] = [2, self.benchmark(10, 2)]
-        size_loops_time['10h'] = [2, self.benchmark('10h', 2)]
-        size_loops_time[15] = [2, self.benchmark(15, 2)]
-        size_loops_time['15h'] = [2, self.benchmark('15h', 2)]
+        size_loops_time[6] = [10, self.benchmark(6, 10)]
+        size_loops_time['6h'] = [10, self.benchmark('6h', 10)]
+        size_loops_time[10] = [5, self.benchmark(10, 5)]
+        size_loops_time['10h'] = [5, self.benchmark('10h', 5)]
+        size_loops_time[15] = [3, self.benchmark(15, 3)]
+        size_loops_time['15h'] = [3, self.benchmark('15h', 3)]
         size_loops_time[20] = [2, self.benchmark(20, 2)]
         size_loops_time['20h'] = [2, self.benchmark('20h', 2)]
         size_loops_time[25] = [2, self.benchmark(25, 2)]

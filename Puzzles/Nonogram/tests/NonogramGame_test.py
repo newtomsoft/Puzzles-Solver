@@ -68,11 +68,11 @@ class NonogramGameTests(TestCase):
             'left': [[0], [1], [0], [0], [0]],
         }
         expected_grid = Grid([
-            [False, False, False, False, False],
-            [False, False, False, True, False],
-            [False, False, False, False, False],
-            [False, False, False, False, False],
-            [False, False, False, False, False]
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -84,11 +84,11 @@ class NonogramGameTests(TestCase):
             'left': [[1], [1], [1], [1], [1]],
         }
         expected_grid = Grid([
-            [False, True, False, False, False],
-            [False, True, False, False, False],
-            [False, True, False, False, False],
-            [False, True, False, False, False],
-            [False, True, False, False, False]
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -100,11 +100,11 @@ class NonogramGameTests(TestCase):
             'left': [[5], [5], [5], [5], [5]],
         }
         expected_grid = Grid([
-            [True, True, True, True, True],
-            [True, True, True, True, True],
-            [True, True, True, True, True],
-            [True, True, True, True, True],
-            [True, True, True, True, True]
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -116,11 +116,11 @@ class NonogramGameTests(TestCase):
             'left': [[1], [1], [1], [0], [1]],
         }
         expected_grid = Grid([
-            [True, False, False, False, False],
-            [True, False, False, False, False],
-            [True, False, False, False, False],
-            [False, False, False, False, False],
-            [True, False, False, False, False]
+            [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -132,11 +132,11 @@ class NonogramGameTests(TestCase):
             'top': [[3, 1], [5], [5], [5], [5]],
         }
         expected_grid = Grid([
-            [True, True, True, True, True],
-            [True, True, True, True, True],
-            [True, True, True, True, True],
-            [False, True, True, True, True],
-            [True, True, True, True, True]
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1],
+            [0, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -148,11 +148,11 @@ class NonogramGameTests(TestCase):
             'top': [[1], [3], [4], [3], [2]]
         }
         expected_grid = Grid([
-            [True, True, True, True, False],
-            [False, True, True, True, False],
-            [False, True, True, True, False],
-            [False, False, True, False, True],
-            [False, False, False, False, True]
+            [1, 1, 1, 1, 0],
+            [0, 1, 1, 1, 0],
+            [0, 1, 1, 1, 0],
+            [0, 0, 1, 0, 1],
+            [0, 0, 0, 0, 1]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -164,11 +164,11 @@ class NonogramGameTests(TestCase):
             'top': [[3], [1, 1], [3, 1], [2], [2]]
         }
         expected_grid = Grid([
-            [False, True, True, True, False],
-            [False, False, True, True, True],
-            [True, True, True, False, True],
-            [True, False, False, False, False],
-            [True, False, True, False, False]
+            [0, 1, 1, 1, 0],
+            [0, 0, 1, 1, 1],
+            [1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -180,16 +180,16 @@ class NonogramGameTests(TestCase):
             'left': [[2, 1, 1], [2, 3], [1, 3], [1, 5], [1, 1, 5], [6], [1, 4], [1, 3, 1], [5], [3]],
         }
         expected_grid = Grid([
-            [True, True, False, True, False, False, False, True, False, False],
-            [True, True, False, False, False, True, True, True, False, False],
-            [True, False, False, False, True, True, True, False, False, False],
-            [False, False, True, False, True, True, True, True, True, False],
-            [True, False, True, False, False, True, True, True, True, True],
-            [False, False, False, False, True, True, True, True, True, True],
-            [True, False, False, False, False, True, True, True, True, False],
-            [True, False, False, True, True, True, False, False, True, False],
-            [True, True, True, True, True, False, False, False, False, False],
-            [False, False, True, True, True, False, False, False, False, False]
+            [1, 1, 0, 1, 0, 0, 0, 1, 0, 0],
+            [1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
+            [1, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 0],
+            [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 1, 1, 1, 1, 0],
+            [1, 0, 0, 1, 1, 1, 0, 0, 1, 0],
+            [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -201,21 +201,21 @@ class NonogramGameTests(TestCase):
             'left': [[3, 3], [3, 4, 1], [3, 1, 3], [2, 1], [6, 5], [9, 1, 2], [4, 3], [3, 4], [3, 2, 4], [1, 5], [1, 1, 1, 1], [1, 4], [2, 2, 5], [2, 8], [1, 4, 1, 3]],
         }
         expected_grid = Grid([
-            [True, True, True, False, False, False, False, False, True, True, True, False, False, False, False],
-            [True, True, True, False, False, False, False, True, True, True, True, False, False, False, True],
-            [True, True, True, False, False, False, False, True, False, True, True, True, False, False, False],
-            [True, True, False, False, False, False, False, False, False, False, False, True, False, False, False],
-            [True, True, True, True, True, True, False, False, True, True, True, True, True, False, False],
-            [True, True, True, True, True, True, True, True, True, False, False, True, False, True, True],
-            [True, True, True, True, False, False, False, False, False, False, False, True, True, True, False],
-            [True, True, True, False, False, False, False, False, False, False, False, True, True, True, True],
-            [True, True, True, False, False, False, False, True, True, False, False, True, True, True, True],
-            [True, False, False, False, False, False, False, False, True, True, True, True, True, False, False],
-            [False, False, False, False, False, True, False, False, False, False, True, False, True, False, True],
-            [False, False, False, False, False, True, False, False, False, True, True, True, True, False, False],
-            [False, True, True, False, False, True, True, False, False, True, True, True, True, True, False],
-            [False, True, True, False, False, True, True, True, True, True, True, True, True, False, False],
-            [False, False, True, False, False, True, True, True, True, False, True, False, True, True, True],
+            [1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1],
+            [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0],
+            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1],
+            [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+            [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            [1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0],
+            [0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1],
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -227,26 +227,26 @@ class NonogramGameTests(TestCase):
             'left': [[1, 2, 2], [1, 2, 6], [4, 5], [7, 7], [6, 6], [2, 7, 7], [1, 9, 5], [3, 5], [9, 2, 1], [4, 7, 1], [5, 5, 1], [5, 3], [5, 1, 2], [5, 3, 2], [1, 1, 3, 5], [6, 4], [3, 4, 1, 4], [2, 3, 2], [3, 2, 2], [3, 2]],
         }
         expected_grid = Grid([
-            [True, False, False, False, False, False, False, False, False, False, False, False, False, True, True, False, True, True, False, False],
-            [True, False, False, False, False, False, False, False, False, True, True, False, True, True, True, True, True, True, False, False],
-            [False, False, False, False, False, False, False, True, True, True, True, False, True, True, True, True, True, False, False, False],
-            [False, False, False, False, True, True, True, True, True, True, True, False, False, True, True, True, True, True, True, True],
-            [False, False, False, False, False, True, True, True, True, True, True, False, False, False, True, True, True, True, True, True],
-            [True, True, False, False, True, True, True, True, True, True, True, False, False, True, True, True, True, True, True, True],
-            [False, False, False, True, False, True, True, True, True, True, True, True, True, True, False, True, True, True, True, True],
-            [False, False, False, False, False, False, True, True, True, False, True, True, True, True, True, False, False, False, False, False],
-            [False, False, False, False, False, True, True, True, True, True, True, True, True, True, False, True, True, False, False, True],
-            [True, True, True, True, False, False, True, True, True, True, True, True, True, False, False, False, True, False, False, False],
-            [True, True, True, True, True, False, False, True, True, True, True, True, False, False, False, False, False, False, False, True],
-            [True, True, True, True, True, False, False, False, True, True, True, False, False, False, False, False, False, False, False, False],
-            [False, True, True, True, True, True, False, False, False, False, True, False, False, False, False, False, False, True, True, False],
-            [False, False, True, True, True, True, True, False, True, True, True, False, False, False, False, False, True, True, False, False],
-            [False, False, True, False, True, False, True, True, True, False, False, False, False, False, False, True, True, True, True, True],
-            [False, False, False, False, False, False, True, True, True, True, True, True, False, False, False, False, True, True, True, True],
-            [False, False, False, False, False, True, True, True, False, True, True, True, True, False, True, False, True, True, True, True],
-            [False, False, False, False, False, True, True, False, False, True, True, True, False, False, False, True, True, False, False, False],
-            [False, False, False, False, True, True, True, False, False, True, True, False, False, False, False, True, True, False, False, False],
-            [False, False, False, False, True, True, True, False, False, False, False, False, False, False, False, True, True, False, False, False]
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1],
+            [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+            [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+            [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+            [0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()
@@ -258,16 +258,16 @@ class NonogramGameTests(TestCase):
             'left': [[2], [1, 1], [1, 1], [3], [1], [1, 2], [3], [2], [3], [1, 1]],
         }
         expected_grid = Grid([
-            [False, False, True, True, False],
-            [False, True, False, True, False],
-            [True, False, False, False, True],
-            [False, True, True, True, False],
-            [False, True, False, False, False],
-            [False, True, False, True, True],
-            [True, True, True, False, False],
-            [False, False, False, True, True],
-            [False, True, True, True, False],
-            [True, False, False, False, True]
+            [0, 0, 1, 1, 0],
+            [0, 1, 0, 1, 0],
+            [1, 0, 0, 0, 1],
+            [0, 1, 1, 1, 0],
+            [0, 1, 0, 0, 0],
+            [0, 1, 0, 1, 1],
+            [1, 1, 1, 0, 0],
+            [0, 0, 0, 1, 1],
+            [0, 1, 1, 1, 0],
+            [1, 0, 0, 0, 1]
         ])
         game = NonogramGame(numbers_by_top_left)
         solution = game.get_solution()

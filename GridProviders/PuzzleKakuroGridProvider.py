@@ -1,10 +1,10 @@
 ﻿import math
 
 from bs4 import BeautifulSoup
+from playwright.sync_api import BrowserContext
 
 from Grid import Grid
 from GridProvider import GridProvider
-from playwright.sync_api import BrowserContext
 from PlaywrightGridProvider import PlaywrightGridProvider
 
 

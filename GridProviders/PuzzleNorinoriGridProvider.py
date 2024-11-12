@@ -1,11 +1,11 @@
 ﻿import math
 
 from bs4 import BeautifulSoup
-
-from RegionsGrid import RegionsGrid
-from GridProvider import GridProvider
 from playwright.sync_api import BrowserContext
+
+from GridProvider import GridProvider
 from PlaywrightGridProvider import PlaywrightGridProvider
+from RegionsGrid import RegionsGrid
 
 
 class PuzzleNorinoriGridProvider(GridProvider, PlaywrightGridProvider):

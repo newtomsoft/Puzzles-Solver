@@ -173,3 +173,6 @@ class Grid:
     @staticmethod
     def list_to_string(array):
         return sum(array)
+
+    def is_empty(self):
+        return self == Grid.empty()

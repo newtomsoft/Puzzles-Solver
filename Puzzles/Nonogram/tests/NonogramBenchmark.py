@@ -152,14 +152,14 @@ class SumpleteBenchmark:
 
     def run_benchmarks(self):
         size_loops_time = dict()
-        # size_loops_time[55] = [30, self.benchmark(55, 30)]
-        # size_loops_time[1010] = [20, self.benchmark(1010, 20)]
-        # size_loops_time[1515] = [10, self.benchmark(1515, 10)]
-        # size_loops_time[2020] = [4, self.benchmark(2020, 4)]
-        # size_loops_time[2525] = [2, self.benchmark(2525, 2)]
-        # size_loops_time[3025] = [1, self.benchmark(3025, 1)]
-        # size_loops_time[3030] = [1, self.benchmark(3030, 1)]
-        size_loops_time[5050] = [1, self.benchmark(5050, 1)]
+        size_loops_time[55] = [30, self.benchmark(55, 30)]
+        size_loops_time[1010] = [20, self.benchmark(1010, 20)]
+        size_loops_time[1515] = [10, self.benchmark(1515, 10)]
+        size_loops_time[2020] = [4, self.benchmark(2020, 4)]
+        size_loops_time[2525] = [2, self.benchmark(2525, 2)]
+        size_loops_time[3025] = [1, self.benchmark(3025, 1)]
+        size_loops_time[3030] = [1, self.benchmark(3030, 1)]
+        # size_loops_time[5050] = [1, self.benchmark(5050, 1)]
 
         print()
         print("----------------------")

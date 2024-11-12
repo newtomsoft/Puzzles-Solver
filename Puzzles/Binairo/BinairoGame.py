@@ -1,4 +1,4 @@
-﻿from z3 import Solver, sat, Sum, Bool, BitVec, Extract
+﻿from z3 import Solver, sat, Sum, BitVec, Extract
 
 from Grid import Grid
 

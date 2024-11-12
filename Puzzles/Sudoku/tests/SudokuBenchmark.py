@@ -190,12 +190,15 @@ class HitoriBenchmark:
             game = SudokuGame(Grid(grid))
             solution = game.get_solution()
             assert solution is not None
+            print("*", end="")
+        print(" ", end="")
 
     def benchmark(self, x, loops_count):
         print(f"Starting benchmark for {x}x{x} grids")
         grids = self.grids_by_size[x]
         print(f"  runs {loops_count} loops of {len(grids)} boards")
         execution_time = timeit.timeit(lambda: self.loop_hitori_game_xxx(x), number=loops_count)
+        print()
         print(f"  Average execution time : {execution_time / loops_count / len(grids):.3f} seconds")
         print("Benchmark finished")
         print("----------------------\n")

@@ -1,5 +1,5 @@
-﻿from bs4 import BeautifulSoup
-import requests
+﻿import requests
+from bs4 import BeautifulSoup
 
 from Grid import Grid
 from GridProviders.GridProvider import GridProvider

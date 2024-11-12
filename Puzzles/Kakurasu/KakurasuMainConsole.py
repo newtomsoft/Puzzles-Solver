@@ -1,24 +1,24 @@
 ﻿from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
-from Puzzles.Nonogram.NonogramGame import NonogramGame
+from PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
+from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
 
 
-class NonogramMainConsole:
+class KakurasuMainConsole:
     @staticmethod
     def main():
-        numbers_by_top_left = NonogramMainConsole.get_grid()
-        NonogramMainConsole.run(numbers_by_top_left)
+        numbers_by_top_left = KakurasuMainConsole.get_grid()
+        KakurasuMainConsole.run(numbers_by_top_left)
 
     @staticmethod
     def get_grid():
-        print("Nonogram Game")
+        print("Kakurasu Game")
         print("Enter url or grid")
         console_input = input()
 
         url_patterns = {
-            r"https://fr.puzzle-nonograms.com/": PuzzleNonogramGridProvider,
-            r"https://www.puzzle-nonograms.com/": PuzzleNonogramGridProvider
+            r"https://fr.puzzle-kakurasu.com/": PuzzleKakurasuGridProvider,
+            r"https://www.puzzle-kakurasu.com/": PuzzleKakurasuGridProvider
         }
 
         for pattern, provider_class in url_patterns.items():
@@ -29,16 +29,16 @@ class NonogramMainConsole:
         return StringGridProvider().get_grid(console_input)
 
     @staticmethod
-    def run(numbers_by_top_left):
-        game = NonogramGame(numbers_by_top_left)
+    def run(numbers_by_side_top):
+        game = KakurasuGame(numbers_by_side_top)
         solution = game.get_solution()
 
         if not solution.is_empty():
             print(f"Solution found:")
-            print(NonogramMainConsole.get_console_grid(solution))
+            print(KakurasuMainConsole.get_console_grid(solution))
         else:
             print(f"No solution found")
-        # NonogramMainConsole.generate_html(solution_grid)
+        # KakurasuMainConsole.generate_html(solution_grid)
 
     @staticmethod
     def get_console_grid(solution_grid):
@@ -49,4 +49,4 @@ class NonogramMainConsole:
 
 
 if __name__ == '__main__':
-    NonogramMainConsole.main()
+    KakurasuMainConsole.main()
