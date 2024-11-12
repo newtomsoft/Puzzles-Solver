@@ -27,7 +27,6 @@ class NonogramGame:
         self._columns_z3: list[BitVec] = [BitVec(f"column_{c}", self.rows_number) for c in range(self.columns_number)]
         self._solver = Solver()
         self.reset_time()
-        self._init_adjacent_cells()
         self._add_constraints()
         check = self._solver.check()
         self.print_time("check solution")
@@ -56,10 +55,6 @@ class NonogramGame:
     @staticmethod
     def reset_time():
         NonogramGame.instant_time = time.time()
-
-    def _init_adjacent_cells(self):
-        self.adjacent_cells_row = {cells_count: Grid.get_bit_array_adjacent_combinations(self.columns_number, cells_count, False) for cells_count in range(self.columns_number + 1)}
-        self.adjacent_cells_column = {cells_count: Grid.get_bit_array_adjacent_combinations(self.rows_number, cells_count, False) for cells_count in range(self.rows_number + 1)}
 
     def _add_constraints(self):
         self._add_row_column_intersection_constraints()
