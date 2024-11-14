@@ -8,16 +8,14 @@ class BinairoGame:
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        # if self.rows_number != self.columns_number:
-        #     raise ValueError("Binairo grid must be square")
         if self.rows_number < 6:
             raise ValueError("Binairo grid must be at least 6x6")
-        if self.rows_number % 2 != 0:
+        if self.rows_number % 2 != 0 or self.columns_number % 2 != 0:
             raise ValueError("Binairo grid must have an even number of rows/columns")
         self._solver = None
         self._matrix_z3 = None
 
-    def get_solution(self) -> (Grid | None, int):
+    def get_solution(self) -> Grid:
         self._matrix_z3 = [[Bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._solver = Solver()
         self._add_constraints()
@@ -26,7 +24,7 @@ class BinairoGame:
 
         return self._compute_solution()
 
-    def _compute_solution(self):
+    def _compute_solution(self) -> Grid:
         model = self._solver.model()
         solution = [[is_true(model.eval(self._matrix_z3[r][c])) for c in range(self.columns_number)] for r in range(self.rows_number)]
         return Grid(solution)
@@ -48,7 +46,6 @@ class BinairoGame:
     def _add_half_true_false_by_line_constraints(self):
         half_columns = self.columns_number / 2
         half_rows = self.rows_number / 2
-
         for row_z3 in self._matrix_z3:
             self._solver.add(sum(row_z3[c] for c in range(self.columns_number)) == half_columns)
         for column_z3 in zip(*self._matrix_z3):

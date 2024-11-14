@@ -19,21 +19,7 @@ class BinairoGameTests(TestCase):
             BinairoGame(grid)
         self.assertEqual("Binairo grid must be at least 6x6", str(context.exception))
 
-    def test_solution_grid_not_square(self):
-        grid = Grid([
-            [-1, -1, -1, -1, -1, 0],
-            [-1, -1, 0, -1, 0, -1],
-            [1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [0, 0, -1, -1, 0, -1],
-            [-1, 0, -1, -1, 0, 0],
-            [-1, 0, -1, -1, 0, 0],
-        ])
-        with self.assertRaises(ValueError) as context:
-            BinairoGame(grid)
-        self.assertEqual("Binairo grid must be square", str(context.exception))
-
-    def test_solution_not_even_size(self):
+    def test_solution_not_even_size_column(self):
         grid = Grid([
             [-1, -1, -1, -1, -1, 0, -1],
             [-1, -1, 0, -1, 0, -1, -1],
@@ -41,7 +27,20 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1, -1],
             [0, 0, -1, -1, 0, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1],
-            [-1, 0, -1, -1, 0, -1, -1],
+        ])
+        with self.assertRaises(ValueError) as context:
+            BinairoGame(grid)
+        self.assertEqual("Binairo grid must have an even number of rows/columns", str(context.exception))
+
+    def test_solution_not_even_size_row(self):
+        grid = Grid([
+            [-1, -1, -1, -1, -1, 0],
+            [-1, -1, 0, -1, 0, -1],
+            [1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [0, 0, -1, -1, 0, -1],
+            [-1, -1, -1, -1, -1, -1],
+            [-1, -1, -1, -1, -1, -1],
         ])
         with self.assertRaises(ValueError) as context:
             BinairoGame(grid)
@@ -176,12 +175,12 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, 1, -1],
         ])
         expected_grid = Grid([
-            [False, True, False, True, False, True],
-            [False, True, False, True, True, False],
-            [True, False, True, False, False, True],
-            [False, False, True, True, False, True],
-            [True, True, False, False, True, False],
-            [True, False, True, False, True, False],
+            [0, 1, 0, 1, 0, 1],
+            [0, 1, 0, 1, 1, 0],
+            [1, 0, 1, 0, 0, 1],
+            [0, 0, 1, 1, 0, 1],
+            [1, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0],
         ])
         game = BinairoGame(grid)
         solution = game.get_solution()
@@ -199,14 +198,14 @@ class BinairoGameTests(TestCase):
             [-1, -1, 0, 0, -1, -1, 0, -1],
         ])
         expected_grid = Grid([
-            [True, False, True, True, False, False, True, False],
-            [False, True, True, False, False, True, True, False],
-            [False, True, False, True, True, False, False, True],
-            [True, False, True, False, True, False, False, True],
-            [False, True, False, True, False, True, True, False],
-            [True, False, False, True, True, False, True, False],
-            [True, False, True, False, False, True, False, True],
-            [False, True, False, False, True, True, False, True],
+            [1, 0, 1, 1, 0, 0, 1, 0],
+            [0, 1, 1, 0, 0, 1, 1, 0],
+            [0, 1, 0, 1, 1, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 0, 1],
+            [0, 1, 0, 1, 0, 1, 1, 0],
+            [1, 0, 0, 1, 1, 0, 1, 0],
+            [1, 0, 1, 0, 0, 1, 0, 1],
+            [0, 1, 0, 0, 1, 1, 0, 1],
         ])
         game = BinairoGame(grid)
         solution = game.get_solution()
@@ -226,16 +225,16 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, 1, -1, -1, -1, -1, 1],
         ])
         expected_grid = Grid([
-            [False, False, True, False, True, False, True, True, False, True],
-            [True, True, False, True, False, True, False, False, True, False],
-            [True, False, True, False, True, False, False, True, False, True],
-            [False, True, False, True, False, True, True, False, True, False],
-            [True, False, True, False, False, True, False, True, True, False],
-            [True, False, False, True, True, False, False, True, False, True],
-            [False, True, True, False, False, True, True, False, True, False],
-            [True, True, False, False, True, False, True, False, True, False],
-            [False, False, True, True, False, True, False, True, False, True],
-            [False, True, False, True, True, False, True, False, False, True],
+            [0, 0, 1, 0, 1, 0, 1, 1, 0, 1],
+            [1, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 1, 0, 0, 1, 0, 1],
+            [0, 1, 0, 1, 0, 1, 1, 0, 1, 0],
+            [1, 0, 1, 0, 0, 1, 0, 1, 1, 0],
+            [1, 0, 0, 1, 1, 0, 0, 1, 0, 1],
+            [0, 1, 1, 0, 0, 1, 1, 0, 1, 0],
+            [1, 1, 0, 0, 1, 0, 1, 0, 1, 0],
+            [0, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+            [0, 1, 0, 1, 1, 0, 1, 0, 0, 1],
         ])
         game = BinairoGame(grid)
         solution = game.get_solution()

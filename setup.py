@@ -4,10 +4,10 @@ setup(
     name='PuzzleGames',
     version='1.0.0',
     packages=find_packages(),
-    url='https://github.com/yourusername/PuzzleGames',
+    url='https://github.com/newtomsoft/Puzzle',
     license='MIT',
     author='thoma',
-    author_email='your.email@example.com',
+    author_email='thomas@newtomsoft.fr',
     description='A collection of puzzle games.',
     install_requires=[
         'playwright',
