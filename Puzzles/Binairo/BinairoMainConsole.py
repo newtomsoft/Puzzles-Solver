@@ -1,6 +1,9 @@
-﻿from BinairoGame import BinairoGame
+﻿import time
+
+from BinairoGame import BinairoGame
 from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
+from PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 
 
 class BinairoMainConsole:
@@ -11,11 +14,13 @@ class BinairoMainConsole:
 
     @staticmethod
     def get_grid():
-        print("Sodoku Game")
+        print("Binairo Game")
         print("Enter url or grid")
         console_input = input()
 
         url_patterns = {
+            "https://www.puzzle-binairo.com": PuzzleBinairoGridProvider,
+            "https://fr.puzzle-binairo.com": PuzzleBinairoGridProvider,
         }
 
         for pattern, provider_class in url_patterns.items():
@@ -28,9 +33,12 @@ class BinairoMainConsole:
     @staticmethod
     def run(grid):
         game = BinairoGame(grid)
+        start_time = time.time()
         solution_grid = game.get_solution()
+        end_time = time.time()
+        execution_time = end_time - start_time
         if solution_grid:
-            print(f"Solution found:")
+            print(f"Solution found in {execution_time:.2f} seconds")
             print(solution_grid.to_console_string())
             # BinairoMainConsole.generate_html(solution_grid)
         else:
@@ -46,20 +54,6 @@ class BinairoMainConsole:
                     file.write(f"<td style='background-color: white; color: black;'>{BinairoMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
                 file.write("</tr>")
             file.write("</table></body></html>")
-
-    @staticmethod
-    def int_to_base26(n):
-        if n <= 9:
-            return n
-        result = []
-        while n > 0:
-            n -= 1
-            if n < 9:
-                result.append(str(n + 1))
-            else:
-                result.append(chr(n - 9 + ord('A')))
-            n //= 35
-        return ''.join(reversed(result))
 
 
 if __name__ == '__main__':
