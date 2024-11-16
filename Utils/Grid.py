@@ -107,7 +107,7 @@ class Grid:
                 cells_sets.add(frozenset(cells))
             excluded.append((r, c))
 
-    def _depth_first_search(self, r, c, value, mode='orthogonal', visited=None) -> set:
+    def _depth_first_search(self, r: int, c: int, value, mode='orthogonal', visited=None) -> set:
         if visited is None:
             visited = set()
         if (self._matrix[r][c] != value) or ((r, c) in visited):
