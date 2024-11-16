@@ -1,4 +1,4 @@
-﻿from z3 import Bool, Solver, Not, And, sat, is_true, Sum, Implies
+﻿from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies
 
 from Grid import Grid
 
@@ -58,12 +58,3 @@ class QueensGame:
                 if r < self.rows_number - 1 and c < self.columns_number - 1:
                     self._solver.add(Implies(self._grid_z3[r][c], Not(self._grid_z3[r + 1][c + 1])))
 
-    def _add_constrain_not_this_solution(self, solution):
-        constraints_to_add = []
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if solution[r][c]:
-                    constraints_to_add.append(self._grid_z3[r][c])
-                else:
-                    constraints_to_add.append(Not(self._grid_z3[r][c]))
-        self._solver.add(Not(And(constraints_to_add)))

@@ -1,26 +1,26 @@
 ﻿import time
 
-from BinairoGame import BinairoGame
 from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
+from PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
+from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 
 
 class BinairoMainConsole:
     @staticmethod
     def main():
-        grid = BinairoMainConsole.get_grid()
-        BinairoMainConsole.run(grid)
+        grid, comparison_operators = BinairoMainConsole.get_grid()
+        BinairoMainConsole.run(grid, comparison_operators)
 
     @staticmethod
     def get_grid():
-        print("Binairo Game")
+        print("BinairoPlus Game")
         print("Enter url or grid")
         console_input = input()
 
         url_patterns = {
-            "https://www.puzzle-binairo.com": PuzzleBinairoGridProvider,
-            "https://fr.puzzle-binairo.com": PuzzleBinairoGridProvider,
+            "https://www.puzzle-binairo.com": PuzzleBinairoPlusGridProvider,
+            "https://fr.puzzle-binairo.com": PuzzleBinairoPlusGridProvider,
         }
 
         for pattern, provider_class in url_patterns.items():
@@ -31,8 +31,8 @@ class BinairoMainConsole:
         return StringGridProvider().get_grid(console_input)
 
     @staticmethod
-    def run(grid):
-        game = BinairoGame(grid)
+    def run(grid, comparison_operators):
+        game = BinairoPlusGame(grid, comparison_operators)
         start_time = time.time()
         solution_grid = game.get_solution()
         end_time = time.time()

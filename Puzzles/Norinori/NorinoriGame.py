@@ -31,7 +31,6 @@ class NorinoriGame:
     def _add_constrains(self):
         self._add_constraint_exactly_2_by_region()
         self._add_constraint_2_by_2()
-        # self._add_constrain_no_adjacent_queen()
 
     def _add_constraint_exactly_2_by_region(self):
         for region in self._colored_regions.values():
@@ -64,18 +63,6 @@ class NorinoriGame:
                 self._solver.add(constraint)
                 pass
 
-    def _add_constrain_no_adjacent_queen(self):
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if r > 0 and c > 0:
-                    self._solver.add(Implies(self._grid_z3[r][c], Not(self._grid_z3[r - 1][c - 1])))
-                if r > 0 and c < self.columns_number - 1:
-                    self._solver.add(Implies(self._grid_z3[r][c], Not(self._grid_z3[r - 1][c + 1])))
-                if r < self.rows_number - 1 and c > 0:
-                    self._solver.add(Implies(self._grid_z3[r][c], Not(self._grid_z3[r + 1][c - 1])))
-                if r < self.rows_number - 1 and c < self.columns_number - 1:
-                    self._solver.add(Implies(self._grid_z3[r][c], Not(self._grid_z3[r + 1][c + 1])))
-
     def _get_colored_regions(self):
         colored_regions = {}
         for r in range(self.rows_number):
@@ -85,14 +72,6 @@ class NorinoriGame:
                 colored_regions[self._grid.value(r, c)].append((r, c))
         return colored_regions
 
-    # @staticmethod
-    # def xor_many(*args):
-    #     if len(args) == 1:
-    #         return args[0]
-    #     elif len(args) == 2:
-    #         return Xor(args[0], args[1])
-    #     else:
-    #         return Or(And(args[0], Not(Or(*args[1:]))), And(Not(args[0]), NorinoriGame.xor_many(*args[1:])))
     @staticmethod
     def generate_rotations(lst):
         return [lst[i:] + lst[:i] for i in range(1, len(lst))]

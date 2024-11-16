@@ -8,7 +8,7 @@ from PlaywrightGridProvider import PlaywrightGridProvider
 from RegionsGrid import RegionsGrid
 
 
-class PuzzleNorinoriGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleAquariumGridProvider(GridProvider, PlaywrightGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
@@ -19,13 +19,14 @@ class PuzzleNorinoriGridProvider(GridProvider, PlaywrightGridProvider):
         browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
-        cells_count = len(cell_divs)
+        matrix_cells = [cell_div for cell_div in cell_divs if 'selectable' in cell_div.get('class', [])]
+        cells_count = len(matrix_cells)
         row_count = int(math.sqrt(cells_count))
         column_count = row_count
         borders_dict = {'br': 'right', 'bl': 'left', 'bt': 'top', 'bb': 'bottom'}
         opens = {'right', 'left', 'top', 'bottom'}
         open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
-        for i, cell in enumerate(cell_divs):
+        for i, cell in enumerate(matrix_cells):
             row = i // column_count
             col = i % column_count
             cell_classes = cell.get('class', [])
@@ -42,5 +43,7 @@ class PuzzleNorinoriGridProvider(GridProvider, PlaywrightGridProvider):
 
         regions_grid = RegionsGrid(open_matrix).compute_regions_grid()
 
-        return regions_grid
+        task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
+        numbers = [int(cell_div.text) for cell_div in task_cells]
+        return regions_grid, numbers
 
