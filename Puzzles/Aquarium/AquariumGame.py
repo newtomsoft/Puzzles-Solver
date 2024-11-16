@@ -12,7 +12,7 @@ class AquariumGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 6:
             raise ValueError("The grid must be at least 6x6")
-        self._aquariums = self._get_aquariums()
+        self._aquariums = self._grid.get_regions()
         if len(self._aquariums) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._numbers = numbers
@@ -20,15 +20,6 @@ class AquariumGame:
         self.rows_water_numbers = numbers[grid.rows_number:]
         self._solver = None
         self._grid_z3 = None
-
-    def _get_aquariums(self) -> dict[int, list[tuple[int, int]]]:
-        aquariums: dict[int, list[tuple[int, int]]] = {}
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if self._grid.value(r, c) not in aquariums:
-                    aquariums[self._grid.value(r, c)] = []
-                aquariums[self._grid.value(r, c)].append((r, c))
-        return aquariums
 
     def get_solution(self) -> Grid:
         self._grid_z3 = [[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]

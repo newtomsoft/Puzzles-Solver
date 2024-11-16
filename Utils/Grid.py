@@ -61,7 +61,7 @@ class Grid:
         return {key: frozenset(value) for key, value in regions.items()} if regions else {}
 
     def are_all_cells_connected(self, value=True, mode='orthogonal') -> bool:
-        r, c = self._get_cell(value)
+        r, c = self._get_cell_of_value(value)
         if r is None:
             return False
         visited = self._depth_first_search(r, c, value, mode)
@@ -71,7 +71,7 @@ class Grid:
         excluded = []
         shapes = set()
         while True:
-            r, c = self._get_cell(value, excluded)
+            r, c = self._get_cell_of_value(value, excluded)
             if r is None:
                 return shapes
             if any((r, c) in shape for shape in shapes):
@@ -96,7 +96,7 @@ class Grid:
         excluded = []
         cells_sets: Set[FrozenSet[Tuple[int, int]]] = set()
         while True:
-            r, c = self._get_cell(value, excluded)
+            r, c = self._get_cell_of_value(value, excluded)
             if r is None:
                 return cells_sets
             if any((r, c) in cells_set for cells_set in cells_sets):
@@ -124,7 +124,7 @@ class Grid:
 
         return visited
 
-    def _get_cell(self, value, excluded=None):
+    def _get_cell_of_value(self, value, excluded=None):
         if excluded is None:
             excluded = []
         return next(((i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and (i, j) not in excluded), (None, None))

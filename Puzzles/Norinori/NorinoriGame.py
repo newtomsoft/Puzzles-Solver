@@ -12,7 +12,7 @@ class NorinoriGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 6:
             raise ValueError("The grid must be at least 6x6")
-        self._colored_regions = self._get_colored_regions()
+        self._colored_regions = self._grid.get_regions()
         if len(self._colored_regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._solver = None
@@ -62,15 +62,6 @@ class NorinoriGame:
                 constraint = Implies(self._grid_z3[r][c], constraint_or)
                 self._solver.add(constraint)
                 pass
-
-    def _get_colored_regions(self):
-        colored_regions = {}
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if self._grid.value(r, c) not in colored_regions:
-                    colored_regions[self._grid.value(r, c)] = []
-                colored_regions[self._grid.value(r, c)].append((r, c))
-        return colored_regions
 
     @staticmethod
     def generate_rotations(lst):
