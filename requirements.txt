@@ -29,3 +29,4 @@ urllib3~=2.2.3
 charset-normalizer~=3.4.0
 packaging~=24.2
 playwright~=1.48.0
+sympy~=1.13.3
