@@ -1,9 +1,9 @@
 ﻿import time
 
 from BinairoGame import BinairoGame
-from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
 from PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
+from Utils.Grid import Grid
 
 
 class BinairoMainConsole:

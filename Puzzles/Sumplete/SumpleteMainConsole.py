@@ -1,7 +1,7 @@
-﻿from Grid import Grid
-from GridProviders.StringGridProvider import StringGridProvider
+﻿from GridProviders.StringGridProvider import StringGridProvider
 from PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from SumpleteGame import SumpleteGame
+from Utils.Grid import Grid
 
 
 class SumpleteMainConsole:

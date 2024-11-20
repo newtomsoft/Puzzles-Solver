@@ -1,7 +1,7 @@
 ﻿import timeit
 
-from Grid import Grid
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
+from Utils.Grid import Grid
 
 
 class SumpleteBenchmark:

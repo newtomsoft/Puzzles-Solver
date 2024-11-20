@@ -1,6 +1,6 @@
 ﻿from z3 import Bool, Solver, Not, And, sat, is_true, Sum
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class MinesweeperMosaicGame:

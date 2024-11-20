@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
+from Utils.Grid import Grid
 
 
 class SumpleteGameTests(TestCase):

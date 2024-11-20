@@ -1,6 +1,6 @@
 ﻿from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class QueensGame:

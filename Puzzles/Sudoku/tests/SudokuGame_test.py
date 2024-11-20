@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Sudoku.SudokuGame import SudokuGame
+from Utils.Grid import Grid
 
 
 class SudokuGameTests(TestCase):

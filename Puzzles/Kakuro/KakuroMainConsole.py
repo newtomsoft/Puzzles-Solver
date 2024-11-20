@@ -1,11 +1,11 @@
 ﻿import webbrowser
 
-from Grid import Grid
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from KakuroConquestGridProvider import KakuroConquestGridProvider
 from KakuroOnlineGridProvider import KakuroOnlineGridProvider
 from Puzzles.Kakuro.KakuroGame import KakuroGame
+from Utils.Grid import Grid
 
 
 class KakuroMainConsole:

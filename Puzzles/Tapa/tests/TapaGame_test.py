@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Tapa.TapaGame import TapaGame
+from Utils.Grid import Grid
 
 
 class TapaGameTests(TestCase):

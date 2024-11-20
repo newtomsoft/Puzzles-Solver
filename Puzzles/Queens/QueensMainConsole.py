@@ -1,9 +1,9 @@
 ﻿import webbrowser
 
-from Grid import Grid
 from GridProviders.QueensGridProvider import QueensGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Queens.QueensGame import QueensGame
+from Utils.Grid import Grid
 
 
 class QueensMainConsole:

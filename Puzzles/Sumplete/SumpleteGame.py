@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, sat, Sum, Bool
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class SumpleteGame:

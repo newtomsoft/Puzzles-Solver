@@ -2,7 +2,7 @@
 
 from MinesweeperMosaicGame import MinesweeperMosaicGame
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class MinesweeperMosaicBenchmark:

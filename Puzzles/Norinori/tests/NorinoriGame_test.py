@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Norinori.NorinoriGame import NorinoriGame
+from Utils.Grid import Grid
 
 
 class NorinoriGameTests(TestCase):

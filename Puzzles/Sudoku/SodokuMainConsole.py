@@ -1,10 +1,10 @@
 ﻿import re
 
-from Grid import Grid
 from GridProviders.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from SudokuGame import SudokuGame
+from Utils.Grid import Grid
 
 
 class SudokuMainConsole:

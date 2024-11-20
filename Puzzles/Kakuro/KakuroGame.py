@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, And, sat, Sum, Int, Distinct
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class KakuroGame:

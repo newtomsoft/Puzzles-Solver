@@ -1,7 +1,7 @@
 ﻿from sympy import divisors
 from z3 import Solver, And, sat, Or, Int
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class ShikakuGame:

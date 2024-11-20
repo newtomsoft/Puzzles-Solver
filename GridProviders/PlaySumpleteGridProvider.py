@@ -1,8 +1,8 @@
 ﻿import requests
 from bs4 import BeautifulSoup
 
-from Grid import Grid
 from GridProvider import GridProvider
+from Utils.Grid import Grid
 
 
 class PlaySumpleteGridProvider(GridProvider):

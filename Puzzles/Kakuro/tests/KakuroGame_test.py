@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Kakuro.KakuroGame import KakuroGame
+from Utils.Grid import Grid
 
 
 class KakuroGameTests(TestCase):

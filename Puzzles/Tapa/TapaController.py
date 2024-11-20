@@ -1,8 +1,8 @@
 ﻿from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from Grid import Grid
 from TapaGame import TapaGame
+from Utils.Grid import Grid
 
 app = Flask(__name__)
 CORS(app, origins="https://www.puzzle-tapa.com")

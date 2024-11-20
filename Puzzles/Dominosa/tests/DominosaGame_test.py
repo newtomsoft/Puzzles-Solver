@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Dominosa.DominosaGame import DominosaGame
+from Utils.Grid import Grid
 
 
 class DominosaGameTests(TestCase):

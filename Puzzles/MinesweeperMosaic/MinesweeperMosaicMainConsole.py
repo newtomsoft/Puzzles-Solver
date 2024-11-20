@@ -1,9 +1,9 @@
 ﻿import re
 
-from Grid import Grid
 from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.MinesweeperMosaic.MinesweeperMosaicGame import MinesweeperMosaicGame
+from Utils.Grid import Grid
 
 
 class MinesweeperMosaicMainConsole:

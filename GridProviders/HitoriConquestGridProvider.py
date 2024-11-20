@@ -1,8 +1,8 @@
 ﻿import requests
 from bs4 import BeautifulSoup
 
-from Grid import Grid
 from GridProviders.GridProvider import GridProvider
+from Utils.Grid import Grid
 
 
 class HitoriConquestGridProvider(GridProvider):

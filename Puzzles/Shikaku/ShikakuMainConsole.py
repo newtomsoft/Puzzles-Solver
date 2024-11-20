@@ -1,9 +1,9 @@
 ﻿import time
 
-from Grid import Grid
 from GridProviders.StringGridProvider import StringGridProvider
 from PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from Puzzles.Shikaku.ShikakuGame import ShikakuGame
+from Utils.Grid import Grid
 
 
 class ShikakuMainConsole:

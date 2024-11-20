@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, Implies, And, Or, sat, Int
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class DominosaGame:

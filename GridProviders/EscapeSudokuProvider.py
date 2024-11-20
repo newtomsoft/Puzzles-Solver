@@ -2,9 +2,9 @@
 
 from playwright.sync_api import sync_playwright, BrowserContext
 
-from Grid import Grid
 from GridProviders.GridProvider import GridProvider
 from PlaywrightGridProvider import PlaywrightGridProvider
+from Utils.Grid import Grid
 from Utils.utils import is_perfect_square
 
 

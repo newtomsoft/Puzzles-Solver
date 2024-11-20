@@ -2,7 +2,7 @@
 
 from z3 import Int, Solver, And, sat, Distinct
 
-from Grid import Grid
+from Utils.Grid import Grid
 from Utils.utils import is_perfect_square
 
 

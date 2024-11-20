@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Nonogram.NonogramGame import NonogramGame
+from Utils.Grid import Grid
 
 
 class NonogramGameTests(TestCase):

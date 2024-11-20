@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Queens.QueensGame import QueensGame
+from Utils.Grid import Grid
 
 
 class QueensGameTests(TestCase):

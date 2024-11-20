@@ -1,7 +1,7 @@
-﻿from Grid import Grid
-from GridProviders.HitoriConquestGridProvider import HitoriConquestGridProvider
+﻿from GridProviders.HitoriConquestGridProvider import HitoriConquestGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Hitori.HitoriGame import HitoriGame
+from Utils.Grid import Grid
 
 
 class HitoriMainConsole:

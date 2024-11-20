@@ -1,7 +1,7 @@
-﻿from Grid import Grid
-from GridProviders.StringGridProvider import StringGridProvider
+﻿from GridProviders.StringGridProvider import StringGridProvider
 from PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from Puzzles.Tapa.TapaGame import TapaGame
+from Utils.Grid import Grid
 
 
 class TapaMainConsole:

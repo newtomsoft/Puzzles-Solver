@@ -1,26 +1,26 @@
 ﻿import time
 
+from AkariGame import AkariGame
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
-from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
+from PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from Utils.Grid import Grid
 
 
-class BinairoMainConsole:
+class AkariMainConsole:
     @staticmethod
     def main():
-        grid, comparison_operators = BinairoMainConsole.get_grid()
-        BinairoMainConsole.run(grid, comparison_operators)
+        data_game = AkariMainConsole.get_grid()
+        AkariMainConsole.run(data_game)
 
     @staticmethod
     def get_grid():
-        print("BinairoPlus Game")
+        print("Akari Game")
         print("Enter url or grid")
         console_input = input()
 
         url_patterns = {
-            "https://www.puzzle-binairo.com": PuzzleBinairoPlusGridProvider,
-            "https://fr.puzzle-binairo.com": PuzzleBinairoPlusGridProvider,
+            "https://www.puzzle-light-up.com": PuzzleAkariGridProvider,
+            "https://fr.puzzle-light-up.com": PuzzleAkariGridProvider,
         }
 
         for pattern, provider_class in url_patterns.items():
@@ -31,8 +31,8 @@ class BinairoMainConsole:
         return StringGridProvider().get_grid(console_input)
 
     @staticmethod
-    def run(grid, comparison_operators):
-        game = BinairoPlusGame(grid, comparison_operators)
+    def run(data_game):
+        game = AkariGame(data_game)
         start_time = time.time()
         solution_grid = game.get_solution()
         end_time = time.time()
@@ -40,7 +40,7 @@ class BinairoMainConsole:
         if solution_grid != Grid.empty():
             print(f"Solution found in {execution_time:.2f} seconds")
             print(solution_grid.to_console_string())
-            # BinairoMainConsole.generate_html(solution_grid)
+            # AkariMainConsole.generate_html(solution_grid)
         else:
             print(f"No solution found")
 
@@ -51,10 +51,10 @@ class BinairoMainConsole:
             for r in range(solution_grid.rows_number):
                 file.write("<tr>")
                 for c in range(solution_grid.columns_number):
-                    file.write(f"<td style='background-color: white; color: black;'>{BinairoMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
+                    file.write(f"<td style='background-color: white; color: black;'>{AkariMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
                 file.write("</tr>")
             file.write("</table></body></html>")
 
 
 if __name__ == '__main__':
-    BinairoMainConsole.main()
+    AkariMainConsole.main()

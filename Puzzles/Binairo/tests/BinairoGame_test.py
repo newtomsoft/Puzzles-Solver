@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Binairo.BinairoGame import BinairoGame
+from Utils.Grid import Grid
 
 
 class BinairoGameTests(TestCase):

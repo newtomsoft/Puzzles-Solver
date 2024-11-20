@@ -1,6 +1,6 @@
 ﻿from z3 import Bool, Solver, Implies, Not, And, Or, sat, is_true, Sum
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class HitoriGame:

@@ -3,7 +3,7 @@
 from bitarray import bitarray
 from z3 import Solver, sat, Or, BitVec, Extract
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class NonogramGame:

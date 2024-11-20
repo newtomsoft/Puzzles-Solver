@@ -1,7 +1,7 @@
 ﻿import timeit
 
-from Grid import Grid
 from Puzzles.Hitori.HitoriGame import HitoriGame
+from Utils.Grid import Grid
 
 
 class HitoriBenchmark:

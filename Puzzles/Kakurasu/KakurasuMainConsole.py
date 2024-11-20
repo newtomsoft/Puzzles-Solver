@@ -1,7 +1,7 @@
-﻿from Grid import Grid
-from GridProviders.StringGridProvider import StringGridProvider
+﻿from GridProviders.StringGridProvider import StringGridProvider
 from PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
+from Utils.Grid import Grid
 
 
 class KakurasuMainConsole:

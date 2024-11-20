@@ -1,8 +1,8 @@
 ﻿from z3 import Bool, Solver, Implies, Not, And, Or, sat, is_true, Sum
 
-from Grid import Grid
 from Puzzles.Tapa.ShapeCollection import ShapeCollection
 from Puzzles.Tapa.ShapeGenerator import ShapeGenerator
+from Utils.Grid import Grid
 
 
 class TapaGame:

@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Grid import Grid
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
+from Utils.Grid import Grid
 
 
 class KakurasuGameTests(TestCase):

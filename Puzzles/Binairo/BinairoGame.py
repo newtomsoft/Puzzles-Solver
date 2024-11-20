@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, sat, Bool, is_true, Not, And
 
-from Grid import Grid
+from Utils.Grid import Grid
 
 
 class BinairoGame:

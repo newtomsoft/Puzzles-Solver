@@ -1,7 +1,7 @@
-﻿from Grid import Grid
-from GridProviders.StringGridProvider import StringGridProvider
+﻿from GridProviders.StringGridProvider import StringGridProvider
 from PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
 from Puzzles.Nonogram.NonogramGame import NonogramGame
+from Utils.Grid import Grid
 
 
 class NonogramMainConsole:

@@ -1,8 +1,8 @@
 ﻿import re
 import timeit
 
-from Grid import Grid
 from Puzzles.Tapa.TapaGame import TapaGame
+from Utils.Grid import Grid
 
 
 class TapaBenchmark:
