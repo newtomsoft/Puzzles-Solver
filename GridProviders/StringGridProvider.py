@@ -1,5 +1,5 @@
-﻿from Grid import Grid
-from GridProviders.GridProvider import GridProvider
+﻿from GridProviders.GridProvider import GridProvider
+from Utils.Grid import Grid
 
 
 class StringGridProvider(GridProvider):

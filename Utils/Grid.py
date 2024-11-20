@@ -162,12 +162,14 @@ class Grid:
         current_bitarray = first_bitarray
         for i in range(neighbour_length - block_length):
             current_bitarray = current_bitarray >> 1
-            bitarrays.append(current_bitarray)
+            if current_bitarray not in bitarrays:
+                bitarrays.append(current_bitarray)
         if circular:
             for i in range(block_length - 1):
                 current_bitarray = current_bitarray >> 1
                 current_bitarray[0] = True
-                bitarrays.append(current_bitarray)
+                if current_bitarray not in bitarrays:
+                    bitarrays.append(current_bitarray)
         return bitarrays
 
     @staticmethod

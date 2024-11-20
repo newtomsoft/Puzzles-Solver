@@ -1,7 +1,7 @@
-﻿from Grid import Grid
+﻿from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
 from Puzzles.Aquarium.AquariumGame import AquariumGame
+from Utils.Grid import Grid
 
 
 class AquariumMainConsole:

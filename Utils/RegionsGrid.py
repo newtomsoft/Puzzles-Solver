@@ -1,5 +1,4 @@
-from Grid import Grid
-
+from Utils.Grid import Grid
 
 class RegionsGrid(Grid):
     def __init__(self, matrix: list[list[set]]):
