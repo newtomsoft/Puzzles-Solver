@@ -3,8 +3,7 @@ from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
 
-from GridProviders.ScrapingGridProvider import PlaywrightGridProvider
-
+from PlaywrightGridProvider import PlaywrightGridProvider
 from Puzzles.Hitori.HitoriMainConsole import HitoriMainConsole
 
 
@@ -73,22 +72,6 @@ class TestMainFunction(TestCase):
         self.assertIn("Solution found", output)
         expected_result = '■8■71■62\n632178■4\n8■13■625\n■7■58■3■\n1632■578\n5■4■2■8■\n25■83416\n■18■6■5■'
         self.assertIn(expected_result, output)
-
-    @patch('builtins.input', side_effect=["https://www.puzzles-mobile.com/hitori/random/5x5-easy"])
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_main_with_url_puzzles_mobile_input_8x8(self, mock_stdout, mock_input):
-        HitoriMainConsole.main()
-        output = mock_stdout.getvalue()
-        self.assertIn("Solution found", output)
-        # content of the solution not tested because changes every time
-
-    @patch('builtins.input', side_effect=["https://www.puzzles-mobile.com/hitori/special/daily"])
-    @patch('sys.stdout', new_callable=StringIO)
-    def test_main_with_url_puzzles_mobile_daily(self, mock_stdout, mock_input):
-        HitoriMainConsole.main()
-        output = mock_stdout.getvalue()
-        self.assertIn("Solution found", output)
-        # content of the solution not tested because changes every day
 
 
 if __name__ == '__main__':

@@ -104,7 +104,7 @@ class HitoriGameTests(TestCase):
         for grid in grids5x5:
             game = HitoriGame(grid)
             solution, _ = game.get_solution()
-            self.assertIsNotNone(solution)
+            self.assertIsNot(Grid.empty(), solution)
 
 
 if __name__ == '__main__':

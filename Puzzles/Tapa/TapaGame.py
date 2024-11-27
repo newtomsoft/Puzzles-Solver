@@ -1,8 +1,8 @@
 ﻿from z3 import Bool, Solver, Implies, Not, And, Or, sat, is_true, Sum
 
-from Puzzles.Tapa.ShapeCollection import ShapeCollection
-from Puzzles.Tapa.ShapeGenerator import ShapeGenerator
 from Utils.Grid import Grid
+from Utils.ShapeCollection import ShapeCollection
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class TapaGame:
@@ -89,7 +89,7 @@ class TapaGame:
         max_size = min(self.min_black, int(min(self._grid.columns_number, self._grid.rows_number) / 2))
         shapes_and_outlines = []
         for current_max_size in range(1, max_size + 1):
-            shapes_and_outlines += ShapeCollection.get_shapes_arounds_by_size((1, current_max_size))
+            shapes_and_outlines += ShapeCollection.get_shapes_around_by_size((1, current_max_size))
 
         for shape_and_outline in shapes_and_outlines:
             shape = shape_and_outline[0]
@@ -122,7 +122,7 @@ class TapaGame:
             if is_solution:
                 return TapaGame.crop_grid(current_grid), proposition_count
 
-            black_shapes = current_grid.get_all_shapes(True)
+            black_shapes = current_grid.get_all_shapes()
             biggest_shape = max(black_shapes, key=len)
             black_shapes.remove(biggest_shape)
             for black_shape in black_shapes:

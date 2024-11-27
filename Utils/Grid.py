@@ -67,7 +67,7 @@ class Grid:
         visited = self._depth_first_search(r, c, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def get_all_shapes(self, value, mode='orthogonal') -> Set[FrozenSet[Tuple[int, int]]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Tuple[int, int]]]:
         excluded = []
         shapes = set()
         while True:

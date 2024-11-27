@@ -1,5 +1,5 @@
 ﻿class ShapeCollection:
-    shapes = {
+    shapes_and_around = {
         (1, 1): [
             ({(0, 0)}, {(-1, 0), (1, 0), (0, -1), (0, 1)}),
         ],
@@ -2956,7 +2956,7 @@
             ({(4, 0), (0, 0), (1, 0), (2, 0), (3, 0)}, {(0, 1), (2, -1), (3, -1), (2, 1), (4, 1), (3, 1), (1, 1), (1, -1), (-1, 0), (5, 0), (4, -1), (0, -1)}),
         ],
     }
-    
+
     @staticmethod
-    def get_shapes_arounds_by_size(size: tuple[int, int]) -> list[set[tuple[int, int]]]:
-        return  ShapeCollection.shapes.get(size, [])
+    def get_shapes_around_by_size(size: tuple[int, int]) -> list[set[tuple[int, int]]]:
+        return ShapeCollection.shapes_and_around.get(size, [])

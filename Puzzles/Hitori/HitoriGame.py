@@ -36,7 +36,7 @@ class HitoriGame:
                 self.print_dot(proposition_count)
 
             for wrong_blacks in wrong_blacks_sets:
-                proposition_constraints = [Not(self._grid_z3.value(wrong_black[0], wrong_black[1])) for wrong_black in wrong_blacks]
+                proposition_constraints = [Not(self._grid_z3.value(r, c)) for r, c in wrong_blacks]
                 self._solver.add(Not(And(proposition_constraints)))
 
         return Grid.empty(), proposition_count
