@@ -106,9 +106,8 @@ class SudokuGame:
         return True
 
     def _initial_numbers_between_1_and_nxn(self):
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                value = self._grid.value(r, c)
-                if value != -1 and (value < 1 or value > self.rows_number):
-                    return False
-        return True
+        return all(
+            self._grid.value(r, c) == -1 or 1 <= self._grid.value(r, c) <= self.rows_number
+            for r in range(self.rows_number)
+            for c in range(self.columns_number)
+        )

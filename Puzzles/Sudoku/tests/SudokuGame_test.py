@@ -147,6 +147,33 @@ class SudokuGameTests(TestCase):
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)
 
+    def test_solution_9x9_2(self):
+        grid = Grid([
+            [7, 1, -1, -1, 8, 3, -1, 4, -1],
+            [9, -1, -1, -1, -1, -1, -1, 5, 8],
+            [4, -1, -1, -1, 1, -1, -1, -1, -1],
+            [-1, 8, -1, -1, -1, 9, -1, -1, 5],
+            [-1, -1, -1, -1, -1, -1, -1, -1, -1],
+            [5, -1, -1, 4, -1, -1, -1, 2, -1],
+            [-1, -1, -1, -1, 7, -1, -1, -1, 4],
+            [3, 2, -1, -1, -1, -1, -1, -1, 9],
+            [-1, 4, -1, 5, 9, -1, -1, 7, 2]
+        ])
+        expected_solution = Grid([
+            [7, 1, 5, 9, 8, 3, 2, 4, 6],
+            [9, 3, 2, 6, 4, 7, 1, 5, 8],
+            [4, 6, 8, 2, 1, 5, 7, 9, 3],
+            [1, 8, 3, 7, 2, 9, 4, 6, 5],
+            [2, 7, 4, 8, 5, 6, 9, 3, 1],
+            [5, 9, 6, 4, 3, 1, 8, 2, 7],
+            [8, 5, 9, 3, 7, 2, 6, 1, 4],
+            [3, 2, 7, 1, 6, 4, 5, 8, 9],
+            [6, 4, 1, 5, 9, 8, 3, 7, 2]
+        ])
+        sudoku_game = SudokuGame(grid)
+        solution = sudoku_game.get_solution()
+        self.assertEqual(expected_solution, solution)
+
 
 if __name__ == '__main__':
     unittest.main()

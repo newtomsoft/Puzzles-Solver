@@ -79,12 +79,12 @@ class NorinoriGameTests(TestCase):
             [4, 5, 5, 6, 6, 7],
         ])
         expected_solution = Grid([
-            [True, True, False, False, True, False],
-            [False, False, True, False, True, False],
-            [True, False, True, False, False, True],
-            [True, False, False, True, False, True],
-            [False, False, False, True, False, False],
-            [False, True, True, False, True, True]
+            [1, 1, 0, 0, 1, 0],
+            [0, 0, 1, 0, 1, 0],
+            [1, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 1],
+            [0, 0, 0, 1, 0, 0],
+            [0, 1, 1, 0, 1, 1]
         ])
         game = NorinoriGame(grid)
         solution = game.get_solution()
@@ -104,16 +104,16 @@ class NorinoriGameTests(TestCase):
             [17, 17, 17, 16, 18, 18, 18, 18, 18, 18],
         ])
         expected_solution = Grid([
-            [True, True, False, False, True, False, False, False, True, True],
-            [False, False, True, False, True, False, True, True, False, False],
-            [True, False, True, False, False, False, False, False, True, True],
-            [True, False, False, True, True, False, True, True, False, False],
-            [False, True, True, False, False, False, False, False, True, True],
-            [True, False, False, False, False, False, True, True, False, False],
-            [True, False, False, True, True, False, False, False, False, True],
-            [False, True, True, False, False, False, True, True, False, True],
-            [True, False, False, False, False, True, False, False, True, False],
-            [True, False, True, True, False, True, False, False, True, False]
+            [1, 1, 0, 0, 1, 0, 0, 0, 1, 1],
+            [0, 0, 1, 0, 1, 0, 1, 1, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0, 0, 1, 1],
+            [1, 0, 0, 1, 1, 0, 1, 1, 0, 0],
+            [0, 1, 1, 0, 0, 0, 0, 0, 1, 1],
+            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+            [1, 0, 0, 1, 1, 0, 0, 0, 0, 1],
+            [0, 1, 1, 0, 0, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
         ])
         game = NorinoriGame(grid)
         solution = game.get_solution()

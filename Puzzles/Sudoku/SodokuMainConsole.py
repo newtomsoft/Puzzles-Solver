@@ -21,6 +21,7 @@ class SudokuMainConsole:
 
         url_patterns = {
             r"https://www.puzzle-sudoku.com/.*": PuzzleSudokuGridProvider,
+            r"https://fr.puzzle-sudoku.com/.*": PuzzleSudokuGridProvider,
             r"https://escape-sudoku.com/.*": EscapeSudokuGridProvider,
         }
 

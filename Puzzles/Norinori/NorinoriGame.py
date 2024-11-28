@@ -12,8 +12,8 @@ class NorinoriGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 6:
             raise ValueError("The grid must be at least 6x6")
-        self._colored_regions = self._grid.get_regions()
-        if len(self._colored_regions) < 2:
+        self._regions = self._grid.get_regions()
+        if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._solver = None
         self._grid_z3 = None
@@ -33,7 +33,7 @@ class NorinoriGame:
         self._add_constraint_2_by_2()
 
     def _add_constraint_exactly_2_by_region(self):
-        for region in self._colored_regions.values():
+        for region in self._regions.values():
             self._solver.add(Sum([self._grid_z3[r][c] for r, c in region]) == 2)
 
     def _add_constraint_2_by_2(self):
@@ -61,7 +61,6 @@ class NorinoriGame:
                 constraint_or = Or(constraint_ands)
                 constraint = Implies(self._grid_z3[r][c], constraint_or)
                 self._solver.add(constraint)
-                pass
 
     @staticmethod
     def generate_rotations(lst):
