@@ -30,13 +30,13 @@ class NorinoriGame:
 
     def _add_constrains(self):
         self._add_constraint_exactly_2_by_region()
-        self._add_constraint_2_by_2()
+        self._add_constraint_2_by_2_without_adjacents()
 
     def _add_constraint_exactly_2_by_region(self):
         for region in self._regions.values():
             self._solver.add(Sum([self._grid_z3[r][c] for r, c in region]) == 2)
 
-    def _add_constraint_2_by_2(self):
+    def _add_constraint_2_by_2_without_adjacents(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 possible_neighbors = []

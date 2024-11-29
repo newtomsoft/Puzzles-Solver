@@ -4,6 +4,7 @@ from typing import Tuple, Set, FrozenSet, Dict
 
 from bitarray import bitarray
 
+from Direction import Direction
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 
@@ -178,3 +179,20 @@ class Grid:
 
     def is_empty(self):
         return self == Grid.empty()
+
+    def neighbors_positions(self, position: (int, int)) -> list[(int, int)]:
+        r, c = position
+        positions = [(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)]
+        return [(nr, nc) for nr, nc in positions if 0 <= nr < self.rows_number and 0 <= nc < self.columns_number]
+
+    @staticmethod
+    def direction_between(first_position, second_position) -> Direction:
+        fr, fc = first_position
+        sr, sc = second_position
+        if fc < sc:
+            return Direction(Direction.RIGHT)
+        if fc > sc:
+            return Direction(Direction.LEFT)
+        if fr < sr:
+            return Direction(Direction.DOWN)
+        return Direction(Direction.UP)
