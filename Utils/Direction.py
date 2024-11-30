@@ -1,6 +1,4 @@
-﻿
-
-class Direction:
+﻿class Direction:
     DOWN = 1
     RIGHT = 2
     UP = 3
@@ -48,11 +46,15 @@ class Direction:
         return self._value
 
     def __str__(self):
-        return {
-            Direction.DOWN: '↓',
-            Direction.RIGHT: '→',
-            Direction.UP: '↑',
-            Direction.LEFT: '←',
-            Direction.NONE: 'x'
-        }
+        if self._value == Direction.DOWN:
+            return '↓'
+        if self._value == Direction.RIGHT:
+            return '→'
+        if self._value == Direction.UP:
+            return '↑'
+        if self._value == Direction.LEFT:
+            return '←'
+        return 'x'
 
+    def __eq__(self, other):
+        return isinstance(other, Direction) and self.value == other.value
