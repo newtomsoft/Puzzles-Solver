@@ -97,10 +97,9 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
-        expected_grid = Grid.empty()
         game = BinairoGame(grid)
         solution = game.get_solution()
-        self.assertEqual(expected_grid, solution)
+        self.assertTrue(solution.is_empty())
 
     def test_solution_using_initial_constraint_and_count_and_unique_column(self):
         grid = Grid([
@@ -111,10 +110,9 @@ class BinairoGameTests(TestCase):
             [0, 0, -1, -1, -1, -1],
             [1, 1, -1, -1, -1, -1],
         ])
-        expected_grid = Grid.empty()
         game = BinairoGame(grid)
         solution = game.get_solution()
-        self.assertEqual(expected_grid, solution)
+        self.assertTrue(solution.is_empty())
 
     def test_solution_using_initial_constraint_and_count_and_unique(self):
         grid = Grid([
@@ -146,10 +144,9 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
-        expected_grid = Grid.empty()
         game = BinairoGame(grid)
         solution = game.get_solution()
-        self.assertEqual(expected_grid, solution)
+        self.assertTrue(solution.is_empty())
 
     def test_solution_using_all_constraints_adjacent_column(self):
         grid = Grid([
@@ -160,10 +157,9 @@ class BinairoGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
-        expected_grid = Grid.empty()
         game = BinairoGame(grid)
         solution = game.get_solution()
-        self.assertEqual(expected_grid, solution)
+        self.assertTrue(solution.is_empty())
 
     def test_solution_6x6(self):
         grid = Grid([

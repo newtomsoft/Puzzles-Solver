@@ -12,7 +12,7 @@ class QueensGameTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensGame(grid)
+            QueensGame((grid, 1))
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_4(self):
@@ -22,7 +22,7 @@ class QueensGameTests(TestCase):
             [0, 0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensGame(grid)
+            QueensGame((grid, 1))
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_color_less_than_columns_number(self):
@@ -33,7 +33,7 @@ class QueensGameTests(TestCase):
             [0, 1, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensGame(grid)
+            QueensGame((grid, 1))
         self.assertEqual("The grid must have the same number of regions as rows/column", str(context.exception))
 
     def test_solution_1(self):
@@ -43,7 +43,7 @@ class QueensGameTests(TestCase):
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ])
-        game = QueensGame(grid)
+        game = QueensGame((grid, 1))
         solution = game.get_solution()
         self.assertIsNone(solution)
 
@@ -55,12 +55,12 @@ class QueensGameTests(TestCase):
             [2, 2, 2, 3],
         ])
         expected_solution = Grid([
-            [False, False, True, False],
-            [True, False, False, False],
-            [False, False, False, True],
-            [False, True, False, False],
+            [0, 0, 1, 0],
+            [1, 0, 0, 0],
+            [0, 0, 0, 1],
+            [0, 1, 0, 0],
         ])
-        game = QueensGame(grid)
+        game = QueensGame((grid, 1))
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -77,17 +77,17 @@ class QueensGameTests(TestCase):
             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
         ])
         expected_solution = Grid([
-            [False, False, False, False, False, False, False, False, True],
-            [False, False, False, False, True, False, False, False, False],
-            [False, False, True, False, False, False, False, False, False],
-            [False, False, False, False, False, False, True, False, False],
-            [False, False, False, True, False, False, False, False, False],
-            [False, True, False, False, False, False, False, False, False],
-            [False, False, False, False, False, False, False, True, False],
-            [False, False, False, False, False, True, False, False, False],
-            [True, False, False, False, False, False, False, False, False]
+            [0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game = QueensGame(grid)
+        game = QueensGame((grid, 1))
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -104,17 +104,64 @@ class QueensGameTests(TestCase):
             [1, 4, 4, 4, 4, 4, 4, 4, 4]
         ])
         expected_solution = Grid([
-            [False, False, False, False, False, False, True, False, False],
-            [False, False, True, False, False, False, False, False, False],
-            [False, False, False, False, False, True, False, False, False],
-            [False, False, False, False, False, False, False, True, False],
-            [False, False, False, True, False, False, False, False, False],
-            [True, False, False, False, False, False, False, False, False],
-            [False, False, False, False, True, False, False, False, False],
-            [False, True, False, False, False, False, False, False, False],
-            [False, False, False, False, False, False, False, False, True]
+            [0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1]
         ])
-        game = QueensGame(grid)
+        game = QueensGame((grid, 1))
+        solution = game.get_solution()
+        self.assertEqual(expected_solution, solution)
+
+    def test_solution_when_stars_count_equal_0(self):
+        grid = Grid([
+            [0, 0, 0, 0, 8, 2, 2, 3, 4],
+            [0, 6, 6, 8, 8, 8, 2, 3, 4],
+            [0, 5, 6, 6, 8, 3, 3, 3, 4],
+            [0, 5, 8, 8, 8, 8, 8, 7, 4],
+            [0, 5, 5, 5, 8, 7, 7, 7, 4],
+            [0, 8, 8, 8, 8, 8, 8, 8, 4],
+            [1, 1, 4, 4, 8, 4, 4, 4, 4],
+            [1, 1, 4, 8, 8, 8, 4, 4, 4],
+            [1, 4, 4, 4, 4, 4, 4, 4, 4],
+        ])
+        stars_count_by_region_column_row = 0
+        with self.assertRaises(ValueError) as context:
+            QueensGame((grid, stars_count_by_region_column_row))
+        self.assertEqual("The stars count by region/column/row must be at least 1", str(context.exception))
+
+    def test_solution_when_stars_count_equal_2(self):
+        grid = Grid([
+            [1, 1, 1, 2, 2, 2, 2, 3, 3, 3],
+            [4, 1, 1, 2, 2, 2, 3, 3, 3, 3],
+            [4, 1, 1, 1, 1, 5, 5, 6, 7, 7],
+            [4, 1, 1, 1, 5, 5, 6, 6, 7, 7],
+            [4, 1, 1, 8, 5, 5, 6, 6, 7, 7],
+            [4, 8, 8, 8, 8, 8, 6, 6, 7, 7],
+            [4, 9, 9, 9, 9, 8, 6, 6, 7, 7],
+            [4, 10, 9, 9, 9, 8, 6, 6, 6, 7],
+            [4, 10, 10, 10, 10, 8, 6, 6, 7, 7],
+            [4, 4, 10, 10, 10, 8, 8, 6, 7, 7]
+        ])
+        expected_solution = Grid([
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+        ])
+        stars_count_by_region_column_row = 2
+        game = QueensGame((grid, stars_count_by_region_column_row))
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 

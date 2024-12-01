@@ -1,23 +1,40 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, Set, FrozenSet, Dict
+from typing import Tuple, FrozenSet, Dict, List
 
 from bitarray import bitarray
 
-from Direction import Direction
+from Position import Position
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 
 class Grid:
-    def __init__(self, matrix: list[list]):
+    def __init__(self, matrix: List[List]):
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
+
+    def __getitem__(self, item):
+        if isinstance(item, Position):
+            return self._matrix[item.r][item.c]
+        if isinstance(item, tuple):
+            return self._matrix[item[0]][item[1]]
+        return self._matrix[item]
 
     def __eq__(self, other):
         if not isinstance(other, Grid):
             return False
         return self.matrix == other.matrix
+
+    def __contains__(self, item):
+        if isinstance(item, Position):
+            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
+        raise TypeError(f'Position expected, got {type(item)}')
+
+    def __iter__(self):
+        for r, row in enumerate(self._matrix):
+            for c, cell in enumerate(row):
+                yield Position(r, c), cell
 
     def __str__(self) -> str:
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
@@ -30,27 +47,32 @@ class Grid:
     def empty() -> 'Grid':
         return Grid([[]])
 
-    def value(self, r, c):
-        return self._matrix[r][c]
+    def value(self, r_or_position, c=None):
+        if isinstance(r_or_position, Position):
+            return self._matrix[r_or_position.r][r_or_position.c]
+        return self._matrix[r_or_position][c]
 
     def set_value(self, r, c, value):
         self._matrix[r][c] = value
 
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
+        matrix = self._matrix.copy()
+        if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
+            matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
         color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in range(self.rows_number)]
         background_color_matrix = [[console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in range(self.rows_number)]
         end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
         end_space = ' ' if back_ground_color_grid else ''
         result = []
-        cell_len = max(len(f'{cell}') for row in self._matrix for cell in row)
+        cell_len = max(len(f'{cell}') for row in matrix for cell in row)
         for r in range(self.rows_number):
-            result.append(self._row_to_string(r, cell_len, background_color_matrix, color_matrix, end_color, end_space))
+            result.append(self._row_to_string(matrix, r, cell_len, background_color_matrix, color_matrix, end_color, end_space))
             if interline and r < self.rows_number - 1:
                 result.append(''.join(f'{background_color_matrix[r][c]}{end_color}' for c in range(self.columns_number)))
         return '\n'.join(result)
 
-    def _row_to_string(self, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
-        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{self._matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
+    def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
+        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
     def get_regions(self) -> Dict[int, FrozenSet[Tuple[int, int]]]:
         regions = defaultdict(set)
@@ -61,6 +83,15 @@ class Grid:
                 regions[self._matrix[r][c]].add((r, c))
         return {key: frozenset(value) for key, value in regions.items()} if regions else {}
 
+    def get_regions_new(self) -> Dict[int, FrozenSet[Position]]:
+        regions = defaultdict(set)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                if self._matrix[r][c] not in regions:
+                    regions[self._matrix[r][c]] = set()
+                regions[self._matrix[r][c]].add(Position(r, c))
+        return {key: frozenset(value) for key, value in regions.items()} if regions else {}
+
     def are_all_cells_connected(self, value=True, mode='orthogonal') -> bool:
         r, c = self._get_cell_of_value(value)
         if r is None:
@@ -68,7 +99,7 @@ class Grid:
         visited = self._depth_first_search(r, c, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Tuple[int, int]]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Tuple[int, int]]]:
         excluded = []
         shapes = set()
         while True:
@@ -82,7 +113,7 @@ class Grid:
             shapes.add(frozenset(visited))
             excluded.append((r, c))
 
-    def are_min_2_connected_cells_touch_border(self, r, c, mode='orthogonal') -> Tuple[bool, Set[Tuple[int, int]]]:
+    def are_min_2_connected_cells_touch_border(self, r, c, mode='orthogonal') -> Tuple[bool, set[Tuple[int, int]]]:
         value = self._matrix[r][c]
         visited = self._depth_first_search(r, c, value, mode)
         if len(visited) <= 1:
@@ -93,9 +124,9 @@ class Grid:
                 border_cells.add(cell)
         return len(border_cells) >= 2, visited
 
-    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> Set[FrozenSet[Tuple[int, int]]]:
+    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[FrozenSet[Tuple[int, int]]]:
         excluded = []
-        cells_sets: Set[FrozenSet[Tuple[int, int]]] = set()
+        cells_sets: set[FrozenSet[Tuple[int, int]]] = set()
         while True:
             r, c = self._get_cell_of_value(value, excluded)
             if r is None:
@@ -174,25 +205,11 @@ class Grid:
         return bitarrays
 
     @staticmethod
-    def list_to_string(array):
-        return sum(array)
+    def list_to_string(values):
+        return sum(values)
 
     def is_empty(self):
         return self == Grid.empty()
 
-    def neighbors_positions(self, position: (int, int)) -> list[(int, int)]:
-        r, c = position
-        positions = [(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)]
-        return [(nr, nc) for nr, nc in positions if 0 <= nr < self.rows_number and 0 <= nc < self.columns_number]
-
-    @staticmethod
-    def direction_between(first_position, second_position) -> Direction:
-        fr, fc = first_position
-        sr, sc = second_position
-        if fc < sc:
-            return Direction(Direction.RIGHT)
-        if fc > sc:
-            return Direction(Direction.LEFT)
-        if fr < sr:
-            return Direction(Direction.DOWN)
-        return Direction(Direction.UP)
+    def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
+        return [position for position in position.neighbors(mode) if position in self]

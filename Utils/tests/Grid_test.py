@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from bitarray import bitarray
 
+from Position import Position
 from Utils.Grid import Grid
 from Utils.colors import console_police_colors, console_back_ground_colors, remove_ansi_escape_sequences
 
@@ -237,6 +238,16 @@ class TestGrid(TestCase):
         expected_string = "12\n34\n56"
         self.assertEqual(expected_string, result_string_cleaned)
 
+    def test_to_string_bool(self):
+        grid = Grid([
+            [True, False, True],
+            [False, True, False]
+        ])
+        expected_string = "101\n010"
+        result_string = grid.to_console_string()
+        result_string_cleaned = remove_ansi_escape_sequences(result_string)
+        self.assertEqual(expected_string, result_string_cleaned)
+
     def test_to_color_string_3x3_with_color(self):
         color_grid = Grid([
             [0, 1, 2],
@@ -430,6 +441,47 @@ class TestGrid(TestCase):
             bitarray('0011'),
         ]
         self.assertEqual(expected_result, result_non_circular)
+
+    def test_get_regions_2x2(self):
+        regions = self.grid_2x2.get_regions()
+        expected_regions = {
+            '1': frozenset({(0, 0)}),
+            '2': frozenset({(0, 1)}),
+            '3': frozenset({(1, 0)}),
+            '4': frozenset({(1, 1)}),
+        }
+        self.assertEqual(expected_regions, regions)
+
+    def test_get_regions_grid_dfs(self):
+        regions = self.grid_dfs.get_regions()
+        expected_regions = {
+            '1': frozenset({(0, 0), (0, 1)}),
+            '2': frozenset({(0, 2), (1, 2)}),
+            '3': frozenset({(0, 3), (2, 1)}),
+            '5': frozenset({(2, 2), (2, 3)}),
+            '8': frozenset({(0, 4), (1, 0), (1, 1), (1, 3), (1, 4), (2, 0), (2, 4), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4)})
+        }
+        self.assertEqual(expected_regions, regions)
+
+    def test_neighbors_positions_0_0(self):
+        neighbors = self.grid_3x3.neighbors_positions(Position(0, 0))
+        expected_neighbors = {Position(0, 1), Position(1, 0)}
+        self.assertEqual(expected_neighbors, set(neighbors))
+
+    def test_neighbors_positions_0_0_with_diagonal(self):
+        neighbors = self.grid_3x3.neighbors_positions(Position(0, 0), 'diagonal')
+        expected_neighbors = {Position(0, 1), Position(1, 0), Position(1, 1)}
+        self.assertEqual(expected_neighbors, set(neighbors))
+
+    def test_neighbors_positions_1_1(self):
+        neighbors = self.grid_3x3.neighbors_positions(Position(1, 1))
+        expected_neighbors = {Position(0, 1), Position(1, 0), Position(1, 2), Position(2, 1)}
+        self.assertEqual(expected_neighbors, set(neighbors))
+
+    def test_neighbors_positions_1_1_with_diagonal(self):
+        neighbors = self.grid_3x3.neighbors_positions(Position(1, 1), 'diagonal')
+        expected_neighbors = {Position(0, 1), Position(1, 0), Position(1, 2), Position(2, 1), Position(0, 0), Position(0, 2), Position(2, 0), Position(2, 2)}
+        self.assertEqual(expected_neighbors, set(neighbors))
 
 
 if __name__ == '__main__':

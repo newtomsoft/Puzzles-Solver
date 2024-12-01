@@ -99,7 +99,7 @@ class StitchesGameTests(TestCase):
         self.assertEqual(expected_dots, dots)
         other_solution = game.get_other_solution()
         other_dots = Grid([[cell > 0 for cell in row] for row in other_solution.matrix])
-        self.assertTrue(other_dots == Grid.empty() or other_dots == dots)
+        self.assertTrue(other_dots.is_empty() or other_dots == dots)
 
     def test_solution_adding_2_by_2_crossing_2_regions(self):
         grid = Grid([
@@ -122,7 +122,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_adding_2_by_2_crossing_2_regions_2(self):
         grid = Grid([
@@ -145,7 +145,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_adding_2_by_2_crossing_2_regions_3(self):
         grid = Grid([
@@ -168,7 +168,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_2_connections(self):
         grid = Grid([
@@ -191,7 +191,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_adding_regions_count(self):
         grid = Grid([
@@ -214,7 +214,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_5x5_1(self):
         grid = Grid([
@@ -237,7 +237,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_5x5_2(self):
         grid = Grid([
@@ -260,7 +260,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_5x5_3(self):
         grid = Grid([
@@ -283,7 +283,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_7x7(self):
         grid = Grid([
@@ -310,7 +310,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_7x7_2connections_1(self):
         grid = Grid([
@@ -337,7 +337,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
     def test_solution_7x7_2connections_2(self):
         grid = Grid([
@@ -364,7 +364,7 @@ class StitchesGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(other_solution.is_empty())
 
 
 if __name__ == '__main__':

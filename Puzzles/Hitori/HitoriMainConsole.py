@@ -30,16 +30,16 @@ class HitoriMainConsole:
     @staticmethod
     def run(grid):
         hitori = HitoriGame(grid)
-        solution_grid, attempts = hitori.get_solution()
+        solution_grid = hitori.get_solution()
         if solution_grid != Grid.empty():
-            print(f"Solution found after {attempts} attempts :")
+            print(f"Solution found:")
             for r in range(solution_grid.rows_number):
                 for c in range(solution_grid.columns_number):
                     if solution_grid.value(r, c) is False:
                         solution_grid.set_value(r, c, '■')
             print(solution_grid.to_console_string())
         else:
-            print(f"No solution found ({attempts} attempts)")
+            print(f"No solution found)")
 
 
 if __name__ == '__main__':

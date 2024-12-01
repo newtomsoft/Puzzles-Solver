@@ -13,7 +13,7 @@ class HitoriGameTests(TestCase):
             [3, 4, 5]
         ])
         game = HitoriGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
     def test_solution_not_exist_corner_isolated(self):
@@ -24,7 +24,7 @@ class HitoriGameTests(TestCase):
             [4, 2, 3, 6]
         ])
         game = HitoriGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
     def test_solution_unique_numbers(self):
@@ -36,7 +36,7 @@ class HitoriGameTests(TestCase):
         expected_solution = Grid(grid.matrix.copy())
         game = HitoriGame(grid)
 
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_simple_duplicate_numbers(self):
@@ -51,7 +51,7 @@ class HitoriGameTests(TestCase):
             [2, 3, 1]
         ])
         game = HitoriGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_12x12(self):
@@ -84,7 +84,7 @@ class HitoriGameTests(TestCase):
             [12, False, 3, 1, 7, 10, False, 11, False, 9, 2, 5]
         ])
         game = HitoriGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_many_games_solution_exist(self):
@@ -103,7 +103,7 @@ class HitoriGameTests(TestCase):
 
         for grid in grids5x5:
             game = HitoriGame(grid)
-            solution, _ = game.get_solution()
+            solution = game.get_solution()
             self.assertIsNot(Grid.empty(), solution)
 
 

@@ -1,5 +1,6 @@
 ﻿import webbrowser
 
+import PuzzleStarBattleGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Queens.QueensGame import QueensGame
@@ -21,7 +22,9 @@ class QueensMainConsole:
         if console_input == "y":
             console_input = "https://www.linkedin.com/games/queens/"
         url_patterns = {
-            r"https://www.linkedin.com/games/queens/": QueensGridProvider
+            r"https://www.linkedin.com/games/queens/": QueensGridProvider,
+            r"https://www.puzzle-star-battle.com": PuzzleStarBattleGridProvider,
+            r"https://fr.puzzle-star-battle.com": PuzzleStarBattleGridProvider,
         }
 
         for pattern, provider_class in url_patterns.items():

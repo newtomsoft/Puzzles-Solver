@@ -37,7 +37,7 @@ class AkariMainConsole:
         solution_grid = game.get_solution()
         end_time = time.time()
         execution_time = end_time - start_time
-        if solution_grid != Grid.empty():
+        if not solution_grid.is_empty():
             print(f"Solution found in {execution_time:.2f} seconds")
             print(solution_grid.to_console_string())
             # AkariMainConsole.generate_html(solution_grid)

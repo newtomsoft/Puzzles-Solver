@@ -32,4 +32,4 @@ class QueensGridProvider(GridProvider, PlaywrightGridProvider):
         matrix = []
         for i in range(0, cells_count, side):
             matrix.append(colors_numbers[i:i + side])
-        return Grid(matrix)
+        return Grid(matrix), 1

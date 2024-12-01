@@ -9,7 +9,7 @@ from PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.RegionsGrid import RegionsGrid
 
 
-class PuzzleStitchesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleStarBattleGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
@@ -44,18 +44,14 @@ class PuzzleStitchesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMo
 
         regions_grid = RegionsGrid(open_matrix).compute_regions_grid()
 
-        task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
-        dots = [int(cell_div.text) for cell_div in task_cells]
-        dots_by_column_row = {'column': dots[:row_count], 'row': dots[row_count:]}
-
         puzzle_info_text = self.get_puzzle_info_text(soup)
-        puzzle_info_text_left = puzzle_info_text.split('÷')[0]
+        puzzle_info_text_left = puzzle_info_text.split('★')[0]
         if puzzle_info_text_left.isdigit():
-            regions_connections = int(puzzle_info_text_left)
+            stars_count_by_region_column_row = int(puzzle_info_text_left)
         elif '/' in puzzle_info_text_left:
-            regions_connections = int(puzzle_info_text_left.split('/')[1])
+            stars_count_by_region_column_row = int(puzzle_info_text_left.split('/')[1])
         else:
             Warning(f"Can't parse regions connections from {puzzle_info_text_left} force to 1")
-            regions_connections = 1
+            stars_count_by_region_column_row = 1
+        return regions_grid, stars_count_by_region_column_row
 
-        return regions_grid, dots_by_column_row, regions_connections

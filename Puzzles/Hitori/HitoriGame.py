@@ -16,8 +16,8 @@ class HitoriGame:
         self._grid_z3 = Grid(grid_z3)
         self._solver = Solver()
         self._add_constraints()
-        solution, propositions_count = self._ensure_all_white_connected()
-        return solution, propositions_count
+        solution, _ = self._ensure_all_white_connected()
+        return solution
 
     def _ensure_all_white_connected(self):
         proposition_count = 0

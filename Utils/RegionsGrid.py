@@ -1,5 +1,6 @@
 from Utils.Grid import Grid
 
+
 class RegionsGrid(Grid):
     def __init__(self, matrix: list[list[set]]):
         super().__init__(matrix)
