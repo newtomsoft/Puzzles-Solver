@@ -31,10 +31,10 @@ class TentsGame:
         grid = Grid([[is_true(model.eval(self.tent(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
-    def tent(self, position):
+    def tent(self, position: Position):
         return self._grid_z3[position]
 
-    def free(self, position):
+    def free(self, position: Position):
         return Not(self.tent(position))
 
     def _add_constraints(self):
@@ -53,30 +53,30 @@ class TentsGame:
         self._solver.add(constraints)
 
     def add_free_if_no_tent_near_constraint(self):
-        for position, _ in self._grid_z3:
+        for position, _ in self._grid:
             if all(self._grid[neighbor_position] != TentsGame._tree_value for neighbor_position in self._grid.neighbors_positions(position)):
                 self._solver.add(self.free(position))
 
     def add_no_adjacent_tent_constraint(self):
-        for position, value in self._grid_z3:
+        for position, _ in self._grid:
             r, c = position
             if r > 0:
-                self._solver.add(Implies(self.tent(position), self.free(position.up_neighbor)))
+                self._solver.add(Implies(self.tent(position), self.free(position.up)))
                 if c > 0:
-                    self._solver.add(Implies(self.tent(position), self.free(position.left_neighbor)))
-                    self._solver.add(Implies(self.tent(position), self.free(position.up_left_neighbor)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.left)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.up_left)))
                 if c < self.columns_number - 1:
-                    self._solver.add(Implies(self.tent(position), self.free(position.right_neighbor)))
-                    self._solver.add(Implies(self.tent(position), self.free(position.up_right_neighbor)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.right)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.up_right)))
 
             if r < self.rows_number - 1:
-                self._solver.add(Implies(self.tent(position), self.free(position.down_neighbor)))
+                self._solver.add(Implies(self.tent(position), self.free(position.down)))
                 if c > 0:
-                    self._solver.add(Implies(self.tent(position), self.free(position.left_neighbor)))
-                    self._solver.add(Implies(self.tent(position), self.free(position.down_left_neighbor)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.left)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.down_left)))
                 if c < self.columns_number - 1:
-                    self._solver.add(Implies(self.tent(position), self.free(position.right_neighbor)))
-                    self._solver.add(Implies(self.tent(position), self.free(position.down_right_neighbor)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.right)))
+                    self._solver.add(Implies(self.tent(position), self.free(position.down_right)))
 
     def add_free_over_tree_constraint(self):
         for position, value in self._grid:

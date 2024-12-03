@@ -81,15 +81,6 @@ class Grid:
     def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
         return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
-    def get_regions(self) -> Dict[int, FrozenSet[Tuple[int, int]]]:
-        regions = defaultdict(set)
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if self._matrix[r][c] not in regions:
-                    regions[self._matrix[r][c]] = set()
-                regions[self._matrix[r][c]].add((r, c))
-        return {key: frozenset(value) for key, value in regions.items()} if regions else {}
-
     def get_regions_new(self) -> Dict[int, FrozenSet[Position]]:
         regions = defaultdict(set)
         for r in range(self.rows_number):

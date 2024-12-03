@@ -23,7 +23,6 @@ class TestPosition(TestCase):
     def test_position_add(self):
         self.assertEqual(Position(1, 2), Position(0, 1) + Position(1, 1))
         self.assertEqual(Position(2, 5), Position(1, 3) + Position(1, 2))
-        # self.assertEqual(Position(3, 7), Position(1, 3) + (2, 4))
 
     def test_position_sub(self):
         self.assertEqual(Position(1, 1), Position(2, 3) - Position(1, 2))
@@ -41,25 +40,25 @@ class TestPosition(TestCase):
         self.assertEqual(Direction(Direction.DOWN), Position(2, 1).direction_from(Position(1, 1)))
 
     def test_position_left_neighbor(self):
-        self.assertEqual(Position(1, 0), Position(1, 1).left_neighbor)
+        self.assertEqual(Position(1, 0), Position(1, 1).left)
 
     def test_position_right_neighbor(self):
-        self.assertEqual(Position(1, 2), Position(1, 1).right_neighbor)
+        self.assertEqual(Position(1, 2), Position(1, 1).right)
 
     def test_position_up_neighbor(self):
-        self.assertEqual(Position(0, 1), Position(1, 1).up_neighbor)
+        self.assertEqual(Position(0, 1), Position(1, 1).up)
 
     def test_position_down_neighbor(self):
-        self.assertEqual(Position(2, 1), Position(1, 1).down_neighbor)
+        self.assertEqual(Position(2, 1), Position(1, 1).down)
 
     def test_position_up_left_neighbor(self):
-        self.assertEqual(Position(0, 0), Position(1, 1).up_left_neighbor)
+        self.assertEqual(Position(0, 0), Position(1, 1).up_left)
 
     def test_position_up_right_neighbor(self):
-        self.assertEqual(Position(0, 2), Position(1, 1).up_right_neighbor)
+        self.assertEqual(Position(0, 2), Position(1, 1).up_right)
 
     def test_position_down_left_neighbor(self):
-        self.assertEqual(Position(2, 0), Position(1, 1).down_left_neighbor)
+        self.assertEqual(Position(2, 0), Position(1, 1).down_left)
 
     def test_position_down_right_neighbor(self):
-        self.assertEqual(Position(2, 2), Position(1, 1).down_right_neighbor)
+        self.assertEqual(Position(2, 2), Position(1, 1).down_right)

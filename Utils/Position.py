@@ -7,9 +7,9 @@ class Position:
         self.c = c
 
     def neighbors(self, mode='orthogonal') -> list['Position']:
-        neighbors = [Position(self.r + 1, self.c), Position(self.r - 1, self.c), Position(self.r, self.c + 1), Position(self.r, self.c - 1)]
+        neighbors = [self.down, self.up, self.right, self.left]
         if mode == 'diagonal':
-            neighbors.extend([Position(self.r + 1, self.c + 1), Position(self.r + 1, self.c - 1), Position(self.r - 1, self.c + 1), Position(self.r - 1, self.c - 1)])
+            neighbors.extend([self.up_left, self.up_right, self.down_left, self.down_right])
         return neighbors
 
     def direction_to(self, other: 'Position') -> Direction:
@@ -27,35 +27,35 @@ class Position:
         return other.direction_to(self)
 
     @property
-    def left_neighbor(self):
+    def left(self):
         return Position(self.r, self.c - 1)
 
     @property
-    def right_neighbor(self):
+    def right(self):
         return Position(self.r, self.c + 1)
 
     @property
-    def up_neighbor(self):
+    def up(self):
         return Position(self.r - 1, self.c)
 
     @property
-    def down_neighbor(self):
+    def down(self):
         return Position(self.r + 1, self.c)
 
     @property
-    def up_left_neighbor(self):
+    def up_left(self):
         return Position(self.r - 1, self.c - 1)
 
     @property
-    def up_right_neighbor(self):
+    def up_right(self):
         return Position(self.r - 1, self.c + 1)
 
     @property
-    def down_left_neighbor(self):
+    def down_left(self):
         return Position(self.r + 1, self.c - 1)
 
     @property
-    def down_right_neighbor(self):
+    def down_right(self):
         return Position(self.r + 1, self.c + 1)
 
     def __eq__(self, other):

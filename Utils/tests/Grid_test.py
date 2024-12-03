@@ -443,23 +443,23 @@ class TestGrid(TestCase):
         self.assertEqual(expected_result, result_non_circular)
 
     def test_get_regions_2x2(self):
-        regions = self.grid_2x2.get_regions()
+        regions = self.grid_2x2.get_regions_new()
         expected_regions = {
-            '1': frozenset({(0, 0)}),
-            '2': frozenset({(0, 1)}),
-            '3': frozenset({(1, 0)}),
-            '4': frozenset({(1, 1)}),
+            '1': frozenset({Position(0, 0)}),
+            '2': frozenset({Position(0, 1)}),
+            '3': frozenset({Position(1, 0)}),
+            '4': frozenset({Position(1, 1)}),
         }
         self.assertEqual(expected_regions, regions)
 
     def test_get_regions_grid_dfs(self):
-        regions = self.grid_dfs.get_regions()
+        regions = self.grid_dfs.get_regions_new()
         expected_regions = {
-            '1': frozenset({(0, 0), (0, 1)}),
-            '2': frozenset({(0, 2), (1, 2)}),
-            '3': frozenset({(0, 3), (2, 1)}),
-            '5': frozenset({(2, 2), (2, 3)}),
-            '8': frozenset({(0, 4), (1, 0), (1, 1), (1, 3), (1, 4), (2, 0), (2, 4), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4)})
+            '1': frozenset({Position(0, 0), Position(0, 1)}),
+            '2': frozenset({Position(0, 2), Position(1, 2)}),
+            '3': frozenset({Position(0, 3), Position(2, 1)}),
+            '5': frozenset({Position(2, 2), Position(2, 3)}),
+            '8': frozenset({Position(0, 4), Position(1, 0), Position(1, 1), Position(1, 3), Position(1, 4), Position(2, 0), Position(2, 4), Position(3, 0), Position(3, 1), Position(3, 2), Position(3, 3), Position(3, 4)})
         }
         self.assertEqual(expected_regions, regions)
 

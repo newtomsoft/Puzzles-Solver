@@ -54,7 +54,7 @@ class NorinoriGameTests(TestCase):
         ])
         game = NorinoriGame(grid)
         solution = game.get_solution()
-        self.assertIsNone(solution)
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_none_because_1_isolated(self):
         grid = Grid([
@@ -67,7 +67,7 @@ class NorinoriGameTests(TestCase):
         ])
         game = NorinoriGame(grid)
         solution = game.get_solution()
-        self.assertIsNone(solution)
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution(self):
         grid = Grid([
