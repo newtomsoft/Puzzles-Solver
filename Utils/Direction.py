@@ -58,3 +58,6 @@
 
     def __eq__(self, other):
         return isinstance(other, Direction) and self.value == other.value
+
+    def __repr__(self):
+        return self.__str__()

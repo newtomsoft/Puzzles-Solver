@@ -86,6 +86,20 @@ class TentsGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
+    def test_add_free_if_no_tent_near_constraint(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+        ])
+        tents_numbers_by_column_row = {'column': [0, 0, 0, 1, 0, 0], 'row': [0, 0, 1, 0, 0, 0]}
+        game = TentsGame((grid, tents_numbers_by_column_row))
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
+
     def test_no_solution_with_one_tent_for_each_tree_constraint(self):
         grid = Grid([
             [0, -1, 0, 0, 0, 0],
@@ -100,7 +114,7 @@ class TentsGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
-    def test_solution_1(self):
+    def test_solution_6x6_1(self):
         grid = Grid([
             [0, -1, 0, 0, 0, 0],
             [0, 0, 0, -1, 0, 0],
@@ -122,7 +136,7 @@ class TentsGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_solution_2(self):
+    def test_solution_6x6_2(self):
         grid = Grid([
             [0, 0, 0, -1, 0, 0],
             [-1, 0, 0, 0, 0, 0],
@@ -139,6 +153,62 @@ class TentsGameTests(TestCase):
             [0, 0, 0, 1, 0, 0],
             [0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 1]
+        ])
+        game = TentsGame((grid, tents_numbers_by_column_row))
+        solution = game.get_solution()
+        self.assertEqual(expected_solution, solution)
+
+    def test_solution_8x8_1(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0, 0, -1],
+            [-1, 0, 0, -1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, -1, 0, 0],
+            [-1, -1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, -1],
+            [-1, 0, 0, 0, -1, 0, 0, 0],
+            [0, 0, 0, 0, 0, -1, 0, 0],
+            [0, -1, 0, 0, 0, 0, 0, -1]
+        ])
+        tents_numbers_by_column_row = {'column': [3, 1, 1, 2, 0, 2, 1, 2], 'row': [2, 2, 1, 2, 1, 2, 1, 1]}
+        expected_solution = Grid([
+            [1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0]
+        ])
+        game = TentsGame((grid, tents_numbers_by_column_row))
+        solution = game.get_solution()
+        self.assertEqual(expected_solution, solution)
+
+    def test_solution_10x10_1(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [-1, 0, -1, 0, 0, -1, 0, -1, 0, 0],
+            [-1, -1, 0, 0, -1, 0, 0, 0, 0, -1],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, -1, 0, -1],
+            [0, -1, 0, -1, -1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, -1, -1, 0, -1, 0, 0, 0, -1],
+            [0, -1, 0, 0, 0, 0, 0, -1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, -1, 0, 0]
+        ])
+        tents_numbers_by_column_row = {'column': [3, 2, 3, 1, 2, 1, 2, 1, 3, 2], 'row': [2, 3, 1, 3, 1, 3, 1, 2, 2, 2]}
+        expected_solution = Grid([
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 1, 0]
         ])
         game = TentsGame((grid, tents_numbers_by_column_row))
         solution = game.get_solution()

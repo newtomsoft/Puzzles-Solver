@@ -24,6 +24,8 @@ class Grid:
     def __eq__(self, other):
         if not isinstance(other, Grid):
             return False
+        if all(isinstance(cell, bool) for cell in self._matrix):
+            return all(value == other.value(position) for position, value in self)
         return self.matrix == other.matrix
 
     def __contains__(self, item):
@@ -38,6 +40,11 @@ class Grid:
 
     def __str__(self) -> str:
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
+
+    def __repr__(self) -> str:
+        if self.is_empty():
+            return 'Grid.empty()'
+        return self.__str__()
 
     @property
     def matrix(self):

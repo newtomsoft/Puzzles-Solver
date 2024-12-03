@@ -26,6 +26,38 @@ class Position:
     def direction_from(self, other: 'Position') -> Direction:
         return other.direction_to(self)
 
+    @property
+    def left_neighbor(self):
+        return Position(self.r, self.c - 1)
+
+    @property
+    def right_neighbor(self):
+        return Position(self.r, self.c + 1)
+
+    @property
+    def up_neighbor(self):
+        return Position(self.r - 1, self.c)
+
+    @property
+    def down_neighbor(self):
+        return Position(self.r + 1, self.c)
+
+    @property
+    def up_left_neighbor(self):
+        return Position(self.r - 1, self.c - 1)
+
+    @property
+    def up_right_neighbor(self):
+        return Position(self.r - 1, self.c + 1)
+
+    @property
+    def down_left_neighbor(self):
+        return Position(self.r + 1, self.c - 1)
+
+    @property
+    def down_right_neighbor(self):
+        return Position(self.r + 1, self.c + 1)
+
     def __eq__(self, other):
         return isinstance(other, Position) and self.r == other.r and self.c == other.c
 
@@ -82,5 +114,3 @@ class Position:
 
     def __neg__(self):
         return Position(-self.r, -self.c)
-
-
