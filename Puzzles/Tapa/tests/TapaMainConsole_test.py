@@ -3,8 +3,7 @@ from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
 
-from GridProviders.ScrapingGridProvider import PlaywrightGridProvider
-
+from PlaywrightGridProvider import PlaywrightGridProvider
 from Puzzles.Tapa.TapaMainConsole import TapaMainConsole
 
 

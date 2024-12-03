@@ -13,7 +13,7 @@ class AquariumGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 6:
             raise ValueError("The grid must be at least 6x6")
-        self._aquariums = self._grid.get_regions_new()
+        self._aquariums = self._grid.get_regions()
         if len(self._aquariums) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._numbers = numbers

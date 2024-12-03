@@ -62,3 +62,12 @@ class TestPosition(TestCase):
 
     def test_position_down_right_neighbor(self):
         self.assertEqual(Position(2, 2), Position(1, 1).down_right)
+
+    def test_orthogonal_neighbors(self):
+        position = Position(2, 3)
+        neighbors = position.neighbors()
+        self.assertEqual(4, len(neighbors))
+        self.assertIn(position.left, neighbors)
+        self.assertIn(position.right, neighbors)
+        self.assertIn(position.up, neighbors)
+        self.assertIn(position.down, neighbors)

@@ -83,7 +83,7 @@ class Grid[T]:
     def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
         return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
-    def get_regions_new(self) -> Dict[int, FrozenSet[Position]]:
+    def get_regions(self) -> Dict[int, FrozenSet[Position]]:
         regions = defaultdict(set)
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -160,13 +160,6 @@ class Grid[T]:
         if excluded is None:
             excluded = []
         return next(((i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and (i, j) not in excluded), (None, None))
-
-    def get_console_grid(self, bool_grid):
-        background_grid = Grid([[1 if bool_grid.value(r, c) else 0 for c in range(bool_grid.columns_number)] for r in range(bool_grid.rows_number)])
-        numbers_grid = Grid([[Grid.list_to_string(self.value(r, c)) if isinstance(self.value(r, c), list) else ' ' for c in range(self.columns_number)] for r in range(self.rows_number)])
-        police_color_grid = Grid([[16 for _ in range(bool_grid.columns_number)] for _ in range(bool_grid.rows_number)])
-        console_grid = numbers_grid.to_console_string(police_color_grid, background_grid)
-        return console_grid
 
     @staticmethod
     def get_adjacent_combinations(neighbour_length, block_length, circular) -> list[list[bool]]:

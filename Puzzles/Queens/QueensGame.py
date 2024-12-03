@@ -14,7 +14,7 @@ class QueensGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 4:
             raise ValueError("The grid must be at least 4x4")
-        self._regions = self._grid.get_regions_new()
+        self._regions = self._grid.get_regions()
         if self.rows_number != len(self._regions):
             raise ValueError("The grid must have the same number of regions as rows/column")
         if self._stars_count_by_region_column_row < 1:

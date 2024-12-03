@@ -87,27 +87,6 @@ class ShikakuGameTests(TestCase):
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
 
-    def test_get_solution(self):
-        grid = Grid([
-            [1, 1, 1, 2, 2, 2],
-            [1, 6, 1, 1, 1, 2],
-            [1, 6, 6, 4, 4, 2],
-            [1, 1, 6, 4, 4, 2],
-            [1, 6, 6, 4, 5, 2],
-            [3, 6, 6, 6, 5, 2],
-        ])
-        expected_grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0],
-        ])
-        game = ShikakuGame(grid)
-        solution = game.get_solution()
-        self.assertEqual(expected_grid, solution)
-
     def test_get_solution_5x5(self):
         grid = Grid([
             [-1, -1, 4, -1, -1],

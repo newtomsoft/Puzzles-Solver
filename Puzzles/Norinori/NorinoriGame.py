@@ -13,7 +13,7 @@ class NorinoriGame:
             raise ValueError("The grid must be square")
         if self.rows_number < 6:
             raise ValueError("The grid must be at least 6x6")
-        self._regions = self._grid.get_regions_new()
+        self._regions = self._grid.get_regions()
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._solver = None

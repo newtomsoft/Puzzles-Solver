@@ -443,7 +443,7 @@ class TestGrid(TestCase):
         self.assertEqual(expected_result, result_non_circular)
 
     def test_get_regions_2x2(self):
-        regions = self.grid_2x2.get_regions_new()
+        regions = self.grid_2x2.get_regions()
         expected_regions = {
             '1': frozenset({Position(0, 0)}),
             '2': frozenset({Position(0, 1)}),
@@ -453,7 +453,7 @@ class TestGrid(TestCase):
         self.assertEqual(expected_regions, regions)
 
     def test_get_regions_grid_dfs(self):
-        regions = self.grid_dfs.get_regions_new()
+        regions = self.grid_dfs.get_regions()
         expected_regions = {
             '1': frozenset({Position(0, 0), Position(0, 1)}),
             '2': frozenset({Position(0, 2), Position(1, 2)}),
@@ -482,6 +482,30 @@ class TestGrid(TestCase):
         neighbors = self.grid_3x3.neighbors_positions(Position(1, 1), 'diagonal')
         expected_neighbors = {Position(0, 1), Position(1, 0), Position(1, 2), Position(2, 1), Position(0, 0), Position(0, 2), Position(2, 0), Position(2, 2)}
         self.assertEqual(expected_neighbors, set(neighbors))
+
+    def test_repr_non_empty_grid(self):
+        grid = Grid([[1, 2], [3, 4]])
+        expected_repr = "1 2\n3 4"
+        self.assertEqual(repr(grid), expected_repr)
+
+    def test_repr_empty_grid(self):
+        grid = Grid([[]])
+        expected_repr = "Grid.empty()"
+        self.assertEqual(repr(grid), expected_repr)
+
+    def test_repr_fully_populated_grid(self):
+        grid = Grid([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        expected_repr = "1 2 3\n4 5 6\n7 8 9"
+        self.assertEqual(repr(grid), expected_repr)
+
+    def test_repr_with_complex_data_types(self):
+        complex_grid = Grid([
+            [{'a': 1}, {'b': 2}],
+            [[1, 2], [3, 4]],
+            [(1, 2), (3, 4)]
+        ])
+        expected_repr = "{'a': 1} {'b': 2}\n[1, 2] [3, 4]\n(1, 2) (3, 4)"
+        self.assertEqual(repr(complex_grid), expected_repr)
 
 
 if __name__ == '__main__':
