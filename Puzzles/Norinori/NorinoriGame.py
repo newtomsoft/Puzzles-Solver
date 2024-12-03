@@ -17,7 +17,7 @@ class NorinoriGame:
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._solver = None
-        self._grid_z3 = None
+        self._grid_z3: Grid = Grid.empty()
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -41,31 +41,14 @@ class NorinoriGame:
             self._solver.add(Sum([self.domino_part(position) for position in region]) == 2)
 
     def _add_constraint_2_by_2_without_adjacents(self):
-        for position, value in self._grid_z3:
-            r, c = position
-            possible_neighbors = []
-            if r > 0:
-                possible_neighbors.append(self.domino_part(position.up))
-            if r < self.rows_number - 1:
-                possible_neighbors.append(self.domino_part(position.down))
-            if c > 0:
-                possible_neighbors.append(self.domino_part(position.left))
-            if c < self.columns_number - 1:
-                possible_neighbors.append(self.domino_part(position.right))
-
-            all_possible_neighbors = NorinoriGame.generate_rotations(possible_neighbors)
-            all_possible_neighbors.append(possible_neighbors)
-            constraint_ands = []
-            for neighbors in all_possible_neighbors:
-                ands = [neighbors[0]]
-                for neighbor in neighbors[1:]:
-                    ands.append(Not(neighbor))
-                constraint_and = And(ands)
-                constraint_ands.append(constraint_and)
-            constraint_or = Or(constraint_ands)
-            constraint = Implies(self.domino_part(r)[c], constraint_or)
-            self._solver.add(constraint)
-
-    @staticmethod
-    def generate_rotations(lst):
-        return [lst[i:] + lst[:i] for i in range(1, len(lst))]
+        for position, _ in self._grid_z3:
+            possible_neighbors_positions = self._grid_z3.neighbors_positions(position)
+            one_is_domino_part_others_is_free = []
+            for possible_domino_position in possible_neighbors_positions:
+                free_positions = possible_neighbors_positions.copy()
+                free_positions.remove(possible_domino_position)
+                first_possible_others_free = [self.domino_part(possible_domino_position)]
+                for free_position in free_positions:
+                    first_possible_others_free.append(Not(self.domino_part(free_position)))
+                one_is_domino_part_others_is_free.append(And(first_possible_others_free))
+            self._solver.add(Implies(self.domino_part(position), Or(one_is_domino_part_others_is_free)))

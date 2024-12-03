@@ -1,20 +1,22 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List
+from typing import Tuple, FrozenSet, Dict, List, TypeVar
 
 from bitarray import bitarray
 
 from Position import Position
 from Utils.colors import console_back_ground_colors, console_police_colors
 
+T = TypeVar('T')
 
-class Grid:
-    def __init__(self, matrix: List[List]):
+
+class Grid[T]:
+    def __init__(self, matrix: List[List[T]]):
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: T) -> T:
         if isinstance(item, Position):
             return self._matrix[item.r][item.c]
         if isinstance(item, tuple):
@@ -33,7 +35,7 @@ class Grid:
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self):
+    def __iter__(self) -> Tuple[Position, T]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
@@ -54,7 +56,7 @@ class Grid:
     def empty() -> 'Grid':
         return Grid([[]])
 
-    def value(self, r_or_position, c=None):
+    def value(self, r_or_position, c=None) -> T:
         if isinstance(r_or_position, Position):
             return self._matrix[r_or_position.r][r_or_position.c]
         return self._matrix[r_or_position][c]
