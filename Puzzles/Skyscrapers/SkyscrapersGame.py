@@ -1,5 +1,6 @@
-﻿from z3 import Solver, sat, Int, Distinct, Implies, And, Not, Or
+﻿from z3 import Solver, sat, Int, Distinct, And, Not, Or, ArithRef
 
+from Position import Position
 from Utils.Grid import Grid
 
 
@@ -8,27 +9,23 @@ class SkyscrapersGame:
 
     def __init__(self, params: (Grid, dict[str, list[int]])):
         self._grid: Grid = params[0]
-        self.viewable_skyscrapers: dict[str, list[int]] = params[1]
+        self.visible_skyscrapers: dict[str, list[int]] = params[1]
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        self.biggest_skyscraper_levels = self.columns_number
+        self.highest_skyscraper_levels = self.columns_number
         if self.rows_number != self.columns_number:
             raise ValueError("The grid must be square")
         if self.rows_number < 4:
             raise ValueError("The grid must be at least 4x4")
-        self.by_east_viewable_skyscrapers = self.viewable_skyscrapers['by_east']
-        if len(self.by_east_viewable_skyscrapers) != self.columns_number:
+        if len(self.visible_skyscrapers['by_east']) != self.columns_number:
             raise ValueError("The 'by_east' viewable skyscrapers list must have the same length as the rows number")
-        self.by_west_viewable_skyscrapers = self.viewable_skyscrapers['by_west']
-        if len(self.by_west_viewable_skyscrapers) != self.columns_number:
+        if len(self.visible_skyscrapers['by_west']) != self.columns_number:
             raise ValueError("The 'by_west' viewable skyscrapers list must have the same length as the rows number")
-        self.by_north_viewable_skyscrapers = self.viewable_skyscrapers['by_north']
-        if len(self.by_north_viewable_skyscrapers) != self.rows_number:
+        if len(self.visible_skyscrapers['by_north']) != self.rows_number:
             raise ValueError("The 'by_north' viewable skyscrapers list must have the same length as the columns number")
-        self.by_south_viewable_skyscrapers = self.viewable_skyscrapers['by_south']
-        if len(self.by_south_viewable_skyscrapers) != self.rows_number:
+        if len(self.visible_skyscrapers['by_south']) != self.rows_number:
             raise ValueError("The 'by_south' viewable skyscrapers list must have the same length as the columns number")
-        self._solver = None
+        self._solver: Solver | None = None
         self._grid_z3: Grid = Grid.empty()
         self._last_solution_grid = None
 
@@ -54,14 +51,14 @@ class SkyscrapersGame:
         return solution
 
     def _exclude_solution(self, solution_grid: Grid):
-        exclude_constraint = Not(And([self._matrix_z3[r][c] == solution_grid.value(r, c) for r in range(self.rows_number) for c in range(self.columns_number) if solution_grid.value(r, c)]))
+        exclude_constraint = Not(And([self._matrix_z3[r][c] == solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if solution_grid.value(r, c)]))
         self._solver.add(exclude_constraint)
 
     def _add_constraints(self):
         self._add_initials_levels_constraint()
         self._add_range_levels_constraint()
         self._add_distinct_level_constraint()
-        self._add_viewable_skyscrapers_constraint()
+        self._add_visible_skyscrapers_constraint()
 
     def level(self, position):
         return self._grid_z3[position]
@@ -84,48 +81,41 @@ class SkyscrapersGame:
             constraints.append(Distinct([column[j] for j in range(self.rows_number)]))
         self._solver.add(constraints)
 
-    def _add_viewable_skyscrapers_constraint(self):
-        for r, row in enumerate(self._grid_z3.matrix):
-            self._add_viewable_skyscrapers_constraint_for_this_view(row[::-1], self.by_east_viewable_skyscrapers[r])
-            self._add_viewable_skyscrapers_constraint_for_this_view(row, self.by_west_viewable_skyscrapers[r])
-            pass
+    def _add_visible_skyscrapers_constraint(self):
+        for index, row in enumerate(self._grid_z3.matrix):
+            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_west'][index], row))
+            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_east'][index], self._reversed(row)))
 
-        for c, column in enumerate(zip(*self._grid_z3.matrix)):
-            self._add_viewable_skyscrapers_constraint_for_this_view(column, self.by_north_viewable_skyscrapers[c])
-            self._add_viewable_skyscrapers_constraint_for_this_view(column[::-1], self.by_south_viewable_skyscrapers[c])
+        for index, column_tuple in enumerate(zip(*self._grid_z3.matrix)):
+            column = list(column_tuple)
+            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_north'][index], column))
+            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_south'][index], self._reversed(column)))
 
-    def _add_viewable_skyscrapers_constraint_for_this_view(self, line, viewable_skyscrapers: int):
-        if viewable_skyscrapers == 0:
-            return
+    def _visible_skyscrapers_constraint(self, visible_skyscrapers: int, line: list[ArithRef], height_base=None):
+        if visible_skyscrapers == 0:
+            return True
 
-        if viewable_skyscrapers == 1:
-            self._solver.add(line[0] == self.biggest_skyscraper_levels)
-            return
+        if height_base is None:
+            height_base = line[0]
 
-        if viewable_skyscrapers == self.biggest_skyscraper_levels:
-            self._solver.add([line[i] == i + 1 for i in range(self.columns_number)])
-            return
+        if visible_skyscrapers == 1:
+            return self._one_visible_skyscraper_constraint(line, height_base)
 
-        if viewable_skyscrapers == 2:
-            self._solver.add(line[0] != self.biggest_skyscraper_levels)
-            constraints = set()
-            first_to_or = line[1] == self.biggest_skyscraper_levels
-            for i in range(2, self.columns_number):
-                constraints.add(And([line[i] == self.biggest_skyscraper_levels, And([line[0] > line[j] for j in range(1, i)])]))
-            constraints.add(first_to_or)
-            self._solver.add(Or(constraints))
-            return
+        if len(line) == 1:
+            return False
 
-        if viewable_skyscrapers == self.biggest_skyscraper_levels - 1:
-            self._solver.add([line[i] != self.biggest_skyscraper_levels for i in range(2)])
-            self._solver.add(Implies(line[-2] == self.biggest_skyscraper_levels, And([line[i + 1] > line[i] for i in range(self.columns_number - 2)])))
-            self._solver.add(Implies(line[-1] == self.biggest_skyscraper_levels, self._all_increase_except_one(line[:-1])))
-            return
+        sub_line = line[1:]
+        line1_sup_line0_constraint = And(line[1] > height_base, self._visible_skyscrapers_constraint(visible_skyscrapers - 1, sub_line, line[1]))
+        line1_inf_line0_constraint = And(line[1] < height_base, self._visible_skyscrapers_constraint(visible_skyscrapers, sub_line, height_base))
 
-    def _all_increase_except_one(self, line):
-        constraints = set()
-        for i_less in range(len(line) - 1):
-            constraint_to_and = [line[i] < line[i + 1] for i in range(self.columns_number - 2) if i != i_less]
-            constraint_to_and.append(line[i_less] > line[i_less + 1])
-            constraints.add(And(constraint_to_and))
-        return Or(constraints)
+        return Or(line1_sup_line0_constraint, line1_inf_line0_constraint)
+
+    @staticmethod
+    def _reversed(line: list) -> list:
+        return line[::-1]
+
+    @staticmethod
+    def _one_visible_skyscraper_constraint(line, highest_skyscraper_levels):
+        index0_constraint = line[0] == highest_skyscraper_levels
+        others_indexes_constraint = And([line[i] < line[0] for i in range(1, len(line))])
+        return And(index0_constraint, others_indexes_constraint)
