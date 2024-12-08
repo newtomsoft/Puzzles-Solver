@@ -2,9 +2,9 @@
 
 
 class Position:
-    def __init__(self, r, c):
-        self.r = r
-        self.c = c
+    def __init__(self, row, column):
+        self.r = row
+        self.c = column
 
     def neighbors(self, mode='orthogonal') -> list['Position']:
         neighbors = [self.down, self.up, self.right, self.left]
