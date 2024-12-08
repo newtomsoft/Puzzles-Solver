@@ -34,7 +34,7 @@ class SkyscrapersGame:
         self._solver = Solver()
         self._add_constraints()
 
-    def get_solution(self) -> Grid | None:
+    def get_solution(self) -> Grid:
         if self._solver is None:
             self._init_solver()
         if self._solver.check() != sat:
@@ -45,13 +45,9 @@ class SkyscrapersGame:
         return grid
 
     def get_other_solution(self):
-        self._exclude_solution(self._last_solution_grid)
-        solution = self.get_solution()
-        return solution
-
-    def _exclude_solution(self, solution_grid: Grid):
-        exclude_constraint = Not(And([self._grid_z3[Position(r, c)] == solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if solution_grid.value(r, c)]))
-        self._solver.add(exclude_constraint)
+        exclusion_constraint = Not(And([self._grid_z3[Position(r, c)] == self._last_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._last_solution_grid.value(r, c)]))
+        self._solver.add(exclusion_constraint)
+        return self.get_solution()
 
     def _level(self, position):
         return self._grid_z3[position]
