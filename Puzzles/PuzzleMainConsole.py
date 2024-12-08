@@ -14,6 +14,7 @@ from PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
 from PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
 from PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
+from PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridProvider
 from PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
 from PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
@@ -33,6 +34,7 @@ from Puzzles.Norinori.NorinoriGame import NorinoriGame
 from Puzzles.Nurikabe.NurikabeGame import NurikabeGame
 from Puzzles.Queens.QueensGame import QueensGame
 from Puzzles.Shikaku.ShikakuGame import ShikakuGame
+from Puzzles.Skyscrapers.SkyscrapersGame import SkyscrapersGame
 from Puzzles.Stitches.StitchesGame import StitchesGame
 from Puzzles.Sudoku.SudokuGame import SudokuGame
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
@@ -88,6 +90,8 @@ class PuzzleMainConsole:
             "https://fr.puzzle-star-battle.com": (QueensGame, PuzzleStarBattleGridProvider),
             "https://www.puzzle-shikaku.com": (ShikakuGame, PuzzleShikakuGridProvider),
             "https://fr.puzzle-shikaku.com": (ShikakuGame, PuzzleShikakuGridProvider),
+            "https://fr.puzzle-skyscrapers.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider),
+            "https://www.puzzle-skyscrapers.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider),
             "https://www.puzzle-stitches.com": (StitchesGame, PuzzleStitchesGridProvider),
             "https://fr.puzzle-stitches.com": (StitchesGame, PuzzleStitchesGridProvider),
             "https://www.puzzle-sudoku.com": (SudokuGame, PuzzleSudokuGridProvider),

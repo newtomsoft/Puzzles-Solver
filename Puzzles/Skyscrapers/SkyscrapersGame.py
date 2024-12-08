@@ -40,16 +40,16 @@ class SkyscrapersGame:
         if self._solver.check() != sat:
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[model.eval(self._grid_z3[Position(r, c)]).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[model.eval(self._level_at(Position(r, c))).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._last_solution_grid = grid
         return grid
 
     def get_other_solution(self):
-        exclusion_constraint = Not(And([self._grid_z3[Position(r, c)] == self._last_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._last_solution_grid.value(r, c)]))
+        exclusion_constraint = Not(And([self._level_at(Position(r, c)) == self._last_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._last_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 
-    def _level(self, position):
+    def _level_at(self, position):
         return self._grid_z3[position]
 
     def _add_constraints(self):
@@ -61,12 +61,12 @@ class SkyscrapersGame:
     def _add_initials_levels_constraint(self):
         for position, level_value in self._grid:
             if level_value != self._no_value:
-                self._solver.add(self._level(position) == level_value)
+                self._solver.add(self._level_at(position) == level_value)
 
     def _add_range_levels_constraint(self):
         for position, level_value in self._grid:
-            self._solver.add(self._level(position) >= 1)
-            self._solver.add(self._level(position) <= self.columns_number)
+            self._solver.add(self._level_at(position) >= 1)
+            self._solver.add(self._level_at(position) <= self.columns_number)
 
     def _add_distinct_level_constraint(self):
         constraints = []
