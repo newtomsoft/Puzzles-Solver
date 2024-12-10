@@ -3,6 +3,7 @@
 from PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
+from PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 from PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
@@ -22,6 +23,7 @@ from PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from Puzzles.Akari.AkariGame import AkariGame
 from Puzzles.Aquarium.AquariumGame import AquariumGame
+from Puzzles.Bimaru.BimaruGame import BimaruGame
 from Puzzles.Binairo.BinairoGame import BinairoGame
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Puzzles.Dominosa.DominosaGame import DominosaGame
@@ -63,6 +65,8 @@ class PuzzleMainConsole:
             "https://fr.puzzle-light-up.com": (AkariGame, PuzzleAkariGridProvider),
             "https://www.puzzle-aquarium.com": (AquariumGame, PuzzleAquariumGridProvider),
             "https://fr.puzzle-aquarium.com": (AquariumGame, PuzzleAquariumGridProvider),
+            "https://www.puzzle-battleships.com": (BimaruGame, PuzzleBimaruGridProvider),
+            "https://fr.puzzle-battleships.com": (BimaruGame, PuzzleBimaruGridProvider),
             "https://www.puzzle-binairo.com": (BinairoGame, PuzzleBinairoGridProvider),
             "https://fr.puzzle-binairo.com": (BinairoGame, PuzzleBinairoGridProvider),
             "https://www.puzzle-binairoplus.com": (BinairoPlusGame, PuzzleBinairoPlusGridProvider),
