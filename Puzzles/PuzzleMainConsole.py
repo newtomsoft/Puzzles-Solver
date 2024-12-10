@@ -7,6 +7,7 @@ from PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 from PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
+from PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
 from PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
@@ -27,6 +28,7 @@ from Puzzles.Bimaru.BimaruGame import BimaruGame
 from Puzzles.Binairo.BinairoGame import BinairoGame
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Puzzles.Dominosa.DominosaGame import DominosaGame
+from Puzzles.Futoshiki.FutoshikiGame import FutoshikiGame
 from Puzzles.Hitori.HitoriGame import HitoriGame
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
 from Puzzles.Kakuro.KakuroGame import KakuroGame
@@ -73,8 +75,8 @@ class PuzzleMainConsole:
             "https://fr.puzzle-binairoplus.com": (BinairoPlusGame, PuzzleBinairoPlusGridProvider),
             "https://www.puzzle-dominosa.com": (DominosaGame, PuzzleDominosaGridProvider),
             "https://fr.puzzle-dominosa.com": (DominosaGame, PuzzleDominosaGridProvider),
-            # "https://www.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
-            # "https://fr.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
+            "https://www.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
+            "https://fr.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
             "https://www.puzzle-hitori.com": (HitoriGame, PuzzleHitoriGridProvider),
             "https://fr.puzzle-hitori.com": (HitoriGame, PuzzleHitoriGridProvider),
             "https://www.puzzle-kakurasu.com": (KakurasuGame, PuzzleKakurasuGridProvider),
