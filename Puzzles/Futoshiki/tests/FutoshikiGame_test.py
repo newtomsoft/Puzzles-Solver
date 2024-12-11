@@ -1,6 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
+from Position import Position
 from Puzzles.Futoshiki.FutoshikiGame import FutoshikiGame
 from Utils.Grid import Grid
 
@@ -15,7 +16,7 @@ class FutoshikiGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1],
         ])
-        higher_positions = [((0, 0), (0, 1))]
+        higher_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
             FutoshikiGame((grid, higher_positions))
         self.assertEqual(str(context.exception), "The grid must be square")
@@ -26,7 +27,7 @@ class FutoshikiGameTests(TestCase):
             [-1, -1, 0],
             [1, -1, -1],
         ])
-        higher_positions = [((0, 0), (0, 1))]
+        higher_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
             FutoshikiGame((grid, higher_positions))
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
@@ -38,7 +39,7 @@ class FutoshikiGameTests(TestCase):
             [-1, -1, -1, -1],
             [-1, -1, -1, -1],
         ])
-        higher_positions = [((0, 3), (1, 3)), ((1, 1), (1, 2)), ((1, 3), (2, 3)), ((2, 0), (3, 0)), ((3, 1), (3, 2))]
+        higher_positions = [(Position(0, 3), Position(1, 3)), Position((1, 1), Position(1, 2)), Position((1, 3), Position(2, 3)), Position((2, 0), Position(3, 0)), Position((3, 1), Position(3, 2))]
         expected_grid = Grid([
             [2, 1, 3, 4],
             [4, 3, 1, 2],
@@ -53,7 +54,7 @@ class FutoshikiGameTests(TestCase):
 
     def test_solution_5x5(self):
         grid = Grid([[-1, -1, -1, -1, -1], [-1, 4, -1, -1, -1], [-1, -1, 4, -1, -1], [-1, -1, -1, -1, -1], [-1, -1, -1, -1, -1]])
-        higher_positions = [((0, 0), (0, 1)), ((0, 3), (0, 2)), ((0, 3), (1, 3)), ((0, 4), (0, 3)), ((2, 0), (2, 1)), ((2, 2), (1, 2)), ((2, 2), (3, 2)), ((2, 4), (1, 4)), ((3, 2), (3, 3)), ((4, 3), (4, 4))]
+        higher_positions = [(Position(0, 0), Position(0, 1)), Position((0, 3), Position(0, 2)), Position((0, 3), Position(1, 3)), Position((0, 4), Position(0, 3)), Position((2, 0), Position(2, 1)), Position((2, 2), Position(1, 2)), Position((2, 2), Position(3, 2)), Position((2, 4), Position(1, 4)), Position((3, 2), Position(3, 3)), Position((4, 3), Position(4, 4))]
         expected_grid = Grid([
             [4, 2, 1, 3, 5],
             [5, 4, 3, 2, 1],
@@ -69,8 +70,8 @@ class FutoshikiGameTests(TestCase):
 
     def test_solution_7x7(self):
         grid = Grid([[-1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1], [6, 2, -1, -1, -1, -1, -1]])
-        higher_positions = [((0, 0), (1, 0)), ((0, 1), (0, 0)), ((0, 4), (0, 5)), ((0, 5), (0, 6)), ((1, 1), (1, 0)), ((1, 4), (1, 5)), ((1, 5), (1, 6)), ((2, 0), (2, 1)), ((2, 1), (1, 1)), ((2, 3), (1, 3)), ((2, 4), (2, 5)), ((2, 6), (3, 6)), ((3, 1), (3, 0)),
-                            ((3, 2), (2, 2)), ((3, 3), (3, 2)), ((3, 4), (3, 3)), ((3, 6), (3, 5)), ((4, 2), (4, 3)), ((4, 3), (3, 3)), ((5, 1), (6, 1)), ((5, 2), (5, 1)), ((5, 4), (5, 5)), ((6, 0), (5, 0)), ((6, 3), (6, 2)), ((6, 3), (5, 3)), ((6, 6), (5, 6))]
+        higher_positions = [(Position(0, 0), Position(1, 0)), Position((0, 1), Position(0, 0)), Position((0, 4), Position(0, 5)), Position((0, 5), Position(0, 6)), Position((1, 1), Position(1, 0)), Position((1, 4), Position(1, 5)), Position((1, 5), Position(1, 6)), Position((2, 0), Position(2, 1)), Position((2, 1), Position(1, 1)), Position((2, 3), Position(1, 3)), Position((2, 4), Position(2, 5)), Position((2, 6), Position(3, 6)), Position((3, 1), Position(3, 0)),
+                            (Position(3, 2), Position(2, 2)), Position((3, 3), Position(3, 2)), Position((3, 4), Position(3, 3)), Position((3, 6), Position(3, 5)), Position((4, 2), Position(4, 3)), Position((4, 3), Position(3, 3)), Position((5, 1), Position(6, 1)), Position((5, 2), Position(5, 1)), Position((5, 4), Position(5, 5)), Position((6, 0), Position(5, 0)), Position((6, 3), Position(6, 2)), Position((6, 3), Position(5, 3)), Position((6, 6), Position(5, 6))]
         expected_grid = Grid([
             [2, 6, 5, 7, 4, 3, 1],
             [1, 3, 4, 2, 7, 6, 5],
@@ -90,9 +91,9 @@ class FutoshikiGameTests(TestCase):
         grid = Grid(
             [[-1, 7, -1, -1, -1, 5, 3, 2, -1], [-1, -1, -1, -1, -1, -1, 7, -1, 2], [-1, -1, -1, -1, -1, -1, -1, -1, 5], [-1, -1, 3, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, 4, -1, -1, -1, -1], [-1, -1, -1, -1, -1, 8, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1],
              [-1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, 7, 2, -1, 5, 8]])
-        higher_positions = [((0, 2), (0, 3)), ((0, 3), (1, 3)), ((0, 8), (1, 8)), ((1, 0), (1, 1)), ((1, 4), (0, 4)), ((1, 7), (1, 6)), ((2, 1), (2, 0)), ((2, 2), (3, 2)), ((2, 3), (2, 4)), ((2, 5), (2, 4)), ((2, 6), (3, 6)), ((3, 1), (2, 1)), ((3, 3), (3, 2)),
-                            ((3, 5), (3, 6)), ((3, 6), (4, 6)), ((3, 7), (3, 6)), ((4, 2), (4, 1)), ((4, 7), (3, 7)), ((5, 0), (5, 1)), ((5, 2), (4, 2)), ((5, 5), (5, 4)), ((5, 7), (5, 6)), ((6, 7), (6, 8)), ((7, 4), (7, 3)), ((7, 4), (6, 4)), ((7, 5), (7, 4)),
-                            ((7, 7), (8, 7)), ((8, 3), (8, 4)), ((8, 5), (8, 6))]
+        higher_positions = [(Position(0, 2), Position(0, 3)), Position((0, 3), Position(1, 3)), Position((0, 8), Position(1, 8)), Position((1, 0), Position(1, 1)), Position((1, 4), Position(0, 4)), Position((1, 7), Position(1, 6)), Position((2, 1), Position(2, 0)), Position((2, 2), Position(3, 2)), Position((2, 3), Position(2, 4)), Position((2, 5), Position(2, 4)), Position((2, 6), Position(3, 6)), Position((3, 1), Position(2, 1)), Position((3, 3), Position(3, 2)),
+                            (Position(3, 5), Position(3, 6)), Position((3, 6), Position(4, 6)), Position((3, 7), Position(3, 6)), Position((4, 2), Position(4, 1)), Position((4, 7), Position(3, 7)), Position((5, 0), Position(5, 1)), Position((5, 2), Position(4, 2)), Position((5, 5), Position(5, 4)), Position((5, 7), Position(5, 6)), Position((6, 7), Position(6, 8)), Position((7, 4), Position(7, 3)), Position((7, 4), Position(6, 4)), Position((7, 5), Position(7, 4)),
+                            (Position(7, 7), Position(8, 7)), Position((8, 3), Position(8, 4)), Position((8, 5), Position(8, 6))]
         expected_grid = Grid([
             [1, 7, 9, 6, 8, 5, 3, 2, 4],
             [6, 3, 5, 4, 9, 1, 7, 8, 2],
@@ -114,11 +115,11 @@ class FutoshikiGameTests(TestCase):
         grid = Grid([[7, 4, 10, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 11], [-1, -1, 5, -1, -1, -1, 11, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, -1, 7, -1, -1, -1],
                      [-1, -1, -1, -1, 5, -1, -1, 9, -1, -1, 3], [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, 3, -1, -1, -1, -1], [-1, 11, -1, -1, -1, -1, -1, -1, -1, -1, -1], [-1, -1, -1, -1, -1, -1, 8, -1, -1, -1, -1],
                      [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 7]])
-        higher_positions = [((0, 4), (1, 4)), ((0, 5), (1, 5)), ((0, 6), (0, 7)), ((0, 7), (0, 8)), ((0, 7), (1, 7)), ((0, 9), (1, 9)), ((1, 0), (1, 1)), ((1, 3), (0, 3)), ((1, 6), (0, 6)), ((1, 7), (2, 7)), ((1, 9), (2, 9)), ((2, 0), (3, 0)), ((2, 2), (2, 1)),
-                            ((2, 2), (1, 2)), ((2, 4), (3, 4)), ((2, 9), (2, 8)), ((3, 3), (3, 2)), ((3, 4), (3, 5)), ((3, 5), (4, 5)), ((3, 6), (3, 7)), ((3, 9), (3, 10)), ((4, 1), (5, 1)), ((4, 2), (4, 1)), ((4, 3), (3, 3)), ((4, 3), (5, 3)), ((4, 6), (5, 6)),
-                            ((5, 3), (5, 4)), ((5, 4), (6, 4)), ((5, 7), (5, 8)), ((5, 8), (4, 8)), ((5, 9), (5, 10)), ((6, 0), (5, 0)), ((6, 1), (7, 1)), ((6, 3), (6, 2)), ((6, 4), (6, 3)), ((6, 6), (5, 6)), ((6, 8), (6, 9)), ((6, 9), (6, 10)), ((6, 10), (5, 10)),
-                            ((7, 0), (6, 0)), ((7, 1), (7, 0)), ((7, 2), (8, 2)), ((7, 6), (8, 6)), ((7, 7), (7, 8)), ((7, 7), (6, 7)), ((7, 9), (7, 8)), ((7, 10), (8, 10)), ((8, 4), (9, 4)), ((8, 6), (8, 5)), ((8, 7), (7, 7)), ((8, 9), (7, 9)), ((8, 10), (8, 9)),
-                            ((9, 0), (8, 0)), ((9, 1), (9, 0)), ((9, 2), (10, 2)), ((9, 3), (8, 3)), ((9, 3), (10, 3)), ((9, 4), (9, 3)), ((9, 7), (10, 7)), ((9, 9), (8, 9)), ((9, 10), (10, 10)), ((10, 0), (9, 0)), ((10, 1), (10, 0))]
+        higher_positions = [(Position(0, 4), Position(1, 4)), Position((0, 5), Position(1, 5)), Position((0, 6), Position(0, 7)), Position((0, 7), Position(0, 8)), Position((0, 7), Position(1, 7)), Position((0, 9), Position(1, 9)), Position((1, 0), Position(1, 1)), Position((1, 3), Position(0, 3)), Position((1, 6), Position(0, 6)), Position((1, 7), Position(2, 7)), Position((1, 9), Position(2, 9)), Position((2, 0), Position(3, 0)), Position((2, 2), Position(2, 1)),
+                            (Position(2, 2), Position(1, 2)), Position((2, 4), Position(3, 4)), Position((2, 9), Position(2, 8)), Position((3, 3), Position(3, 2)), Position((3, 4), Position(3, 5)), Position((3, 5), Position(4, 5)), Position((3, 6), Position(3, 7)), Position((3, 9), Position(3, 10)), Position((4, 1), Position(5, 1)), Position((4, 2), Position(4, 1)), Position((4, 3), Position(3, 3)), Position((4, 3), Position(5, 3)), Position((4, 6), Position(5, 6)),
+                            (Position(5, 3), Position(5, 4)), Position((5, 4), Position(6, 4)), Position((5, 7), Position(5, 8)), Position((5, 8), Position(4, 8)), Position((5, 9), Position(5, 10)), Position((6, 0), Position(5, 0)), Position((6, 1), Position(7, 1)), Position((6, 3), Position(6, 2)), Position((6, 4), Position(6, 3)), Position((6, 6), Position(5, 6)), Position((6, 8), Position(6, 9)), Position((6, 9), Position(6, 10)), Position((6, 10), Position(5, 10)),
+                            (Position(7, 0), Position(6, 0)), Position((7, 1), Position(7, 0)), Position((7, 2), Position(8, 2)), Position((7, 6), Position(8, 6)), Position((7, 7), Position(7, 8)), Position((7, 7), Position(6, 7)), Position((7, 9), Position(7, 8)), Position((7, 10), Position(8, 10)), Position((8, 4), Position(9, 4)), Position((8, 6), Position(8, 5)), Position((8, 7), Position(7, 7)), Position((8, 9), Position(7, 9)), Position((8, 10), Position(8, 9)),
+                            (Position(9, 0), Position(8, 0)), Position((9, 1), Position(9, 0)), Position((9, 2), Position(10, 2)), Position((9, 3), Position(8, 3)), Position((9, 3), Position(10, 3)), Position((9, 4), Position(9, 3)), Position((9, 7), Position(10, 7)), Position((9, 9), Position(8, 9)), Position((9, 10), Position(10, 10)), Position((10, 0), Position(9, 0)), Position((10, 1), Position(10, 0))]
         expected_grid = Grid([
             [7, 4, 10, 1, 8, 9, 6, 5, 3, 11, 2],
             [10, 1, 4, 8, 3, 5, 7, 2, 6, 9, 11],
@@ -146,17 +147,17 @@ class FutoshikiGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, -1, -1, -1], [7, 13, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, -1], [-1, -1, -1, 11, 4, 3, 13, -1, -1, 9, 2, -1, -1, 10, 15]
         ])
         higher_positions = [
-            ((0, 3), (0, 4)), ((0, 8), (0, 7)), ((0, 9), (0, 10)), ((0, 10), (0, 11)), ((1, 0), (1, 1)), ((1, 1), (2, 1)), ((1, 2), (1, 1)), ((1, 3), (0, 3)), ((1, 4), (2, 4)), ((1, 5), (1, 4)), ((1, 5), (0, 5)), ((1, 7), (1, 8)), ((1, 8), (0, 8)),
-            ((1, 9), (1, 8)), ((1, 10), (1, 11)), ((1, 12), (1, 11)), ((1, 13), (1, 14)), ((1, 14), (2, 14)), ((2, 0), (2, 1)), ((2, 2), (2, 1)), ((2, 3), (2, 4)), ((2, 5), (2, 4)), ((2, 8), (1, 8)), ((2, 9), (1, 9)), ((2, 9), (3, 9)),
-            ((2, 10), (3, 10)), ((2, 12), (2, 13)), ((2, 13), (1, 13)), ((2, 14), (3, 14)), ((3, 3), (3, 2)), ((3, 4), (3, 3)), ((3, 4), (4, 4)), ((3, 9), (4, 9)), ((3, 11), (3, 12)), ((3, 12), (4, 12)), ((4, 0), (5, 0)), ((4, 1), (3, 1)),
-            ((4, 3), (4, 2)), ((4, 4), (4, 3)), ((4, 9), (4, 10)), ((4, 11), (5, 11)), ((4, 13), (4, 12)), ((4, 14), (5, 14)), ((5, 0), (5, 1)), ((5, 2), (6, 2)), ((5, 4), (5, 5)), ((5, 5), (5, 6)), ((5, 7), (4, 7)), ((5, 8), (5, 7)), ((5, 9), (6, 9)),
-            ((5, 10), (6, 10)), ((5, 11), (5, 12)), ((5, 14), (5, 13)), ((6, 1), (7, 1)), ((6, 2), (6, 3)), ((6, 3), (7, 3)), ((6, 4), (6, 3)), ((6, 6), (6, 5)), ((6, 9), (6, 8)), ((6, 10), (6, 9)), ((6, 12), (6, 13)), ((6, 13), (7, 13)),
-            ((7, 1), (8, 1)), ((7, 4), (8, 4)), ((7, 5), (7, 4)), ((7, 6), (7, 5)), ((7, 11), (7, 12)), ((8, 0), (7, 0)), ((8, 2), (8, 1)), ((8, 3), (8, 2)), ((8, 4), (8, 3)), ((8, 7), (7, 7)), ((8, 8), (7, 8)), ((8, 10), (7, 10)), ((8, 11), (8, 12)),
-            ((8, 12), (7, 12)), ((8, 13), (7, 13)), ((8, 14), (8, 13)), ((9, 1), (9, 2)), ((9, 1), (8, 1)), ((9, 3), (8, 3)), ((9, 6), (9, 5)), ((9, 7), (10, 7)), ((9, 8), (9, 7)), ((9, 9), (9, 8)), ((9, 10), (10, 10)), ((9, 12), (8, 12)),
-            ((9, 13), (9, 12)), ((10, 1), (9, 1)), ((10, 3), (9, 3)), ((10, 5), (11, 5)), ((10, 6), (9, 6)), ((10, 8), (10, 7)), ((10, 9), (11, 9)), ((10, 10), (10, 9)), ((10, 11), (10, 12)), ((11, 0), (10, 0)), ((11, 2), (11, 1)), ((11, 6), (11, 5)),
-            ((11, 11), (10, 11)), ((11, 12), (12, 12)), ((11, 13), (11, 12)), ((11, 14), (11, 13)), ((12, 0), (11, 0)), ((12, 2), (12, 1)), ((12, 4), (12, 3)), ((12, 9), (12, 10)), ((12, 10), (13, 10)), ((12, 14), (13, 14)), ((13, 0), (12, 0)),
-            ((13, 3), (12, 3)), ((13, 4), (13, 3)), ((13, 5), (14, 5)), ((13, 6), (13, 7)), ((13, 7), (14, 7)), ((13, 8), (13, 7)), ((13, 10), (14, 10)), ((13, 12), (13, 13)), ((13, 13), (12, 13)), ((13, 14), (13, 13)), ((14, 2), (14, 3)),
-            ((14, 3), (13, 3)), ((14, 8), (14, 7)), ((14, 9), (14, 8)), ((14, 11), (14, 12))
+            (Position(0, 3), Position(0, 4)), Position((0, 8), Position(0, 7)), Position((0, 9), Position(0, 10)), Position((0, 10), Position(0, 11)), Position((1, 0), Position(1, 1)), Position((1, 1), Position(2, 1)), Position((1, 2), Position(1, 1)), Position((1, 3), Position(0, 3)), Position((1, 4), Position(2, 4)), Position((1, 5), Position(1, 4)), Position((1, 5), Position(0, 5)), Position((1, 7), Position(1, 8)), Position((1, 8), Position(0, 8)),
+            (Position(1, 9), Position(1, 8)), Position((1, 10), Position(1, 11)), Position((1, 12), Position(1, 11)), Position((1, 13), Position(1, 14)), Position((1, 14), Position(2, 14)), Position((2, 0), Position(2, 1)), Position((2, 2), Position(2, 1)), Position((2, 3), Position(2, 4)), Position((2, 5), Position(2, 4)), Position((2, 8), Position(1, 8)), Position((2, 9), Position(1, 9)), Position((2, 9), Position(3, 9)),
+            (Position(2, 10), Position(3, 10)), Position((2, 12), Position(2, 13)), Position((2, 13), Position(1, 13)), Position((2, 14), Position(3, 14)), Position((3, 3), Position(3, 2)), Position((3, 4), Position(3, 3)), Position((3, 4), Position(4, 4)), Position((3, 9), Position(4, 9)), Position((3, 11), Position(3, 12)), Position((3, 12), Position(4, 12)), Position((4, 0), Position(5, 0)), Position((4, 1), Position(3, 1)),
+            (Position(4, 3), Position(4, 2)), Position((4, 4), Position(4, 3)), Position((4, 9), Position(4, 10)), Position((4, 11), Position(5, 11)), Position((4, 13), Position(4, 12)), Position((4, 14), Position(5, 14)), Position((5, 0), Position(5, 1)), Position((5, 2), Position(6, 2)), Position((5, 4), Position(5, 5)), Position((5, 5), Position(5, 6)), Position((5, 7), Position(4, 7)), Position((5, 8), Position(5, 7)), Position((5, 9), Position(6, 9)),
+            (Position(5, 10), Position(6, 10)), Position((5, 11), Position(5, 12)), Position((5, 14), Position(5, 13)), Position((6, 1), Position(7, 1)), Position((6, 2), Position(6, 3)), Position((6, 3), Position(7, 3)), Position((6, 4), Position(6, 3)), Position((6, 6), Position(6, 5)), Position((6, 9), Position(6, 8)), Position((6, 10), Position(6, 9)), Position((6, 12), Position(6, 13)), Position((6, 13), Position(7, 13)),
+            (Position(7, 1), Position(8, 1)), Position((7, 4), Position(8, 4)), Position((7, 5), Position(7, 4)), Position((7, 6), Position(7, 5)), Position((7, 11), Position(7, 12)), Position((8, 0), Position(7, 0)), Position((8, 2), Position(8, 1)), Position((8, 3), Position(8, 2)), Position((8, 4), Position(8, 3)), Position((8, 7), Position(7, 7)), Position((8, 8), Position(7, 8)), Position((8, 10), Position(7, 10)), Position((8, 11), Position(8, 12)),
+            (Position(8, 12), Position(7, 12)), Position((8, 13), Position(7, 13)), Position((8, 14), Position(8, 13)), Position((9, 1), Position(9, 2)), Position((9, 1), Position(8, 1)), Position((9, 3), Position(8, 3)), Position((9, 6), Position(9, 5)), Position((9, 7), Position(10, 7)), Position((9, 8), Position(9, 7)), Position((9, 9), Position(9, 8)), Position((9, 10), Position(10, 10)), Position((9, 12), Position(8, 12)),
+            (Position(9, 13), Position(9, 12)), Position((10, 1), Position(9, 1)), Position((10, 3), Position(9, 3)), Position((10, 5), Position(11, 5)), Position((10, 6), Position(9, 6)), Position((10, 8), Position(10, 7)), Position((10, 9), Position(11, 9)), Position((10, 10), Position(10, 9)), Position((10, 11), Position(10, 12)), Position((11, 0), Position(10, 0)), Position((11, 2), Position(11, 1)), Position((11, 6), Position(11, 5)),
+            (Position(11, 11), Position(10, 11)), Position((11, 12), Position(12, 12)), Position((11, 13), Position(11, 12)), Position((11, 14), Position(11, 13)), Position((12, 0), Position(11, 0)), Position((12, 2), Position(12, 1)), Position((12, 4), Position(12, 3)), Position((12, 9), Position(12, 10)), Position((12, 10), Position(13, 10)), Position((12, 14), Position(13, 14)), Position((13, 0), Position(12, 0)),
+            (Position(13, 3), Position(12, 3)), Position((13, 4), Position(13, 3)), Position((13, 5), Position(14, 5)), Position((13, 6), Position(13, 7)), Position((13, 7), Position(14, 7)), Position((13, 8), Position(13, 7)), Position((13, 10), Position(14, 10)), Position((13, 12), Position(13, 13)), Position((13, 13), Position(12, 13)), Position((13, 14), Position(13, 13)), Position((14, 2), Position(14, 3)),
+            (Position(14, 3), Position(13, 3)), Position((14, 8), Position(14, 7)), Position((14, 9), Position(14, 8)), Position((14, 11), Position(14, 12))
         ]
         expected_grid = Grid([
             [7, 4, 10, 1, 8, 9, 6, 5, 3, 11, 2],

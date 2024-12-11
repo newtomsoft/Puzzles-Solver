@@ -68,7 +68,7 @@ class Position:
         return f'({self.r}, {self.c})'
 
     def __repr__(self):
-        return self.__str__()
+        return f'Position{self.__str__()}'
 
     def __add__(self, other):
         return Position(self.r + other.r, self.c + other.c)

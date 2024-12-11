@@ -1,13 +1,13 @@
-﻿from z3 import Solver, sat, Int, And, Not, Distinct
+﻿from z3 import Solver, sat, Int, And, Not, Distinct, Or
 
 from Position import Position
 from Utils.Grid import Grid
 
 
-class FutoshikiGame:
+class RenzokuGame:
     def __init__(self, params: (Grid, list[tuple[Position, Position]])):
         self._grid: Grid = params[0]
-        self._higher_positions: list[tuple[Position, Position]] = params[1]
+        self._consecutive_positions: list[tuple[Position, Position]] = params[1]
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number != self.columns_number:
@@ -45,7 +45,8 @@ class FutoshikiGame:
         self.add_range_constraints()
         self._add_distinct_constraints()
         self._add_initial_constraints()
-        self.add_higher_constraints()
+        self.add_consecutive_constraints()
+        self._add_non_consecutive_constraints()
 
     def add_range_constraints(self):
         for position, value in self._grid_z3:
@@ -64,6 +65,14 @@ class FutoshikiGame:
             if value != -1:
                 self._solver.add(self._number(position) == value)
 
-    def add_higher_constraints(self):
-        for first_position, second_position in self._higher_positions:
-            self._solver.add(self._number(first_position) > self._number(second_position))
+    def add_consecutive_constraints(self):
+        for first_position, second_position in self._consecutive_positions:
+            self._solver.add((Or(self._number(first_position) - self._number(second_position) == 1, self._number(second_position) - self._number(first_position) == 1)))
+
+    def _add_non_consecutive_constraints(self):
+        non_consecutive_positions = (
+                [(Position(r, c), Position(r + 1, c)) for r in range(self.rows_number - 1) for c in range(self.columns_number) if (Position(r, c), Position(r + 1, c)) not in self._consecutive_positions]
+                + [(Position(r, c), Position(r, c + 1)) for r in range(self.rows_number) for c in range(self.columns_number - 1) if (Position(r, c), Position(r, c + 1)) not in self._consecutive_positions]
+        )
+        for first_position, second_position in non_consecutive_positions:
+            self._solver.add((And(self._number(first_position) - self._number(second_position) != 1, self._number(second_position) - self._number(first_position) != 1)))

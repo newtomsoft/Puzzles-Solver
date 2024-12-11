@@ -7,7 +7,7 @@ from Position import Position
 from Utils.Grid import Grid
 
 
-class PuzzleFutoshikiGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleRenzokuGridProvider(GridProvider, PlaywrightGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
@@ -30,11 +30,11 @@ class PuzzleFutoshikiGridProvider(GridProvider, PlaywrightGridProvider):
             for c in range(columns_number):
                 row.append(values[r * columns_number + c])
             matrix.append(row)
-        higher_positions = self.scrap_higher_positions(soup)
-        return Grid(matrix), higher_positions
+        consecutive_positions = self.scrap_consecutive_positions(soup)
+        return Grid(matrix), consecutive_positions
 
     @staticmethod
-    def scrap_higher_positions(soup):
+    def scrap_consecutive_positions(soup):
         cell_size = 46
         highers = []
         for div_condition in soup.find_all('div', class_='condition'):
@@ -43,10 +43,6 @@ class PuzzleFutoshikiGridProvider(GridProvider, PlaywrightGridProvider):
             index_column = int(style.split('left: ')[1].split('px')[0]) // cell_size
             if any('right' in s for s in div_condition['class']):
                 highers.append((Position(index_row, index_column), Position(index_row, index_column + 1)))
-            if any('left' in s for s in div_condition['class']):
-                highers.append((Position(index_row, index_column + 1), Position(index_row, index_column)))
-            if any('up' in s for s in div_condition['class']):
-                highers.append((Position(index_row + 1, index_column), Position(index_row, index_column)))
             if any('down' in s for s in div_condition['class']):
                 highers.append((Position(index_row, index_column), Position(index_row + 1, index_column)))
 

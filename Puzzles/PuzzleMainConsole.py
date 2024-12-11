@@ -1,4 +1,5 @@
-﻿import time
+﻿import re
+import time
 
 from PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -15,6 +16,7 @@ from PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvi
 from PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
 from PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
+from PuzzleRenzokuGridProvider import PuzzleRenzokuGridProvider
 from PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridProvider
 from PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
@@ -37,6 +39,7 @@ from Puzzles.Nonogram.NonogramGame import NonogramGame
 from Puzzles.Norinori.NorinoriGame import NorinoriGame
 from Puzzles.Nurikabe.NurikabeGame import NurikabeGame
 from Puzzles.Queens.QueensGame import QueensGame
+from Puzzles.Renzoku.RenzokuGame import RenzokuGame
 from Puzzles.Shikaku.ShikakuGame import ShikakuGame
 from Puzzles.Skyscrapers.SkyscrapersGame import SkyscrapersGame
 from Puzzles.Stitches.StitchesGame import StitchesGame
@@ -63,59 +66,36 @@ class PuzzleMainConsole:
             console_input = "https://www.linkedin.com/games/queens/"
 
         url_patterns = {
-            "https://www.puzzle-light-up.com": (AkariGame, PuzzleAkariGridProvider),
-            "https://fr.puzzle-light-up.com": (AkariGame, PuzzleAkariGridProvider),
-            "https://www.puzzle-aquarium.com": (AquariumGame, PuzzleAquariumGridProvider),
-            "https://fr.puzzle-aquarium.com": (AquariumGame, PuzzleAquariumGridProvider),
-            "https://www.puzzle-battleships.com": (BimaruGame, PuzzleBimaruGridProvider),
-            "https://fr.puzzle-battleships.com": (BimaruGame, PuzzleBimaruGridProvider),
-            "https://www.puzzle-binairo.com": (BinairoGame, PuzzleBinairoGridProvider),
-            "https://fr.puzzle-binairo.com": (BinairoGame, PuzzleBinairoGridProvider),
-            "https://www.puzzle-binairoplus.com": (BinairoPlusGame, PuzzleBinairoPlusGridProvider),
-            "https://fr.puzzle-binairoplus.com": (BinairoPlusGame, PuzzleBinairoPlusGridProvider),
-            "https://www.puzzle-dominosa.com": (DominosaGame, PuzzleDominosaGridProvider),
-            "https://fr.puzzle-dominosa.com": (DominosaGame, PuzzleDominosaGridProvider),
-            "https://www.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
-            "https://fr.puzzle-futoshiki.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
-            "https://www.puzzle-hitori.com": (HitoriGame, PuzzleHitoriGridProvider),
-            "https://fr.puzzle-hitori.com": (HitoriGame, PuzzleHitoriGridProvider),
-            "https://www.puzzle-kakurasu.com": (KakurasuGame, PuzzleKakurasuGridProvider),
-            "https://fr.puzzle-kakurasu.com": (KakurasuGame, PuzzleKakurasuGridProvider),
-            "https://www.puzzle-kakuro.com": (KakuroGame, PuzzleKakuroGridProvider),
-            "https://fr.puzzle-kakuro.com": (KakuroGame, PuzzleKakuroGridProvider),
-            "https://www.puzzle-minesweeper.com": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider),
-            "https://fr.puzzle-minesweeper.com": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider),
-            "https://www.puzzle-nonogram.com": (NonogramGame, PuzzleNonogramGridProvider),
-            "https://fr.puzzle-nonogram.com": (NonogramGame, PuzzleNonogramGridProvider),
-            "https://www.puzzle-norinori.com": (NorinoriGame, PuzzleNorinoriGridProvider),
-            "https://fr.puzzle-norinori.com": (NorinoriGame, PuzzleNorinoriGridProvider),
-            "https://www.puzzle-nurikabe.com": (NurikabeGame, PuzzleNurikabeGridProvider),
-            "https://fr.puzzle-nurikabe.com": (NurikabeGame, PuzzleNurikabeGridProvider),
-            "https://www.linkedin.com/games/queens": (QueensGame, QueensGridProvider),
-            "https://www.puzzle-star-battle.com": (QueensGame, PuzzleStarBattleGridProvider),
-            "https://fr.puzzle-star-battle.com": (QueensGame, PuzzleStarBattleGridProvider),
-            "https://www.puzzle-shikaku.com": (ShikakuGame, PuzzleShikakuGridProvider),
-            "https://fr.puzzle-shikaku.com": (ShikakuGame, PuzzleShikakuGridProvider),
-            "https://fr.puzzle-skyscrapers.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider),
-            "https://www.puzzle-skyscrapers.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider),
-            "https://www.puzzle-stitches.com": (StitchesGame, PuzzleStitchesGridProvider),
-            "https://fr.puzzle-stitches.com": (StitchesGame, PuzzleStitchesGridProvider),
-            "https://www.puzzle-sudoku.com": (SudokuGame, PuzzleSudokuGridProvider),
-            "https://fr.puzzle-sudoku.com": (SudokuGame, PuzzleSudokuGridProvider),
-            "https://playsumplete.com/": (SumpleteGame, PlaySumpleteGridProvider),
-            "https://www.puzzle-tapa.com": (TapaGame, PuzzleTapaGridProvider),
-            "https://fr.puzzle-tapa.com": (TapaGame, PuzzleTapaGridProvider),
-            "https://www.puzzle-tents.com": (TentsGame, PuzzleTentsGridProvider),
-            "https://fr.puzzle-tents.com": (TentsGame, PuzzleTentsGridProvider),
+            r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider),
+            r"https://.*\.puzzle-aquarium\.com": (AquariumGame, PuzzleAquariumGridProvider),
+            r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider),
+            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider),
+            r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider),
+            r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider),
+            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider),
+            r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider),
+            r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider),
+            r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider),
+            r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider),
+            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider),
+            r"https://.*\.puzzle-nonogram\.com": (NonogramGame, PuzzleNonogramGridProvider),
+            r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider),
+            r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider),
+            r"https://www\.linkedin\.com/games/queens": (QueensGame, QueensGridProvider),
+            r"https://.*\.puzzle-star-battle\.com": (QueensGame, PuzzleStarBattleGridProvider),
+            r"https://.*\.puzzle-shikaku\.com": (ShikakuGame, PuzzleShikakuGridProvider),
+            r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider),
+            r"https://.*\.puzzle-stitches\.com": (StitchesGame, PuzzleStitchesGridProvider),
+            r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider),
+            r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider),
+            r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider),
+            r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider),
         }
-
         for pattern, (game_class, provider_class) in url_patterns.items():
-            if pattern in console_input:
+            if re.match(pattern, console_input):
                 game = game_class
                 provider = provider_class()
                 return game, provider.get_grid(console_input)
-
-        raise Exception("No provider found")
 
     @staticmethod
     def run(puzzle_game, data_game):
