@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, sat, Int, Distinct, And, Not, Or, ArithRef
 
-from Position import Position
+from Utils.Position import Position
 from Utils.Grid import Grid
 
 

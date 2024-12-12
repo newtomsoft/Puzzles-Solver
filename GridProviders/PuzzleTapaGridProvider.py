@@ -3,8 +3,8 @@ import math
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProvider import GridProvider
-from PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.GridProvider import GridProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Utils.Grid import Grid
 
 

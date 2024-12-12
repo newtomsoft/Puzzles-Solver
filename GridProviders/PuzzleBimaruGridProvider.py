@@ -2,7 +2,7 @@
 from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
-from PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Puzzles.Bimaru.BimaruGame import BimaruGame
 from Utils.Grid import Grid
 

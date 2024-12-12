@@ -1,4 +1,4 @@
-﻿from Direction import Direction
+﻿from Utils.Direction import Direction
 
 
 class Position:

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from Position import Position
+from Utils.Position import Position
 from Puzzles.Bimaru.BimaruGame import BimaruGame
 from Utils.Grid import Grid
 

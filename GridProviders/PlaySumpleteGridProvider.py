@@ -1,7 +1,7 @@
 ﻿import requests
 from bs4 import BeautifulSoup
 
-from GridProvider import GridProvider
+from GridProviders.GridProvider import GridProvider
 from Utils.Grid import Grid
 
 

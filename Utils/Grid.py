@@ -4,7 +4,7 @@ from typing import Tuple, FrozenSet, Dict, List, TypeVar
 
 from bitarray import bitarray
 
-from Position import Position
+from Utils.Position import Position
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')

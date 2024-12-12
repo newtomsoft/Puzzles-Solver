@@ -4,7 +4,7 @@ import re
 from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
-from PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Utils.Grid import Grid
 
 

@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from bitarray import bitarray
 
-from Position import Position
+from Utils.Position import Position
 from Utils.Grid import Grid
 from Utils.colors import console_police_colors, console_back_ground_colors, remove_ansi_escape_sequences
 

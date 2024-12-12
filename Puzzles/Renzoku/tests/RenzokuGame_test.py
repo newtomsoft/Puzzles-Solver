@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Position import Position
+from Utils.Position import Position
 from Puzzles.Renzoku.RenzokuGame import RenzokuGame
 from Utils.Grid import Grid
 

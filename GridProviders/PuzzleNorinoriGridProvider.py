@@ -3,9 +3,9 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProvider import GridProvider
-from PlaywrightGridProvider import PlaywrightGridProvider
-from RegionsGrid import RegionsGrid
+from GridProviders.GridProvider import GridProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from Utils.RegionsGrid import RegionsGrid
 
 
 class PuzzleNorinoriGridProvider(GridProvider, PlaywrightGridProvider):

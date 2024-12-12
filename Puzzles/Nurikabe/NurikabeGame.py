@@ -1,7 +1,7 @@
 ﻿from z3 import Solver, And, sat, Or, Bool, Not, is_true
 
-from ShapeGenerator import ShapeGenerator
 from Utils.Grid import Grid
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class NurikabeGame:

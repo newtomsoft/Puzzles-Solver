@@ -1,7 +1,7 @@
 ﻿from z3 import Solver, sat, Int, And, Not, If, Sum, Or, Implies
 
-from Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class BimaruGame:

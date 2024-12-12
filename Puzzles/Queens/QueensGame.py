@@ -1,6 +1,6 @@
 ﻿from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies
 
-from Position import Position
+from Utils.Position import Position
 from Utils.Grid import Grid
 
 

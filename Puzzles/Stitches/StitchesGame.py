@@ -1,7 +1,7 @@
 ﻿from z3 import Solver, Not, And, sat, Sum, Implies, Or, Int, If
 
-from Direction import Direction
-from Position import Position
+from Utils.Direction import Direction
+from Utils.Position import Position
 from Utils.Grid import Grid
 
 

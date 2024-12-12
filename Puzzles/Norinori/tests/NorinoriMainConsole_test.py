@@ -3,7 +3,7 @@ from io import StringIO
 from unittest import TestCase
 from unittest.mock import patch
 
-from PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Puzzles.Norinori.NorinoriMainConsole import NorinoriMainConsole
 from utils import clean_ansi_escape_codes
 

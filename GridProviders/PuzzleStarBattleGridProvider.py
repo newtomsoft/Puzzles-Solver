@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.RegionsGrid import RegionsGrid
 
 

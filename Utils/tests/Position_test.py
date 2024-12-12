@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Direction import Direction
-from Position import Position
+from Utils.Position import Position
 
 
 class TestPosition(TestCase):

@@ -2,8 +2,8 @@
 from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
-from PlaywrightGridProvider import PlaywrightGridProvider
-from Position import Position
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from Utils.Position import Position
 from Utils.Grid import Grid
 
 
