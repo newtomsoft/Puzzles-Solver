@@ -1,13 +1,13 @@
 ﻿from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class QueensGame:
-    def __init__(self, param: tuple[Grid, int]):
-        self._grid = param[0]
-        self._stars_count_by_region_column_row = param[1]
+    def __init__(self, grid: Grid, stars_count_by_region_column_row: int):
+        self._grid = grid
+        self._stars_count_by_region_column_row = stars_count_by_region_column_row
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number != self.columns_number:

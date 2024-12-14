@@ -1,9 +1,9 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Utils.Position import Position
 from Puzzles.Renzoku.RenzokuGame import RenzokuGame
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class RenzokuGameTests(TestCase):
@@ -18,7 +18,7 @@ class RenzokuGameTests(TestCase):
         ])
         consecutive_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
-            RenzokuGame((grid, consecutive_positions))
+            RenzokuGame(grid, consecutive_positions)
         self.assertEqual(str(context.exception), "The grid must be square")
 
     def test_solution_grid_too_small(self):
@@ -29,7 +29,7 @@ class RenzokuGameTests(TestCase):
         ])
         consecutive_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
-            RenzokuGame((grid, consecutive_positions))
+            RenzokuGame(grid, consecutive_positions)
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_4x4(self):
@@ -47,7 +47,7 @@ class RenzokuGameTests(TestCase):
             [4, 2, 3, 1],
             [3, 1, 4, 2],
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -73,7 +73,7 @@ class RenzokuGameTests(TestCase):
             [2, 3, 4, 1, 5],
             [1, 5, 2, 3, 4],
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -87,7 +87,7 @@ class RenzokuGameTests(TestCase):
             (Position(5, 0), Position(6, 0))
         ]
         expected_grid = Grid([[4, 2, 7, 3, 6, 5, 1], [1, 7, 4, 2, 5, 3, 6], [5, 6, 2, 7, 3, 1, 4], [2, 4, 3, 5, 1, 6, 7], [3, 1, 5, 6, 7, 4, 2], [6, 5, 1, 4, 2, 7, 3], [7, 3, 6, 1, 4, 2, 5]])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -110,7 +110,7 @@ class RenzokuGameTests(TestCase):
             [9, 2, 7, 4, 8, 6, 3, 5, 1], [8, 1, 4, 5, 9, 3, 2, 6, 7], [6, 7, 9, 2, 3, 1, 5, 4, 8], [7, 8, 3, 6, 1, 5, 4, 2, 9], [1, 6, 2, 8, 7, 4, 9, 3, 5], [2, 5, 8, 7, 4, 9, 6, 1, 3], [3, 4, 5, 9, 2, 8, 1, 7, 6], [5, 9, 1, 3, 6, 2, 7, 8, 4],
             [4, 3, 6, 1, 5, 7, 8, 9, 2]
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -133,7 +133,7 @@ class RenzokuGameTests(TestCase):
             [3, 10, 1, 4, 8, 7, 9, 5, 11, 6, 2], [1, 5, 7, 8, 3, 9, 2, 4, 6, 10, 11], [7, 1, 4, 6, 9, 2, 10, 11, 3, 5, 8], [9, 2, 11, 1, 5, 3, 8, 6, 7, 4, 10], [8, 7, 2, 5, 10, 11, 6, 1, 4, 9, 3], [2, 8, 5, 3, 4, 1, 7, 10, 9, 11, 6], [6, 3, 8, 9, 7, 5, 11, 2, 10, 1, 4],
             [4, 9, 10, 11, 6, 8, 1, 3, 2, 7, 5], [10, 11, 6, 2, 1, 4, 3, 9, 5, 8, 7], [11, 4, 9, 10, 2, 6, 5, 7, 8, 3, 1], [5, 6, 3, 7, 11, 10, 4, 8, 1, 2, 9]
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -159,7 +159,7 @@ class RenzokuGameTests(TestCase):
             [11, 9, 8, 2, 4, 7, 3, 1, 12, 5, 6, 10, 13], [4, 7, 6, 10, 13, 2, 9, 8, 11, 3, 12, 1, 5], [1, 8, 13, 4, 5, 6, 2, 10, 3, 9, 7, 11, 12], [6, 12, 2, 13, 10, 3, 11, 9, 5, 4, 1, 7, 8], [2, 3, 10, 5, 11, 9, 8, 13, 7, 12, 4, 6, 1],
             [5, 2, 11, 6, 12, 1, 10, 4, 9, 13, 3, 8, 7], [10, 1, 3, 7, 9, 13, 5, 12, 4, 6, 8, 2, 11], [9, 4, 7, 12, 3, 8, 1, 6, 13, 11, 10, 5, 2]
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()
@@ -190,7 +190,7 @@ class RenzokuGameTests(TestCase):
             [4, 3, 11, 13, 1, 5, 7, 8, 2, 12, 10, 15, 6, 14, 9], [15, 5, 6, 3, 13, 10, 2, 12, 7, 8, 9, 14, 4, 11, 1], [3, 4, 12, 15, 2, 1, 6, 5, 13, 11, 14, 9, 7, 8, 10], [12, 7, 1, 11, 5, 2, 4, 9, 14, 10, 6, 3, 8, 13, 15],
             [9, 15, 2, 1, 7, 8, 3, 6, 10, 13, 4, 11, 5, 12, 14], [2, 10, 15, 8, 4, 9, 11, 13, 6, 3, 7, 12, 14, 1, 5], [6, 13, 10, 12, 14, 7, 9, 11, 4, 15, 1, 2, 3, 5, 8]
         ])
-        game = RenzokuGame((grid, consecutive_positions))
+        game = RenzokuGame(grid, consecutive_positions)
         solution = game.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game.get_other_solution()

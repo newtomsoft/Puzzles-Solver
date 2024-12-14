@@ -1,5 +1,5 @@
-﻿from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
+﻿from GridProviders.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
+from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Dominosa.DominosaGame import DominosaGame
 
 

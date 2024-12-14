@@ -22,19 +22,19 @@ class NurikabeGame:
         # True if a cell is black (river), False if white (island)
         self._solver = Solver()
         self._add_constraints()
-        solution, propositions_count = self._ensure_all_black_connected_and_no_island_without_number()
-        return solution, propositions_count
+        solution = self._ensure_all_black_connected_and_no_island_without_number()
+        return solution
 
     def get_other_solution(self):
         self._exclude_solution(self._last_solution)
-        solution, propositions_count = self._ensure_all_black_connected_and_no_island_without_number()
-        return solution, propositions_count
+        solution = self._ensure_all_black_connected_and_no_island_without_number()
+        return solution
 
     def _exclude_solution(self, solution):
         river_cells = solution.get_all_shapes(1)
         self._solver.add(Not(And([self._matrix_z3[r][c] for river_cell in river_cells for r, c in river_cell])))
 
-    def _ensure_all_black_connected_and_no_island_without_number(self) -> (Grid, int):
+    def _ensure_all_black_connected_and_no_island_without_number(self):
         proposition_count = 0
         while self._solver.check() == sat:
             model = self._solver.model()
@@ -46,7 +46,7 @@ class NurikabeGame:
                 continue
             if river_compliant and len(islands) == self.island_count:
                 self._last_solution = current_grid
-                return current_grid, proposition_count
+                return current_grid
 
             if not river_compliant:
                 self._recompute_river(current_grid)
@@ -55,8 +55,7 @@ class NurikabeGame:
             if len(islands) < self.island_count:
                 self._exclude_solution(current_grid)
 
-        print("Unsat core:", self._solver.unsat_core())
-        return Grid.empty(), proposition_count
+        return Grid.empty()
 
     def _recompute_river(self, grid):
         rivers = grid.get_all_shapes(1)

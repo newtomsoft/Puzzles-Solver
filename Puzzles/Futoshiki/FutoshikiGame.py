@@ -1,13 +1,13 @@
 ﻿from z3 import Solver, sat, Int, And, Not, Distinct
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class FutoshikiGame:
-    def __init__(self, params: (Grid, list[tuple[Position, Position]])):
-        self._grid: Grid = params[0]
-        self._higher_positions: list[tuple[Position, Position]] = params[1]
+    def __init__(self, grid: Grid, higher_positions: list[tuple[Position, Position]]):
+        self._grid = grid
+        self._higher_positions = higher_positions
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number != self.columns_number:
@@ -42,10 +42,15 @@ class FutoshikiGame:
         return self._grid_z3[position]
 
     def _add_constraints(self):
+        self._add_initial_constraints()
         self.add_range_constraints()
         self._add_distinct_constraints()
-        self._add_initial_constraints()
         self.add_higher_constraints()
+
+    def _add_initial_constraints(self):
+        for position, value in self._grid:
+            if value != -1:
+                self._solver.add(self._number(position) == value)
 
     def add_range_constraints(self):
         for position, value in self._grid_z3:
@@ -58,11 +63,6 @@ class FutoshikiGame:
         for index, column_tuple in enumerate(zip(*self._grid_z3.matrix)):
             column = list(column_tuple)
             self._solver.add(Distinct(column))
-
-    def _add_initial_constraints(self):
-        for position, value in self._grid:
-            if value != -1:
-                self._solver.add(self._number(position) == value)
 
     def add_higher_constraints(self):
         for first_position, second_position in self._higher_positions:

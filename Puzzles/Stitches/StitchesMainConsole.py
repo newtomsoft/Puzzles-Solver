@@ -1,7 +1,7 @@
-﻿from Direction import Direction
-from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
+﻿from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Stitches.StitchesGame import StitchesGame
+from Utils.Direction import Direction
 from Utils.Grid import Grid
 
 

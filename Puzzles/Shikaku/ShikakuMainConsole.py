@@ -1,7 +1,7 @@
 ﻿import time
 
+from GridProviders.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from Puzzles.Shikaku.ShikakuGame import ShikakuGame
 from Utils.Grid import Grid
 

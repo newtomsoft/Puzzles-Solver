@@ -1,15 +1,15 @@
 ﻿from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies, Or
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class TentsGame:
     _tree_value = -1
 
-    def __init__(self, params: (Grid, dict[str, list[int]])):
-        self._grid: Grid = params[0]
-        self.tents_numbers_by_column_row: dict[str, list[int]] = params[1]
+    def __init__(self, grid: Grid, tents_numbers_by_column_row):
+        self._grid: Grid = grid
+        self.tents_numbers_by_column_row: dict[str, list[int]] = tents_numbers_by_column_row
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number != self.columns_number:

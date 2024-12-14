@@ -1,5 +1,5 @@
-﻿from GridProviders.StringGridProvider import StringGridProvider
-from PlaySumpleteGridProvider import PlaySumpleteGridProvider
+﻿from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
+from GridProviders.StringGridProvider import StringGridProvider
 from SumpleteGame import SumpleteGame
 from Utils.Grid import Grid
 

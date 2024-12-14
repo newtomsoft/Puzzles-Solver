@@ -1,5 +1,5 @@
-﻿from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
+﻿from GridProviders.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
+from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Nonogram.NonogramGame import NonogramGame
 from Utils.Grid import Grid
 

@@ -45,9 +45,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 1, 1, 0]
         ])
         game = NurikabeGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_only_numbers_1_when_not_possible(self):
@@ -59,9 +59,8 @@ class NurikabeGameTests(TestCase):
             [0, 1, 0, 0, 0],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
-        self.assertEqual(1, propositions_count)
 
     def test_get_solution_5x5_numbers_1_2(self):
         grid = Grid([
@@ -79,9 +78,9 @@ class NurikabeGameTests(TestCase):
             [1, 0, 1, 1, 1]
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_numbers_1_2_bis(self):
@@ -100,9 +99,9 @@ class NurikabeGameTests(TestCase):
             [0, 1, 1, 1, 0]
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_only_numbers_2(self):
@@ -121,9 +120,9 @@ class NurikabeGameTests(TestCase):
             [1, 0, 1, 0, 0],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_with_island_size_6(self):
@@ -142,9 +141,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 1, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_1(self):
@@ -163,9 +162,9 @@ class NurikabeGameTests(TestCase):
             [1, 0, 1, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_2(self):
@@ -184,9 +183,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 1, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_3(self):
@@ -205,9 +204,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 1, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_4(self):
@@ -226,9 +225,9 @@ class NurikabeGameTests(TestCase):
             [0, 1, 1, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_5(self):
@@ -247,9 +246,9 @@ class NurikabeGameTests(TestCase):
             [0, 1, 1, 0, 0],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_5x5_6(self):
@@ -268,9 +267,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 1, 1, 1]
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_7x7_easy(self):
@@ -293,9 +292,9 @@ class NurikabeGameTests(TestCase):
             [1, 1, 0, 1, 0, 0, 0],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_12x(self):
@@ -328,9 +327,9 @@ class NurikabeGameTests(TestCase):
             [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     @unittest.skip("This test takes too long to run")  # TODO:
@@ -362,9 +361,9 @@ class NurikabeGameTests(TestCase):
             [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
         ])
         game = NurikabeGame(grid)
-        solution, propositions_count = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        other_solution, _ = game.get_other_solution()
+        other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
 

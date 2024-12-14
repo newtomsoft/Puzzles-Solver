@@ -24,6 +24,7 @@ from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from GridProviders.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
 from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
+from GridProviders.QueensGridProvider import QueensGridProvider
 from Puzzles.Akari.AkariGame import AkariGame
 from Puzzles.Aquarium.AquariumGame import AquariumGame
 from Puzzles.Bimaru.BimaruGame import BimaruGame
@@ -47,7 +48,6 @@ from Puzzles.Sudoku.SudokuGame import SudokuGame
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
 from Puzzles.Tapa.TapaGame import TapaGame
 from Puzzles.Tents.TentsGame import TentsGame
-from GridProviders.QueensGridProvider import QueensGridProvider
 from Utils.Grid import Grid
 
 
@@ -78,7 +78,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider),
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider),
-            r"https://.*\.puzzle-nonogram\.com": (NonogramGame, PuzzleNonogramGridProvider),
+            r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider),
             r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider),
             r"https://www\.linkedin\.com/games/queens": (QueensGame, QueensGridProvider),
@@ -96,10 +96,15 @@ class PuzzleMainConsole:
                 game = game_class
                 provider = provider_class()
                 return game, provider.get_grid(console_input)
+        raise ValueError("No grid provider found")
 
     @staticmethod
     def run(puzzle_game, data_game):
-        game = puzzle_game(data_game)
+        if type(data_game) is tuple:
+            grid, *extra_data = data_game
+            game = puzzle_game(grid, *extra_data)
+        else:
+            game = puzzle_game(data_game)
         start_time = time.time()
         solution_grid = game.get_solution()
         end_time = time.time()

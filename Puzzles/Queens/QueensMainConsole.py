@@ -1,6 +1,6 @@
 ﻿import webbrowser
 
-import PuzzleStarBattleGridProvider
+from GridProviders.PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Queens.QueensGame import QueensGame

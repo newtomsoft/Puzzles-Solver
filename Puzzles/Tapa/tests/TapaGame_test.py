@@ -47,8 +47,8 @@ class TapaGameTests(TestCase):
             [[1], [1]],
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_not_exist_black_count_around_1_number(self):
         grid = Grid([
@@ -56,8 +56,8 @@ class TapaGameTests(TestCase):
             [False, False],
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_exist_basic_grid_1_number(self):
         grid = Grid([
@@ -66,7 +66,7 @@ class TapaGameTests(TestCase):
         ])
         expected_solution = Grid([[False, True], [True, True]])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_exist_basic_grid_number_0(self):
@@ -78,7 +78,7 @@ class TapaGameTests(TestCase):
         ])
         expected_solution = Grid([[False, False, False, False], [False, False, False, False], [False, False, False, False], [True, True, False, False]])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_exist_basic_grid_1_number_8(self):
@@ -89,7 +89,7 @@ class TapaGameTests(TestCase):
         ])
         expected_solution = Grid([[True, True, True], [True, False, True], [True, True, True]])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_exist_basic_grid_2_numbers(self):
@@ -99,7 +99,7 @@ class TapaGameTests(TestCase):
         ])
         expected_solution = Grid([[False, True], [False, True]])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_not_exist_black_square(self):
@@ -111,8 +111,8 @@ class TapaGameTests(TestCase):
 
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_not_exist_black_count_around_2_numbers(self):
         grid = Grid([
@@ -120,8 +120,8 @@ class TapaGameTests(TestCase):
             [False, False],
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_not_exist_black_count_around_2_numbers_without_gap(self):
         grid = Grid([
@@ -129,8 +129,8 @@ class TapaGameTests(TestCase):
             [False, False],
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_exist_grid_with_list_count_1_1(self):
         grid = Grid([
@@ -140,7 +140,7 @@ class TapaGameTests(TestCase):
         ])
         expected_solution = Grid([[False, True, True], [True, False, True], [True, True, True]])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_exist_grid_with_list_count_2_2(self):
@@ -157,7 +157,7 @@ class TapaGameTests(TestCase):
             [False, False, False, False]
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_solution_not_exist_isolated_black(self):
@@ -166,8 +166,8 @@ class TapaGameTests(TestCase):
             [False, [2]],
         ])
         game = TapaGame(grid)
-        solution, _ = game.get_solution()
-        self.assertIsNone(solution)
+        solution = game.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_grid_6x6(self):
         grid = Grid([
@@ -187,9 +187,8 @@ class TapaGameTests(TestCase):
             [False, False, True, True, True, False]
         ])
         game = TapaGame(grid)
-        solution, attempts = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        self.assertLessEqual(attempts, 5)
 
     def test_solution_grid_10x10(self):
         grid = Grid([
@@ -217,9 +216,8 @@ class TapaGameTests(TestCase):
             [True, True, False, True, True, True, True, False, True, True]
         ])
         game = TapaGame(grid)
-        solution, attempts = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        self.assertLessEqual(attempts, 5)
 
     def test_solution_grid_10x10_2(self):
         grid = Grid([
@@ -247,9 +245,8 @@ class TapaGameTests(TestCase):
             [True, True, True, True, True, False, True, True, True, True]
         ])
         game = TapaGame(grid)
-        solution, attempts = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        self.assertLessEqual(attempts, 5)
 
     def test_solution_grid_15x15_1(self):
         grid = Grid([
@@ -287,9 +284,8 @@ class TapaGameTests(TestCase):
             [False, False, False, False, True, True, True, True, False, True, True, False, True, True, True]
         ])
         game = TapaGame(grid)
-        solution, attempts = game.get_solution()
+        solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
-        self.assertLessEqual(attempts, 5)
 
 
 if __name__ == '__main__':

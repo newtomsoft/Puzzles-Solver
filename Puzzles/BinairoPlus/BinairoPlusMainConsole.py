@@ -1,7 +1,7 @@
 ﻿import time
 
+from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Utils.Grid import Grid
 

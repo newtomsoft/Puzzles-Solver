@@ -1,7 +1,7 @@
 ﻿import webbrowser
 
+from GridProviders.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from Puzzles.Norinori.NorinoriGame import NorinoriGame
 from Utils.Grid import Grid
 

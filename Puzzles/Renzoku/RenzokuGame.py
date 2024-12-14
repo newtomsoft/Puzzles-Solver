@@ -1,13 +1,13 @@
 ﻿from z3 import Solver, sat, Int, And, Not, Distinct, Or
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class RenzokuGame:
-    def __init__(self, params: (Grid, list[tuple[Position, Position]])):
-        self._grid: Grid = params[0]
-        self._consecutive_positions: list[tuple[Position, Position]] = params[1]
+    def __init__(self, grid: Grid, consecutive_positions: list[tuple[Position, Position]]):
+        self._grid: Grid = grid
+        self._consecutive_positions: list[tuple[Position, Position]] = consecutive_positions
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number != self.columns_number:

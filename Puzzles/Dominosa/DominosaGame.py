@@ -36,6 +36,12 @@ class DominosaGame:
             (value0, value1): {(int(model.eval(r).as_long()), int(model.eval(c).as_long())) for r, c in positions}
             for (value0, value1), positions in self._dominoes_positions_z3.items()
         }
+        solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
+        for (value0, value1), positions in dominoes_positions.items():
+            for r, c in positions:
+                solution_grid.set_value(r, c, value0)
+            r0, c0 = next(iter(positions))
+            solution_grid.set_value(r0, c0, value1)
         return dominoes_positions
 
     def _add_constraints(self):
@@ -53,7 +59,6 @@ class DominosaGame:
         constraints_positions_dominos = []
         dominoes_positions_z3 = self._dominoes_positions_z3
 
-        # for domino_value_0, domino_value_1 in custom_tqdm(possibles_dominoes_positions_by_value.keys(), desc="Processing dominoes", unit="domino"):
         for domino_value_0, domino_value_1 in possibles_dominoes_positions_by_value.keys():
             constraints_positions_domino = []
             possible_positions = possibles_dominoes_positions_by_value[(domino_value_0, domino_value_1)]

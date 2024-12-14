@@ -1,15 +1,15 @@
 ﻿from z3 import Solver, sat, Int, Distinct, And, Not, Or, ArithRef
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class SkyscrapersGame:
     _no_value = 0
 
-    def __init__(self, params: (Grid, dict[str, list[int]])):
-        self._grid: Grid = params[0]
-        self.visible_skyscrapers: dict[str, list[int]] = params[1]
+    def __init__(self, grid: Grid, visible_skyscrapers: dict[str, list[int]]):
+        self._grid: Grid = grid
+        self.visible_skyscrapers: dict[str, list[int]] = visible_skyscrapers
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self.highest_skyscraper_levels = self.columns_number

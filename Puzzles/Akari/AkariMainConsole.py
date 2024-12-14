@@ -1,8 +1,8 @@
 ﻿import time
 
 from AkariGame import AkariGame
+from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from Utils.Grid import Grid
 
 

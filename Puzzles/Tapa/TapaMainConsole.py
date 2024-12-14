@@ -1,5 +1,5 @@
-﻿from GridProviders.StringGridProvider import StringGridProvider
-from PuzzleTapaGridProvider import PuzzleTapaGridProvider
+﻿from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
+from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Tapa.TapaGame import TapaGame
 from Utils.Grid import Grid
 
@@ -31,12 +31,12 @@ class TapaMainConsole:
     @staticmethod
     def run(grid):
         game = TapaGame(grid)
-        solution_grid, count = game.get_solution()
+        solution_grid = game.get_solution()
         if not solution_grid:
             print(f"No solution found")
             return 1
 
-        print(f"Solution found in {count} attempts:")
+        print(f"Solution found:")
         console_grid = game.get_console_grid(solution_grid)
         print(console_grid)
 
