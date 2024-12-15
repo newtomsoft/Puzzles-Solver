@@ -1,4 +1,5 @@
 import {ApplicationPuzzleTapa} from "./PuzzleTapa";
+import {ApplicationPuzzleBinairoPlus} from "./PuzzleBinairoPlus";
 import {NotSupportedWebsite} from "./notSupportedWebsite";
 
 chrome.action.onClicked.addListener((tab) => {
@@ -9,6 +10,18 @@ chrome.action.onClicked.addListener((tab) => {
             chrome.scripting.executeScript({
                 target: {tabId: tab.id!},
                 func: ApplicationPuzzleTapa,
+            }).then();
+            break;
+        case 'www.puzzle-binairo.com':
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id!},
+                func: ApplicationPuzzleBinairoPlus,
+            }).then();
+            break;
+        case 'www.puzzles-mobile.com':
+            chrome.scripting.executeScript({
+                target: {tabId: tab.id!},
+                func: ApplicationPuzzleBinairoPlus,
             }).then();
             break;
         default:
