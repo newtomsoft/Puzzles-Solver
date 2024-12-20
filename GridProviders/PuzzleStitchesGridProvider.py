@@ -14,10 +14,10 @@ class PuzzleStitchesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMo
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
+        self.new_game(page)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
         matrix_cells = [cell_div for cell_div in cell_divs if 'selectable' in cell_div.get('class', [])]

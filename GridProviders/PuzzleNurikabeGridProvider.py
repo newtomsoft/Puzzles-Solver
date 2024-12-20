@@ -11,7 +11,7 @@ class PuzzleNurikabeGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         html_page = page.content()
         browser.close()

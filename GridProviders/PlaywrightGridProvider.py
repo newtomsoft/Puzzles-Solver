@@ -50,14 +50,16 @@ class PlaywrightGridProvider(ABC):
         self.password = self.config['DEFAULT']['password']
 
     def with_playwright(self, callback, source):
-        with sync_playwright() as playwright:
-            browser = playwright.chromium.launch_persistent_context(
-                self.user_data_path,
-                headless=self.headless,
-                args=[f'--disable-extensions-except={self.extensions_path}', f'--load-extension={self.extensions_path}']
-            )
-            try:
-                var = callback(browser, source)
-                return var
-            finally:
-                browser.close()
+        playwright = sync_playwright().start()
+        browser = playwright.chromium.launch_persistent_context(
+            self.user_data_path,
+            headless=self.headless,
+            no_viewport=True,
+            args=[
+                f'--disable-extensions-except={self.extensions_path}',
+                f'--load-extension={self.extensions_path}',
+                '--start-maximized'
+            ]
+        )
+        var = callback(browser, source)
+        return var, browser

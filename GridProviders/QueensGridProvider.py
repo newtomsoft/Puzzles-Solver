@@ -13,7 +13,7 @@ class QueensGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         frame = page.frames[1]
         start_game_button = frame.wait_for_selector('button:has-text("Commencer une partie")')

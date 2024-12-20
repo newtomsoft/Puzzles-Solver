@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Puzzles.Norinori.NorinoriMainConsole import NorinoriMainConsole
-from utils import clean_ansi_escape_codes
+from Utils.utils import clean_ansi_escape_codes
 
 
 class TestMainFunction(TestCase):

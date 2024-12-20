@@ -36,20 +36,20 @@ class QueensGame:
         return self._grid_z3[position]
 
     def _add_constraints(self):
-        self._add_constraint_single_queen_by_row()
-        self._add_constraint_single_queen_by_column()
-        self._add_constraint_single_queen_by_region()
+        self._add_constraint_queen_by_row()
+        self._add_constraint_queen_by_column()
+        self._add_constraint_queen_by_region()
         self._add_constraint_no_adjacent_queen()
 
-    def _add_constraint_single_queen_by_row(self):
+    def _add_constraint_queen_by_row(self):
         for r in range(self.rows_number):
             self._solver.add(Sum([self.queen(Position(r, c)) for c in range(self.columns_number)]) == self._stars_count_by_region_column_row)
 
-    def _add_constraint_single_queen_by_column(self):
+    def _add_constraint_queen_by_column(self):
         for c in range(self.columns_number):
             self._solver.add(Sum([self.queen(Position(r, c)) for r in range(self.rows_number)]) == self._stars_count_by_region_column_row)
 
-    def _add_constraint_single_queen_by_region(self):
+    def _add_constraint_queen_by_region(self):
         for region in self._regions.values():
             self._solver.add(Sum([self.queen(position) for position in region]) == self._stars_count_by_region_column_row)
 

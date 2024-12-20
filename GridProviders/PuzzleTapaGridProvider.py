@@ -13,7 +13,7 @@ class PuzzleTapaGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         html_page = page.content()
         browser.close()
@@ -34,29 +34,3 @@ class PuzzleTapaGridProvider(GridProvider, PlaywrightGridProvider):
                 values.append(int(span.get_text()))
             matrix[i // column_count][i % column_count] = values
         return Grid(matrix)
-
-    def play(self, grid: Grid, url: str):
-        return self.with_playwright(self.play_grid, (grid, url))
-
-    def play_grid(self, browser: BrowserContext, grid_url):
-        grid = grid_url[0]
-        url = grid_url[1]
-
-        page = browser.new_page()
-        page.goto(url)
-
-        cell_divs = page.query_selector_all('div.cell, div.tapa-task-cell')
-        cells_count = len(cell_divs)
-        row_count = int(math.sqrt(cells_count))
-        column_count = row_count
-
-        for r in range(row_count):
-            for c in range(column_count):
-                value = grid.value(r, c)
-                if isinstance(value, list):
-                    continue
-                if value:
-                    cell_div = cell_divs[r * column_count + c]
-                    cell_div.click()
-
-        page.pause()

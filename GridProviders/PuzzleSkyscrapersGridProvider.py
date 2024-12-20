@@ -5,18 +5,26 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.Grid import Grid
 
 
-class PuzzleSkyscrapersGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleSkyscrapersGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
+        page.evaluate(
+            """
+            console.log('Resizing window', screen.width, screen.height);
+            window.moveTo(0, 0);
+            window.resizeTo(screen.width, screen.height);
+            """
+        )
+        self.new_game(page)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_cell_divs = soup.find_all('div', class_=['cell selectable', 'cell selectable immutable'])
         cells_count = len(grid_cell_divs)

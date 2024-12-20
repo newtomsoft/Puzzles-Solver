@@ -54,7 +54,7 @@
                     const coordinates = getCoordinates(cellDiv as HTMLElement);
                     const middleX = coordinates.left + coordinates.width / 2.0;
                     const middleY = coordinates.top + coordinates.height / 2.0;
-                    createSquare(createSegment, middleX, middleY);
+                    createSquare(middleX, middleY);
                     // if (cellDiv.classList.contains('cell-off')) {
                     //     cellDiv.classList.remove('cell-off');
                     //     cellDiv.classList.add('cell-on');
@@ -74,7 +74,7 @@
         };
     }
 
-    function createSquare(createSegment: (width: string, height: string, left: string, top: string) => void, middleX: number, middleY: number) {
+    function createSquare(middleX: number, middleY: number) {
         createSegment(`23px`, '1px', `${middleX - 11}px`, `${middleY - 11}px`);
         createSegment('23px', '1px', `${middleX - 11}px`, `${middleY + 11}px`);
         createSegment('1px', '23px', `${middleX - 11}px`, `${middleY - 11}px`);

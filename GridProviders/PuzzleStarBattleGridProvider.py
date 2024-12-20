@@ -14,10 +14,11 @@ class PuzzleStarBattleGridProvider(GridProvider, PlaywrightGridProvider, Puzzles
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
+        page.wait_for_selector('div.cell')
+        PuzzlesMobileGridProvider.new_game(page)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
         matrix_cells = [cell_div for cell_div in cell_divs if 'selectable' in cell_div.get('class', [])]
@@ -54,4 +55,3 @@ class PuzzleStarBattleGridProvider(GridProvider, PlaywrightGridProvider, Puzzles
             Warning(f"Can't parse regions connections from {puzzle_info_text_left} force to 1")
             stars_count_by_region_column_row = 1
         return regions_grid, stars_count_by_region_column_row
-

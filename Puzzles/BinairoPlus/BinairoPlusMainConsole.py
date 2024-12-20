@@ -1,22 +1,27 @@
 ﻿import time
 
+from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Utils.Grid import Grid
 
 
-class BinairoMainConsole:
-    @staticmethod
-    def main():
-        grid, comparison_operators = BinairoMainConsole.get_grid()
-        BinairoMainConsole.run(grid, comparison_operators)
+class BinairoPlusMainConsole:
+    def __init__(self):
+        self.console_input = None
 
-    @staticmethod
-    def get_grid():
+    def main(self):
+        data_game, browser = self.get_grid()
+        grid = data_game[0]
+        comparison_operators = data_game[1]
+        solution = self.run(grid, comparison_operators)
+        self.play(solution, browser)
+
+    def get_grid(self):
         print("BinairoPlus Game")
         print("Enter url or grid")
-        console_input = input()
+        self.console_input = input()
 
         url_patterns = {
             "https://www.puzzle-binairo.com": PuzzleBinairoPlusGridProvider,
@@ -24,11 +29,11 @@ class BinairoMainConsole:
         }
 
         for pattern, provider_class in url_patterns.items():
-            if pattern in console_input:
+            if pattern in self.console_input:
                 provider = provider_class()
-                return provider.get_grid(console_input)
+                return provider.get_grid(self.console_input)
 
-        return StringGridProvider().get_grid(console_input)
+        return StringGridProvider().get_grid(self.console_input)
 
     @staticmethod
     def run(grid, comparison_operators):
@@ -41,6 +46,7 @@ class BinairoMainConsole:
             print(f"Solution found in {execution_time:.2f} seconds")
             print(solution_grid.to_console_string())
             # BinairoMainConsole.generate_html(solution_grid)
+            return solution_grid
         else:
             print(f"No solution found")
 
@@ -51,10 +57,24 @@ class BinairoMainConsole:
             for r in range(solution_grid.rows_number):
                 file.write("<tr>")
                 for c in range(solution_grid.columns_number):
-                    file.write(f"<td style='background-color: white; color: black;'>{BinairoMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
+                    file.write(f"<td style='background-color: white; color: black;'>{BinairoPlusMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
                 file.write("</tr>")
             file.write("</table></body></html>")
 
+    def play(self, solution, browser):
+        url_patterns = {
+            "https://www.puzzle-binairo.com": PuzzleBinairoPlusGridPlayer,
+            "https://fr.puzzle-binairo.com": PuzzleBinairoPlusGridPlayer,
+        }
+
+        for pattern, player_class in url_patterns.items():
+            if pattern in self.console_input:
+                player = player_class()
+                player.play(solution, browser)
+                return
+
+        raise ValueError("No player found")
+
 
 if __name__ == '__main__':
-    BinairoMainConsole.main()
+    BinairoPlusMainConsole().main()

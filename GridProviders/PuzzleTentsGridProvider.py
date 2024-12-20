@@ -11,10 +11,9 @@ class PuzzleTentsGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_=['cell'])
         grid_cell_divs = [cell_div for cell_div in cell_divs if 'task' not in cell_div.get('class', [])]
@@ -29,4 +28,5 @@ class PuzzleTentsGridProvider(GridProvider, PlaywrightGridProvider):
         task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
         tents_numbers = [int(cell_div.text) for cell_div in task_cells]
         tents_numbers_by_column_row = {'column': tents_numbers[:rows_count], 'row': tents_numbers[rows_count:]}
+
         return Grid(matrix), tents_numbers_by_column_row

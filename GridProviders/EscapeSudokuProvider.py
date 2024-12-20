@@ -23,7 +23,7 @@ class EscapeSudokuGridProvider(GridProvider, PlaywrightGridProvider):
                 headless=headless,
                 args=[f'--disable-extensions-except={extension_path}', f'--load-extension={extension_path}']
             )
-            page = browser.new_page()
+            page = browser.pages[0]
             page.goto(source)
             page.wait_for_selector('div.game-boxes')
             slot_divs = page.query_selector_all('div.slot')

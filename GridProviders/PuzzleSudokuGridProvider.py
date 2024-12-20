@@ -12,7 +12,7 @@ class PuzzleSudokuGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         numbers_divs = page.query_selector_all('div.number')
         numbers_str = [inner_text if (inner_text := number_div.inner_text()) else -1 for number_div in numbers_divs]

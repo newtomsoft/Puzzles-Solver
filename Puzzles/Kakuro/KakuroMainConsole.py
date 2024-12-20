@@ -1,9 +1,9 @@
 ﻿import webbrowser
 
+from GridProviders.KakuroConquestGridProvider import KakuroConquestGridProvider
+from GridProviders.KakuroOnlineGridProvider import KakuroOnlineGridProvider
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from KakuroConquestGridProvider import KakuroConquestGridProvider
-from KakuroOnlineGridProvider import KakuroOnlineGridProvider
 from Puzzles.Kakuro.KakuroGame import KakuroGame
 from Utils.Grid import Grid
 

@@ -3,8 +3,8 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class PuzzleRenzokuGridProvider(GridProvider, PlaywrightGridProvider):
@@ -12,7 +12,7 @@ class PuzzleRenzokuGridProvider(GridProvider, PlaywrightGridProvider):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.new_page()
+        page = browser.pages[0]
         page.goto(url)
         html_page = page.content()
         browser.close()
