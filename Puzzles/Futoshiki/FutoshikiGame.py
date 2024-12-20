@@ -43,16 +43,16 @@ class FutoshikiGame:
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self.add_range_constraints()
+        self._add_range_constraints()
         self._add_distinct_constraints()
-        self.add_higher_constraints()
+        self._add_higher_constraints()
 
     def _add_initial_constraints(self):
         for position, value in self._grid:
             if value != -1:
                 self._solver.add(self._number(position) == value)
 
-    def add_range_constraints(self):
+    def _add_range_constraints(self):
         for position, value in self._grid_z3:
             self._solver.add(1 <= value, value <= self.rows_number)
 
@@ -64,6 +64,6 @@ class FutoshikiGame:
             column = list(column_tuple)
             self._solver.add(Distinct(column))
 
-    def add_higher_constraints(self):
+    def _add_higher_constraints(self):
         for first_position, second_position in self._higher_positions:
             self._solver.add(self._number(first_position) > self._number(second_position))
