@@ -3,6 +3,7 @@ import time
 from typing import Tuple
 
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
@@ -79,7 +80,7 @@ class PuzzleMainConsole:
         url_patterns = {
             r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider, None),
             r"https://.*\.puzzle-aquarium\.com": (AquariumGame, PuzzleAquariumGridProvider, None),
-            r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, None),
+            r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlusGridPlayer),
             r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider, None),
             r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, None),

@@ -16,14 +16,14 @@ class BimaruGame:
 
     ship_middle_input = 8
 
-    def __init__(self, params: (Grid, dict[str, list[int]], dict[int, int])):
+    def __init__(self, grid: Grid, ship_cells: dict[str, list[int]], ships_number_by_size: dict[int, int]):
         if BimaruGame.ship_single != 7:
             raise ValueError("Ship single value error")
-        self._grid: Grid = params[0]
+        self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        self.ship_cells: dict[str, list[int]] = params[1]
-        self.ships_number_by_size: dict[int, int] = params[2]
+        self.ship_cells = ship_cells
+        self.ships_number_by_size = ships_number_by_size
 
         if self.rows_number != self.columns_number:
             raise ValueError("The grid must be square")
@@ -62,6 +62,12 @@ class BimaruGame:
         exclusion_constraint = Not(And([self._grid_z3[Position(r, c)] == self._last_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._last_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
+
+    def _total_ships_size(self):
+        total = 0
+        for size, number in self.ships_number_by_size.items():
+            total += size * number
+        return total
 
     def _ship(self, position):
         return self._grid_z3[position]
@@ -102,14 +108,7 @@ class BimaruGame:
             column = list(column_tuple)
             self._solver.add(Sum([If(column[i] != BimaruGame.water, 1, 0) for i in range(self.rows_number)]) == self.ship_cells['column'][index])
 
-    def _total_ships_size(self):
-        total = 0
-        for size, number in self.ships_number_by_size.items():
-            total += size * number
-        return total
-
     def _add_ship_implies_constraint(self):
-        max_size = max(self.ships_number_by_size.keys())
         for position, _ in self._grid_z3:
             self._add_ship_single_implies_constraint(position)
             self._add_ship_bottom_implies_constraint(position)
@@ -175,6 +174,7 @@ class BimaruGame:
             self._solver.add(Implies(self._ship(position) == BimaruGame.ship_middle_vertical, False))
 
     def _add_ships_number_constraint(self):
+        return
         singles_in_solution = Sum([If(self._ship(position) == BimaruGame.ship_single, 1, 0) for position, _ in self._grid_z3])
         tops_in_solution = Sum([If(self._ship(position) == BimaruGame.ship_top, 1, 0) for position, _ in self._grid_z3])
         bottoms_in_solution = Sum([If(self._ship(position) == BimaruGame.ship_bottom, 1, 0) for position, _ in self._grid_z3])
@@ -191,32 +191,30 @@ class BimaruGame:
         self._solver.add(lefts_in_solution == rights_in_solution)
 
         tips_expected = 2 * sum([number for size, number in self.ships_number_by_size.items() if size > 1])
-        middle_expected = sum([number * (size - 2) for size, number in self.ships_number_by_size.items() if size > 2])
+        middles_expected = sum([number * (size - 2) for size, number in self.ships_number_by_size.items() if size > 2])
 
-        self._solver.add(middles_in_solution == middle_expected)
+        self._solver.add(middles_in_solution == middles_expected)
         self._solver.add(Sum(lefts_in_solution, rights_in_solution, tops_in_solution, bottoms_in_solution) == tips_expected)
 
     def _add_ships_size_constraint(self):
-        self._add_ship_single_number_constraint()
-
-        max_size = max(self.ships_number_by_size.keys())
-        for position, _ in self._grid_z3:
-            self._add_ship_max_size_constraint(max_size, position)
-
-    def _add_ship_single_number_constraint(self):
         single_number = self.ships_number_by_size.get(1) if self.ships_number_by_size.get(1) is not None else 0
         self._solver.add(Sum([If(self._ship(position) == BimaruGame.ship_single, 1, 0) for position, _ in self._grid_z3]) == single_number)
 
-    def _add_ship_max_size_constraint(self, max_size, position):
-        if max_size <= 1:
-            return
-
-        horizontal_positions = [position + Position(0, i) for i in range(max_size + 1) if (position + Position(0, i)).c < self.columns_number]
-        if len(horizontal_positions) == max_size + 1:
-            horizontal_condition = And([self._ship(current_position) != BimaruGame.water for current_position in horizontal_positions[:-1]])
-            self._solver.add(Implies(horizontal_condition, self._ship(horizontal_positions[-1]) == BimaruGame.water))
-
-        vertical_positions = [position + Position(i, 0) for i in range(max_size + 1) if (position + Position(i, 0)).r < self.rows_number]
-        if len(vertical_positions) == max_size + 1:
-            vertical_condition = And([self._ship(current_position) != BimaruGame.water for current_position in vertical_positions[:-1]])
-            self._solver.add(Implies(vertical_condition, self._ship(vertical_positions[-1]) == BimaruGame.water))
+        for number in range(2, max(self.ships_number_by_size.keys()) + 1):
+            if self.ships_number_by_size.get(number) is None:
+                continue
+            constraint = []
+            for position, _ in self._grid_z3:
+                horizontal_positions_n = [position + Position(0, i) for i in range(number) if (position + Position(0, i)).c < self.columns_number]
+                if len(horizontal_positions_n) == number:
+                    start_horizontal_condition = And(self._ship(horizontal_positions_n[0]) == BimaruGame.ship_left)
+                    between_horizontal_condition = And([self._ship(current_position) == BimaruGame.ship_middle_horizontal for current_position in horizontal_positions_n[1:-1]])
+                    end_horizontal_condition = And(self._ship(horizontal_positions_n[-1]) == BimaruGame.ship_right)
+                    constraint.append(If(And(start_horizontal_condition,  between_horizontal_condition, end_horizontal_condition), 1, 0))
+                vertical_positions_n = [position + Position(i, 0) for i in range(number) if (position + Position(i, 0)).r < self.rows_number]
+                if len(vertical_positions_n) == number:
+                    start_vertical_condition = And(self._ship(vertical_positions_n[0]) == BimaruGame.ship_top)
+                    between_vertical_condition = And([self._ship(current_position) == BimaruGame.ship_middle_vertical for current_position in vertical_positions_n[1:-1]])
+                    end_vertical_condition = And(self._ship(vertical_positions_n[-1]) == BimaruGame.ship_bottom)
+                    constraint.append(If(And(start_vertical_condition, between_vertical_condition, end_vertical_condition), 1, 0))
+            self._solver.add(Sum(constraint) == self.ships_number_by_size[number])

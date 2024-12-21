@@ -3,9 +3,9 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from Utils.Position import Position
 from Puzzles.Bimaru.BimaruGame import BimaruGame
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class BimaruGameTests(TestCase):
@@ -28,7 +28,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [1, 0, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_grid_must_be_at_least_4x4_raises_value_error(self):
@@ -42,7 +42,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [1, 0, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("The grid must be at least 6x6", str(context.exception))
 
     def test_boats_number_by_size_not_filled(self):
@@ -57,7 +57,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [1, 0, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("At least one boat must be placed", str(context.exception))
 
     def test_boats_column_not_compliant(self):
@@ -72,7 +72,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("Boat cells column must have the same length as the columns number", str(context.exception))
 
     def test_boats_rows_not_compliant(self):
@@ -87,7 +87,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [1, 0, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("Boat cells row must have the same length as the rows number", str(context.exception))
 
     def test_boats_rows_columns_not_equal(self):
@@ -102,7 +102,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [2, 1, 1, 0, 0, 0], 'row': [1, 1, 1, 0, 0, 0]}
         ships_number_by_size = {1: 2, 2: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("The sum of boat cells by row and column must be equal", str(context.exception))
 
     def test_boats_cell_number_not_compliant(self):
@@ -117,7 +117,7 @@ class BimaruGameTests(TestCase):
         ships = {'column': [2, 1, 1, 0, 0, 0], 'row': [1, 2, 1, 0, 0, 0]}
         ships_number_by_size = {1: 3, 2: 1}
         with self.assertRaises(ValueError) as context:
-            BimaruGame((grid, ships, ships_number_by_size))
+            BimaruGame(grid, ships, ships_number_by_size)
         self.assertEqual("The sum of the size of the ships must be equal to the sum of ships cells", str(context.exception))
 
     def test_solution_with_sums_constraints(self):
@@ -129,6 +129,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [2, 0, 2, 0, 2, 0], 'row': [3, 0, 3, 0, 0, 0]}
+        ships_number_by_size = {1: 6}
         expected_solution = Grid([
             [6, 0, 6, 0, 6, 0],
             [0, 0, 0, 0, 0, 0],
@@ -137,9 +139,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [2, 0, 2, 0, 2, 0], 'row': [3, 0, 3, 0, 0, 0]}
-        ships_number_by_size = {1: 6}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(self._to_bool(expected_solution), self._to_bool(solution))
         other_solution = game.get_other_solution()
@@ -156,7 +156,7 @@ class BimaruGameTests(TestCase):
         ])
         ships = {'column': [1, 1, 0, 0, 0, 0], 'row': [1, 1, 0, 0, 0, 0]}
         ships_number_by_size = {1: 2}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -169,6 +169,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [2, 0, 0, 0, 0, 0], 'row': [1, 1, 0, 0, 0, 0]}
+        ships_number_by_size = {2: 1}
         expected_solution = Grid([
             [BimaruGame.ship_top, 0, 0, 0, 0, 0],
             [BimaruGame.ship_bottom, 0, 0, 0, 0, 0],
@@ -177,9 +179,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [2, 0, 0, 0, 0, 0], 'row': [1, 1, 0, 0, 0, 0]}
-        ships_number_by_size = {2: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(self._to_bool(expected_solution), self._to_bool(solution))
         other_solution = game.get_other_solution()
@@ -196,7 +196,7 @@ class BimaruGameTests(TestCase):
         ])
         ships = {'column': [3, 0, 0, 0, 0, 0], 'row': [1, 1, 1, 0, 0, 0]}
         ships_number_by_size = {3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(Grid.empty(), self._to_bool(solution))
 
@@ -209,6 +209,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [1, 1, 0, 0, 0, 0], 'row': [2, 0, 0, 0, 0, 0]}
+        ships_number_by_size = {2: 1}
         expected_solution = Grid([
             [BimaruGame.ship_left, BimaruGame.ship_right, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
@@ -217,9 +219,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [1, 1, 0, 0, 0, 0], 'row': [2, 0, 0, 0, 0, 0]}
-        ships_number_by_size = {2: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(self._to_bool(expected_solution), self._to_bool(solution))
         other_solution = game.get_other_solution()
@@ -234,6 +234,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [1, 1, 1, 0, 0, 0], 'row': [3, 0, 0, 0, 0, 0]}
+        ships_number_by_size = {3: 1}
         expected_solution = Grid([
             [BimaruGame.ship_left, BimaruGame.ship_middle_horizontal, BimaruGame.ship_right, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
@@ -242,9 +244,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [1, 1, 1, 0, 0, 0], 'row': [3, 0, 0, 0, 0, 0]}
-        ships_number_by_size = {3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(self._to_bool(expected_solution), self._to_bool(solution))
         other_solution = game.get_other_solution()
@@ -259,6 +259,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, 2, -1, -1],
         ])
+        ships = {'column': [2, 1, 2, 3, 1, 1], 'row': [1, 3, 0, 1, 4, 1]}
+        ships_number_by_size = {1: 3, 2: 2, 3: 1}
         expected_solution = Grid([
             [0, 0, 1, 0, 0, 0],
             [7, 0, 2, 0, 7, 0],
@@ -267,9 +269,7 @@ class BimaruGameTests(TestCase):
             [3, 4, 0, 5, 0, 7],
             [0, 0, 0, 2, 0, 0]
         ])
-        ships = {'column': [2, 1, 2, 3, 1, 1], 'row': [1, 3, 0, 1, 4, 1]}
-        ships_number_by_size = {1: 3, 2: 2, 3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -284,6 +284,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [2, 3, 0, 3, 1, 1], 'row': [1, 3, 1, 3, 0, 2]}
+        ships_number_by_size = {1: 3, 2: 2, 3: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 7],
             [3, 4, 0, 1, 0, 0],
@@ -292,9 +294,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 7, 0, 0, 7, 0]
         ])
-        ships = {'column': [2, 3, 0, 3, 1, 1], 'row': [1, 3, 1, 3, 0, 2]}
-        ships_number_by_size = {1: 3, 2: 2, 3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -309,6 +309,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [4, 1, 1, 1, 2, 1], 'row': [2, 2, 3, 0, 3, 0]}
+        ships_number_by_size = {1: 3, 2: 2, 3: 1}
         expected_solution = Grid([
             [1, 0, 0, 0, 7, 0],
             [5, 0, 7, 0, 0, 0],
@@ -317,9 +319,7 @@ class BimaruGameTests(TestCase):
             [3, 4, 0, 7, 0, 0],
             [0, 0, 0, 0, 0, 0]
         ])
-        ships = {'column': [4, 1, 1, 1, 2, 1], 'row': [2, 2, 3, 0, 3, 0]}
-        ships_number_by_size = {1: 3, 2: 2, 3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -334,6 +334,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [3, 1, 3, 1, 1, 1], 'row': [3, 2, 0, 3, 0, 2]}
+        ships_number_by_size = {1: 3, 2: 2, 3: 1}
         expected_solution = Grid([
             [1, 0, 1, 0, 0, 7],
             [2, 0, 2, 0, 0, 0],
@@ -342,9 +344,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [7, 0, 0, 0, 7, 0],
         ])
-        ships = {'column': [3, 1, 3, 1, 1, 1], 'row': [3, 2, 0, 3, 0, 2]}
-        ships_number_by_size = {1: 3, 2: 2, 3: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -361,6 +361,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [3, 0, 4, 3, 2, 4, 1, 2], 'row': [2, 4, 0, 4, 0, 5, 2, 2]}
+        ships_number_by_size = {1: 3, 2: 3, 3: 2, 4: 1}
         expected_solution = Grid([
             [0, 0, 0, 1, 0, 1, 0, 0],
             [7, 0, 0, 2, 0, 2, 0, 7],
@@ -371,9 +373,7 @@ class BimaruGameTests(TestCase):
             [2, 0, 5, 0, 0, 0, 0, 0],
             [0, 0, 2, 0, 0, 0, 0, 7],
         ])
-        ships = {'column': [3, 0, 4, 3, 2, 4, 1, 2], 'row': [2, 4, 0, 4, 0, 5, 2, 2]}
-        ships_number_by_size = {1: 3, 2: 3, 3: 2, 4: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -392,6 +392,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, +3, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [2, 1, 2, 2, 2, 2, 1, 4, 2, 2], 'row': [2, 2, 3, 2, 0, 4, 4, 0, 3, 0]}
+        ships_number_by_size = {1: 4, 2: 3, 3: 2, 4: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 0, 3, 4, 0, 0],
             [7, 0, 7, 0, 0, 0, 0, 0, 0, 0],
@@ -404,9 +406,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 3, 4, 0, 0, 7, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [2, 1, 2, 2, 2, 2, 1, 4, 2, 2], 'row': [2, 2, 3, 2, 0, 4, 4, 0, 3, 0]}
-        ships_number_by_size = {1: 4, 2: 3, 3: 2, 4: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -425,6 +425,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, +3, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
         ])
+        ships = {'column': [2, 1, 2, 2, 2, 2, 1, 4, 2, 2], 'row': [2, 2, 3, 2, 0, 4, 4, 0, 3, 0]}
+        ships_number_by_size = {1: 4, 2: 3, 3: 2, 4: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 0, 3, 4, 0, 0],
             [7, 0, 7, 0, 0, 0, 0, 0, 0, 0],
@@ -437,9 +439,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 3, 4, 0, 0, 7, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [2, 1, 2, 2, 2, 2, 1, 4, 2, 2], 'row': [2, 2, 3, 2, 0, 4, 4, 0, 3, 0]}
-        ships_number_by_size = {1: 4, 2: 3, 3: 2, 4: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -468,6 +468,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
         ])
+        ships = {'column': [7, 2, 5, 3, 8, 3, 3, 5, 4, 3, 8, 5, 4, 7, 2, 4, 2, 5, 2, 2], 'row': [8, 2, 7, 4, 2, 1, 11, 1, 2, 8, 3, 3, 9, 0, 3, 3, 6, 8, 3, 0]}
+        ships_number_by_size = {1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 0, 0, 3, 6, 6, 6, 6, 6, 4, 0, 0, 0, 0, 0, 7],
             [0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
@@ -490,9 +492,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
-        ships = {'column': [7, 2, 5, 3, 8, 3, 3, 5, 4, 3, 8, 5, 4, 7, 2, 4, 2, 5, 2, 2], 'row': [8, 2, 7, 4, 2, 1, 11, 1, 2, 8, 3, 3, 9, 0, 3, 3, 6, 8, 3, 0]}
-        ships_number_by_size = {1: 7, 2: 6, 3: 5, 4: 4, 5: 3, 6: 2, 7: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -526,13 +526,15 @@ class BimaruGameTests(TestCase):
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
         ])
+        ships = {'column': [3, 2, 2, 4, 6, 6, 7, 5, 2, 5, 4, 9, 7, 3, 11, 2, 12, 1, 2, 13, 3, 4, 3, 3, 1], 'row': [6, 0, 10, 2, 7, 8, 2, 2, 14, 3, 3, 3, 9, 2, 3, 10, 2, 7, 7, 3, 2, 5, 4, 4, 2]}
+        ships_number_by_size = {1: 8, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 0, 3, 4, 0, 3, 6, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 3, 6, 6, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6, 6, 6, 4, 0, 0, 0, 0],
+            [0, 0, 0, 3, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 3, 6, 6, 6, 6, 6, 4, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [5, 0, 0, 0, 3, 4, 0, 0, 7, 0, 0, 5, 0, 0, 1, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0],
-            [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 0, 7, 0, 0, 0, 0, 3, 6, 6, 4],
+            [5, 0, 0, 0, 3, 6, 4, 0, 7, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0],
+            [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 1, 0, 7, 0, 0, 0, 0, 3, 6, 6, 4],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 1, 0, 3, 6, 6, 6, 4, 0, 0, 0, 5, 0, 0, 2, 0, 1, 0, 3, 6, 6, 6, 4, 0, 0],
@@ -546,16 +548,14 @@ class BimaruGameTests(TestCase):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 5, 0, 0, 3, 4, 0, 0, 0, 3, 6, 4, 0, 0],
             [0, 0, 3, 6, 6, 6, 6, 4, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 2, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 2, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 5, 0, 7, 0, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 0, 0, 2, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 5, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0],
-        ]),
-        ships = {'column': [3, 2, 2, 4, 6, 6, 7, 5, 2, 5, 4, 9, 7, 3, 11, 2, 12, 1, 2, 13, 3, 4, 3, 3, 1], 'row': [6, 0, 10, 2, 7, 8, 2, 2, 14, 3, 3, 3, 9, 2, 3, 10, 2, 7, 7, 3, 2, 5, 4, 4, 2]}
-        ships_number_by_size = {1: 8, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+            [0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ])
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -594,6 +594,8 @@ class BimaruGameTests(TestCase):
             [-1, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
         ])
+        ships = {'column': [3, 6, 8, 4, 8, 3, 3, 8, 2, 5, 16, 2, 2, 12, 5, 6, 4, 3, 6, 3, 12, 5, 8, 11, 5, 4, 3, 5, 1, 2], 'row': [8, 4, 7, 4, 3, 12, 3, 6, 3, 11, 3, 6, 1, 8, 1, 17, 1, 8, 3, 7, 9, 7, 4, 5, 3, 7, 6, 3, 4, 1]}
+        ships_number_by_size = {1: 9, 2: 8, 3: 7, 4: 6, 5: 5, 6: 4, 7: 3, 8: 2, 9: 1}
         expected_solution = Grid([
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 6, 6, 6, 6, 6, 4, 0, 0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -626,9 +628,7 @@ class BimaruGameTests(TestCase):
             [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        ships = {'column': [3, 6, 8, 4, 8, 3, 3, 8, 2, 5, 16, 2, 2, 12, 5, 6, 4, 3, 6, 3, 12, 5, 8, 11, 5, 4, 3, 5, 1, 2], 'row': [8, 4, 7, 4, 3, 12, 3, 6, 3, 11, 3, 6, 1, 8, 1, 17, 1, 8, 3, 7, 9, 7, 4, 5, 3, 7, 6, 3, 4, 1]}
-        ships_number_by_size = {1: 9, 2: 8, 3: 7, 4: 6, 5: 5, 6: 4, 7: 3, 8: 2, 9: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -654,7 +654,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [1, 0, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -676,7 +676,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -698,7 +698,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -720,7 +720,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -742,7 +742,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -764,7 +764,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -786,7 +786,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
@@ -808,7 +808,7 @@ class BimaruGameTestsParameterized(TestCase):
         ])
         ships = {'column': [0, 1, 0, 0, 0, 0], 'row': [1, 0, 0, 0, 0, 0]}
         ships_number_by_size = {1: 1}
-        game = BimaruGame((grid, ships, ships_number_by_size))
+        game = BimaruGame(grid, ships, ships_number_by_size)
         solution = game.get_solution()
         self.assertEqual(expected, solution)
 
