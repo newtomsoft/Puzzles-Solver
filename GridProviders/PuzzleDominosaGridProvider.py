@@ -5,18 +5,19 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.Grid import Grid
 
 
-class PuzzleDominosaGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleDominosaGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         page.goto(url)
+        self.new_game(page)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
         number_spans = [span for span in cell_divs if span.find('div').find('span')]
@@ -29,5 +30,4 @@ class PuzzleDominosaGridProvider(GridProvider, PlaywrightGridProvider):
         matrix = []
         for i in range(0, cells_count, columns_count):
             matrix.append(numbers[i:i + columns_count])
-        browser.close()
         return Grid(matrix)

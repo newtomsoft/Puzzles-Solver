@@ -61,8 +61,8 @@ class Grid[T]:
             return self._matrix[r_or_position.r][r_or_position.c]
         return self._matrix[r_or_position][c]
 
-    def set_value(self, r, c, value):
-        self._matrix[r][c] = value
+    def set_value(self, position: Position, value):
+        self._matrix[position.r][position.c] = value
 
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
         matrix = self._matrix.copy()

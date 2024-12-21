@@ -4,6 +4,7 @@ from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperM
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.MinesweeperMosaic.MinesweeperMosaicGame import MinesweeperMosaicGame
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class MinesweeperMosaicMainConsole:
@@ -39,11 +40,11 @@ class MinesweeperMosaicMainConsole:
             for r in range(solution_grid.rows_number):
                 for c in range(solution_grid.columns_number):
                     if solution_grid.value(r, c) is False:
-                        solution_grid.set_value(r, c, 16)
-                    if solution_grid.value(r, c) is True:
-                        solution_grid.set_value(r, c, 6)
+                        solution_grid.set_value(Position(r, c), 16)
+                    if solution_grid.value(Position(r, c)) is True:
+                        solution_grid.set_value(Position(r, c), 6)
             police_color_grid = Grid([[11 for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
-            clean_grid = Grid([[grid.value(r, c) if grid.value(r, c) != -1 else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
+            clean_grid = Grid([[grid.value(Position(r, c)) if grid.value(Position(r, c)) != -1 else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
             print(clean_grid.to_console_string(police_color_grid, solution_grid))
             MinesweeperMosaicMainConsole.generate_html(grid, solution_grid)
         else:

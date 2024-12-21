@@ -1,6 +1,8 @@
 ﻿from z3 import Solver, Implies, And, Or, sat, Int
 
+from Utils.Direction import Direction
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class DominosaGame:
@@ -30,19 +32,20 @@ class DominosaGame:
         self._solver = Solver()
         self._add_constraints()
         if self._solver.check() != sat:
-            return {}
+            return Grid.empty()
         model = self._solver.model()
         dominoes_positions = {
-            (value0, value1): {(int(model.eval(r).as_long()), int(model.eval(c).as_long())) for r, c in positions}
+            (value0, value1): [Position(int(model.eval(r).as_long()), int(model.eval(c).as_long())) for r, c in positions]
             for (value0, value1), positions in self._dominoes_positions_z3.items()
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
-        for (value0, value1), positions in dominoes_positions.items():
-            for r, c in positions:
-                solution_grid.set_value(r, c, value0)
-            r0, c0 = next(iter(positions))
-            solution_grid.set_value(r0, c0, value1)
-        return dominoes_positions
+        for _, positions in dominoes_positions.items():
+            direction01 = Direction.between(positions[0], positions[1])
+            direction10 = Direction.between(positions[1], positions[0])
+            solution_grid.set_value(positions[0], direction01)
+            solution_grid.set_value(positions[1], direction10)
+
+        return solution_grid
 
     def _add_constraints(self):
         self._range_positions_dominoes_constraints()

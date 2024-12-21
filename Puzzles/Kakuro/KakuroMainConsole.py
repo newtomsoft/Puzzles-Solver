@@ -6,6 +6,7 @@ from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Kakuro.KakuroGame import KakuroGame
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class KakuroMainConsole:
@@ -48,7 +49,7 @@ class KakuroMainConsole:
             for r in range(grid.rows_number):
                 for c in range(grid.columns_number):
                     if grid.value(r, c) == 0:
-                        grid.set_value(r, c, solution_grid.value(r, c))
+                        grid.set_value(Position(r, c), solution_grid.value(r, c))
             KakuroMainConsole.generate_html(grid)
         else:
             print(f"No solution found")

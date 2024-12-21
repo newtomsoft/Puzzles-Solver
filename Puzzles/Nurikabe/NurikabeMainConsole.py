@@ -2,6 +2,7 @@
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.Nurikabe.NurikabeGame import NurikabeGame
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class NurikabeMainConsole:
@@ -36,8 +37,8 @@ class NurikabeMainConsole:
             print(f"Solution found:")
             for r in range(solution_grid.rows_number):
                 for c in range(solution_grid.columns_number):
-                    if solution_grid.value(r, c) is False:
-                        solution_grid.set_value(r, c, '■')
+                    if solution_grid.value(Position(r, c)) is False:
+                        solution_grid.set_value(Position(r, c), '■')
             print(solution_grid.to_console_string())
         else:
             print(f"No solution found")

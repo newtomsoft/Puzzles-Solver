@@ -5,6 +5,7 @@ from typing import Tuple
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
+from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
@@ -83,7 +84,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlusGridPlayer),
             r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider, None),
-            r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, None),
+            r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider, None),
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider, None),
             r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, None),

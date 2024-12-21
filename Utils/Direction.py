@@ -57,7 +57,27 @@
         return 'x'
 
     def __eq__(self, other):
-        return isinstance(other, Direction) and self.value == other.value
+        if isinstance(other, Direction) and self.value == other.value:
+            return True
+        if isinstance(other, str):
+            return self.__str__() == other
+        if isinstance(other, int) and self.value == other:
+            return True
+        return False
 
     def __repr__(self):
         return self.__str__()
+
+    @staticmethod
+    def between(position1, position2):
+        if position1.r == position2.r and position1.c == position2.c:
+            return Direction(Direction.NONE)
+        if position1.r == position2.r:
+            if position1.c < position2.c:
+                return Direction(Direction.RIGHT)
+            return Direction(Direction.LEFT)
+        if position1.c == position2.c:
+            if position1.r < position2.r:
+                return Direction(Direction.DOWN)
+            return Direction(Direction.UP)
+        return Direction(Direction.NONE)
