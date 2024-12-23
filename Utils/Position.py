@@ -26,6 +26,17 @@ class Position:
     def direction_from(self, other: 'Position') -> Direction:
         return other.direction_to(self)
 
+    def next(self, direction: Direction) -> 'Position':
+        if direction == Direction.DOWN:
+            return self.down
+        if direction == Direction.RIGHT:
+            return self.right
+        if direction == Direction.UP:
+            return self.up
+        if direction == Direction.LEFT:
+            return self.left
+        return self
+
     @property
     def left(self):
         return Position(self.r, self.c - 1)

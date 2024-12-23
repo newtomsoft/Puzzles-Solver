@@ -10,6 +10,7 @@ from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
+from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
@@ -33,6 +34,7 @@ from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from GridProviders.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
 from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
+from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from Puzzles.Akari.AkariGame import AkariGame
 from Puzzles.Aquarium.AquariumGame import AquariumGame
@@ -57,6 +59,7 @@ from Puzzles.Sudoku.SudokuGame import SudokuGame
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
 from Puzzles.Tapa.TapaGame import TapaGame
 from Puzzles.Tents.TentsGame import TentsGame
+from Puzzles.Thermometers.ThermometersGame import ThermometersGame
 from Utils.Grid import Grid
 
 
@@ -103,6 +106,7 @@ class PuzzleMainConsole:
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, None),
+            r"https://.*\.puzzle-thermometers\.com": (ThermometersGame, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
         }
         for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
             if re.match(pattern, console_input):
