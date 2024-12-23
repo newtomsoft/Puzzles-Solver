@@ -24,5 +24,6 @@ class PuzzleDominosaGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 page.mouse.move(box['x'] + unknown_coefficient * box['width'], box['y'] + box['height'] / 2)
                 page.mouse.down()
                 page.mouse.up()
+        sleep(2)
         cls.submit_score(page)
         sleep(60)
