@@ -45,7 +45,7 @@ class PlaywrightGridProvider(ABC):
         extensions_path = self.config['DEFAULT']['extensions_path']
         extensions_paths = extensions_path.split(',')
         extensions_paths = [os.path.join(self.config_dir_path, x) for x in extensions_paths if x]
-        self.extensions_path = ','.join([str(path) for path in extensions_paths])
+        self.extensions_path = ','.join([str(path) if os.path.exists(str(path)) else '' for path in extensions_paths] )
         self.email = self.config['DEFAULT']['email']
         self.password = self.config['DEFAULT']['password']
 
