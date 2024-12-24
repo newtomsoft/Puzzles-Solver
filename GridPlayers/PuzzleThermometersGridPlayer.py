@@ -12,9 +12,14 @@ class PuzzleThermometersGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
     def play(cls, solution, browser: BrowserContext):
         page = browser.pages[0]
         cells = page.locator(".cell:not(.task)")
+        cells_all = cells.all()
+        matrix_cells = sorted(
+            [cell_div for cell_div in cells_all if 'selectable' in cell_div.get_attribute('class')],
+            key=lambda div: (int(div.get_attribute('style').split('top:')[1].split('px')[0]), int(div.get_attribute('style').split('left:')[1].split('px')[0]))
+        )
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
-            box = cells.nth(index).bounding_box()
+            box = matrix_cells[index].bounding_box()
             if value == Direction.DOWN:
                 page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'])
                 page.mouse.down()

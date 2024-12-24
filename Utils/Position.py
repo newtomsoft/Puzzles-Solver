@@ -1,4 +1,6 @@
-﻿from Utils.Direction import Direction
+﻿import math
+
+from Utils.Direction import Direction
 
 
 class Position:
@@ -19,12 +21,17 @@ class Position:
             if self.c < other.c:
                 return Direction(Direction.RIGHT)
             return Direction(Direction.LEFT)
-        if self.r < other.r:
-            return Direction(Direction.DOWN)
-        return Direction(Direction.UP)
+        if self.c == other.c:
+            if self.r < other.r:
+                return Direction(Direction.DOWN)
+            return Direction(Direction.UP)
+        return Direction(Direction.NONE)
 
     def direction_from(self, other: 'Position') -> Direction:
         return other.direction_to(self)
+
+    def distance_to(self, other: 'Position') -> float:
+        return math.sqrt(math.pow(abs(self.r - other.r),2) + math.pow(abs(self.c - other.c),2))
 
     def next(self, direction: Direction) -> 'Position':
         if direction == Direction.DOWN:

@@ -1,6 +1,7 @@
-﻿from unittest import TestCase
+﻿import math
+from unittest import TestCase
 
-from Direction import Direction
+from Utils.Direction import Direction
 from Utils.Position import Position
 
 
@@ -71,3 +72,20 @@ class TestPosition(TestCase):
         self.assertIn(position.right, neighbors)
         self.assertIn(position.up, neighbors)
         self.assertIn(position.down, neighbors)
+
+    def test_distance(self):
+        self.assertEqual(0, Position(1, 1).distance_to(Position(1, 1)))
+        self.assertEqual(1, Position(1, 1).distance_to(Position(1, 2)))
+        self.assertEqual(1, Position(1, 1).distance_to(Position(2, 1)))
+        self.assertEqual(2, Position(1, 1).distance_to(Position(3, 1)))
+        self.assertEqual(2, Position(1, 1).distance_to(Position(1, 3)))
+        self.assertEqual(3, Position(1, 1).distance_to(Position(4, 1)))
+        self.assertEqual(3, Position(1, 1).distance_to(Position(1, 4)))
+        self.assertEqual(4, Position(1, 1).distance_to(Position(5, 1)))
+        self.assertEqual(4, Position(1, 1).distance_to(Position(1, 5)))
+        self.assertEqual(5, Position(1, 1).distance_to(Position(6, 1)))
+        self.assertEqual(5, Position(1, 1).distance_to(Position(1, 6)))
+        self.assertEqual(math.sqrt(2), Position(1, 1).distance_to(Position(2,2)))
+        self.assertEqual(math.sqrt(8), Position(1, 1).distance_to(Position(3,3)))
+        self.assertEqual(math.sqrt(18), Position(1, 1).distance_to(Position(4,4)))
+        self.assertEqual(math.sqrt(13), Position(1, 1).distance_to(Position(3,4)))

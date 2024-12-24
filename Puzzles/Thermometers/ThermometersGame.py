@@ -40,17 +40,20 @@ class ThermometersGame:
         ('s4', 'e2'): Direction.NONE,
         ('c1', 'l1'): Direction.RIGHT,
         ('c1', 'l2'): Direction.DOWN,
+        ('c1', 'c2'): Direction.DOWN,
         ('c1', 'c4'): Direction.RIGHT,
         ('c1', 'e3'): Direction.NONE,
         ('c1', 'e4'): Direction.NONE,
         ('c2', 'l1'): Direction.LEFT,
         ('c2', 'l2'): Direction.DOWN,
+        ('c2', 'c1'): Direction.DOWN,
         ('c2', 'c3'): Direction.LEFT,
         ('c2', 'e4'): Direction.NONE,
         ('c2', 'e1'): Direction.NONE,
         ('c3', 'l1'): Direction.LEFT,
         ('c3', 'l2'): Direction.UP,
         ('c3', 'c2'): Direction.LEFT,
+        ('c3', 'c4'): Direction.UP,
         ('c3', 'e1'): Direction.NONE,
         ('c3', 'e2'): Direction.NONE,
         ('c4', 'l1'): Direction.RIGHT,
@@ -87,13 +90,12 @@ class ThermometersGame:
         self._solver = None
         self._grid_z3 = None
         self._last_solution_grid = None
-        self.thermometers = []
+        self._thermometers_positions = self._compute_thermometers_positions()
 
     def _init_solver(self):
         self._matrix_z3 = [[Bool(f"t_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._grid_z3 = Grid(self._matrix_z3)
         self._solver = Solver()
-        self._compute_thermometers()
         self._add_constraints()
 
     def get_solution(self) -> Grid | None:
@@ -131,21 +133,21 @@ class ThermometersGame:
         self._solver.add(constraints)
 
     def _add_thermometers_constraints(self):
-        for thermometer in self.thermometers:
-            self._add_thermometer_constraint(thermometer)
+        for positions in self._thermometers_positions:
+            self._add_thermometer_constraint(positions)
 
-    def _add_thermometer_constraint(self, thermometer):
-        for i, position in enumerate(thermometer):
-            if i == 0:
-                continue
-            self._solver.add(Implies(self.thermometer(position), And([self.thermometer(p) for p in thermometer[:i]])))
+    def _add_thermometer_constraint(self, positions):
+        for i in range(len(positions)):
+            self._solver.add(Implies(self.thermometer(positions[i]), And([self.thermometer(current_position) for current_position in positions[:i]])))
 
-    def _compute_thermometers(self):
+    def _compute_thermometers_positions(self):
+        thermometer_positions = []
         for position, value in self._grid:
             if value == 's1' or value == 's2' or value == 's3' or value == 's4':
-                self._compute_thermometer(position, value)
+                thermometer_positions.append(self._compute_thermometer_positions(position, value))
+        return thermometer_positions
 
-    def _compute_thermometer(self, first_position: Position, value):
+    def _compute_thermometer_positions(self, first_position: Position, value):
         second_position = first_position.next(self.next_direction[value])
         thermometer_positions = [first_position, second_position]
         while True:
@@ -164,23 +166,23 @@ class ThermometersGame:
             if previous_value == 'c1' and current_value == 'c3':
                 direction = previous_position.direction_to(current_position)
                 thermometer_positions.append(current_position.next(Direction.UP) if direction == Direction.RIGHT else current_position.next(Direction.LEFT))
-                break
+                continue
             if previous_value == 'c2' and current_value == 'c4':
                 direction = previous_position.direction_to(current_position)
                 thermometer_positions.append(current_position.next(Direction.UP) if direction == Direction.LEFT else current_position.next(Direction.RIGHT))
-                break
+                continue
             if previous_value == 'c3' and current_value == 'c1':
                 direction = previous_position.direction_to(current_position)
                 thermometer_positions.append(current_position.next(Direction.DOWN) if direction == Direction.LEFT else current_position.next(Direction.RIGHT))
-                break
+                continue
             if previous_value == 'c4' and current_value == 'c2':
                 direction = previous_position.direction_to(current_position)
                 thermometer_positions.append(current_position.next(Direction.DOWN) if direction == Direction.RIGHT else current_position.next(Direction.LEFT))
-                break
+                continue
             next_position = current_position.next(self.next_direction[(previous_value, current_value)])
             if next_position == current_position:
                 break
             thermometer_positions.append(next_position)
-        self.thermometers.append(thermometer_positions)
+        return thermometer_positions
 
 
