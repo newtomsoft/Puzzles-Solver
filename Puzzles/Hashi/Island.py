@@ -5,16 +5,16 @@ from Utils.Position import Position
 class Island:
     _islands: {Position: 'Island'} = {}
 
-    def __init__(self, position: Position, links_number: int):
+    def __init__(self, position: Position, bridges: int):
         self.position = position
-        self.links_number = links_number
-        if links_number < 1 or links_number > 8:
-            raise ValueError("Links number must be between 1 and 8")
+        self.bridges = bridges
+        if bridges < 1 or bridges > 8:
+            raise ValueError("Bridges must be between 1 and 8")
         Island._islands[position] = self
-        self.direction_islands_links_number: {Direction: (Position, int)} = {}
-        self.compute_possible_links()
+        self.direction_position_bridges: {Direction: (Position, int)} = {}
+        self.compute_possible_bridges()
 
-    def compute_possible_links(self):
+    def compute_possible_bridges(self):
         min_distances = {}
         for other_island in Island._islands.values():
             direction = self.position.direction_to(other_island.position)
@@ -34,14 +34,24 @@ class Island:
                 min_distances[Direction.DOWN] = (distance, other_island.position)
                 continue
         if min_distances.get(Direction.RIGHT) is not None:
-            self.direction_islands_links_number[Direction.RIGHT] = min_distances[Direction.RIGHT][1], 0
-            Island._islands[min_distances[Direction.RIGHT][1]].direction_islands_links_number[Direction.LEFT] = self.position, 0
+            self.direction_position_bridges[Direction.RIGHT] = min_distances[Direction.RIGHT][1], 0
+            Island._islands[min_distances[Direction.RIGHT][1]].direction_position_bridges[Direction.LEFT] = self.position, 0
         if min_distances.get(Direction.LEFT) is not None:
-            self.direction_islands_links_number[Direction.LEFT] = min_distances[Direction.LEFT][1], 0
-            Island._islands[min_distances[Direction.LEFT][1]].direction_islands_links_number[Direction.RIGHT] = self.position, 0
+            self.direction_position_bridges[Direction.LEFT] = min_distances[Direction.LEFT][1], 0
+            Island._islands[min_distances[Direction.LEFT][1]].direction_position_bridges[Direction.RIGHT] = self.position, 0
         if min_distances.get(Direction.UP) is not None:
-            self.direction_islands_links_number[Direction.UP] = min_distances[Direction.UP][1], 0
-            Island._islands[min_distances[Direction.UP][1]].direction_islands_links_number[Direction.DOWN] = self.position, 0
+            self.direction_position_bridges[Direction.UP] = min_distances[Direction.UP][1], 0
+            Island._islands[min_distances[Direction.UP][1]].direction_position_bridges[Direction.DOWN] = self.position, 0
         if min_distances.get(Direction.DOWN) is not None:
-            self.direction_islands_links_number[Direction.DOWN] = min_distances[Direction.DOWN][1], 0
-            Island._islands[min_distances[Direction.DOWN][1]].direction_islands_links_number[Direction.UP] = self.position, 0
+            self.direction_position_bridges[Direction.DOWN] = min_distances[Direction.DOWN][1], 0
+            Island._islands[min_distances[Direction.DOWN][1]].direction_position_bridges[Direction.UP] = self.position, 0
+
+    def set_bridge(self, position: Position, direction: Direction, number: int):
+        self.direction_position_bridges[direction] = position, number
+        Island._islands[position].direction_position_bridges[direction.opposite] = self.position, number
+
+    def __eq__(self, other):
+        return self.position == other.position and self.bridges == other.bridges and self.direction_position_bridges == other.direction_position_bridges
+
+    def __repr__(self):
+        return f"Island({self.position}, {self.bridges} {self.direction_position_bridges})"

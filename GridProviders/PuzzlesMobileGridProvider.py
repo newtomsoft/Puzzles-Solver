@@ -9,8 +9,8 @@ class PuzzlesMobileGridProvider:
         return puzzle_info_text
 
     @staticmethod
-    def new_game(page: Page):
+    def new_game(page: Page, selector_to_waite='div.cell'):
         new_game_button = page.locator("#btnNew")
         if new_game_button.count() > 0:
             new_game_button.click()
-            page.wait_for_selector('div.cell')
+            page.wait_for_selector(selector_to_waite)

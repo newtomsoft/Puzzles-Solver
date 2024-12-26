@@ -6,6 +6,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
+from GridPlayers.PuzzleHashiGridPlayer import PuzzleHachiGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
@@ -19,6 +20,7 @@ from GridProviders.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from GridProviders.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
 from GridProviders.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
+from GridProviders.PuzzleHashiGridProvider import PuzzleHashiGridProvider
 from GridProviders.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from GridProviders.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
@@ -43,6 +45,7 @@ from Puzzles.Binairo.BinairoGame import BinairoGame
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Puzzles.Dominosa.DominosaGame import DominosaGame
 from Puzzles.Futoshiki.FutoshikiGame import FutoshikiGame
+from Puzzles.Hashi.HashiGame import HashiGame
 from Puzzles.Hitori.HitoriGame import HitoriGame
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
 from Puzzles.Kakuro.KakuroGame import KakuroGame
@@ -90,6 +93,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider, None),
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider, None),
+            r"https://.*\.puzzle-bridges\.com": (HashiGame, PuzzleHashiGridProvider, PuzzleHachiGridPlayer),
             r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, None),
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider, None),
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
@@ -126,13 +130,13 @@ class PuzzleMainConsole:
             game = puzzle_game(data_game)
 
         start_time = time.time()
-        solution_grid = game.get_solution()
+        solution = game.get_solution()
         end_time = time.time()
         execution_time = end_time - start_time
-        if solution_grid != Grid.empty():
+        if solution != Grid.empty():
             print(f"Solution found in {execution_time:.2f} seconds")
-            print(solution_grid.to_console_string())
-            return solution_grid
+            # print(solution.to_console_string())
+            return solution
         else:
             print(f"No solution found")
 
