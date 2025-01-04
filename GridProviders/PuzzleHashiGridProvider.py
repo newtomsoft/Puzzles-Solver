@@ -5,6 +5,7 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Puzzles.Hashi.Island import Island
+from Utils.Grid import Grid
 from Utils.Position import Position
 
 
@@ -32,4 +33,8 @@ class PuzzleHashiGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobil
             bridges = int(cell.text)
             island = Island(position, bridges)
             islands[position] = island
-        return islands
+
+        max_row = max([position.r for position in islands.keys()])
+        max_col = max([position.c for position in islands.keys()])
+        matrix = [[islands[position].bridges if (position := Position(r, c)) in islands.keys() else 0 for c in range(max_col + 1)] for r in range(max_row + 1)]
+        return Grid(matrix)

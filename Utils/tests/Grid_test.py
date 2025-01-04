@@ -3,8 +3,8 @@ from unittest import TestCase
 
 from bitarray import bitarray
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 from Utils.colors import console_police_colors, console_back_ground_colors, remove_ansi_escape_sequences
 
 
@@ -57,33 +57,33 @@ class TestGrid(TestCase):
         self.assertEqual('6', self.grid_2x3.value(1, 2))
 
     def test_depth_first_search_1(self):
-        visited = self.grid_dfs._depth_first_search(0, 0, '1', 'orthogonal')
-        expected_visited = {(0, 0), (0, 1)}
+        visited = self.grid_dfs._depth_first_search(Position(0, 0), '1', 'orthogonal')
+        expected_visited = {Position(0, 0), Position(0, 1)}
         self.assertEqual(expected_visited, visited)
 
     def test_depth_first_search_2(self):
-        visited = self.grid_dfs._depth_first_search(0, 2, '2', 'orthogonal')
-        expected_visited = {(0, 2), (1, 2)}
+        visited = self.grid_dfs._depth_first_search(Position(0, 2), '2', 'orthogonal')
+        expected_visited = {Position(0, 2), Position(1, 2)}
         self.assertEqual(expected_visited, visited)
 
     def test_depth_first_search_5(self):
-        visited = self.grid_dfs._depth_first_search(2, 2, '5', 'orthogonal')
-        expected_visited = {(2, 2), (2, 3)}
+        visited = self.grid_dfs._depth_first_search(Position(2, 2), '5', 'orthogonal')
+        expected_visited = {Position(2, 2), Position(2, 3)}
         self.assertEqual(expected_visited, visited)
 
     def test_depth_first_search_8(self):
-        visited = self.grid_dfs._depth_first_search(1, 3, '8', 'orthogonal')
-        expected_visited = {(1, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 4), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4)}
+        visited = self.grid_dfs._depth_first_search(Position(1, 3), '8', 'orthogonal')
+        expected_visited = {Position(1, 3), Position(0, 4), Position(1, 0), Position(1, 1), Position(1, 4), Position(2, 0), Position(2, 4), Position(3, 0), Position(3, 1), Position(3, 2), Position(3, 3), Position(3, 4)}
         self.assertEqual(expected_visited, visited)
 
     def test_depth_first_search_3_by_0_3(self):
-        visited = self.grid_dfs._depth_first_search(0, 3, '3', 'orthogonal')
-        expected_visited = {(0, 3)}
+        visited = self.grid_dfs._depth_first_search(Position(0, 3), '3', 'orthogonal')
+        expected_visited = {Position(0, 3)}
         self.assertEqual(expected_visited, visited)
 
     def test_depth_first_search_3_by_2_0(self):
-        visited = self.grid_dfs._depth_first_search(2, 1, '3', 'orthogonal')
-        expected_visited = {(2, 1)}
+        visited = self.grid_dfs._depth_first_search(Position(2, 1), '3', 'orthogonal')
+        expected_visited = {Position(2, 1)}
         self.assertEqual(expected_visited, visited)
 
     def test_all_cells_connected_1(self):
@@ -132,35 +132,35 @@ class TestGrid(TestCase):
         self.assertTrue(self.grid_dfs_diagonal.are_all_cells_connected('9', 'diagonal'))
 
     def test_min_2_connected_cells_touch_border_0_0(self):
-        self.assertTrue(self.grid_dfs.are_min_2_connected_cells_touch_border(0, 0, 'orthogonal')[0])
+        self.assertTrue(self.grid_dfs.are_min_2_connected_cells_touch_border(Position(0, 0), 'orthogonal')[0])
 
     def test_min_2_connected_cells_touch_border_0_2(self):
-        self.assertFalse(self.grid_dfs.are_min_2_connected_cells_touch_border(0, 2, 'orthogonal')[0])
+        self.assertFalse(self.grid_dfs.are_min_2_connected_cells_touch_border(Position(0, 2), 'orthogonal')[0])
 
     def test_min_2_connected_cells_touch_border_0_3(self):
-        self.assertFalse(self.grid_dfs.are_min_2_connected_cells_touch_border(0, 3, 'orthogonal')[0])
+        self.assertFalse(self.grid_dfs.are_min_2_connected_cells_touch_border(Position(0, 3), 'orthogonal')[0])
 
     def test_min_2_connected_cells_touch_border_1_1(self):
-        self.assertTrue(self.grid_dfs.are_min_2_connected_cells_touch_border(1, 1, 'orthogonal')[0])
+        self.assertTrue(self.grid_dfs.are_min_2_connected_cells_touch_border(Position(1, 1), 'orthogonal')[0])
 
     def test_min_2_diagonally_connected_cells_touch_border_0_0(self):
-        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(0, 0, 'diagonal')[0])
+        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(Position(0, 0), 'diagonal')[0])
 
     def test_min_2_diagonally_connected_cells_touch_border_0_1(self):
-        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(0, 1, 'diagonal')[0])
+        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(Position(0, 1), 'diagonal')[0])
 
     def test_min_2_diagonally_connected_cells_touch_border_1_3(self):
-        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(1, 3, 'diagonal')[0])
+        self.assertTrue(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(Position(1, 3), 'diagonal')[0])
 
     def test_min_2_diagonally_connected_cells_touch_border_2_3(self):
-        self.assertFalse(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(2, 3, 'diagonal')[0])
+        self.assertFalse(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(Position(2, 3), 'diagonal')[0])
 
     def test_min_2_diagonally_connected_cells_touch_border_3_4(self):
-        self.assertFalse(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(3, 4, 'diagonal')[0])
+        self.assertFalse(self.grid_dfs_diagonal.are_min_2_connected_cells_touch_border(Position(3, 4), 'diagonal')[0])
 
     def test_find_min_2_connected_cells_touch_border_1(self):
         cells = self.grid_dfs.find_all_min_2_connected_cells_touch_border('1', 'orthogonal')
-        expected_cells = {(0, 0), (0, 1)}
+        expected_cells = {Position(0, 0), Position(0, 1)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
@@ -174,13 +174,13 @@ class TestGrid(TestCase):
 
     def test_find_min_2_connected_cells_touch_border_8(self):
         cells = self.grid_dfs.find_all_min_2_connected_cells_touch_border('8', 'orthogonal')
-        expected_cells = {(0, 4), (1, 0), (1, 1), (1, 3), (1, 4), (2, 0), (2, 4), (3, 0), (3, 1), (3, 2), (3, 3), (3, 4)}
+        expected_cells = {Position(0, 4), Position(1, 0), Position(1, 1), Position(1, 3), Position(1, 4), Position(2, 0), Position(2, 4), Position(3, 0), Position(3, 1), Position(3, 2), Position(3, 3), Position(3, 4)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
     def test_find_2_diagonally_connected_cells_touch_border_2(self):
         cells = self.grid_dfs_diagonal.find_all_min_2_connected_cells_touch_border('2', 'diagonal')
-        expected_cells = {(0, 3), (1, 4)}
+        expected_cells = {Position(0, 3), Position(1, 4)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
@@ -202,26 +202,26 @@ class TestGrid(TestCase):
 
     def test_find_2_diagonally_connected_cells_touch_border_8(self):
         cells = self.grid_dfs_diagonal.find_all_min_2_connected_cells_touch_border('8', 'diagonal')
-        expected_cells = {(0, 1), (1, 0)}
+        expected_cells = {Position(0, 1), Position(1, 0)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
     def test_find_2_diagonally_connected_cells_touch_border_9(self):
         cells = self.grid_dfs_diagonal.find_all_min_2_connected_cells_touch_border('9', 'diagonal')
-        expected_cells = {(1, 3), (2, 4), (3, 3)}
+        expected_cells = {Position(1, 3), Position(2, 4), Position(3, 3)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
     def test_find_2_diagonally_connected_cells_touch_border_1(self):
         cells = self.grid_dfs_diagonal.find_all_min_2_connected_cells_touch_border('1', 'diagonal')
-        expected_cells = {(0, 0), (0, 2), (1, 1), (2, 0), (2, 2)}
+        expected_cells = {Position(0, 0), Position(0, 2), Position(1, 1), Position(2, 0), Position(2, 2)}
         self.assertEqual(1, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
 
     def test_2_count_diagonally_connected_cells_touch_border_1(self):
         cells = self.grid_dfs_diagonal_border.find_all_min_2_connected_cells_touch_border('1', 'diagonal')
-        expected_cells = {(0, 0), (1, 1), (2, 0)}
-        expected_cells_2 = {(0, 4), (1, 3), (2, 4)}
+        expected_cells = {Position(0, 0), Position(1, 1), Position(2, 0)}
+        expected_cells_2 = {Position(0, 4), Position(1, 3), Position(2, 4)}
         self.assertEqual(2, len(cells))
         self.assertTrue(frozenset(expected_cells) in cells)
         self.assertTrue(frozenset(expected_cells_2) in cells)

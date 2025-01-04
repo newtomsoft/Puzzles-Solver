@@ -1,8 +1,8 @@
 ﻿from z3 import Solver, Not, And, sat, Sum, Implies, Or, Int, If
 
 from Utils.Direction import Direction
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class StitchesGame:
@@ -117,7 +117,7 @@ class StitchesGame:
             self._solver.add(constraint)
             return
 
-        or_constraints = [self._grid_connexion_z3[position] == Direction.NONE]
+        or_constraints = [self._grid_connexion_z3[position] == Direction.none().value]
         for other_region_dot_position in other_region_dot_positions:
             direction = position.direction_to(other_region_dot_position)
             or_constraints.append(self._grid_connexion_z3[position] == direction.value)

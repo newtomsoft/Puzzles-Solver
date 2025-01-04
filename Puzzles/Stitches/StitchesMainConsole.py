@@ -35,7 +35,7 @@ class StitchesMainConsole:
         solution_grid = game.get_solution()
         if solution_grid:
             print(f"Solution found")
-            printable_grid = Grid([[str(value) if (value := Direction(solution_grid.value(r, c))) != Direction(Direction.NONE) else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
+            printable_grid = Grid([[str(value) if (value := Direction(solution_grid.value(r, c))) != Direction.none() else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
             police_color_grid = Grid([[16 for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
             printable_grid_string = printable_grid.to_console_string(police_color_grid, grid)
             print(printable_grid_string)

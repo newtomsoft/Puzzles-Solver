@@ -94,9 +94,10 @@ class Grid[T]:
 
     def are_all_cells_connected(self, value=True, mode='orthogonal') -> bool:
         r, c = self._get_cell_of_value(value)
+        position = Position(r, c)
         if r is None:
             return False
-        visited = self._depth_first_search(r, c, value, mode)
+        visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
     def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Tuple[int, int]]]:
@@ -104,18 +105,19 @@ class Grid[T]:
         shapes = set()
         while True:
             r, c = self._get_cell_of_value(value, excluded)
+            position = Position(r, c)
             if r is None:
                 return shapes
             if any((r, c) in shape for shape in shapes):
                 excluded.append((r, c))
                 continue
-            visited = self._depth_first_search(r, c, value, mode)
+            visited = self._depth_first_search(position, value, mode)
             shapes.add(frozenset(visited))
             excluded.append((r, c))
 
-    def are_min_2_connected_cells_touch_border(self, r, c, mode='orthogonal') -> Tuple[bool, set[Tuple[int, int]]]:
-        value = self._matrix[r][c]
-        visited = self._depth_first_search(r, c, value, mode)
+    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Tuple[int, int]]]:
+        value = self.value(position)
+        visited = self._depth_first_search(position, value, mode)
         if len(visited) <= 1:
             return False, set()
         border_cells = set()
@@ -129,28 +131,30 @@ class Grid[T]:
         cells_sets: set[FrozenSet[Tuple[int, int]]] = set()
         while True:
             r, c = self._get_cell_of_value(value, excluded)
+            position = Position(r, c)
             if r is None:
                 return cells_sets
             if any((r, c) in cells_set for cells_set in cells_sets):
                 excluded.append((r, c))
                 continue
-            are_touch_border, cells = self.are_min_2_connected_cells_touch_border(r, c, mode)
+            are_touch_border, cells = self.are_min_2_connected_cells_touch_border(position, mode)
             if are_touch_border:
                 cells_sets.add(frozenset(cells))
             excluded.append((r, c))
 
-    def _depth_first_search(self, r: int, c: int, value, mode='orthogonal', visited=None) -> set:
+    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> set:
         if visited is None:
             visited = set()
-        if (self._matrix[r][c] != value) or ((r, c) in visited):
+        if (self.value(position) != value) or (position in visited):
             return visited
-        visited.add((r, c))
+        visited.add(position)
 
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)] if mode != 'diagonal' else [(1, 1), (1, -1), (-1, 1), (-1, -1)]
         for dr, dc in directions:
-            if 0 <= r + dr < self.rows_number and 0 <= c + dc < self.columns_number and (r + dr, c + dc) not in visited:
-                if self._matrix[r + dr][c + dc] == value:
-                    new_visited = self._depth_first_search(r + dr, c + dc, value, mode, visited)
+            if 0 <= position.r + dr < self.rows_number and 0 <= position.c + dc < self.columns_number and (position.r + dr, position.c + dc) not in visited:
+                current_position = position + Position(dr, dc)
+                if self.value(current_position) == value:
+                    new_visited = self._depth_first_search(current_position, value, mode, visited)
                     if new_visited != visited:
                         return new_visited
 

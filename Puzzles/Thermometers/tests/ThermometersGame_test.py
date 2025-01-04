@@ -1,9 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Puzzles.Stitches.StitchesGame import StitchesGame
 from Puzzles.Thermometers.ThermometersGame import ThermometersGame
-from Utils.Direction import Direction
 from Utils.Grid import Grid
 
 

@@ -5,7 +5,7 @@ from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
 from Utils.Grid import Grid
 
 
-class BinairoGameTests(TestCase):
+class BinairoPlusGameTests(TestCase):
     def test_solution_6x6(self):
         grid = Grid([
             [-1, -1, -1, -1, -1, -1],

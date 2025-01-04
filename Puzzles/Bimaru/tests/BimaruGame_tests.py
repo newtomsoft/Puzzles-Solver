@@ -498,6 +498,8 @@ class BimaruGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+
+class BimaruGameLongTests(TestCase):
     def test_solution_25x25_1(self):
         grid = Grid([
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],

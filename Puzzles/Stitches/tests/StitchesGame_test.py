@@ -110,11 +110,11 @@ class StitchesGameTests(TestCase):
             [5, 0, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [Direction.DOWN, 0, 0, 0, 0],
-            [Direction.UP, 0, 0, 0, 0],
-            [0, 0, 0, 0, Direction.DOWN],
-            [0, 0, 0, 0, Direction.UP],
-            [Direction.RIGHT, Direction.LEFT, 0, 0, 0],
+            [Direction._DOWN, 0, 0, 0, 0],
+            [Direction._UP, 0, 0, 0, 0],
+            [0, 0, 0, 0, Direction._DOWN],
+            [0, 0, 0, 0, Direction._UP],
+            [Direction._RIGHT, Direction._LEFT, 0, 0, 0],
         ])
         dots_by_column_row = {'column': [3, 1, 0, 0, 2], 'row': [1, 1, 1, 1, 2]}
         regions_connections = 1
@@ -133,11 +133,11 @@ class StitchesGameTests(TestCase):
             [3, 3, 0, 0, 2],
         ])
         expected_solution = Grid([
-            [Direction.RIGHT, Direction.LEFT, 0, 0, 0],
-            [0, 0, 0, Direction.DOWN, 0],
-            [0, Direction.DOWN, 0, Direction.UP, 0],
-            [0, Direction.UP, 0, 0, 0],
-            [0, 0, 0, Direction.RIGHT, Direction.LEFT],
+            [Direction._RIGHT, Direction._LEFT, 0, 0, 0],
+            [0, 0, 0, Direction._DOWN, 0],
+            [0, Direction._DOWN, 0, Direction._UP, 0],
+            [0, Direction._UP, 0, 0, 0],
+            [0, 0, 0, Direction._RIGHT, Direction._LEFT],
         ])
         dots_by_column_row = {'column': [1, 3, 0, 3, 1], 'row': [2, 1, 2, 1, 2]}
         regions_connections = 1

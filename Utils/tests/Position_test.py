@@ -29,16 +29,16 @@ class TestPosition(TestCase):
         self.assertEqual(Position(1, 1), Position(2, 3) - Position(1, 2))
 
     def test_direction_to(self):
-        self.assertEqual(Direction(Direction.LEFT), Position(1, 1).direction_to(Position(1, 0)))
-        self.assertEqual(Direction(Direction.RIGHT), Position(1, 1).direction_to(Position(1, 2)))
+        self.assertEqual(Direction.left(), Position(1, 1).direction_to(Position(1, 0)))
+        self.assertEqual(Direction.right(), Position(1, 1).direction_to(Position(1, 2)))
         self.assertEqual(Direction.up(), Position(1, 1).direction_to(Position(0, 1)))
-        self.assertEqual(Direction(Direction.DOWN), Position(1, 1).direction_to(Position(2, 1)))
+        self.assertEqual(Direction.down(), Position(1, 1).direction_to(Position(2, 1)))
 
     def test_direction_from(self):
-        self.assertEqual(Direction(Direction.LEFT), Position(1, 0).direction_from(Position(1, 1)))
-        self.assertEqual(Direction(Direction.RIGHT), Position(1, 2).direction_from(Position(1, 1)))
+        self.assertEqual(Direction.left(), Position(1, 0).direction_from(Position(1, 1)))
+        self.assertEqual(Direction.right(), Position(1, 2).direction_from(Position(1, 1)))
         self.assertEqual(Direction.up(), Position(0, 1).direction_from(Position(1, 1)))
-        self.assertEqual(Direction(Direction.DOWN), Position(2, 1).direction_from(Position(1, 1)))
+        self.assertEqual(Direction.down(), Position(2, 1).direction_from(Position(1, 1)))
 
     def test_position_left_neighbor(self):
         self.assertEqual(Position(1, 0), Position(1, 1).left)

@@ -16,31 +16,31 @@ class Position:
 
     def direction_to(self, other: 'Position') -> Direction:
         if other is None or self == other:
-            return Direction(Direction.NONE)
+            return Direction(Direction.none())
         if self.r == other.r:
             if self.c < other.c:
-                return Direction(Direction.RIGHT)
-            return Direction(Direction.LEFT)
+                return Direction.right()
+            return Direction.left()
         if self.c == other.c:
             if self.r < other.r:
-                return Direction(Direction.DOWN)
+                return Direction.down()
             return Direction.up()
-        return Direction(Direction.NONE)
+        return Direction(Direction.none())
 
     def direction_from(self, other: 'Position') -> Direction:
         return other.direction_to(self)
 
     def distance_to(self, other: 'Position') -> float:
-        return math.sqrt(math.pow(abs(self.r - other.r),2) + math.pow(abs(self.c - other.c),2))
+        return math.sqrt(math.pow(abs(self.r - other.r), 2) + math.pow(abs(self.c - other.c), 2))
 
     def next(self, direction: Direction) -> 'Position':
-        if direction == Direction.DOWN:
+        if direction == Direction.down():
             return self.down
-        if direction == Direction.RIGHT:
+        if direction == Direction.right():
             return self.right
-        if direction == Direction.UP:
+        if direction == Direction.up():
             return self.up
-        if direction == Direction.LEFT:
+        if direction == Direction.left():
             return self.left
         return self
 
@@ -75,6 +75,13 @@ class Position:
     @property
     def down_right(self):
         return Position(self.r + 1, self.c + 1)
+
+    def get_positions_to(self, position: 'Position') -> list['Position']:
+        if self.r == position.r:
+            return [Position(self.r, c) for c in range(min(self.c, position.c) + 1, max(self.c, position.c))]
+        if self.c == position.c:
+            return [Position(r, self.c) for r in range(min(self.r, position.r) + 1, max(self.r, position.r))]
+        return []
 
     def __eq__(self, other):
         return isinstance(other, Position) and self.r == other.r and self.c == other.c

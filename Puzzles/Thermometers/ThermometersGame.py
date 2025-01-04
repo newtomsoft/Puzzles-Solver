@@ -1,4 +1,4 @@
-from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies, Or, And
+from z3 import Bool, Solver, Not, sat, is_true, Sum, Implies, And
 
 from Utils.Direction import Direction
 from Utils.Grid import Grid
@@ -17,63 +17,63 @@ class ThermometersGame:
     s3 = '┤'
     s4 = '┴'
     next_direction = {
-        's1': Direction.RIGHT,
-        's2': Direction.DOWN,
-        's3': Direction.LEFT,
-        's4': Direction.UP,
+        's1': Direction.right(),
+        's2': Direction.down(),
+        's3': Direction.left(),
+        's4': Direction.up(),
 
-        ('s1', 'c2'): Direction.DOWN,
-        ('s1', 'c3'): Direction.UP,
-        ('s1', 'l1'): Direction.RIGHT,
-        ('s1', 'e3'): Direction.NONE,
-        ('s2', 'c3'): Direction.LEFT,
-        ('s2', 'c4'): Direction.RIGHT,
-        ('s2', 'l2'): Direction.DOWN,
-        ('s2', 'e4'): Direction.NONE,
-        ('s3', 'c1'): Direction.DOWN,
-        ('s3', 'c4'): Direction.UP,
-        ('s3', 'l1'): Direction.LEFT,
-        ('s3', 'e1'): Direction.NONE,
-        ('s4', 'c1'): Direction.RIGHT,
-        ('s4', 'c2'): Direction.LEFT,
-        ('s4', 'l2'): Direction.UP,
-        ('s4', 'e2'): Direction.NONE,
-        ('c1', 'l1'): Direction.RIGHT,
-        ('c1', 'l2'): Direction.DOWN,
-        ('c1', 'c2'): Direction.DOWN,
-        ('c1', 'c4'): Direction.RIGHT,
-        ('c1', 'e3'): Direction.NONE,
-        ('c1', 'e4'): Direction.NONE,
-        ('c2', 'l1'): Direction.LEFT,
-        ('c2', 'l2'): Direction.DOWN,
-        ('c2', 'c1'): Direction.DOWN,
-        ('c2', 'c3'): Direction.LEFT,
-        ('c2', 'e4'): Direction.NONE,
-        ('c2', 'e1'): Direction.NONE,
-        ('c3', 'l1'): Direction.LEFT,
-        ('c3', 'l2'): Direction.UP,
-        ('c3', 'c2'): Direction.LEFT,
-        ('c3', 'c4'): Direction.UP,
-        ('c3', 'e1'): Direction.NONE,
-        ('c3', 'e2'): Direction.NONE,
-        ('c4', 'l1'): Direction.RIGHT,
-        ('c4', 'l2'): Direction.UP,
-        ('c4', 'c1'): Direction.RIGHT,
-        ('c4', 'c3'): Direction.UP,
-        ('c4', 'e2'): Direction.NONE,
-        ('c4', 'e3'): Direction.NONE,
-        ('l1', 'c1'): Direction.DOWN,
-        ('l1', 'c2'): Direction.DOWN,
-        ('l1', 'c3'): Direction.UP,
-        ('l1', 'c4'): Direction.UP,
-        ('l1', 'e1'): Direction.NONE,
-        ('l1', 'e3'): Direction.NONE,
-        ('l2', 'c1'): Direction.RIGHT,
-        ('l2', 'c2'): Direction.LEFT,
-        ('l2', 'c3'): Direction.LEFT,
-        ('l2', 'c4'): Direction.RIGHT,
-        ('l2', 'e2'): Direction.NONE,
-        ('l2', 'e4'): Direction.NONE,
+        ('s1', 'c2'): Direction.down(),
+        ('s1', 'c3'): Direction.up(),
+        ('s1', 'l1'): Direction.right(),
+        ('s1', 'e3'): Direction.none(),
+        ('s2', 'c3'): Direction.left(),
+        ('s2', 'c4'): Direction.right(),
+        ('s2', 'l2'): Direction.down(),
+        ('s2', 'e4'): Direction.none(),
+        ('s3', 'c1'): Direction.down(),
+        ('s3', 'c4'): Direction.up(),
+        ('s3', 'l1'): Direction.left(),
+        ('s3', 'e1'): Direction.none(),
+        ('s4', 'c1'): Direction.right(),
+        ('s4', 'c2'): Direction.left(),
+        ('s4', 'l2'): Direction.up(),
+        ('s4', 'e2'): Direction.none(),
+        ('c1', 'l1'): Direction.right(),
+        ('c1', 'l2'): Direction.down(),
+        ('c1', 'c2'): Direction.down(),
+        ('c1', 'c4'): Direction.right(),
+        ('c1', 'e3'): Direction.none(),
+        ('c1', 'e4'): Direction.none(),
+        ('c2', 'l1'): Direction.left(),
+        ('c2', 'l2'): Direction.down(),
+        ('c2', 'c1'): Direction.down(),
+        ('c2', 'c3'): Direction.left(),
+        ('c2', 'e4'): Direction.none(),
+        ('c2', 'e1'): Direction.none(),
+        ('c3', 'l1'): Direction.left(),
+        ('c3', 'l2'): Direction.up(),
+        ('c3', 'c2'): Direction.left(),
+        ('c3', 'c4'): Direction.up(),
+        ('c3', 'e1'): Direction.none(),
+        ('c3', 'e2'): Direction.none(),
+        ('c4', 'l1'): Direction.right(),
+        ('c4', 'l2'): Direction.up(),
+        ('c4', 'c1'): Direction.right(),
+        ('c4', 'c3'): Direction.up(),
+        ('c4', 'e2'): Direction.none(),
+        ('c4', 'e3'): Direction.none(),
+        ('l1', 'c1'): Direction.down(),
+        ('l1', 'c2'): Direction.down(),
+        ('l1', 'c3'): Direction.up(),
+        ('l1', 'c4'): Direction.up(),
+        ('l1', 'e1'): Direction.none(),
+        ('l1', 'e3'): Direction.none(),
+        ('l2', 'c1'): Direction.right(),
+        ('l2', 'c2'): Direction.left(),
+        ('l2', 'c3'): Direction.left(),
+        ('l2', 'c4'): Direction.right(),
+        ('l2', 'e2'): Direction.none(),
+        ('l2', 'e4'): Direction.none(),
     }
 
     def __init__(self, grid: Grid, full_by_column_row):
@@ -165,19 +165,19 @@ class ThermometersGame:
                 continue
             if previous_value == 'c1' and current_value == 'c3':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.UP) if direction == Direction.RIGHT else current_position.next(Direction.LEFT))
+                thermometer_positions.append(current_position.next(Direction.up()) if direction == Direction.right() else current_position.next(Direction.left()))
                 continue
             if previous_value == 'c2' and current_value == 'c4':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.UP) if direction == Direction.LEFT else current_position.next(Direction.RIGHT))
+                thermometer_positions.append(current_position.next(Direction.up) if direction == Direction.left() else current_position.next(Direction.right()))
                 continue
             if previous_value == 'c3' and current_value == 'c1':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.DOWN) if direction == Direction.LEFT else current_position.next(Direction.RIGHT))
+                thermometer_positions.append(current_position.next(Direction.down()) if direction == Direction.left() else current_position.next(Direction.right()))
                 continue
             if previous_value == 'c4' and current_value == 'c2':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.DOWN) if direction == Direction.RIGHT else current_position.next(Direction.LEFT))
+                thermometer_positions.append(current_position.next(Direction.down()) if direction == Direction.right() else current_position.next(Direction.left()))
                 continue
             next_position = current_position.next(self.next_direction[(previous_value, current_value)])
             if next_position == current_position:
