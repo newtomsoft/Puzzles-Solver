@@ -29,30 +29,32 @@
     def orthogonal_directions():
         return [Direction.UP, Direction.LEFT, Direction.DOWN, Direction.RIGHT]
 
+    @staticmethod
+    def up():
+        return Direction(Direction.UP)
+
+    @staticmethod
+    def down():
+        return Direction(Direction.DOWN)
+
+    @staticmethod
+    def right():
+        return Direction(Direction.RIGHT)
+
+    @staticmethod
+    def left():
+        return Direction(Direction.LEFT)
+
     @property
     def opposite(self):
         if self.value == Direction.DOWN:
-            return Direction(Direction.UP)
+            return Direction.up()
         if self.value == Direction.UP:
             return Direction(Direction.DOWN)
         if self.value == Direction.RIGHT:
             return Direction(Direction.LEFT)
         if self.value == Direction.LEFT:
             return Direction(Direction.RIGHT)
-        return Direction(Direction.NONE)
-
-    @staticmethod
-    def between(position1, position2):
-        if position1.r == position2.r and position1.c == position2.c:
-            return Direction(Direction.NONE)
-        if position1.r == position2.r:
-            if position1.c < position2.c:
-                return Direction(Direction.RIGHT)
-            return Direction(Direction.LEFT)
-        if position1.c == position2.c:
-            if position1.r < position2.r:
-                return Direction(Direction.DOWN)
-            return Direction(Direction.UP)
         return Direction(Direction.NONE)
 
     @property

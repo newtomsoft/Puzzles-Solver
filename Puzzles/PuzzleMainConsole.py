@@ -135,7 +135,7 @@ class PuzzleMainConsole:
         execution_time = end_time - start_time
         if solution != Grid.empty():
             print(f"Solution found in {execution_time:.2f} seconds")
-            # print(solution.to_console_string())
+            print(solution.to_console_string())
             return solution
         else:
             print(f"No solution found")

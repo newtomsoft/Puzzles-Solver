@@ -43,7 +43,7 @@ class PuzzleStarBattleGridProvider(GridProvider, PlaywrightGridProvider, Puzzles
             cell_borders = {borders_dict[cls] for cls in cell_classes if cls in borders_dict.keys()}
             open_matrix[row][col] = opens - cell_borders
 
-        regions_grid = RegionsGrid(open_matrix).compute_regions_grid()
+        regions_grid = RegionsGrid(open_matrix)
 
         puzzle_info_text = self.get_puzzle_info_text(soup)
         puzzle_info_text_left = puzzle_info_text.split('★')[0]

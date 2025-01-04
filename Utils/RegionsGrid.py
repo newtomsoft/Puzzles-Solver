@@ -1,14 +1,14 @@
+from typing import List, Set
+
 from Utils.Grid import Grid
 
 
 class RegionsGrid(Grid):
-    def __init__(self, matrix: list[list[set]]):
+    def __init__(self, matrix: List[List[Set]]):
         super().__init__(matrix)
-        self._matrix = matrix
-        self.rows_number = len(matrix)
-        self.columns_number = len(matrix[0])
+        self._matrix = self._compute_regions_grid()
 
-    def compute_regions_grid(self):
+    def _compute_regions_grid(self):
         while True:
             visited_regions = set()
             regions_count = 0
@@ -24,7 +24,7 @@ class RegionsGrid(Grid):
                     visited_regions.update(region)
             if len(visited_regions) == self.rows_number * self.columns_number:
                 break
-        return Grid(matrix)
+        return matrix
 
     def _depth_first_search_regions(self, r, c, visited=None):
         if visited is None:

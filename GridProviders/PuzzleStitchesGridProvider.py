@@ -42,7 +42,7 @@ class PuzzleStitchesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMo
             cell_borders = {borders_dict[cls] for cls in cell_classes if cls in borders_dict.keys()}
             open_matrix[row][col] = opens - cell_borders
 
-        regions_grid = RegionsGrid(open_matrix).compute_regions_grid()
+        regions_grid = RegionsGrid(open_matrix)
 
         task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
         dots = [int(cell_div.text) for cell_div in task_cells]

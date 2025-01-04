@@ -31,13 +31,13 @@ class TestPosition(TestCase):
     def test_direction_to(self):
         self.assertEqual(Direction(Direction.LEFT), Position(1, 1).direction_to(Position(1, 0)))
         self.assertEqual(Direction(Direction.RIGHT), Position(1, 1).direction_to(Position(1, 2)))
-        self.assertEqual(Direction(Direction.UP), Position(1, 1).direction_to(Position(0, 1)))
+        self.assertEqual(Direction.up(), Position(1, 1).direction_to(Position(0, 1)))
         self.assertEqual(Direction(Direction.DOWN), Position(1, 1).direction_to(Position(2, 1)))
 
     def test_direction_from(self):
         self.assertEqual(Direction(Direction.LEFT), Position(1, 0).direction_from(Position(1, 1)))
         self.assertEqual(Direction(Direction.RIGHT), Position(1, 2).direction_from(Position(1, 1)))
-        self.assertEqual(Direction(Direction.UP), Position(0, 1).direction_from(Position(1, 1)))
+        self.assertEqual(Direction.up(), Position(0, 1).direction_from(Position(1, 1)))
         self.assertEqual(Direction(Direction.DOWN), Position(2, 1).direction_from(Position(1, 1)))
 
     def test_position_left_neighbor(self):

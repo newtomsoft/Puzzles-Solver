@@ -87,6 +87,12 @@ class IslandTest(TestCase):
         expected_island_6_5_direction_position_bridges_number = {Direction.LEFT: (island_6_0.position, 0), Direction.UP: (island_4_5.position, 0)}
         self.assertEqual(expected_island_6_5_direction_position_bridges_number, island_6_5.direction_position_bridges)
 
+    def test_compute_possible_crossover_bridges(self):
+        island_0_1 = Island(Position(0, 1), 2)
+        island_1_0 = Island(Position(1, 0), 2)
+        island_1_2 = Island(Position(1, 2), 2)
+        island_2_1 = Island(Position(2, 1), 2)
+        possible_conflict_bridges = Island.compute_possible_crossover_bridges()
 
 if __name__ == '__main__':
     unittest.main()

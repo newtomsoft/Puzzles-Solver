@@ -7,7 +7,6 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.Grid import Grid
-from Utils.RegionsGrid import RegionsGrid
 
 
 class PuzzleThermometersGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):

@@ -24,7 +24,7 @@ class Position:
         if self.c == other.c:
             if self.r < other.r:
                 return Direction(Direction.DOWN)
-            return Direction(Direction.UP)
+            return Direction.up()
         return Direction(Direction.NONE)
 
     def direction_from(self, other: 'Position') -> Direction:
