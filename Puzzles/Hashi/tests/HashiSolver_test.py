@@ -1,9 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
-
 from Puzzles.Hashi.HashiSolver import HashiSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 from Utils.Island import Island
 from Utils.IslandsGrid import IslandGrid
@@ -36,6 +35,7 @@ class HashiSolverTests(TestCase):
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
         solution = game_solver.get_solution()
+        self.assertNotEqual(IslandGrid.empty(), solution)
 
         expected_island_0_0 = Island(Position(0, 0), 1)
         expected_island_0_1 = Island(Position(0, 1), 4)
@@ -97,6 +97,7 @@ class HashiSolverTests(TestCase):
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
         solution = game_solver.get_solution()
+        self.assertNotEqual(IslandGrid.empty(), solution)
 
         expected_island_0_1 = Island(Position(0, 1), 1)
         expected_island_0_2 = Island(Position(0, 2), 2)
@@ -136,6 +137,7 @@ class HashiSolverTests(TestCase):
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
         solution = game_solver.get_solution()
+        self.assertNotEqual(IslandGrid.empty(), solution)
 
         expected_island_0_0 = Island(Position(0, 0), 1)
         expected_island_0_1 = Island(Position(0, 1), 2)
@@ -175,6 +177,7 @@ class HashiSolverTests(TestCase):
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
         solution = game_solver.get_solution()
+        self.assertNotEqual(IslandGrid.empty(), solution)
 
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)

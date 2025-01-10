@@ -11,7 +11,7 @@ from Utils.Position import Position
 class HashiSolver(GameSolver):
     def __init__(self, grid: Grid, solver_engine: SolverEngine):
         self._input_grid = grid
-        self._island_grid = None
+        self._island_grid: IslandGrid | None = None
         self.init_island_grid()
         self._solver = solver_engine
         self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
@@ -35,8 +35,6 @@ class HashiSolver(GameSolver):
                 bridges_number = model.eval(bridges).as_long()
                 if bridges_number > 0:
                     self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
-                if position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
-                    self._island_grid[position].direction_position_bridges.pop(direction)
         self._last_solution = self._island_grid
         connected_positions = self._island_grid.get_connected_positions()
         if len(connected_positions) != 1:
