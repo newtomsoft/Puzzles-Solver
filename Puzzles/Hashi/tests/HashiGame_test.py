@@ -2,8 +2,8 @@ import unittest
 from unittest import TestCase
 
 from Puzzles.Hashi.HashiGame import HashiGame
-from Puzzles.Hashi.Island import Island
 from Utils.Grid import Grid
+from Utils.Island import Island
 from Utils.IslandsGrid import IslandGrid
 from Utils.Position import Position
 

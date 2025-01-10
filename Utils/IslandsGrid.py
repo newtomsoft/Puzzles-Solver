@@ -1,8 +1,8 @@
 from typing import Dict
 
-from Puzzles.Hashi.Island import Island
 from Utils.Direction import Direction
 from Utils.Grid import Grid
+from Utils.Island import Island
 from Utils.Position import Position
 
 
@@ -18,7 +18,7 @@ class IslandGrid(Grid):
             self.islands = {}
             return
 
-        matrix = [[self.islands[position] if (position := Position(r, c)) in self.islands.keys() else 0 for c in range(grid.columns_number + 1)] for r in range(grid.rows_number + 1)]
+        matrix = [[self.islands[position] if (position := Position(r, c)) in self.islands.keys() else 0 for c in range(grid.columns_number)] for r in range(grid.rows_number)]
         super().__init__(matrix)
         self._compute_possible_bridges()
         self.possible_crossover_bridge = self._compute_possible_crossover_bridges()
@@ -81,9 +81,7 @@ class IslandGrid(Grid):
         return possible_crossover_bridges
 
     def reset_all_bridges(self):
-        for island in self.islands.values():
-            for position, _ in island.direction_position_bridges.values():
-                island.set_bridge(position, 0)
+        self.islands.clear()
 
     def __str__(self) -> str:
         return '\n'.join(' '.join(str(self.string(cell)) for cell in row) for row in self._matrix)
@@ -93,10 +91,18 @@ class IslandGrid(Grid):
             return 'Grid.empty()'
         return self.__str__()
 
-    def are_all_islands_connected(self) -> bool:
-        position = self.islands.keys().__iter__().__next__()
+    def are_all_islands_connected(self, exclude_without_bridge=False) -> bool:
+        concerned_islands_count = len(self.islands)
+        position = next(iter(self.islands.keys()))
+        if exclude_without_bridge:
+            for island in self.islands.values():
+                if island.bridges_count == 0:
+                    concerned_islands_count -= 1
+                    continue
+                position = island.position
+
         visited = self._depth_first_search_islands(position)
-        return len(visited) == len(self.islands)
+        return len(visited) == concerned_islands_count
 
     def _depth_first_search_islands(self, position: Position, visited=None) -> set:
         if visited is None:
