@@ -33,6 +33,8 @@ class HashiGame:
                 if bridges_number > 0:
                     self.island_grid[position].set_bridge(self.island_grid[position].direction_position_bridges[direction][0], bridges_number)
         self._last_solution = self.island_grid
+        if not self.island_grid.are_all_islands_connected():
+            return self.get_other_solution()
         return self.island_grid
 
     def get_other_solution(self):

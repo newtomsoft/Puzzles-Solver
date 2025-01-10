@@ -8,7 +8,7 @@ from Utils.Position import Position
 
 class IslandGrid(Grid):
     def __init__(self, grid: Grid):
-        self.islands = {}
+        self.islands: Dict[Position, Island] = {}
         for position, bridges in grid:
             if bridges != 0:
                 self.islands[position] = Island(position, bridges)
@@ -25,7 +25,7 @@ class IslandGrid(Grid):
 
     @staticmethod
     def empty() -> 'IslandGrid':
-        return IslandGrid({})
+        return IslandGrid(Grid.empty())
 
     def get_island(self, position: Position) -> Island:
         return self.islands[position] if position in self.islands.keys() else 0
@@ -92,6 +92,29 @@ class IslandGrid(Grid):
         if self.is_empty():
             return 'Grid.empty()'
         return self.__str__()
+
+    def are_all_islands_connected(self) -> bool:
+        position = self.islands.keys().__iter__().__next__()
+        visited = self._depth_first_search_islands(position)
+        return len(visited) == len(self.islands)
+
+    def _depth_first_search_islands(self, position: Position, visited=None) -> set:
+        if visited is None:
+            visited = set()
+        if position in visited:
+            return visited
+        visited.add(position)
+        position_bridges = self.islands[position].direction_position_bridges.values()
+        for position_bridge in position_bridges:
+            if position_bridge[1] == 0:
+                continue
+            current_position = position_bridge[0]
+            if current_position not in visited:
+                new_visited = self._depth_first_search_islands(current_position, visited)
+                if new_visited != visited:
+                    return new_visited
+
+        return visited
 
     @staticmethod
     def string(cell: Island | int) -> str:

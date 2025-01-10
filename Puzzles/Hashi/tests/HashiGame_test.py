@@ -127,10 +127,27 @@ class HashiGameTests(TestCase):
         game = HashiGame(grid)
         solution = game.get_solution()
 
+        expected_island_0_0 = Island(Position(0, 0), 1)
+        expected_island_0_1 = Island(Position(0, 1), 2)
+        expected_island_1_0 = Island(Position(1, 0), 1)
+        expected_island_1_1 = Island(Position(1, 1), 2)
+
+        expected_island_0_0.set_bridge(Position(0, 1), 1)
+        expected_island_0_0.set_bridge(Position(1, 0), 0)
+        expected_island_0_1.set_bridge(Position(0, 0), 1)
+        expected_island_0_1.set_bridge(Position(1, 1), 1)
+        expected_island_1_0.set_bridge(Position(1, 1), 1)
+        expected_island_1_0.set_bridge(Position(0, 0), 0)
+        expected_island_1_1.set_bridge(Position(1, 0), 1)
+        expected_island_1_1.set_bridge(Position(0, 1), 1)
+
+        self.assertEqual(expected_island_0_0, solution[Position(0, 0)])
+        self.assertEqual(expected_island_0_1, solution[Position(0, 1)])
+        self.assertEqual(expected_island_1_0, solution[Position(1, 0)])
+        self.assertEqual(expected_island_1_1, solution[Position(1, 1)])
+
         other_solution = game.get_other_solution()
-        self.assertNotEqual(IslandGrid.empty(), other_solution)
-        # todo: must be assertEqual(IslandGrid.empty(), other_solution)
-        pass
+        self.assertEqual(IslandGrid.empty(), other_solution)
 
     def test_solution_with_possible_isolated_islands_10x10(self):
         grid = Grid([
@@ -149,9 +166,7 @@ class HashiGameTests(TestCase):
         solution = game.get_solution()
 
         other_solution = game.get_other_solution()
-        self.assertNotEqual(IslandGrid.empty(), other_solution)
-        # todo: must be assertEqual(IslandGrid.empty(), other_solution)
-        pass
+        self.assertEqual(IslandGrid.empty(), other_solution)
 
 
 if __name__ == '__main__':
