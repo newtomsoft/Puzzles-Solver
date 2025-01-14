@@ -8,6 +8,7 @@ from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
+from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
@@ -24,6 +25,7 @@ from GridProviders.PuzzleHashiGridProvider import PuzzleHashiGridProvider
 from GridProviders.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from GridProviders.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
+from GridProviders.PuzzleMasyuGridProvider import PuzzleMasyuGridProvider
 from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 from GridProviders.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
 from GridProviders.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
@@ -49,6 +51,7 @@ from Puzzles.Hashi.HashiGame import HashiGame
 from Puzzles.Hitori.HitoriGame import HitoriGame
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
 from Puzzles.Kakuro.KakuroGame import KakuroGame
+from Puzzles.Masyu.MasyuGame import MasyuGame
 from Puzzles.MinesweeperMosaic.MinesweeperMosaicGame import MinesweeperMosaicGame
 from Puzzles.Nonogram.NonogramGame import NonogramGame
 from Puzzles.Norinori.NorinoriGame import NorinoriGame
@@ -97,6 +100,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, None),
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider, None),
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
+            r"https://.*\.puzzle-masyu\.com": (MasyuGame, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider, None),
             r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider, None),
             r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
@@ -135,7 +139,7 @@ class PuzzleMainConsole:
         execution_time = end_time - start_time
         if solution != Grid.empty():
             print(f"Solution found in {execution_time:.2f} seconds")
-            print(solution.to_console_string())
+            print(solution)
             return solution
         else:
             print(f"No solution found")

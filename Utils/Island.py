@@ -22,6 +22,9 @@ class Island:
     def set_bridges_count_according_to_directions_bridges(self):
         self.bridges_count = sum([bridges for (_, bridges) in self.direction_position_bridges.values()])
 
+    def has_no_bridge(self):
+        return self.bridges_count == 0
+
     def __eq__(self, other):
         return self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
 

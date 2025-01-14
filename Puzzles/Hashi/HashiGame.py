@@ -40,8 +40,10 @@ class HashiGame:
                 if position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
                     self._island_grid[position].direction_position_bridges.pop(direction)
         self._last_solution = self._island_grid
-        if not self._island_grid.are_all_islands_connected():
+        connected_positions = self._island_grid.get_connected_positions()
+        if len(connected_positions) != 1:
             return self.get_other_solution()
+
         return self._island_grid
 
     def get_other_solution(self):

@@ -33,15 +33,15 @@ class Position:
     def distance_to(self, other: 'Position') -> float:
         return math.sqrt(math.pow(abs(self.r - other.r), 2) + math.pow(abs(self.c - other.c), 2))
 
-    def next(self, direction: Direction) -> 'Position':
+    def next(self, direction: Direction, count=1) -> 'Position':
         if direction == Direction.down():
-            return self.down
+            return Position(self.r + count, self.c)
         if direction == Direction.right():
-            return self.right
+            return Position(self.r, self.c + count)
         if direction == Direction.up():
-            return self.up
+            return Position(self.r - count, self.c)
         if direction == Direction.left():
-            return self.left
+            return Position(self.r, self.c - count)
         return self
 
     @property

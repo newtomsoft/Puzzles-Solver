@@ -27,9 +27,6 @@ class IslandGrid(Grid):
     def empty() -> 'IslandGrid':
         return IslandGrid(Grid.empty())
 
-    def get_island(self, position: Position) -> Island:
-        return self.islands[position] if position in self.islands.keys() else 0
-
     def _compute_possible_bridges(self):
         for island in self.islands.values():
             min_distances = {}
@@ -80,50 +77,64 @@ class IslandGrid(Grid):
         ]
         return possible_crossover_bridges
 
-    def reset_all_bridges(self):
-        self.islands.clear()
-
-    def __str__(self) -> str:
-        return '\n'.join(' '.join(str(self.string(cell)) for cell in row) for row in self._matrix)
-
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'
         return self.__str__()
 
-    def are_all_islands_connected(self, exclude_without_bridge=False) -> bool:
-        concerned_islands_count = len(self.islands)
-        position = next(iter(self.islands.keys()))
-        if exclude_without_bridge:
-            for island in self.islands.values():
-                if island.bridges_count == 0:
-                    concerned_islands_count -= 1
-                    continue
-                position = island.position
+    def get_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
+        concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
+        visited_list: list[set[Position]] = []
+        visited_flat: set[Position] = set()
+        while len(visited_flat) != concerned_islands_count:
+            position = next(island.position for island in self.islands.values() if island.position not in visited_flat) if not exclude_without_bridge else next((island.position for island in self.islands.values() if island.bridges_count != 0 and island.position not in visited_flat), None)
+            visited = self._depth_first_search_islands(position)
+            visited_list.append(visited)
+            visited_flat.update(visited)
+        return visited_list
 
-        visited = self._depth_first_search_islands(position)
-        return len(visited) == concerned_islands_count
-
-    def _depth_first_search_islands(self, position: Position, visited=None) -> set:
-        if visited is None:
-            visited = set()
-        if position in visited:
-            return visited
-        visited.add(position)
+    def _depth_first_search_islands(self, position: Position, visited_positions=None) -> set[Position]:
+        if visited_positions is None:
+            visited_positions = set()
+        if position in visited_positions:
+            return visited_positions
+        visited_positions.add(position)
         position_bridges = self.islands[position].direction_position_bridges.values()
         for position_bridge in position_bridges:
             if position_bridge[1] == 0:
                 continue
             current_position = position_bridge[0]
-            if current_position not in visited:
-                new_visited = self._depth_first_search_islands(current_position, visited)
-                if new_visited != visited:
-                    return new_visited
+            if current_position not in visited_positions:
+                new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
+                if new_visited_positions != visited_positions:
+                    return new_visited_positions
 
-        return visited
+        return visited_positions
+
+    def __str__(self) -> str:
+        matrix = self._matrix.copy()
+        result = []
+        for r in range(self.rows_number):
+            result.append(''.join(f'{self.string(matrix[r][c])}' for c in range(self.columns_number)))
+        return '\n'.join(result)
+
+    def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
+        return ''.join(f'{self.string(matrix[r][c])}' for c in range(self.columns_number))
 
     @staticmethod
-    def string(cell: Island | int) -> str:
-        if isinstance(cell, Island):
-            return str(cell.direction_position_bridges)
-        return ' '
+    def string(cell):
+        if cell.has_no_bridge():
+            return '   '
+        if Direction.up() in cell.direction_position_bridges and Direction.right() in cell.direction_position_bridges:
+            return ' └─'
+        if Direction.up() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+            return '─┘ '
+        if Direction.down() in cell.direction_position_bridges and Direction.right() in cell.direction_position_bridges:
+            return ' ┌─'
+        if Direction.down() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+            return '─┐ '
+        if Direction.up() in cell.direction_position_bridges and Direction.down() in cell.direction_position_bridges:
+            return ' │ '
+        if Direction.right() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+            return '───'
+        return ' X '
