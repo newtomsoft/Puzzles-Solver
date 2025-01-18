@@ -32,6 +32,7 @@ from GridProviders.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from GridProviders.PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
 from GridProviders.PuzzleRenzokuGridProvider import PuzzleRenzokuGridProvider
 from GridProviders.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
+from GridProviders.PuzzleShingokiGridProvider import PuzzleShingokiGridProvider
 from GridProviders.PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridProvider
 from GridProviders.PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
 from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
@@ -59,6 +60,7 @@ from Puzzles.Nurikabe.NurikabeGame import NurikabeGame
 from Puzzles.Queens.QueensGame import QueensGame
 from Puzzles.Renzoku.RenzokuGame import RenzokuGame
 from Puzzles.Shikaku.ShikakuGame import ShikakuGame
+from Puzzles.Shingoki.ShingokiGame import ShingokiGame
 from Puzzles.Skyscrapers.SkyscrapersGame import SkyscrapersGame
 from Puzzles.Stitches.StitchesGame import StitchesGame
 from Puzzles.Sudoku.SudokuGame import SudokuGame
@@ -108,6 +110,7 @@ class PuzzleMainConsole:
             r"https://www\.linkedin\.com/games/queens": (QueensGame, QueensGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (QueensGame, PuzzleStarBattleGridProvider, None),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuGame, PuzzleShikakuGridProvider, None),
+            r"https://.*\.puzzle-shingoki\.com": (ShingokiGame, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
             r"https://.*\.puzzle-stitches\.com": (StitchesGame, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
             r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, None),

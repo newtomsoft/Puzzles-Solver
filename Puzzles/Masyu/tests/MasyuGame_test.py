@@ -91,7 +91,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_6x6(self):
+    def test_solution_6x6_0(self):
         grid = Grid([
             ['b', 'w', ' ', ' ', ' ', ' '],
             ['w', ' ', ' ', 'w', 'w', ' '],
@@ -114,7 +114,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_6x6_2(self):
+    def test_solution_6x6_1(self):
         grid = Grid([
             [' ', 'b', ' ', ' ', 'w', ' '],
             [' ', ' ', ' ', ' ', ' ', ' '],
@@ -137,7 +137,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_8x8(self):
+    def test_solution_8x8_0(self):
         grid = Grid([
             ['b', 'w', ' ', 'w', ' ', ' ', 'w', ' '],
             ['w', ' ', ' ', ' ', ' ', ' ', ' ', 'w'],
@@ -164,7 +164,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_8x8_2(self):
+    def test_solution_8x8_1(self):
         grid = Grid([
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b'],
             ['w', ' ', 'b', ' ', 'b', ' ', ' ', ' '],
@@ -191,7 +191,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_10x10(self):
+    def test_solution_10x10_0(self):
         grid = Grid([
             [' ', ' ', 'b', 'w', ' ', ' ', ' ', ' ', ' ', 'b'],
             ['w', ' ', 'w', ' ', 'b', 'w', ' ', 'w', ' ', ' '],
@@ -222,7 +222,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_10x10_2(self):
+    def test_solution_10x10_1(self):
         grid = Grid([
             [' ', ' ', 'b', 'w', ' ', ' ', 'b', 'b', ' ', ' '],
             [' ', ' ', 'w', ' ', ' ', ' ', 'w', 'w', ' ', 'w'],
@@ -253,7 +253,7 @@ class MasyuGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_10x10_3(self):
+    def test_solution_10x10_2(self):
         grid = Grid([
             [' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' '],
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' '],

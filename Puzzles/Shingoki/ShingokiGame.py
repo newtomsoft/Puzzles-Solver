@@ -108,67 +108,182 @@ class ShingokiGame:
         for position, cell_value in self.input_grid:
             color, segments_count = self._convert_cell_value_to_color_and_segments_count(cell_value)
             if color == 'w':
-                dot_count_constraints = []
-                for first_part_count in range(1, segments_count):
-                    second_part_count = segments_count - first_part_count
-                    horizontal_positions = [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] + [position] + [position.next(Direction.right(), count) for count in range(1, second_part_count + 1)]
-                    horizontal_constraints = []
-                    if all(position in self._island_bridges_z3 for position in horizontal_positions):
-                        horizontal_constraint = And([self._island_bridges_z3[position][Direction.left()] == 1 for position in horizontal_positions[1:first_part_count+1]] + [self._island_bridges_z3[position][Direction.right()] == 1 for position in horizontal_positions[first_part_count:-1]])
-                        left_up_constraint, left_down_constraint, right_up_constraint, right_down_constraint = False, False, False, False
-                        if Direction.up() in self._island_bridges_z3[horizontal_positions[0]]:
-                            left_up_constraint = self._island_bridges_z3[horizontal_positions[0]][Direction.up()] == 1
-                        if Direction.down() in self._island_bridges_z3[horizontal_positions[0]]:
-                            left_down_constraint = self._island_bridges_z3[horizontal_positions[0]][Direction.down()] == 1
-                        if Direction.up() in self._island_bridges_z3[horizontal_positions[-1]]:
-                            right_up_constraint = self._island_bridges_z3[horizontal_positions[-1]][Direction.up()] == 1
-                        if Direction.down() in self._island_bridges_z3[horizontal_positions[-1]]:
-                            right_down_constraint = self._island_bridges_z3[horizontal_positions[-1]][Direction.down()] == 1
-                        turn_constraint = And(Or(left_up_constraint, left_down_constraint), Or(right_up_constraint, right_down_constraint))
-                        horizontal_constraints.append(And(horizontal_constraint, turn_constraint))
-
-                    vertical_positions = [position.next(Direction.up(), count) for count in reversed(range(1, first_part_count + 1))] + [position] + [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
-                    vertical_constraints = []
-                    if all(position in self._island_bridges_z3 for position in vertical_positions):
-                        vertical_constraint = And([self._island_bridges_z3[position][Direction.up()] == 1 for position in vertical_positions[1:first_part_count+1]] + [self._island_bridges_z3[position][Direction.down()] == 1 for position in vertical_positions[first_part_count:-1]])
-                        up_left_constraint, down_left_constraint, up_right_constraint, down_right_constraint = False, False, False, False
-                        if Direction.left() in self._island_bridges_z3[vertical_positions[0]]:
-                            up_left_constraint = self._island_bridges_z3[vertical_positions[0]][Direction.left()] == 1
-                        if Direction.right() in self._island_bridges_z3[vertical_positions[0]]:
-                            up_right_constraint = self._island_bridges_z3[vertical_positions[0]][Direction.right()] == 1
-                        if Direction.left() in self._island_bridges_z3[vertical_positions[-1]]:
-                            down_left_constraint = self._island_bridges_z3[vertical_positions[-1]][Direction.left()] == 1
-                        if Direction.right() in self._island_bridges_z3[vertical_positions[-1]]:
-                            down_right_constraint = self._island_bridges_z3[vertical_positions[-1]][Direction.right()] == 1
-                        turn_constraint = And(Or(up_left_constraint, up_right_constraint), Or(down_left_constraint, down_right_constraint))
-                        vertical_constraints.append(And(vertical_constraint, turn_constraint))
-                    dot_count_constraints.append(Or(Or(horizontal_constraints), Or(vertical_constraints)))
-                self._solver.add(Or(dot_count_constraints))
-
+                white_constraints = self._white_constraints(position, segments_count)
+                self._solver.add(Or(white_constraints))
             if color == 'b':
-                left_up_constraint, left_down_constraint, right_up_constraint, right_down_constraint = False, False, False, False
-                if position.right in self._island_bridges_z3 and position.right.right in self._island_bridges_z3 and position.down in self._island_bridges_z3 and position.down.down in self._island_bridges_z3:
-                    right_down_constraint = And(
-                        self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position.right][Direction.right()] == 1,
-                        self._island_bridges_z3[position][Direction.down()] == 1, self._island_bridges_z3[position.down][Direction.down()] == 1)
-                if position.left in self._island_bridges_z3 and position.left.left in self._island_bridges_z3 and position.down in self._island_bridges_z3 and position.down.down in self._island_bridges_z3:
-                    left_down_constraint = And(
-                        self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position.left][Direction.left()] == 1,
-                        self._island_bridges_z3[position][Direction.down()] == 1, self._island_bridges_z3[position.down][Direction.down()] == 1)
-                if position.right in self._island_bridges_z3 and position.right.right in self._island_bridges_z3 and position.up in self._island_bridges_z3 and position.up.up in self._island_bridges_z3:
-                    right_up_constraint = And(
-                        self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position.right][Direction.right()] == 1,
-                        self._island_bridges_z3[position][Direction.up()] == 1, self._island_bridges_z3[position.up][Direction.up()] == 1)
-                if position.left in self._island_bridges_z3 and position.left.left in self._island_bridges_z3 and position.up in self._island_bridges_z3 and position.up.up in self._island_bridges_z3:
-                    left_up_constraint = And(
-                        self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position.left][Direction.left()] == 1,
-                        self._island_bridges_z3[position][Direction.up()] == 1, self._island_bridges_z3[position.up][Direction.up()] == 1)
-                self._solver.add(Or(right_down_constraint, left_down_constraint, right_up_constraint, left_up_constraint))
+                black_constraints = self._black_constraints(position, segments_count)
+                self._solver.add(Or(black_constraints))
+
+    def _white_constraints(self, position, segments_count):
+        white_constraints = []
+        for first_part_count in range(1, segments_count):
+            second_part_count = segments_count - first_part_count
+            vertical_constraints = self._white_vertical_constraints(position, first_part_count, second_part_count)
+            horizontal_constraints = self._white_horizontal_constraints(position, first_part_count, second_part_count)
+            white_constraints.append(Or(Or(vertical_constraints), Or(horizontal_constraints)))
+        return white_constraints
+
+    def _white_vertical_constraints(self, position, first_part_count, second_part_count):
+        vertical_positions = (
+                [position.next(Direction.up(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+        )
+        vertical_constraints = []
+        if all(position in self._island_bridges_z3 for position in vertical_positions):
+            first_constraint_vertical = And(
+                [self._island_bridges_z3[position][Direction.up()] == 1 for position in vertical_positions[1:first_part_count + 1]]
+                + [self._island_bridges_z3[position][Direction.down()] == 1 for position in vertical_positions[first_part_count:-1]]
+            )
+            up_left_constraint, down_left_constraint, up_right_constraint, down_right_constraint = False, False, False, False
+            if Direction.left() in self._island_bridges_z3[vertical_positions[0]]:
+                up_left_constraint = self._island_bridges_z3[vertical_positions[0]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[vertical_positions[0]]:
+                up_right_constraint = self._island_bridges_z3[vertical_positions[0]][Direction.right()] == 1
+            if Direction.left() in self._island_bridges_z3[vertical_positions[-1]]:
+                down_left_constraint = self._island_bridges_z3[vertical_positions[-1]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[vertical_positions[-1]]:
+                down_right_constraint = self._island_bridges_z3[vertical_positions[-1]][Direction.right()] == 1
+            second_constraint = And(Or(up_left_constraint, up_right_constraint), Or(down_left_constraint, down_right_constraint))
+            vertical_constraints.append(And(first_constraint_vertical, second_constraint))
+        return vertical_constraints
+
+    def _white_horizontal_constraints(self, position, first_part_count, second_part_count):
+        horizontal_positions = (
+                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.right(), count) for count in range(1, second_part_count + 1)]
+        )
+        horizontal_constraints = []
+        if all(position in self._island_bridges_z3 for position in horizontal_positions):
+            first_constraint_horizontal = And(
+                [self._island_bridges_z3[position][Direction.left()] == 1 for position in horizontal_positions[1:first_part_count + 1]]
+                + [self._island_bridges_z3[position][Direction.right()] == 1 for position in horizontal_positions[first_part_count:-1]]
+            )
+            left_up_constraint, left_down_constraint, right_up_constraint, right_down_constraint = False, False, False, False
+            if Direction.up() in self._island_bridges_z3[horizontal_positions[0]]:
+                left_up_constraint = self._island_bridges_z3[horizontal_positions[0]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[horizontal_positions[0]]:
+                left_down_constraint = self._island_bridges_z3[horizontal_positions[0]][Direction.down()] == 1
+            if Direction.up() in self._island_bridges_z3[horizontal_positions[-1]]:
+                right_up_constraint = self._island_bridges_z3[horizontal_positions[-1]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[horizontal_positions[-1]]:
+                right_down_constraint = self._island_bridges_z3[horizontal_positions[-1]][Direction.down()] == 1
+            second_constraint = And(Or(left_up_constraint, left_down_constraint), Or(right_up_constraint, right_down_constraint))
+            horizontal_constraints.append(And(first_constraint_horizontal, second_constraint))
+        return horizontal_constraints
+
+    def _black_constraints(self, position, segments_count):
+        black_constraints = []
+        for first_part_count in range(1, segments_count):
+            second_part_count = segments_count - first_part_count
+            right_down_constraints = self._black_right_down_constraints(position, first_part_count, second_part_count)
+            right_up_constraints = self._black_right_up_constraints(position, first_part_count, second_part_count)
+            left_down_constraints = self._black_left_down_constraints(position, first_part_count, second_part_count)
+            left_up_constraints = self._black_left_up_constraints(position, first_part_count, second_part_count)
+            black_constraints.append(Or(Or(right_down_constraints), Or(right_up_constraints), Or(left_down_constraints), Or(left_up_constraints)))
+        return black_constraints
+
+    def _black_right_down_constraints(self, position, first_part_count, second_part_count):
+        right_down_positions = (
+                [position.next(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+        )
+        right_down_constraints = []
+        if all(position in self._island_bridges_z3 for position in right_down_positions):
+            first_constraint_right_down = And(
+                [self._island_bridges_z3[position][Direction.right()] == 1 for position in right_down_positions[1:first_part_count + 1]] + [
+                    self._island_bridges_z3[position][Direction.down()] == 1 for position in right_down_positions[first_part_count:-1]])
+            right_up_constraint, right_down_constraint, down_right_constraint, down_left_constraint = False, False, False, False
+            if Direction.up() in self._island_bridges_z3[right_down_positions[0]]:
+                right_up_constraint = self._island_bridges_z3[right_down_positions[0]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[right_down_positions[0]]:
+                right_down_constraint = self._island_bridges_z3[right_down_positions[0]][Direction.down()] == 1
+            if Direction.left() in self._island_bridges_z3[right_down_positions[-1]]:
+                down_left_constraint = self._island_bridges_z3[right_down_positions[-1]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[right_down_positions[-1]]:
+                down_right_constraint = self._island_bridges_z3[right_down_positions[-1]][Direction.right()] == 1
+            second_constraint = And(Or(right_up_constraint, right_down_constraint), Or(down_left_constraint, down_right_constraint))
+            right_down_constraints.append(And(first_constraint_right_down, second_constraint))
+        return right_down_constraints
+
+    def _black_right_up_constraints(self, position, first_part_count, second_part_count):
+        right_up_positions = (
+                [position.next(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.up(), count) for count in range(1, second_part_count + 1)]
+        )
+        right_up_constraints = []
+        if all(position in self._island_bridges_z3 for position in right_up_positions):
+            first_constraint_right_up = And(
+                [self._island_bridges_z3[position][Direction.right()] == 1 for position in right_up_positions[1:first_part_count + 1]] + [
+                    self._island_bridges_z3[position][Direction.up()] == 1 for position in right_up_positions[first_part_count:-1]])
+            right_up_constraint, right_down_constraint, up_right_constraint, up_left_constraint = False, False, False, False
+            if Direction.up() in self._island_bridges_z3[right_up_positions[0]]:
+                right_up_constraint = self._island_bridges_z3[right_up_positions[0]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[right_up_positions[0]]:
+                right_down_constraint = self._island_bridges_z3[right_up_positions[0]][Direction.down()] == 1
+            if Direction.left() in self._island_bridges_z3[right_up_positions[-1]]:
+                up_left_constraint = self._island_bridges_z3[right_up_positions[-1]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[right_up_positions[-1]]:
+                up_right_constraint = self._island_bridges_z3[right_up_positions[-1]][Direction.right()] == 1
+            second_constraint = And(Or(right_up_constraint, right_down_constraint), Or(up_left_constraint, up_right_constraint))
+            right_up_constraints.append(And(first_constraint_right_up, second_constraint))
+        return right_up_constraints
+
+    def _black_left_down_constraints(self, position, first_part_count, second_part_count):
+        left_down_positions = (
+                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+        )
+        left_down_constraints = []
+        if all(position in self._island_bridges_z3 for position in left_down_positions):
+            first_constraint_left_down = And(
+                [self._island_bridges_z3[position][Direction.left()] == 1 for position in left_down_positions[1:first_part_count + 1]] + [
+                    self._island_bridges_z3[position][Direction.down()] == 1 for position in left_down_positions[first_part_count:-1]])
+            left_up_constraint, left_down_constraint, down_left_constraint, down_right_constraint = False, False, False, False
+            if Direction.up() in self._island_bridges_z3[left_down_positions[0]]:
+                left_up_constraint = self._island_bridges_z3[left_down_positions[0]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[left_down_positions[0]]:
+                left_down_constraint = self._island_bridges_z3[left_down_positions[0]][Direction.down()] == 1
+            if Direction.left() in self._island_bridges_z3[left_down_positions[-1]]:
+                down_left_constraint = self._island_bridges_z3[left_down_positions[-1]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[left_down_positions[-1]]:
+                down_right_constraint = self._island_bridges_z3[left_down_positions[-1]][Direction.right()] == 1
+            second_constraint = And(Or(left_up_constraint, left_down_constraint), Or(down_left_constraint, down_right_constraint))
+            left_down_constraints.append(And(first_constraint_left_down, second_constraint))
+        return left_down_constraints
+
+    def _black_left_up_constraints(self, position, first_part_count, second_part_count):
+        left_up_positions = (
+                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position] +
+                [position.next(Direction.up(), count) for count in range(1, second_part_count + 1)]
+        )
+        left_up_constraints = []
+        if all(position in self._island_bridges_z3 for position in left_up_positions):
+            first_constraint_left_up = And(
+                [self._island_bridges_z3[position][Direction.left()] == 1 for position in left_up_positions[1:first_part_count + 1]] + [
+                    self._island_bridges_z3[position][Direction.up()] == 1 for position in left_up_positions[first_part_count:-1]])
+            left_up_constraint, left_down_constraint, up_left_constraint, up_right_constraint = False, False, False, False
+            if Direction.up() in self._island_bridges_z3[left_up_positions[0]]:
+                left_up_constraint = self._island_bridges_z3[left_up_positions[0]][Direction.up()] == 1
+            if Direction.down() in self._island_bridges_z3[left_up_positions[0]]:
+                left_down_constraint = self._island_bridges_z3[left_up_positions[0]][Direction.down()] == 1
+            if Direction.left() in self._island_bridges_z3[left_up_positions[-1]]:
+                up_left_constraint = self._island_bridges_z3[left_up_positions[-1]][Direction.left()] == 1
+            if Direction.right() in self._island_bridges_z3[left_up_positions[-1]]:
+                up_right_constraint = self._island_bridges_z3[left_up_positions[-1]][Direction.right()] == 1
+            second_constraint = And(Or(left_up_constraint, left_down_constraint), Or(up_left_constraint, up_right_constraint))
+            left_up_constraints.append(And(first_constraint_left_up, second_constraint))
+        return left_up_constraints
 
     @staticmethod
     def _convert_cell_value_to_color_and_segments_count(cell_value: str):
-        if len(cell_value) != 2:
+        if len(cell_value) < 2:
             return ' ', 0
         color = cell_value[0]
-        segments_count = int(cell_value[1])
+        segments_count = int(cell_value.replace(color, ''))
         return color, segments_count
