@@ -21,9 +21,7 @@ class MasyuGame:
         self._island_grid = IslandGrid(Grid([[2 for _ in row] for row in self.input_grid.matrix]))
 
     def _init_solver(self):
-        orthogonal_directions = [Direction.right(), Direction.down(), Direction.left(), Direction.up()]
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in orthogonal_directions} for island in
-                                   self._island_grid.islands.values()}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()}
         self._solver = Solver()
         self._add_constraints()
 

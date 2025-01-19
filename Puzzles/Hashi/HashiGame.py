@@ -21,8 +21,7 @@ class HashiGame:
         self._island_grid = IslandGrid(self._input_grid)
 
     def _init_solver(self):
-        orthogonal_directions = [Direction.right(), Direction.down(), Direction.left(), Direction.up()]
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in orthogonal_directions} for island in self._island_grid.islands.values()}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()}
         self._solver = Solver()
         self._add_constraints()
 

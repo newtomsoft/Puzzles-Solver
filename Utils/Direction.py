@@ -1,10 +1,4 @@
 ﻿class Direction:
-    _NONE = 0
-    _DOWN = 1
-    _RIGHT = 2
-    _UP = 3
-    _LEFT = 4
-
     def __init__(self, value):
         if isinstance(value, str):
             if value == 'down':
@@ -24,6 +18,10 @@
         if value not in Direction._orthogonal_directions_values() and value != Direction._NONE:
             raise ValueError(f"Unknown direction {value}")
         self._value = value
+
+    @staticmethod
+    def orthogonal():
+        return [Direction.up(), Direction.left(), Direction.down(), Direction.right()]
 
     @staticmethod
     def _orthogonal_directions_values():
@@ -91,3 +89,8 @@
     def __hash__(self):
         return hash(self._value)
 
+    _NONE = 0
+    _DOWN = 1
+    _RIGHT = 2
+    _UP = 3
+    _LEFT = 4

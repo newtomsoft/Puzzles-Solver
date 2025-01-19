@@ -1,6 +1,6 @@
 from typing import Dict
 
-from z3 import Solver, sat, Int, And, Not, Sum, ArithRef, Or
+from z3 import Solver, sat, Int, And, Not, Sum, ArithRef, Or, Implies
 
 from Utils.Direction import Direction
 from Utils.Grid import Grid
@@ -12,18 +12,16 @@ class ShingokiGame:
     def __init__(self, grid: Grid):
         self.input_grid = grid
         self._island_grid = None
-        self.init_island_grid()
+        self._init_island_grid()
         self._solver: Solver | None = None
         self._island_bridges_z3: Dict[Position, Dict[Direction, ArithRef]] = {}
         self._last_solution: IslandGrid | None = None
 
-    def init_island_grid(self):
+    def _init_island_grid(self):
         self._island_grid = IslandGrid(Grid([[2 for _ in row] for row in self.input_grid.matrix]))
 
     def _init_solver(self):
-        orthogonal_directions = [Direction.right(), Direction.down(), Direction.left(), Direction.up()]
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in orthogonal_directions} for island in
-                                   self._island_grid.islands.values()}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()}
         self._solver = Solver()
         self._add_constraints()
 
@@ -49,6 +47,8 @@ class ShingokiGame:
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
+            import sys  # TODO
+            sys.setrecursionlimit(2000)
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 self._last_solution = self._island_grid
@@ -62,7 +62,7 @@ class ShingokiGame:
                         cell_constraints.append(self._island_bridges_z3[position][direction] == value)
                 not_loop_constraints.append(Not(And(cell_constraints)))
             self._solver.add(And(not_loop_constraints))
-            self.init_island_grid()
+            self._init_island_grid()
 
         return IslandGrid.empty(), proposition_count
 
@@ -73,7 +73,7 @@ class ShingokiGame:
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
         self._solver.add(Not(And(previous_solution_constraints)))
 
-        self.init_island_grid()
+        self._init_island_grid()
         return self.get_solution()
 
     def _add_constraints(self):
@@ -83,9 +83,13 @@ class ShingokiGame:
         self._add_dots_count_constraints()
 
     def _add_initial_constraints(self):
-        for _island_bridges_z3 in self._island_bridges_z3.values():
-            for direction_bridges in _island_bridges_z3.values():
-                self._solver.add(Or(direction_bridges == 0, direction_bridges == 1))
+        constraints = [Or(direction_bridges == 0, direction_bridges == 1) for _island_bridges_z3 in self._island_bridges_z3.values() for direction_bridges in _island_bridges_z3.values()]
+        self._solver.add(constraints)
+        constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
+        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number-1, c)][Direction.down()] == 0 for c in range(self._island_grid.columns_number)]
+        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number-1)][Direction.right()] == 0 for r in range(self._island_grid.rows_number)]
+        constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
+        self._solver.add(constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
@@ -98,11 +102,9 @@ class ShingokiGame:
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            sum_constraint_0 = Sum(
-                [self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
-            sum_constraint_2 = Sum(
-                [self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
-            self._solver.add(Or(sum_constraint_0, sum_constraint_2))
+            sum0_constraint = Sum([self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
+            sum2_constraint = Sum([self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
+            self._solver.add(Or(sum0_constraint, sum2_constraint))
 
     def _add_dots_count_constraints(self):
         for position, cell_value in self.input_grid:
@@ -113,6 +115,8 @@ class ShingokiGame:
             if color == 'b':
                 black_constraints = self._black_constraints(position, segments_count)
                 self._solver.add(Or(black_constraints))
+                if segments_count == 2:
+                    self._solver.add(self._not_loop_black2_constraint(position))
 
     def _white_constraints(self, position, segments_count):
         white_constraints = []
@@ -287,3 +291,28 @@ class ShingokiGame:
         color = cell_value[0]
         segments_count = int(cell_value.replace(color, ''))
         return color, segments_count
+
+    def _not_loop_black2_constraint(self, position):
+        constraints = []
+
+        if position.up_right in self._island_bridges_z3:
+            right_up_constraint = And(self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position][Direction.up()] == 1)
+            then_right_up_constraint = Not(And(self._island_bridges_z3[position.up_right][Direction.left()] == 1, self._island_bridges_z3[position.up_right][Direction.down()] == 1))
+            constraints.append(Implies(right_up_constraint, then_right_up_constraint))
+
+        if position.down_right in self._island_bridges_z3:
+            right_down_constraint = And(self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position][Direction.down()] == 1)
+            then_right_down_constraint = Not(And(self._island_bridges_z3[position.down_right][Direction.left()] == 1, self._island_bridges_z3[position.down_right][Direction.up()] == 1))
+            constraints.append(Implies(right_down_constraint, then_right_down_constraint))
+
+        if position.up_left in self._island_bridges_z3:
+            left_up_constraint = And(self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position][Direction.up()] == 1)
+            then_left_up_constraint = Not(And(self._island_bridges_z3[position.up_left][Direction.right()] == 1, self._island_bridges_z3[position.up_left][Direction.down()] == 1))
+            constraints.append(Implies(left_up_constraint, then_left_up_constraint))
+
+        if position.down_left in self._island_bridges_z3:
+            left_down_constraint = And(self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position][Direction.down()] == 1)
+            then_left_down_constraint = Not(And(self._island_bridges_z3[position.down_left][Direction.right()] == 1, self._island_bridges_z3[position.down_left][Direction.up()] == 1))
+            constraints.append(Implies(left_down_constraint, then_left_down_constraint))
+
+        return And(constraints)
