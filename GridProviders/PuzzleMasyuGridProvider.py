@@ -1,6 +1,4 @@
-﻿import math
-
-from bs4 import BeautifulSoup
+﻿from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
@@ -20,11 +18,8 @@ class PuzzleMasyuGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobil
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         dot_divs = soup.find_all('div', class_='loop-dot')
-        dot_numbers = len(dot_divs)
-        rows_number = int(math.sqrt(dot_numbers))
-        if rows_number * rows_number != dot_numbers:
-            raise ValueError('Invalid number of dots')
-        columns_number = rows_number
+        rows_number = sum(1 for cell in dot_divs if 'left: 4px' in cell['style'])
+        columns_number = sum(1 for cell in dot_divs if 'top: 4px' in cell['style'])
         matrix = [[' ' for _ in range(columns_number)] for _ in range(rows_number)]
         for index, dot_div in enumerate(dot_divs):
             row = index // columns_number

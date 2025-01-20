@@ -16,13 +16,6 @@ class PuzzleSkyscrapersGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
     def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         page.goto(url)
-        page.evaluate(
-            """
-            console.log('Resizing window', screen.width, screen.height);
-            window.moveTo(0, 0);
-            window.resizeTo(screen.width, screen.height);
-            """
-        )
         self.new_game(page)
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')

@@ -37,6 +37,7 @@ from GridProviders.PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridPro
 from GridProviders.PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
 from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from GridProviders.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
+from GridProviders.PuzzleSurizaGridProvider import PuzzleSurizaGridProvider
 from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
@@ -65,6 +66,7 @@ from Puzzles.Skyscrapers.SkyscrapersGame import SkyscrapersGame
 from Puzzles.Stitches.StitchesGame import StitchesGame
 from Puzzles.Sudoku.SudokuGame import SudokuGame
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
+from Puzzles.Suriza.SurizaGame import SurizaGame
 from Puzzles.Tapa.TapaGame import TapaGame
 from Puzzles.Tents.TentsGame import TentsGame
 from Puzzles.Thermometers.ThermometersGame import ThermometersGame
@@ -114,6 +116,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
             r"https://.*\.puzzle-stitches\.com": (StitchesGame, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
             r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, None),
+            r"https://.*\.puzzle-loop\.com": (SurizaGame, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, None),
