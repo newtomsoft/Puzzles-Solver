@@ -42,7 +42,7 @@ class SudokuGame:
         if self._solver.check() != sat:
             return None
         model = self._solver.model()
-        grid = Grid([[model.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constraints(self):

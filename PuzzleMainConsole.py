@@ -12,6 +12,7 @@ from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
+from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
 from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -115,7 +116,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-shingoki\.com": (ShingokiGame, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
             r"https://.*\.puzzle-stitches\.com": (StitchesGame, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
-            r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, None),
+            r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
             r"https://.*\.puzzle-loop\.com": (SurizaGame, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, None),
