@@ -14,6 +14,13 @@ class Position:
             neighbors.extend([self.up_left, self.up_right, self.down_left, self.down_right])
         return neighbors
 
+    def straddled_neighbors(self) -> set['Position']:
+        r_floor = math.floor(self.r)
+        c_floor = math.floor(self.c)
+        r_ceil = math.ceil(self.r)
+        c_ceil = math.ceil(self.c)
+        return {Position(r_floor, c_floor), Position(r_floor, c_ceil), Position(r_ceil, c_floor), Position(r_ceil, c_ceil)}
+
     def direction_to(self, other: 'Position') -> Direction:
         if other is None or self == other:
             return Direction(Direction.none())
@@ -82,6 +89,11 @@ class Position:
         if self.c == position.c:
             return [Position(r, self.c) for r in range(min(self.r, position.r) + 1, max(self.r, position.r))]
         return []
+
+    def symmetric(self, position, to_int=True) -> 'Position':
+        if to_int:
+            return Position(int(2 * position.r - self.r), int(2 * position.c - self.c))
+        return Position(2 * position.r - self.r, 2 * position.c - self.c)
 
     def __eq__(self, other):
         return isinstance(other, Position) and self.r == other.r and self.c == other.c

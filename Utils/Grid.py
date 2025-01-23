@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar
+from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set
 
 from bitarray import bitarray
 
@@ -210,3 +210,6 @@ class Grid[T]:
 
     def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
         return [position for position in position.neighbors(mode) if position in self]
+
+    def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
+        return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
