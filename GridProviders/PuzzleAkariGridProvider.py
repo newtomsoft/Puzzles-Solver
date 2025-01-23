@@ -3,17 +3,18 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleAkariGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleAkariGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         page.goto(url)
+        self.new_game(page)
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cells = soup.find_all('div', class_=['cell', 'light-up-task-cell'])
         values = [-1 if 'wall' in cell['class'] else (int(cell.text) if 'light-up-task-cell' in cell['class'] else None) for cell in cells]

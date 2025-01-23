@@ -3,6 +3,7 @@ import time
 from typing import Tuple
 
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
@@ -41,6 +42,7 @@ from GridProviders.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
 from GridProviders.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
 from GridProviders.PuzzleSurizaGridProvider import PuzzleSurizaGridProvider
 from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
+from GridProviders.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvider
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
@@ -70,6 +72,7 @@ from Puzzles.Sudoku.SudokuGame import SudokuGame
 from Puzzles.Sumplete.SumpleteGame import SumpleteGame
 from Puzzles.Suriza.SurizaGame import SurizaGame
 from Puzzles.Tapa.TapaGame import TapaGame
+from Puzzles.TentaiShow.TentaiShowGame import TentaiShowGame
 from Puzzles.Tents.TentsGame import TentsGame
 from Puzzles.Thermometers.ThermometersGame import ThermometersGame
 from Utils.Grid import Grid
@@ -94,7 +97,7 @@ class PuzzleMainConsole:
             console_input = "https://www.linkedin.com/games/queens/"
 
         url_patterns = {
-            r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider, None),
+            r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumGame, PuzzleAquariumGridProvider, None),
             r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlusGridPlayer),
@@ -121,6 +124,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-loop\.com": (SurizaGame, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, None),
+            r"https://.*\.puzzle-galaxies\.com": (TentaiShowGame, PuzzleTentaiShowGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, None),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersGame, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
         }
