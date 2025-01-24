@@ -42,13 +42,13 @@ class RenzokuGame:
         return self._grid_z3[position]
 
     def _add_constraints(self):
-        self.add_range_constraints()
+        self._add_range_constraints()
         self._add_distinct_constraints()
         self._add_initial_constraints()
-        self.add_consecutive_constraints()
+        self._add_consecutive_constraints()
         self._add_non_consecutive_constraints()
 
-    def add_range_constraints(self):
+    def _add_range_constraints(self):
         for position, value in self._grid_z3:
             self._solver.add(1 <= value, value <= self.rows_number)
 
@@ -65,7 +65,7 @@ class RenzokuGame:
             if value != -1:
                 self._solver.add(self._number(position) == value)
 
-    def add_consecutive_constraints(self):
+    def _add_consecutive_constraints(self):
         for first_position, second_position in self._consecutive_positions:
             self._solver.add((Or(self._number(first_position) - self._number(second_position) == 1, self._number(second_position) - self._number(first_position) == 1)))
 
