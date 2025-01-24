@@ -1,7 +1,7 @@
 ﻿from z3 import Bool, Solver, Not, And, sat, is_true, Sum, Implies, Or
 
-from Utils.Position import Position
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class NorinoriGame:
@@ -34,13 +34,13 @@ class NorinoriGame:
 
     def _add_constraints(self):
         self._add_constraint_exactly_2_by_region()
-        self._add_constraint_2_by_2_without_adjacents()
+        self._add_constraint_2_by_2_without_adjacent()
 
     def _add_constraint_exactly_2_by_region(self):
         for region in self._regions.values():
             self._solver.add(Sum([self.domino_part(position) for position in region]) == 2)
 
-    def _add_constraint_2_by_2_without_adjacents(self):
+    def _add_constraint_2_by_2_without_adjacent(self):
         for position, _ in self._grid_z3:
             possible_neighbors_positions = self._grid_z3.neighbors_positions(position)
             one_is_domino_part_others_is_free = []
