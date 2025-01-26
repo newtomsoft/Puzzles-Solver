@@ -45,10 +45,7 @@ class TentaiShowGame:
             if is_solution:
                 return grid, proposition_count
 
-            circle_shapes = {}
-            for circle_value in self.circle_positions.keys():
-                circle_shapes[circle_value] = grid.get_all_shapes(circle_value)
-
+            circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
             for circle_value, shapes in circle_shapes.items():
                 if len(shapes) == 1:
                     continue
