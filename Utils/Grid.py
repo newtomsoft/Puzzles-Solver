@@ -93,29 +93,27 @@ class Grid[T]:
         return {key: frozenset(value) for key, value in regions.items()} if regions else {}
 
     def are_all_cells_connected(self, value=True, mode='orthogonal') -> bool:
-        r, c = self._get_cell_of_value(value)
-        position = Position(r, c)
-        if r is None:
+        position = self._get_cell_of_value(value)
+        if position is None:
             return False
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Tuple[int, int]]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Position]]:
         excluded = []
         shapes = set()
         while True:
-            r, c = self._get_cell_of_value(value, excluded)
-            position = Position(r, c)
-            if r is None:
+            position = self._get_cell_of_value(value, excluded)
+            if position is None:
                 return shapes
-            if any((r, c) in shape for shape in shapes):
-                excluded.append((r, c))
+            if any(position in shape for shape in shapes):
+                excluded.append(position)
                 continue
             visited = self._depth_first_search(position, value, mode)
             shapes.add(frozenset(visited))
-            excluded.append((r, c))
+            excluded.append(position)
 
-    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Tuple[int, int]]]:
+    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Position]]:
         value = self.value(position)
         visited = self._depth_first_search(position, value, mode)
         if len(visited) <= 1:
@@ -126,9 +124,9 @@ class Grid[T]:
                 border_cells.add(cell)
         return len(border_cells) >= 2, visited
 
-    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[FrozenSet[Tuple[int, int]]]:
+    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[FrozenSet[Position]]:
         excluded = []
-        cells_sets: set[FrozenSet[Tuple[int, int]]] = set()
+        cells_sets: set[FrozenSet[Position]] = set()
         while True:
             r, c = self._get_cell_of_value(value, excluded)
             position = Position(r, c)
@@ -142,7 +140,7 @@ class Grid[T]:
                 cells_sets.add(frozenset(cells))
             excluded.append((r, c))
 
-    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> set:
+    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> Set[Position]:
         if visited is None:
             visited = set()
         if (self.value(position) != value) or (position in visited):
@@ -163,7 +161,7 @@ class Grid[T]:
     def _get_cell_of_value(self, value, excluded=None):
         if excluded is None:
             excluded = []
-        return next(((i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and (i, j) not in excluded), (None, None))
+        return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
 
     @staticmethod
     def get_adjacent_combinations(neighbour_length, block_length, circular) -> list[list[bool]]:

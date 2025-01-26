@@ -126,7 +126,7 @@ class TapaGame:
             biggest_shape = max(black_shapes, key=len)
             black_shapes.remove(biggest_shape)
             for black_shape in black_shapes:
-                shape_not_all_black = Not(And([self._grid_z3.value(r, c) for r, c in black_shape]))
+                shape_not_all_black = Not(And([self._grid_z3[position] for position in black_shape]))
                 around_shape = ShapeGenerator.around_shape(black_shape)
                 around_not_all_white = Not(And([Not(self._grid_z3.value(r, c)) for r, c in around_shape]))
                 constraint = Or(shape_not_all_black, around_not_all_white)

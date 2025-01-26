@@ -1,5 +1,7 @@
 ﻿import itertools
 
+from Utils.Position import Position
+
 
 class ShapeGenerator:
     @staticmethod
@@ -17,9 +19,9 @@ class ShapeGenerator:
     def around_shape(shape):
         shape_set = set(shape)
         enlarged_shape = set()
-        for r, c in shape:
-            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                adjacent_cell = (r + dr, c + dc)
+        for position in shape:
+            for position_delta in [Position(-1, 0), Position(1, 0), Position(0, -1), Position(0, 1)]:
+                adjacent_cell = position + position_delta
                 if adjacent_cell not in shape_set:
                     enlarged_shape.add(adjacent_cell)
         return enlarged_shape
