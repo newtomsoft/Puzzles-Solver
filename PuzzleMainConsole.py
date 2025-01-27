@@ -16,6 +16,7 @@ from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
 from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
+from GridPlayers.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
 from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -124,7 +125,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
             r"https://.*\.puzzle-loop\.com": (SurizaGame, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
-            r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, None),
+            r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, PuzzleTapaGridPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowGame, PuzzleTentaiShowGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, None),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersGame, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
