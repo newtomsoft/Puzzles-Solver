@@ -151,3 +151,6 @@ class Position:
 
     def __neg__(self):
         return Position(-self.r, -self.c)
+
+    def __len__(self):  # get air of rectangle from (0, 0) to self
+        return abs(self.r) + abs(self.c) + 1
