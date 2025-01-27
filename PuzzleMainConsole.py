@@ -17,6 +17,7 @@ from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
 from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
 from GridPlayers.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
+from GridPlayers.PuzzleTentsGridPlayer import PuzzleTentsGridPlayer
 from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -127,7 +128,7 @@ class PuzzleMainConsole:
             r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, PuzzleTapaGridPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowGame, PuzzleTentaiShowGridProvider, None),
-            r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, None),
+            r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersGame, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
         }
         for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
