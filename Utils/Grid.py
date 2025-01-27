@@ -68,8 +68,11 @@ class Grid[T]:
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
             matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
-        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in range(self.rows_number)]
-        background_color_matrix = [[console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in range(self.rows_number)]
+        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in
+                        range(self.rows_number)]
+        background_color_matrix = [
+            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in
+            range(self.rows_number)]
         end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
         end_space = ' ' if back_ground_color_grid else ''
         result = []
@@ -208,6 +211,9 @@ class Grid[T]:
 
     def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
         return [position for position in position.neighbors(mode) if position in self]
+
+    def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
+        return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
