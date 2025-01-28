@@ -8,15 +8,20 @@ class HitoriGame:
         self._grid = grid
         self._solver = None
         self._grid_z3 = None
-        self._is_print_proposition = False
         self._is_print_dot = False
+        self._last_solution: Grid | None = None
 
-    def get_solution(self) -> (Grid | None, int):
-        grid_z3 = [[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)]
-        self._grid_z3 = Grid(grid_z3)
+    def _init_solver(self):
+        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._solver = Solver()
         self._add_constraints()
+
+    def get_solution(self) -> Grid:
+        if self._solver is None:
+            self._init_solver()
+
         solution, _ = self._ensure_all_white_connected()
+        self._last_solution = solution
         return solution
 
     def _ensure_all_white_connected(self):
@@ -26,8 +31,6 @@ class HitoriGame:
             proposition_count += 1
             current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])
             wrong_blacks_sets = current_grid.find_all_min_2_connected_cells_touch_border(False, 'diagonal')
-            if self._is_print_proposition:
-                self.print_proposition(current_grid)
 
             if len(wrong_blacks_sets) == 0:
                 return self.get_solution_grid(current_grid), proposition_count
@@ -40,6 +43,14 @@ class HitoriGame:
                 self._solver.add(Not(And(proposition_constraints)))
 
         return Grid.empty(), proposition_count
+
+    def get_other_solution(self):
+        previous_solution_constraints = []
+        for position, _ in [(position, value) for (position, value) in self._last_solution if not value]:
+            previous_solution_constraints.append(Not(self._grid_z3[position]))
+        self._solver.add(Not(And(previous_solution_constraints)))
+
+        return self.get_solution()
 
     def _add_constraints(self):
         self._if_unique_in_row_and_column_then_white()
@@ -139,10 +150,13 @@ class HitoriGame:
     def _if_3_same_number_in_corner_then_black_corner(self):
         constraints = [
             Not(self._grid_z3.value(0, 0)) if self._grid.value(0, 0) == self._grid.value(0, 1) == self._grid.value(1, 0) else True,
-            Not(self._grid_z3.value(0, self._grid.columns_number - 1)) if self._grid.value(0, self._grid.columns_number - 1) == self._grid.value(0, self._grid.columns_number - 2) == self._grid.value(1, self._grid.columns_number - 1) else True,
-            Not(self._grid_z3.value(self._grid.rows_number - 1, 0)) if self._grid.value(self._grid.rows_number - 1, 0) == self._grid.value(self._grid.rows_number - 1, 1) == self._grid.value(self._grid.rows_number - 2, 0) else True,
-            Not(self._grid_z3.value(self._grid.rows_number - 1, self._grid.columns_number - 1)) if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 1) == self._grid.value(self._grid.rows_number - 2,
-                                                                                                                                                                                                   self._grid.columns_number - 1) == self._grid.value(
+            Not(self._grid_z3.value(0, self._grid.columns_number - 1)) if self._grid.value(0, self._grid.columns_number - 1) == self._grid.value(0, self._grid.columns_number - 2) == self._grid.value(
+                1, self._grid.columns_number - 1) else True,
+            Not(self._grid_z3.value(self._grid.rows_number - 1, 0)) if self._grid.value(self._grid.rows_number - 1, 0) == self._grid.value(self._grid.rows_number - 1, 1) == self._grid.value(
+                self._grid.rows_number - 2, 0) else True,
+            Not(self._grid_z3.value(self._grid.rows_number - 1, self._grid.columns_number - 1)) if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 1) == self._grid.value(
+                self._grid.rows_number - 2,
+                self._grid.columns_number - 1) == self._grid.value(
                 self._grid.rows_number - 1, self._grid.columns_number - 2) else True
         ]
         self._solver.add(constraints)
@@ -172,8 +186,8 @@ class HitoriGame:
 
     def _3_black_in_von_neumann_implies_last_white(self):
         constraints = []
-        for r in range(1, self._grid.rows_number - 2):
-            for c in range(1, self._grid.columns_number - 2):
+        for r in range(1, self._grid.rows_number - 1):
+            for c in range(1, self._grid.columns_number - 1):
                 constraints.append(Implies(And(Not(self._grid_z3.value(r, c - 1)), Not(self._grid_z3.value(r - 1, c)), Not(self._grid_z3.value(r, c + 1))), self._grid_z3.value(r + 1, c)))
                 constraints.append(Implies(And(Not(self._grid_z3.value(r - 1, c)), Not(self._grid_z3.value(r, c + 1)), Not(self._grid_z3.value(r + 1, c))), self._grid_z3.value(r, c - 1)))
                 constraints.append(Implies(And(Not(self._grid_z3.value(r, c + 1)), Not(self._grid_z3.value(r + 1, c)), Not(self._grid_z3.value(r, c - 1))), self._grid_z3.value(r - 1, c)))
@@ -254,10 +268,12 @@ class HitoriGame:
         constraints = []
         for r in range(1, self._grid.rows_number - 4):
             for c, dc in {(0, 1), (self._grid.columns_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r + 4, c)), Not(self._grid_z3.value(r + 1, c + dc)), Not(self._grid_z3.value(r + 3, c + dc))), self._grid_z3.value(r + 2, c + 2 * dc)))
+                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r + 4, c)), Not(self._grid_z3.value(r + 1, c + dc)), Not(self._grid_z3.value(r + 3, c + dc))),
+                                           self._grid_z3.value(r + 2, c + 2 * dc)))
         for c in range(1, self._grid.columns_number - 4):
             for r, dr in {(0, 1), (self._grid.rows_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r, c + 4)), Not(self._grid_z3.value(r + dr, c + 1)), Not(self._grid_z3.value(r + dr, c + 3))), self._grid_z3.value(r + 2 * dr, c + 2)))
+                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r, c + 4)), Not(self._grid_z3.value(r + dr, c + 1)), Not(self._grid_z3.value(r + dr, c + 3))),
+                                           self._grid_z3.value(r + 2 * dr, c + 2)))
         self._solver.add(constraints)
 
     def print_proposition(self, proposition_grid: Grid):

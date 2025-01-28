@@ -64,6 +64,9 @@ class Grid[T]:
     def set_value(self, position: Position, value):
         self._matrix[position.r][position.c] = value
 
+    def get_index(self, position: Position) -> int:
+        return position.r * self.columns_number + position.c
+
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
@@ -131,17 +134,16 @@ class Grid[T]:
         excluded = []
         cells_sets: set[FrozenSet[Position]] = set()
         while True:
-            r, c = self._get_cell_of_value(value, excluded)
-            position = Position(r, c)
-            if r is None:
+            position = self._get_cell_of_value(value, excluded)
+            if position is None:
                 return cells_sets
-            if any((r, c) in cells_set for cells_set in cells_sets):
-                excluded.append((r, c))
+            if any(position in cells_set for cells_set in cells_sets):
+                excluded.append(position)
                 continue
             are_touch_border, cells = self.are_min_2_connected_cells_touch_border(position, mode)
             if are_touch_border:
                 cells_sets.add(frozenset(cells))
-            excluded.append((r, c))
+            excluded.append(position)
 
     def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> Set[Position]:
         if visited is None:
@@ -161,7 +163,7 @@ class Grid[T]:
 
         return visited
 
-    def _get_cell_of_value(self, value, excluded=None):
+    def _get_cell_of_value(self, value, excluded=None) -> Position or None:
         if excluded is None:
             excluded = []
         return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)

@@ -10,6 +10,7 @@ from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
+from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
 from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
@@ -111,7 +112,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider, None),
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiGame, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
-            r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, None),
+            r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider, None),
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuGame, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
