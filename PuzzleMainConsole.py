@@ -12,7 +12,9 @@ from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
+from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
+from GridPlayers.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
 from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
@@ -114,9 +116,9 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuGame, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider, None),
-            r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider, None),
+            r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
-            r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider, None),
+            r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (QueensGame, QueensGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (QueensGame, PuzzleStarBattleGridProvider, None),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuGame, PuzzleShikakuGridProvider, None),
