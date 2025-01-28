@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set
+from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator
 
 from bitarray import bitarray
 
@@ -35,7 +35,7 @@ class Grid[T]:
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self) -> Tuple[Position, T]:
+    def __iter__(self) -> Generator[Tuple[Position, T]]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
@@ -105,19 +105,20 @@ class Grid[T]:
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Position]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []
         shapes = set()
         while True:
             position = self._get_cell_of_value(value, excluded)
             if position is None:
-                return shapes
+                break
             if any(position in shape for shape in shapes):
                 excluded.append(position)
                 continue
             visited = self._depth_first_search(position, value, mode)
             shapes.add(frozenset(visited))
             excluded.append(position)
+        return shapes
 
     def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Position]]:
         value = self.value(position)
@@ -130,13 +131,13 @@ class Grid[T]:
                 border_cells.add(cell)
         return len(border_cells) >= 2, visited
 
-    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[FrozenSet[Position]]:
+    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []
-        cells_sets: set[FrozenSet[Position]] = set()
+        cells_sets: Set[FrozenSet[Position]] = set()
         while True:
             position = self._get_cell_of_value(value, excluded)
             if position is None:
-                return cells_sets
+                break
             if any(position in cells_set for cells_set in cells_sets):
                 excluded.append(position)
                 continue
@@ -144,6 +145,7 @@ class Grid[T]:
             if are_touch_border:
                 cells_sets.add(frozenset(cells))
             excluded.append(position)
+        return cells_sets
 
     def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> Set[Position]:
         if visited is None:
