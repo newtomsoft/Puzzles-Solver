@@ -3,18 +3,19 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Utils.Grid import Grid
 
 
-class PuzzleNurikabeGridProvider(GridProvider, PlaywrightGridProvider):
+class PuzzleNurikabeGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         page.goto(url)
+        self.new_game(page, 'div.cell')
         html_page = page.content()
-        browser.close()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_=['cell', 'nurikabe-task-cell'])
         rows_number = sum(1 for cell in cell_divs if 'left: 1px' in cell['style'])
