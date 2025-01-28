@@ -39,7 +39,7 @@ class ShingokiGame:
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
-                    if position.next(direction) not in self._island_bridges_z3:
+                    if position.after(direction) not in self._island_bridges_z3:
                         continue
                     bridges_number = model.eval(bridges).as_long()
                     if bridges_number > 0:
@@ -129,9 +129,9 @@ class ShingokiGame:
 
     def _white_vertical_constraints(self, position, first_part_count, second_part_count):
         vertical_positions = (
-                [position.next(Direction.up(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.up(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.down(), count) for count in range(1, second_part_count + 1)]
         )
         vertical_constraints = []
         if all(position in self._island_bridges_z3 for position in vertical_positions):
@@ -154,9 +154,9 @@ class ShingokiGame:
 
     def _white_horizontal_constraints(self, position, first_part_count, second_part_count):
         horizontal_positions = (
-                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.right(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.right(), count) for count in range(1, second_part_count + 1)]
         )
         horizontal_constraints = []
         if all(position in self._island_bridges_z3 for position in horizontal_positions):
@@ -190,9 +190,9 @@ class ShingokiGame:
 
     def _black_right_down_constraints(self, position, first_part_count, second_part_count):
         right_down_positions = (
-                [position.next(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.down(), count) for count in range(1, second_part_count + 1)]
         )
         right_down_constraints = []
         if all(position in self._island_bridges_z3 for position in right_down_positions):
@@ -214,9 +214,9 @@ class ShingokiGame:
 
     def _black_right_up_constraints(self, position, first_part_count, second_part_count):
         right_up_positions = (
-                [position.next(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.up(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.up(), count) for count in range(1, second_part_count + 1)]
         )
         right_up_constraints = []
         if all(position in self._island_bridges_z3 for position in right_up_positions):
@@ -238,9 +238,9 @@ class ShingokiGame:
 
     def _black_left_down_constraints(self, position, first_part_count, second_part_count):
         left_down_positions = (
-                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.down(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.down(), count) for count in range(1, second_part_count + 1)]
         )
         left_down_constraints = []
         if all(position in self._island_bridges_z3 for position in left_down_positions):
@@ -262,9 +262,9 @@ class ShingokiGame:
 
     def _black_left_up_constraints(self, position, first_part_count, second_part_count):
         left_up_positions = (
-                [position.next(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
+                [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
-                [position.next(Direction.up(), count) for count in range(1, second_part_count + 1)]
+                [position.after(Direction.up(), count) for count in range(1, second_part_count + 1)]
         )
         left_up_constraints = []
         if all(position in self._island_bridges_z3 for position in left_up_positions):

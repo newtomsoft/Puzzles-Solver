@@ -35,25 +35,21 @@ class TentaiShowGame:
         while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
+            if proposition_count % 10 == 0:
+                print('.', end='', flush=True)
             grid = Grid([[model.eval(self._grid_z3[Position(r, c)]).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
 
-            is_solution = True
-            for circle_value in self.circle_positions.keys():
-                if not grid.are_all_cells_connected(circle_value):
-                    is_solution = False
-                    break
-            if is_solution:
+            circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
+            not_compliant_shapes = [(circle_value, shapes_positions) for (circle_value, shapes_positions) in circle_shapes.items() if len(shapes_positions) > 1]
+            if len(not_compliant_shapes) == 0:
                 return grid, proposition_count
 
-            circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
-            for circle_value, shapes in circle_shapes.items():
-                if len(shapes) == 1:
-                    continue
-                circle_positions = self.circle_positions[circle_value].straddled_neighbors()
-                for positions in shapes:
-                    if next(iter(circle_positions)) not in positions:
-                        shape_constraints = [self._grid_z3[position] == circle_value for position in positions]
-                        around_constraints = [self._grid_z3[position] == grid[position] for position in ShapeGenerator.around_shape(positions) if position in grid]
+            for circle_value, shapes_positions in not_compliant_shapes:
+                selected_circle_position = next(iter(self.circle_positions[circle_value].straddled_neighbors()))
+                for shape_positions in shapes_positions:
+                    if selected_circle_position not in shape_positions:
+                        shape_constraints = [self._grid_z3[position] == circle_value for position in shape_positions]
+                        around_constraints = [self._grid_z3[position] == grid[position] for position in ShapeGenerator.around_shape(shape_positions) if position in grid]
                         constraint = Not(And(shape_constraints + around_constraints))
                         self._solver.add(constraint)
 
