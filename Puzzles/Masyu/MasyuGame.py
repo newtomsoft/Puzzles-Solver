@@ -39,7 +39,7 @@ class MasyuGame:
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
-                    if position.next(direction) not in self._island_bridges_z3:
+                    if position.after(direction) not in self._island_bridges_z3:
                         continue
                     bridges_number = model.eval(bridges).as_long()
                     if bridges_number > 0:

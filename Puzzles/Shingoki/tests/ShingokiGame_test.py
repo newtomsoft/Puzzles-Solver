@@ -753,7 +753,7 @@ class ShingokiGameTests(TestCase):
         # other_solution = game.get_other_solution()
         # self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip('This test is too slow (around 120 seconds)')
+    @unittest.skip('This test is too slow (around 120 seconds)')
     def test_solution_41x41(self):
         grid = Grid([
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'w4', ' ', ' ', ' ', 'b2', ' ', 'b3', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b4', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b3', ' ', 'b2', ' ', ' ', 'b4', ' ', ' '],

@@ -148,7 +148,7 @@ class ThermometersGame:
         return thermometer_positions
 
     def _compute_thermometer_positions(self, first_position: Position, value):
-        second_position = first_position.next(self.next_direction[value])
+        second_position = first_position.after(self.next_direction[value])
         thermometer_positions = [first_position, second_position]
         while True:
             current_position = thermometer_positions[-1]
@@ -157,29 +157,29 @@ class ThermometersGame:
             previous_value = self._grid[previous_position]
             if previous_value == 'l1' and current_value == 'l1':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(direction))
+                thermometer_positions.append(current_position.after(direction))
                 continue
             if previous_value == 'l2' and current_value == 'l2':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(direction))
+                thermometer_positions.append(current_position.after(direction))
                 continue
             if previous_value == 'c1' and current_value == 'c3':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.up()) if direction == Direction.right() else current_position.next(Direction.left()))
+                thermometer_positions.append(current_position.after(Direction.up()) if direction == Direction.right() else current_position.after(Direction.left()))
                 continue
             if previous_value == 'c2' and current_value == 'c4':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.up) if direction == Direction.left() else current_position.next(Direction.right()))
+                thermometer_positions.append(current_position.after(Direction.up) if direction == Direction.left() else current_position.after(Direction.right()))
                 continue
             if previous_value == 'c3' and current_value == 'c1':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.down()) if direction == Direction.left() else current_position.next(Direction.right()))
+                thermometer_positions.append(current_position.after(Direction.down()) if direction == Direction.left() else current_position.after(Direction.right()))
                 continue
             if previous_value == 'c4' and current_value == 'c2':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.next(Direction.down()) if direction == Direction.right() else current_position.next(Direction.left()))
+                thermometer_positions.append(current_position.after(Direction.down()) if direction == Direction.right() else current_position.after(Direction.left()))
                 continue
-            next_position = current_position.next(self.next_direction[(previous_value, current_value)])
+            next_position = current_position.after(self.next_direction[(previous_value, current_value)])
             if next_position == current_position:
                 break
             thermometer_positions.append(next_position)

@@ -40,7 +40,7 @@ class Position:
     def distance_to(self, other: 'Position') -> float:
         return math.sqrt(math.pow(abs(self.r - other.r), 2) + math.pow(abs(self.c - other.c), 2))
 
-    def next(self, direction: Direction, count=1) -> 'Position':
+    def after(self, direction: Direction, count=1) -> 'Position':
         if direction == Direction.down():
             return Position(self.r + count, self.c)
         if direction == Direction.right():
