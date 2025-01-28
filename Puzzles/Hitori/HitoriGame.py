@@ -1,6 +1,7 @@
 ﻿from z3 import Bool, Solver, Implies, Not, And, Or, sat, is_true, Sum
 
 from Utils.Grid import Grid
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class HitoriGame:
@@ -8,7 +9,6 @@ class HitoriGame:
         self._grid = grid
         self._solver = None
         self._grid_z3 = None
-        self._is_print_dot = False
         self._last_solution: Grid | None = None
 
     def _init_solver(self):
@@ -30,17 +30,16 @@ class HitoriGame:
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])
-            wrong_blacks_sets = current_grid.find_all_min_2_connected_cells_touch_border(False, 'diagonal')
-
-            if len(wrong_blacks_sets) == 0:
+            white_shapes = current_grid.get_all_shapes()
+            if len(white_shapes) == 1:
                 return self.get_solution_grid(current_grid), proposition_count
 
-            if self._is_print_dot:
-                self.print_dot(proposition_count)
-
-            for wrong_blacks in wrong_blacks_sets:
-                proposition_constraints = [Not(self._grid_z3.value(r, c)) for r, c in wrong_blacks]
-                self._solver.add(Not(And(proposition_constraints)))
+            biggest_white_shapes = max(white_shapes, key=len)
+            white_shapes.remove(biggest_white_shapes)
+            for white_shape in white_shapes:
+                around_white = ShapeGenerator.around_shape(white_shape)
+                around_white_are_not_all_black_constraint = Not(And([Not(self._grid_z3[position]) for position in around_white if position in self._grid]))
+                self._solver.add(around_white_are_not_all_black_constraint)
 
         return Grid.empty(), proposition_count
 
@@ -58,7 +57,7 @@ class HitoriGame:
         self._white_for_same_number_in_row_and_column_implies_black()
         self._black_implies_von_neumann_withe()
         self._if_sandwiched_by_2_same_number_then_white()
-        self._if_2_same_number_contigus_then_others_black()
+        self._if_2_same_number_adjacent_then_others_black()
         self._if_3_same_number_in_corner_then_black_corner()
         self._black_x_black_on_border_implies_white_white()
         self._if_4_same_number_in_square_then_black_in_diagonal()
@@ -119,7 +118,7 @@ class HitoriGame:
                         constraints.append(Implies(self._grid_z3.value(r0, c0), Not(self._grid_z3.value(r0, c1))))
         self._solver.add(constraints)
 
-    def _if_2_same_number_contigus_then_others_black(self):
+    def _if_2_same_number_adjacent_then_others_black(self):
         constraints = []
         for r in range(self._grid.rows_number - 1):
             for c in range(self._grid.columns_number):
