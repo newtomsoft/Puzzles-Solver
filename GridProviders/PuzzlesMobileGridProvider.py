@@ -1,4 +1,6 @@
-﻿from playwright.sync_api import Page
+﻿from urllib.parse import urlparse
+
+from playwright.sync_api import Page
 
 
 class PuzzlesMobileGridProvider:
@@ -10,6 +12,9 @@ class PuzzlesMobileGridProvider:
 
     @staticmethod
     def new_game(page: Page, selector_to_waite='div.cell'):
+        url_object = urlparse(page.url)
+        if 'specid=' in url_object.query:
+            return
         new_game_button = page.locator("#btnNew")
         if new_game_button.count() > 0:
             new_game_button.click()
