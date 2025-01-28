@@ -209,7 +209,7 @@ class NurikabeGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_get_solution_5x5_4(self):
+    def test_get_solution_5x5_4(self):  # approx 28 ms
         grid = Grid([
             [1, 0, 0, 3, 0],
             [0, 0, 1, 0, 0],
@@ -230,7 +230,7 @@ class NurikabeGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_get_solution_5x5_5(self):
+    def test_get_solution_5x5_5(self):  # approx 40 ms
         grid = Grid([
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
@@ -251,7 +251,7 @@ class NurikabeGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_get_solution_5x5_6(self):
+    def test_get_solution_5x5_6(self):  # approx 34 ms
         grid = Grid([
             [1, 0, 0, 0, 0],
             [0, 0, 1, 0, 2],
@@ -272,7 +272,7 @@ class NurikabeGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_get_solution_7x7_easy(self):
+    def test_get_solution_7x7_easy(self):  # approx 300 ms
         grid = Grid([
             [0, 0, 0, 0, 0, 0, 0],
             [6, 0, 0, 0, 0, 0, 0],
@@ -297,7 +297,7 @@ class NurikabeGameTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_get_solution_12x(self):
+    def test_get_solution_12x(self):  # approx 4,8 seconds
         grid = Grid([
             [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0],
