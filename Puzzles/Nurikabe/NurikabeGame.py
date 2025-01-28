@@ -1,7 +1,8 @@
 ﻿from typing import Set
 
-from z3 import Solver, And, sat, Or, Bool, Not, is_true
+from z3 import Solver, And, sat, Or, Bool, Not, is_true, Implies
 
+from Utils.Direction import Direction
 from Utils.Grid import Grid
 from Utils.Position import Position
 from Utils.ShapeGenerator import ShapeGenerator
@@ -30,12 +31,11 @@ class NurikabeGame:
 
     def get_other_solution(self):
         self._exclude_solution(self._last_solution)
-        solution = self._ensure_all_black_connected_and_no_island_without_number()
-        return solution
+        return self._ensure_all_black_connected_and_no_island_without_number()
 
     def _exclude_solution(self, solution):
-        river_cells = solution.get_all_shapes(1)
-        self._solver.add(Not(And([self._grid_z3[r][c] for river_cell in river_cells for r, c in river_cell])))
+        rivers_cells = solution.get_all_shapes(1)
+        self._solver.add(Not(And([self._grid_z3[river_cell] for river_cells in rivers_cells for river_cell in river_cells])))
 
     def _ensure_all_black_connected_and_no_island_without_number(self):
         proposition_count = 0
@@ -67,7 +67,7 @@ class NurikabeGame:
         for river in rivers:
             not_all_cell_are_river = Not(And([self._grid_z3[position] for position in river]))
             around_river = ShapeGenerator.around_shape(river)
-            around_river_are_not_all_island = Not(And([Not(self._grid_z3[position]) for position in around_river if 0 <= position.r < self.rows_number and 0 <= position.c < self.columns_number]))
+            around_river_are_not_all_island = Not(And([Not(self._grid_z3[position]) for position in around_river if position in self._grid]))
             constraint = Or(not_all_cell_are_river, around_river_are_not_all_island)
             self._solver.add(constraint)
 
@@ -75,7 +75,7 @@ class NurikabeGame:
         result = False
         for island in islands:
             if all(self._grid[position] == 0 for position in island) or any((island_area := self._grid[position]) != 0 for position in island) and island_area != len(island):
-                black_around_shape = [position for position in ShapeGenerator.around_shape(island) if 0 <= position.r < self.rows_number and 0 <= position.c < self.columns_number]
+                black_around_shape = [position for position in ShapeGenerator.around_shape(island) if position in self._grid]
                 blacks = [self._grid_z3[position] for position in black_around_shape]
                 whites = [Not(self._grid_z3[position]) for position in island]
                 constraint_black_and_white = And(blacks + whites)
@@ -84,34 +84,35 @@ class NurikabeGame:
         return result
 
     def _add_constraints(self):
-        self._constraint_island_on_island_area()
-        self._constraint_islands_area_sum()
-        self._constraint_adjacent_1_is_river()
-        self._constraint_river_between_2_island_area()
-        self._constraint_river_if_2_island_area_diagonal_adjacent()
-        self._constraint_no_square_river()
-        self._constraint_islands_area_and_river()
+        self._add_island_on_island_area_constraint()
+        self._add_islands_area_sum_constraint()
+        self._add_adjacent_1_is_river_constraint()
+        self._add_river_between_2_island_area_constraint()
+        self._add_river_if_2_island_area_diagonal_adjacent_constraint()
+        self._add_no_square_river_constraint()
+        self._add_islands_area_and_river_constraint()
+        self._add_river_if_all_neighbors_river_and_not_island_area()
 
-    def _constraint_island_on_island_area(self):
+    def _add_island_on_island_area_constraint(self):
         constraint = [Not(self._grid_z3[position]) for position in self.islands_area_position]
         self._solver.add(constraint)
 
-    def _constraint_adjacent_1_is_river(self):
+    def _add_adjacent_1_is_river_constraint(self):
         for river_values in [self._grid_z3.neighbors_values(position) for position in self.islands_area_position if self._grid[position] == 1]:
             self._solver.add(river_values)
 
-    def _constraint_islands_area_sum(self):
+    def _add_islands_area_sum_constraint(self):
         islands_area_sum = sum(number for number in self.islands_area)
         constraint = sum(Not(self._grid_z3[r][c]) for r in range(self.rows_number) for c in range(self.columns_number)) == islands_area_sum
         self._solver.add(constraint)
 
-    def _constraint_no_square_river(self):
+    def _add_no_square_river_constraint(self):
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
                 if self._grid.value(r, c) == 0 and self._grid.value(r + 1, c) == 0 and self._grid.value(r, c + 1) == 0 and self._grid.value(r + 1, c + 1) == 0:
                     self._solver.add(Not(And(self._grid_z3[r][c], self._grid_z3[r + 1][c], self._grid_z3[r][c + 1], self._grid_z3[r + 1][c + 1])))
 
-    def _constraint_islands_area_and_river(self):
+    def _add_islands_area_and_river_constraint(self):
         islands_possible_positions = self._constraint_islands_area()
         self._constraint_must_be_river(islands_possible_positions)
 
@@ -131,7 +132,8 @@ class NurikabeGame:
         area = len(position - initial_position)
         if position != initial_position and self._grid[position] != 0 or area == island_area:
             return possible_positions
-        adjacent_positions_to_add = {pos for pos in self._grid.neighbors_positions(position) if self._grid[pos] == 0 and pos not in possible_positions and not self._is_adjacent_with_other_island_area(pos, position)}
+        adjacent_positions_to_add = {pos for pos in self._grid.neighbors_positions(position) if
+                                     self._grid[pos] == 0 and pos not in possible_positions and not self._is_adjacent_with_other_island_area(pos, position)}
         if len(adjacent_positions_to_add) == 0:
             return possible_positions
         possible_positions.update(adjacent_positions_to_add)
@@ -146,17 +148,17 @@ class NurikabeGame:
     def _is_adjacent_with_other_island_area(self, position: Position, position_origin: Position):
         return any([self._grid[adjacent_position] for adjacent_position in self._grid.neighbors_positions(position) if adjacent_position != position_origin]) > 0
 
-    def _constraint_river_between_2_island_area(self):
+    def _add_river_between_2_island_area_constraint(self):
         for r in range(self.rows_number - 2):
             for c in range(self.columns_number - 2):
                 position = Position(r, c)
                 if self._grid[position] == 0:
                     continue
-                neighbors = [position + position_offset for position_offset in [Position(2, 0), Position(0, 2)]]
+                neighbors = [position.after(Direction.down(), 2), position.after(Direction.right(), 2)]
                 for river_value in [self._grid_z3[(neighbor_position + position) // 2] for neighbor_position in neighbors if self._grid[neighbor_position] != 0]:
                     self._solver.add(river_value)
 
-    def _constraint_river_if_2_island_area_diagonal_adjacent(self):
+    def _add_river_if_2_island_area_diagonal_adjacent_constraint(self):
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
                 if self._grid.value(r, c) == 0 or self._grid.value(r + 1, c + 1) == 0:
@@ -170,3 +172,7 @@ class NurikabeGame:
                     continue
                 self._solver.add(self._grid_z3[r + 1][c])
                 self._solver.add(self._grid_z3[r][c - 1])
+
+    def _add_river_if_all_neighbors_river_and_not_island_area(self):
+        for position, value in [(position, value) for position, value in self._grid_z3 if self._grid[position] == 0]:
+            Implies(And([self._grid_z3[neighbor_position] for neighbor_position in self._grid.neighbors_positions(position)]), self._grid_z3[position])
