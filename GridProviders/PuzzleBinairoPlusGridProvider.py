@@ -14,7 +14,7 @@ class PuzzleBinairoPlusGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
     def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         page.goto(url)
-        self.new_game(page)
+        self.new_game(page, 'div.cell')
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cells = soup.find_all('div', class_=['cell', 'cell-0', 'cell-1'])

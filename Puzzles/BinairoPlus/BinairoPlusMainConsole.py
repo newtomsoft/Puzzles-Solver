@@ -1,6 +1,7 @@
 ﻿import time
 
-from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
+from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoGridPlayer
+
 from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
@@ -63,8 +64,8 @@ class BinairoPlusMainConsole:
 
     def play(self, solution, browser):
         url_patterns = {
-            "https://www.puzzle-binairo.com": PuzzleBinairoPlusGridPlayer,
-            "https://fr.puzzle-binairo.com": PuzzleBinairoPlusGridPlayer,
+            "https://www.puzzle-binairo.com": PuzzleBinairoGridPlayer,
+            "https://fr.puzzle-binairo.com": PuzzleBinairoGridPlayer,
         }
 
         for pattern, player_class in url_patterns.items():
