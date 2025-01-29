@@ -2,11 +2,12 @@
 import time
 from typing import Tuple
 
+from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoGridPlayer
+
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
-from GridPlayers.PuzzleBinairoPlusGridPlayer import PuzzleBinairoPlusGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
@@ -106,8 +107,8 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumGame, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
-            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlusGridPlayer),
-            r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider, None),
+            r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider, PuzzleBinairoGridPlayer),
+            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
             r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider, None),
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
