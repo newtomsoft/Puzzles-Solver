@@ -13,10 +13,11 @@ from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
 from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
+from GridPlayers.PuzzleMinesweeperGridPlayer import PuzzleMinesweeperGridPlayer
+from GridPlayers.PuzzleMinesweeperMosaicGridPlayer import PuzzleMinesweeperMosaicGridPlayer
 from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
-from GridPlayers.PuzzlePuzzleMinesweeperMosaicGridPlayer import PuzzlePuzzleHitoriGridPlayerGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
 from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
@@ -65,6 +66,7 @@ from Puzzles.Hitori.HitoriGame import HitoriGame
 from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
 from Puzzles.Kakuro.KakuroGame import KakuroGame
 from Puzzles.Masyu.MasyuGame import MasyuGame
+from Puzzles.Minesweeper.MinesweeperGame import MinesweeperGame
 from Puzzles.MinesweeperMosaic.MinesweeperMosaicGame import MinesweeperMosaicGame
 from Puzzles.Nonogram.NonogramGame import NonogramGame
 from Puzzles.Norinori.NorinoriGame import NorinoriGame
@@ -117,7 +119,8 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider, None),
             r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuGame, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
-            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider, PuzzlePuzzleHitoriGridPlayerGridPlayer),
+            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
+            r"https://.*\.puzzle-minesweeper\.com": (MinesweeperGame, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
