@@ -6,6 +6,8 @@ from Utils.Position import Position
 
 
 class IslandTest(TestCase):
+    solver_engine = Z3SolverEngine()
+
     def setUp(self):
         Island._islands = {}
 

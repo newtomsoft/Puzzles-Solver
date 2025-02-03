@@ -10,7 +10,7 @@ from Utils.Grid import Grid
 
 
 class PuzzleThermometersGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
+    def get_grid(self, url: str) -> tuple[any, BrowserContext]:
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
@@ -28,7 +28,7 @@ class PuzzleThermometersGridProvider(GridProvider, PlaywrightGridProvider, Puzzl
         row_count = int(math.sqrt(cells_count))
         column_count = row_count
         cell_types = {'start': 's', 'straight': 'l', 'curve': 'c', 'end': 'e'}
-        rs = {'r1':'1', 'r2':'2', 'r3':'3'}
+        rs = {'r1': '1', 'r2': '2', 'r3': '3'}
         matrix = [['' for _ in range(column_count)] for _ in range(row_count)]
         for i, cell in enumerate(matrix_cells):
             row = i // column_count

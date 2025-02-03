@@ -6,6 +6,8 @@ from Utils.Position import Position
 
 
 class TestPosition(TestCase):
+    solver_engine = Z3SolverEngine()
+
     def test_position_equality(self):
         self.assertEqual(Position(1, 2), Position(1, 2))
         self.assertNotEqual(Position(1, 2), Position(1, 3))
@@ -85,7 +87,7 @@ class TestPosition(TestCase):
         self.assertEqual(4, Position(1, 1).distance_to(Position(1, 5)))
         self.assertEqual(5, Position(1, 1).distance_to(Position(6, 1)))
         self.assertEqual(5, Position(1, 1).distance_to(Position(1, 6)))
-        self.assertEqual(math.sqrt(2), Position(1, 1).distance_to(Position(2,2)))
-        self.assertEqual(math.sqrt(8), Position(1, 1).distance_to(Position(3,3)))
-        self.assertEqual(math.sqrt(18), Position(1, 1).distance_to(Position(4,4)))
-        self.assertEqual(math.sqrt(13), Position(1, 1).distance_to(Position(3,4)))
+        self.assertEqual(math.sqrt(2), Position(1, 1).distance_to(Position(2, 2)))
+        self.assertEqual(math.sqrt(8), Position(1, 1).distance_to(Position(3, 3)))
+        self.assertEqual(math.sqrt(18), Position(1, 1).distance_to(Position(4, 4)))
+        self.assertEqual(math.sqrt(13), Position(1, 1).distance_to(Position(3, 4)))

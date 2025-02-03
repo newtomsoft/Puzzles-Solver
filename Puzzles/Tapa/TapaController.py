@@ -1,7 +1,7 @@
 ﻿from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from TapaGame import TapaGame
+from TapaSolver import TapaSolver
 from Utils.Grid import Grid
 
 app = Flask(__name__)
@@ -16,8 +16,9 @@ def get_solution():
         return jsonify({"error": "matrix data is required"}), 400
 
     grid = Grid(grid_data)
-    game = TapaGame(grid)
-    solution_grid = game.get_solution()
+    game_solver = TapaSolver(grid, self.get_solver_engine)
+
+    solution_grid = game_solver.get_solution()
     if not solution_grid:
         return jsonify({"message": "No solution found"}), 200
 

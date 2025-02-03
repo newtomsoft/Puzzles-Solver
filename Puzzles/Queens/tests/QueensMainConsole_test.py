@@ -9,6 +9,10 @@ from Utils.utils import clean_ansi_escape_codes
 
 
 class TestMainFunction(TestCase):
+    @staticmethod
+    def get_solver_engine():
+        return Z3SolverEngine()
+
     def setUp(self):
         self.patcher = patch.object(PlaywrightGridProvider, 'get_config')
         self.mock_get_config = self.patcher.start()
