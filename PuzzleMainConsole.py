@@ -1,6 +1,8 @@
 ﻿import re
 import time
-from typing import Tuple
+from typing import Tuple, Any
+
+from playwright.sync_api import BrowserContext
 
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
@@ -24,6 +26,7 @@ from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
 from GridPlayers.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
 from GridPlayers.PuzzleTentsGridPlayer import PuzzleTentsGridPlayer
 from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
+from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
@@ -54,109 +57,111 @@ from GridProviders.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvi
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
-from Puzzles.Akari.AkariGame import AkariGame
-from Puzzles.Aquarium.AquariumGame import AquariumGame
-from Puzzles.Bimaru.BimaruGame import BimaruGame
-from Puzzles.Binairo.BinairoGame import BinairoGame
-from Puzzles.BinairoPlus.BinairoPlusGame import BinairoPlusGame
-from Puzzles.Dominosa.DominosaGame import DominosaGame
-from Puzzles.Futoshiki.FutoshikiGame import FutoshikiGame
-from Puzzles.Hashi.HashiGame import HashiGame
-from Puzzles.Hitori.HitoriGame import HitoriGame
-from Puzzles.Kakurasu.KakurasuGame import KakurasuGame
-from Puzzles.Kakuro.KakuroGame import KakuroGame
-from Puzzles.Masyu.MasyuGame import MasyuGame
-from Puzzles.Minesweeper.MinesweeperGame import MinesweeperGame
-from Puzzles.MinesweeperMosaic.MinesweeperMosaicGame import MinesweeperMosaicGame
-from Puzzles.Nonogram.NonogramGame import NonogramGame
-from Puzzles.Norinori.NorinoriGame import NorinoriGame
-from Puzzles.Nurikabe.NurikabeGame import NurikabeGame
-from Puzzles.Queens.QueensGame import QueensGame
-from Puzzles.Renzoku.RenzokuGame import RenzokuGame
-from Puzzles.Shikaku.ShikakuGame import ShikakuGame
-from Puzzles.Shingoki.ShingokiGame import ShingokiGame
-from Puzzles.Skyscrapers.SkyscrapersGame import SkyscrapersGame
-from Puzzles.Stitches.StitchesGame import StitchesGame
-from Puzzles.Sudoku.SudokuGame import SudokuGame
-from Puzzles.Sumplete.SumpleteGame import SumpleteGame
-from Puzzles.Suriza.SurizaGame import SurizaGame
-from Puzzles.Tapa.TapaGame import TapaGame
-from Puzzles.TentaiShow.TentaiShowGame import TentaiShowGame
-from Puzzles.Tents.TentsGame import TentsGame
-from Puzzles.Thermometers.ThermometersGame import ThermometersGame
+from Puzzles.Akari.AkariSolver import AkariSolver
+from Puzzles.Aquarium.AquariumSolver import AquariumSolver
+from Puzzles.Bimaru.BimaruSolver import BimaruSolver
+from Puzzles.Binairo.BinairoSolver import BinairoSolver
+from Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
+from Puzzles.Dominosa.DominosaSolver import DominosaSolver
+from Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
+from Puzzles.GameSolver import GameSolver
+from Puzzles.Hashi.HashiSolver import HashiSolver
+from Puzzles.Hitori.HitoriSolver import HitoriSolver
+from Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
+from Puzzles.Kakuro.KakuroSolver import KakuroSolver
+from Puzzles.Masyu.MasyuSolver import MasyuSolver
+from Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
+from Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from Puzzles.Nonogram.NonogramSolver import NonogramSolver
+from Puzzles.Norinori.NorinoriSolver import NorinoriSolver
+from Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
+from Puzzles.Queens.QueensSolver import QueensSolver
+from Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
+from Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
+from Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
+from Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
+from Puzzles.Stitches.StitchesSolver import StitchesSolver
+from Puzzles.Sudoku.SudokuSolver import SudokuSolver
+from Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
+from Puzzles.Suriza.SurizaSolver import SurizaSolver
+from Puzzles.Tapa.TapaSolver import TapaSolver
+from Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
+from Puzzles.Tents.TentsSolver import TentsSolver
+from Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 
 class PuzzleMainConsole:
     @staticmethod
     def main():
-        puzzle_game, data_game, player = PuzzleMainConsole.get_game_data_player()  # todo: refacto data_game
-        good_data_game = data_game[0]
-        browser = data_game[1]
-        solution = PuzzleMainConsole.run(puzzle_game, good_data_game)
-        if player is not None:
-            player.play(solution, browser)
+        game_solver, data_game, browser, game_player = PuzzleMainConsole.get_game_data_player()
+        solution = PuzzleMainConsole.run(game_solver, data_game)
+        if game_player is not None:
+            game_player.play(solution, browser)
 
     @staticmethod
-    def get_game_data_player() -> Tuple[type, Tuple[Grid, ...], GridPlayer or None]:
-        print("Puzzle Game")
-        print("Enter url")
+    def get_game_data_player() -> Tuple[GameSolver, Any, BrowserContext, GridPlayer | None]:
+        print("Puzzle Solver")
+        print("Enter game url")
         console_input = input()
         if console_input == "queens":
             console_input = "https://www.linkedin.com/games/queens/"
 
         url_patterns = {
-            r"https://.*\.puzzle-light-up\.com": (AkariGame, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
-            r"https://.*\.puzzle-aquarium\.com": (AquariumGame, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
-            r"https://.*\.puzzle-battleships\.com": (BimaruGame, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
-            r"https://.*\.puzzle-binairo\.com": (BinairoGame, PuzzleBinairoGridProvider, PuzzleBinairoGridPlayer),
-            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusGame, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
-            r"https://.*\.puzzle-dominosa\.com": (DominosaGame, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
-            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuGame, PuzzleRenzokuGridProvider, PuzzleFutoshikiGridPlayer),  # same player as futoshiki
-            r"https://.*\.puzzle-futoshiki\.com": (FutoshikiGame, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
-            r"https://.*\.puzzle-bridges\.com": (HashiGame, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
-            r"https://.*\.puzzle-hitori\.com": (HitoriGame, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
-            r"https://.*\.puzzle-kakurasu\.com": (KakurasuGame, PuzzleKakurasuGridProvider, None),
-            r"https://.*\.puzzle-kakuro\.com": (KakuroGame, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
-            r"https://.*\.puzzle-masyu\.com": (MasyuGame, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
-            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicGame, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
-            r"https://.*\.puzzle-minesweeper\.com": (MinesweeperGame, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
-            r"https://.*\.puzzle-nonograms\.com": (NonogramGame, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
-            r"https://.*\.puzzle-norinori\.com": (NorinoriGame, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
-            r"https://.*\.puzzle-nurikabe\.com": (NurikabeGame, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
-            r"https://www\.linkedin\.com/games/queens": (QueensGame, QueensGridProvider, None),
-            r"https://.*\.puzzle-star-battle\.com": (QueensGame, PuzzleStarBattleGridProvider, None),
-            r"https://.*\.puzzle-shikaku\.com": (ShikakuGame, PuzzleShikakuGridProvider, None),
-            r"https://.*\.puzzle-shingoki\.com": (ShingokiGame, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
-            r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersGame, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
-            r"https://.*\.puzzle-stitches\.com": (StitchesGame, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
-            r"https://.*\.puzzle-sudoku\.com": (SudokuGame, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
-            r"https://.*\.puzzle-loop\.com": (SurizaGame, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
-            r"https://playsumplete\.com/": (SumpleteGame, PlaySumpleteGridProvider, None),
-            r"https://.*\.puzzle-tapa\.com": (TapaGame, PuzzleTapaGridProvider, PuzzleTapaGridPlayer),
-            r"https://.*\.puzzle-galaxies\.com": (TentaiShowGame, PuzzleTentaiShowGridProvider, None),
-            r"https://.*\.puzzle-tents\.com": (TentsGame, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
-            r"https://.*\.puzzle-thermometers\.com": (ThermometersGame, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
+            r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
+            r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
+            r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
+            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
+            r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoGridPlayer),
+            r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
+            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiGridPlayer),  # same player as futoshiki
+            r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
+            r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
+            r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
+            r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, None),
+            r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
+            r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
+            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
+            r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
+            r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
+            r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
+            r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
+            r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
+            r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, None),
+            r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, None),
+            r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
+            r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
+            r"https://.*\.puzzle-stitches\.com": (StitchesSolver, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
+            r"https://.*\.puzzle-sudoku\.com": (SudokuSolver, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
+            r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
+            r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
+            r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaGridPlayer),
+            r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleTentaiShowGridProvider, None),
+            r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
+            r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
         }
         for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
             if re.match(pattern, console_input):
-                game = game_class
-                grid_provider = grid_provider_class()
-                player = player_class() if player_class is not None else None
-                return game, grid_provider.get_grid(console_input), player
+                game_solver: GameSolver = game_class
+                grid_provider: GridProvider = grid_provider_class()
+                game_player: GridPlayer | None = player_class() if player_class is not None else None
+                game_data, browser_context = grid_provider.get_grid(console_input)
+                return game_solver, game_data, browser_context, game_player
         raise ValueError("No grid grid provider found")
 
     @staticmethod
-    def run(puzzle_game, data_game):
+    def run(puzzle_game: type(GameSolver), data_game):
+        solver_engine = Z3SolverEngine()
         if type(data_game) is tuple:
             grid = data_game[0]
             extra_data = data_game[1:]
-            game = puzzle_game(grid, *extra_data)
+            game_solver = puzzle_game(grid, *extra_data, solver_engine)
         else:
-            game = puzzle_game(data_game)
+            game_solver = puzzle_game(data_game, solver_engine)
 
         start_time = time.time()
-        solution = game.get_solution()
+        solution = game_solver.get_solution()
         end_time = time.time()
         execution_time = end_time - start_time
         if solution != Grid.empty():

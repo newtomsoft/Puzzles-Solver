@@ -25,7 +25,7 @@ class EscapeSudokuGridProvider(GridProvider, PlaywrightGridProvider):
             )
             page = browser.pages[0]
             page.goto(source)
-            page.wait_for_selector('div.game-boxes')
+            page.wait_for_selector('div.game_solver-boxes')
             slot_divs = page.query_selector_all('div.slot')
             cells_count = len(slot_divs)
             matrix_size = int(math.sqrt(cells_count))

@@ -1,9 +1,10 @@
 ﻿import time
 
+from SolverEngine.Z3SolverEngine import Z3SolverEngine
 from playwright.sync_api import BrowserContext
 
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
-from Puzzles.Tents.TentsGame import TentsGame
+from Puzzles.Tents.TentsSolver import TentsSolver
 from Utils.Grid import Grid
 
 
@@ -21,9 +22,9 @@ class PuzzleMainConsole:
 
     @staticmethod
     def run(data_game):
-        game = TentsGame(data_game[0], data_game[1])
+        game_solver = TentsSolver(data_game[0], data_game[1], Z3SolverEngine())
         start_time = time.time()
-        solution_grid = game.get_solution()
+        solution_grid = game_solver.get_solution()
         end_time = time.time()
         execution_time = end_time - start_time
         if solution_grid != Grid.empty():

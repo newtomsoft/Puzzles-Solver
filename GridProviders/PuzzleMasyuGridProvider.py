@@ -18,8 +18,8 @@ class PuzzleMasyuGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobil
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         dot_divs = soup.find_all('div', class_='loop-dot')
-        rows_number = sum(1 for cell in dot_divs if 'left: 4px' in cell['style'])
-        columns_number = sum(1 for cell in dot_divs if 'top: 4px' in cell['style'])
+        rows_number = sum(1 for cell in dot_divs if 'left: 0px' in cell['style'])
+        columns_number = sum(1 for cell in dot_divs if 'top: 0px' in cell['style'])
         matrix = [[' ' for _ in range(columns_number)] for _ in range(rows_number)]
         for index, dot_div in enumerate(dot_divs):
             row = index // columns_number

@@ -4,7 +4,7 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Puzzles.Bimaru.BimaruGame import BimaruGame
+from Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from Utils.Grid import Grid
 
 
@@ -51,15 +51,15 @@ class PuzzleBimaruGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobi
     @staticmethod
     def ship_type(classes: list[str]) -> int:
         if 'ship-bottom' in classes:
-            return BimaruGame.ship_bottom
+            return BimaruSolver.ship_bottom
         if 'ship-top' in classes:
-            return BimaruGame.ship_top
+            return BimaruSolver.ship_top
         if 'ship-single' in classes:
-            return BimaruGame.ship_single
+            return BimaruSolver.ship_single
         if 'ship-right' in classes:
-            return BimaruGame.ship_right
+            return BimaruSolver.ship_right
         if 'ship-left' in classes:
-            return BimaruGame.ship_left
+            return BimaruSolver.ship_left
         if 'ship-middle' in classes:
-            return BimaruGame.ship_middle_input
-        return BimaruGame.water
+            return BimaruSolver.ship_middle_input
+        return BimaruSolver.water

@@ -1,7 +1,8 @@
-﻿from flask import Flask, request, jsonify
+﻿from SolverEngine.Z3SolverEngine import Z3SolverEngine
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from BinairoPlusGame import BinairoPlusGame
+from BinairoPlusSolver import BinairoPlusSolver
 from Utils.Grid import Grid
 
 app = Flask(__name__)
@@ -21,8 +22,8 @@ def get_solution():
 
     grid = Grid(grid_data)
     comparison_operators = comparison_operators_data
-    game = BinairoPlusGame(grid, comparison_operators)
-    solution_grid = game.get_solution()
+    game_solver = BinairoPlusSolver(grid, comparison_operators, Z3SolverEngine())
+    solution_grid = game_solver.get_solution()
     if not solution_grid:
         return jsonify({"message": "No solution found"}), 200
 

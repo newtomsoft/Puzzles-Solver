@@ -162,8 +162,8 @@ class MinesweeperMosaicBenchmark:
     def loop_game_xxx(self, x):
         grids = self.grids_by_size[x]
         for grid in grids:
-            game = MinesweeperMosaicGame(Grid(grid))
-            solution = game.get_solution()
+            game_solver = MinesweeperMosaicGame(Grid(grid))
+            solution = game_solver.get_solution()
             assert solution is not None
 
     def benchmark(self, x, loops_count):

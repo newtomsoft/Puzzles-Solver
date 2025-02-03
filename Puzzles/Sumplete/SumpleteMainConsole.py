@@ -1,6 +1,6 @@
 ﻿from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
-from SumpleteGame import SumpleteGame
+from SumpleteSolver import SumpleteSolver
 from Utils.Grid import Grid
 
 
@@ -29,8 +29,8 @@ class SumpleteMainConsole:
 
     @staticmethod
     def run(grid):
-        game = SumpleteGame(grid)
-        solution_grid = game.get_solution()
+        game_solver = SumpleteSolver(grid)
+        solution_grid = game_solver.get_solution()
         if solution_grid:
             print(f"Solution found:")
             print(solution_grid.to_console_string())
