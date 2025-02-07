@@ -13,6 +13,7 @@ from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
 from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
+from GridPlayers.PuzzleKakurasuGridPlayer import PuzzleKakurasuGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
 from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
 from GridPlayers.PuzzleMinesweeperGridPlayer import PuzzleMinesweeperGridPlayer
@@ -121,7 +122,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
             r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
-            r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, None),
+            r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
