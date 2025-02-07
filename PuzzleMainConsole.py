@@ -21,6 +21,7 @@ from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
+from GridPlayers.PuzzleStarBattleGridPlayer import PuzzleStarBattleGridPlayer
 from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
 from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
 from GridPlayers.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
@@ -128,7 +129,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
-            r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, None),
+            r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, None),
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
