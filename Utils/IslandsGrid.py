@@ -6,7 +6,7 @@ from Utils.Island import Island
 from Utils.Position import Position
 
 
-class IslandGrid(Grid):
+class IslandGrid(Grid[Island]):
     def __init__(self, grid: Grid):
         self.islands: Dict[Position, Island] = {}
         for position, bridges in grid:
@@ -122,19 +122,29 @@ class IslandGrid(Grid):
         return ''.join(f'{self.string(matrix[r][c])}' for c in range(self.columns_number))
 
     @staticmethod
-    def string(cell):
-        if cell.has_no_bridge():
+    def string(island: Island) -> str:
+        if isinstance(island, int):
+            return ' · '
+        if island.has_no_bridge():
             return '   '
-        if Direction.up() in cell.direction_position_bridges and Direction.right() in cell.direction_position_bridges:
+        if Direction.up() in island.direction_position_bridges and Direction.right() in island.direction_position_bridges:
             return ' └─'
-        if Direction.up() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+        if Direction.up() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
             return '─┘ '
-        if Direction.down() in cell.direction_position_bridges and Direction.right() in cell.direction_position_bridges:
+        if Direction.down() in island.direction_position_bridges and Direction.right() in island.direction_position_bridges:
             return ' ┌─'
-        if Direction.down() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+        if Direction.down() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
             return '─┐ '
-        if Direction.up() in cell.direction_position_bridges and Direction.down() in cell.direction_position_bridges:
+        if Direction.up() in island.direction_position_bridges and Direction.down() in island.direction_position_bridges:
             return ' │ '
-        if Direction.right() in cell.direction_position_bridges and Direction.left() in cell.direction_position_bridges:
+        if Direction.right() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
             return '───'
+        if Direction.up() in island.direction_position_bridges:
+            return ' │ '
+        if Direction.down() in island.direction_position_bridges:
+            return ' │ '
+        if Direction.right() in island.direction_position_bridges:
+            return ' ──'
+        if Direction.left() in island.direction_position_bridges:
+            return '── '
         return ' X '

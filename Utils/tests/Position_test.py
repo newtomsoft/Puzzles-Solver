@@ -6,8 +6,6 @@ from Utils.Position import Position
 
 
 class TestPosition(TestCase):
-    solver_engine = Z3SolverEngine()
-
     def test_position_equality(self):
         self.assertEqual(Position(1, 2), Position(1, 2))
         self.assertNotEqual(Position(1, 2), Position(1, 3))

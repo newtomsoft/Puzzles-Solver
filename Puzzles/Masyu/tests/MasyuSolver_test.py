@@ -1,9 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
-
 from Puzzles.Masyu.MasyuSolver import MasyuSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 

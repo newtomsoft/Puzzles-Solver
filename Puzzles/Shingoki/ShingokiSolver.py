@@ -13,7 +13,7 @@ from Utils.Position import Position
 class ShingokiSolver(GameSolver):
     def __init__(self, grid: Grid, solver_engine: SolverEngine):
         self.input_grid = grid
-        self._island_grid = None
+        self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._solver = solver_engine
         self._island_bridges_z3: Dict[Position, Dict[Direction, ArithRef]] = {}
