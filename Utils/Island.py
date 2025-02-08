@@ -29,4 +29,4 @@ class Island:
         return self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
 
     def __repr__(self):
-        return f"{self.bridges_count} ; {self.direction_position_bridges}"
+        return f"{self.bridges_count}-{self.direction_position_bridges}"

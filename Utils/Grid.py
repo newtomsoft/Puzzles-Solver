@@ -16,12 +16,12 @@ class Grid[T]:
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
 
-    def __getitem__(self, item: T) -> T:
-        if isinstance(item, Position):
-            return self._matrix[item.r][item.c]
-        if isinstance(item, tuple):
-            return self._matrix[item[0]][item[1]]
-        return self._matrix[item]
+    def __getitem__(self, key) -> T:
+        if isinstance(key, Position):
+            return self._matrix[key.r][key.c]
+        if isinstance(key, tuple):
+            return self._matrix[key[0]][key[1]]
+        return self._matrix[key]
 
     def __eq__(self, other):
         if not isinstance(other, Grid):

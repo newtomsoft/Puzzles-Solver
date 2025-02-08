@@ -1,7 +1,6 @@
 ﻿import unittest
 from unittest import TestCase
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
 from bitarray import bitarray
 
 from Utils.Grid import Grid
@@ -10,8 +9,6 @@ from Utils.colors import console_police_colors, console_back_ground_colors, remo
 
 
 class TestGrid(TestCase):
-    solver_engine = Z3SolverEngine()
-
     def setUp(self):
         self.grid_2x2 = Grid([
             ['1', '2'],
