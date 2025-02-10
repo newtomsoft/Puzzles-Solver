@@ -51,7 +51,7 @@ class SolverEngine(ABC):
         pass
 
     @abstractmethod
-    def is_true(self, param):
+    def is_true(self, param) -> bool:
         pass
 
     @abstractmethod

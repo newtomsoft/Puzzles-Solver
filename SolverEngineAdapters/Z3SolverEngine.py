@@ -37,7 +37,7 @@ class Z3SolverEngine(SolverEngine):
     def Not(self, constraint):
         return z3.Not(constraint)
 
-    def is_true(self, param):
+    def is_true(self, param) -> bool:
         return z3.is_true(param)
 
     def add(self, constraint):
