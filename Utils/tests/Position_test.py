@@ -5,7 +5,7 @@ from Utils.Direction import Direction
 from Utils.Position import Position
 
 
-class TestPosition(TestCase):
+class PositionTest(TestCase):
     def test_position_equality(self):
         self.assertEqual(Position(1, 2), Position(1, 2))
         self.assertNotEqual(Position(1, 2), Position(1, 3))

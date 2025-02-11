@@ -8,7 +8,7 @@ from Utils.Position import Position
 from Utils.colors import console_police_colors, console_back_ground_colors, remove_ansi_escape_sequences
 
 
-class TestGrid(TestCase):
+class GridTest(TestCase):
     def setUp(self):
         self.grid_2x2 = Grid([
             ['1', '2'],
