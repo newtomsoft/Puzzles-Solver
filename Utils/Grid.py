@@ -35,7 +35,7 @@ class Grid[T]:
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self) -> Generator[Tuple[Position, T]]:
+    def __iter__(self) -> Generator[Tuple[Position, int | T]]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell

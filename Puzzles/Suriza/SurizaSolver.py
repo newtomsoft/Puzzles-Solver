@@ -4,6 +4,7 @@ from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Direction import Direction
 from Utils.Grid import Grid
+from Utils.Island import Island
 from Utils.IslandsGrid import IslandGrid
 from Utils.Position import Position
 
@@ -18,7 +19,7 @@ class SurizaSolver(GameSolver):
         self._last_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
-        self._island_grid = IslandGrid(Grid([[2 for _ in range(self.input_grid.columns_number + 1)] for _ in range(self.input_grid.rows_number + 1)]))
+        self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number+1)] for r in range(self.input_grid.rows_number+1)])
 
     def _init_solver(self):
         self._island_bridges_z3 = {island.position: {direction: self._solver.int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()}

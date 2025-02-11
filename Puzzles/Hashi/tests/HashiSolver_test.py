@@ -23,6 +23,36 @@ class HashiSolverTests(TestCase):
         solution = game_solver.get_solution()
         self.assertEqual(IslandGrid.empty(), solution)
 
+    def test_2x2_square(self):
+        grid = Grid([
+            [2, 2],
+            [2, 2]
+        ])
+        game_solver = HashiSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution_repr = (
+            ' ┌──┐ \n'
+            ' └──┘ '
+        )
+        self.assertEqual(expected_solution_repr, repr(solution))
+
+    def test_3x2_rectangle(self):
+        grid = Grid([
+            [2, 2],
+            [0, 0],
+            [2, 2]
+        ])
+        game_solver = HashiSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution_repr = (
+            ' ┌──┐ \n'
+            ' │  │ \n'
+            ' └──┘ '
+        )
+
+        self.assertEqual(expected_solution_repr, repr(solution))
+        # test doesnt work until the implementation of the __repr__ method in IslandGrid
+
     def test_solution_without_crossover(self):
         grid = Grid([
             [1, 4, 0, 3],
