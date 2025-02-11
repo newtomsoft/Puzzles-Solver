@@ -77,17 +77,13 @@ class IslandGrid(Grid[Island]):
         ]
         return possible_crossover_bridges
 
-    def __repr__(self) -> str:
-        if self.is_empty():
-            return 'Grid.empty()'
-        return self.__str__()
-
     def get_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
         concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
         visited_list: list[set[Position]] = []
         visited_flat: set[Position] = set()
         while len(visited_flat) != concerned_islands_count:
-            position = next(island.position for island in self.islands.values() if island.position not in visited_flat) if not exclude_without_bridge else next((island.position for island in self.islands.values() if island.bridges_count != 0 and island.position not in visited_flat), None)
+            position = next(island.position for island in self.islands.values() if island.position not in visited_flat) if not exclude_without_bridge else next(
+                (island.position for island in self.islands.values() if island.bridges_count != 0 and island.position not in visited_flat), None)
             visited = self._depth_first_search_islands(position)
             visited_list.append(visited)
             visited_flat.update(visited)
@@ -111,40 +107,36 @@ class IslandGrid(Grid[Island]):
 
         return visited_positions
 
-    def __str__(self) -> str:
-        matrix = self._matrix.copy()
-        result = []
-        for r in range(self.rows_number):
-            result.append(''.join(f'{self.string(matrix[r][c])}' for c in range(self.columns_number)))
-        return '\n'.join(result)
+    def __repr__(self) -> str:
+        if self.is_empty():
+            return 'Grid.empty()'
+        result = ''
+        current_row = 0
+        for position, island in self:
+            if position.r != current_row:
+                result += '\n'
+                current_row = position.r
+            if isinstance(island, int):
+                result += self.get_str(position)
+            else:
+                result += str(island)
+        return result
 
-    def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
-        return ''.join(f'{self.string(matrix[r][c])}' for c in range(self.columns_number))
-
-    @staticmethod
-    def string(island: Island) -> str:
-        if isinstance(island, int):
-            return ' · '
-        if island.has_no_bridge():
-            return '   '
-        if Direction.up() in island.direction_position_bridges and Direction.right() in island.direction_position_bridges:
-            return ' └─'
-        if Direction.up() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
-            return '─┘ '
-        if Direction.down() in island.direction_position_bridges and Direction.right() in island.direction_position_bridges:
-            return ' ┌─'
-        if Direction.down() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
-            return '─┐ '
-        if Direction.up() in island.direction_position_bridges and Direction.down() in island.direction_position_bridges:
-            return ' │ '
-        if Direction.right() in island.direction_position_bridges and Direction.left() in island.direction_position_bridges:
-            return '───'
-        if Direction.up() in island.direction_position_bridges:
-            return ' │ '
-        if Direction.down() in island.direction_position_bridges:
-            return ' │ '
-        if Direction.right() in island.direction_position_bridges:
-            return ' ──'
-        if Direction.left() in island.direction_position_bridges:
-            return '── '
-        return ' X '
+    def get_str(self, position: Position) -> str:
+        while position.left in self.islands.keys():
+            position = position.left
+            if self.__getitem__(position) != 0:  # todo 0 is not a good value test island direction_position_bridges
+                return '───'
+        while position.right in self.islands.keys():
+            position = position.right
+            if self.__getitem__(position) != 0:
+                return '───'
+        while position.down in self.islands.keys():
+            position = position.down
+            if self.__getitem__(position) != 0:
+                return ' │ '
+        while position.up in self.islands.keys():
+            position = position.up
+            if self.__getitem__(position) != 0:
+                return ' | '
+        return '   '
