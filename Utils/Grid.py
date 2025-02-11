@@ -40,13 +40,10 @@ class Grid[T]:
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
 
-    def __str__(self) -> str:
-        return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
-
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'
-        return self.__str__()
+        return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
 
     @property
     def matrix(self):

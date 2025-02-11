@@ -26,7 +26,40 @@ class Island:
         return self.bridges_count == 0
 
     def __eq__(self, other):
-        return self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
+        return isinstance(other, Island) and self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
 
     def __repr__(self):
-        return f"{self.bridges_count}-{self.direction_position_bridges}"
+        if self.has_no_bridge():
+            return '   '
+        if Direction.up() in self.direction_position_bridges and Direction.right() in self.direction_position_bridges and Direction.down() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┼─'
+        if Direction.up() in self.direction_position_bridges and Direction.right() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┴─'
+        if Direction.down() in self.direction_position_bridges and Direction.right() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┬─'
+        if Direction.up() in self.direction_position_bridges and Direction.down() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┤ '
+        if Direction.up() in self.direction_position_bridges and Direction.down() in self.direction_position_bridges and Direction.right() in self.direction_position_bridges:
+            return ' ├─'
+        if Direction.up() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┘ '
+        if Direction.up() in self.direction_position_bridges and Direction.right() in self.direction_position_bridges:
+            return ' └─'
+        if Direction.down() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '─┐ '
+        if Direction.right() in self.direction_position_bridges and Direction.down() in self.direction_position_bridges:
+            return ' ┌─'
+        if Direction.up() in self.direction_position_bridges and Direction.down() in self.direction_position_bridges:
+            return ' │ '
+        if Direction.down() in self.direction_position_bridges:
+            return ' ╷ '
+        if Direction.up() in self.direction_position_bridges:
+            return ' ╵ '
+        if Direction.right() in self.direction_position_bridges and Direction.left() in self.direction_position_bridges:
+            return '───'
+        if Direction.right() in self.direction_position_bridges:
+            return ' ──'
+        if Direction.left() in self.direction_position_bridges:
+            return '── '
+        return ' X '
+
