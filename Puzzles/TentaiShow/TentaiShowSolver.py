@@ -36,7 +36,7 @@ class TentaiShowSolver(GameSolver):
             proposition_count += 1
             if proposition_count % 10 == 0:
                 print('.', end='', flush=True)
-            grid = Grid([[model.eval(self._grid_z3[Position(r, c)]).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
+            grid = Grid([[model.eval(self._grid_z3[Position(r, c)])() for c in range(self.columns_number)] for r in range(self.rows_number)])
 
             circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
             not_compliant_shapes = [(circle_value, shapes_positions) for (circle_value, shapes_positions) in circle_shapes.items() if len(shapes_positions) > 1]

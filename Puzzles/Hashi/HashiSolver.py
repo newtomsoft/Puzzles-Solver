@@ -19,11 +19,12 @@ class HashiSolver(GameSolver):
         self._last_solution: IslandGrid | None = None
 
     def init_island_grid(self):
-        self._island_grid = IslandGrid([[Island(Position(r, c), self._input_grid[Position(r, c)]) for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
+        self._island_grid = IslandGrid([[Island(Position(r, c), self._input_grid[Position(r, c)]) if isinstance(self._input_grid[Position(r, c)], int) else None for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: self._solver.int(f"{island.position}_{direction}")
-                                                     for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()}
+        self._island_bridges_z3 = {
+            island.position: {direction: self._solver.int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()
+        }
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -41,7 +42,7 @@ class HashiSolver(GameSolver):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
-                    bridges_number = model.eval(bridges).as_long()
+                    bridges_number = model.eval(bridges)()
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
 

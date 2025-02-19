@@ -2,14 +2,14 @@
 from unittest import TestCase
 
 from Puzzles.Sudoku.SudokuSolver import SudokuSolver
-from SolverEngineAdapters.PulpSolverEngine import PulpSolverEngine
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 
 class SudokuSolverTests(TestCase):
     @staticmethod
     def get_solver_engine():
-        return PulpSolverEngine()
+        return Z3SolverEngine()
 
     def test_solution_grid_square(self):
         grid = Grid([
@@ -44,7 +44,7 @@ class SudokuSolverTests(TestCase):
         with self.assertRaises(ValueError) as context:
             SudokuSolver(grid, self.get_solver_engine())
 
-        self.assertEqual("initial numbers must be different in rows and columns", str(context.exception))
+        self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
     def test_solution_initial_number_different_in_column(self):
         grid = Grid([
@@ -56,7 +56,7 @@ class SudokuSolverTests(TestCase):
         with self.assertRaises(ValueError) as context:
             SudokuSolver(grid, self.get_solver_engine())
 
-        self.assertEqual("initial numbers must be different in rows and columns", str(context.exception))
+        self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
     def test_solution_initial_number_different_in_sub_square(self):
         grid = Grid([

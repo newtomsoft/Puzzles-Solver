@@ -1,9 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
-
 from Puzzles.Stitches.StitchesSolver import StitchesSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Direction import Direction
 from Utils.Grid import Grid
 

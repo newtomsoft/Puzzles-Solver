@@ -54,7 +54,7 @@
 #             for r in range(solution_grid.rows_number):
 #                 file.write("<tr>")
 #                 for c in range(solution_grid.columns_number):
-#                     file.write(f"<td style='background-color: white; color: black;'>{BinairoMainConsole.int_to_base26(solution_grid.value(r, c).as_long())}</td>")
+#                     file.write(f"<td style='background-color: white; color: black;'>{BinairoMainConsole.int_to_base26(solution_grid.value(r, c)())}</td>")
 #                 file.write("</tr>")
 #             file.write("</table></body></html>")
 # 

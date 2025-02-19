@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 
 from Puzzles.Hashi.HashiSolver import HashiSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from SolverEngineAdapters.OrToolsSolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 from Utils.Island import Island
 from Utils.IslandsGrid import IslandGrid
@@ -36,10 +36,25 @@ class HashiSolverTests(TestCase):
         )
         self.assertEqual(expected_solution_repr, repr(solution))
 
+    def test_3x2_square(self):
+        grid = Grid([
+            [2, 2],
+            [2, 2],
+            ['_', '_']
+        ])
+        game_solver = HashiSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution_repr = (
+            ' ┌──┐ \n'
+            ' └──┘ \n'
+            '      '
+        )
+        self.assertEqual(expected_solution_repr, repr(solution))
+
     def test_3x2_rectangle(self):
         grid = Grid([
             [2, 2],
-            [0, 0],
+            ['_', '_'],
             [2, 2]
         ])
         game_solver = HashiSolver(grid, self.get_solver_engine())
@@ -49,18 +64,17 @@ class HashiSolverTests(TestCase):
             ' │  │ \n'
             ' └──┘ '
         )
-
         self.assertEqual(expected_solution_repr, repr(solution))
         # test doesnt work until the implementation of the __repr__ method in IslandGrid
 
     def test_solution_without_crossover(self):
         grid = Grid([
-            [1, 4, 0, 3],
-            [0, 0, 2, 0],
-            [1, 0, 4, 4],
-            [0, 2, 0, 0],
-            [0, 0, 1, 0],
-            [2, 0, 0, 2]
+            [1, 4, '_', 3],
+            ['_', '_', 2, '_'],
+            [1, '_', 4, 4],
+            ['_', 2, '_', '_'],
+            ['_', '_', 1, '_'],
+            [2, '_', '_', 2]
         ])
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
@@ -120,9 +134,9 @@ class HashiSolverTests(TestCase):
 
     def test_solution_with_possible_crossover(self):
         grid = Grid([
-            [0, 1, 2],
-            [3, 0, 3],
-            [3, 2, 0]
+            ['_', 1, 2],
+            [3, '_', 3],
+            [3, 2, '_']
         ])
         game_solver = HashiSolver(grid, self.get_solver_engine())
 
@@ -193,16 +207,16 @@ class HashiSolverTests(TestCase):
 
     def test_solution_with_possible_isolated_islands_10x10(self):
         grid = Grid([
-            [3, 0, 4, 0, 0, 3, 0, 0, 0, 3],
-            [0, 0, 0, 0, 2, 0, 1, 0, 2, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 3, 0, 0, 0, 0, 0, 0, 3],
-            [3, 0, 0, 0, 0, 0, 1, 0, 3, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-            [0, 0, 4, 0, 4, 0, 0, 0, 0, 0],
-            [2, 0, 0, 0, 0, 4, 0, 0, 2, 0],
-            [0, 2, 0, 0, 0, 0, 0, 0, 0, 3]
+            [3, '_', 4, '_', '_', 3, '_', '_', '_', 3],
+            ['_', '_', '_', '_', 2, '_', 1, '_', 2, '_'],
+            ['_', '_', '_', '_', '_', '_', '_', '_', '_', '_'],
+            ['_', '_', 3, '_', '_', '_', '_', '_', '_', 3],
+            [3, '_', '_', '_', '_', '_', 1, '_', 3, '_'],
+            ['_', '_', '_', '_', '_', '_', '_', '_', '_', '_'],
+            [2, '_', '_', '_', '_', '_', '_', '_', '_', 2],
+            ['_', '_', 4, '_', 4, '_', '_', '_', '_', '_'],
+            [2, '_', '_', '_', '_', 4, '_', '_', 2, '_'],
+            ['_', 2, '_', '_', '_', '_', '_', '_', '_', 3]
         ])
         game_solver = HashiSolver(grid, self.get_solver_engine())
 

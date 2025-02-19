@@ -110,42 +110,29 @@ class IslandGrid(Grid[Island]):
 
     def __repr__(self) -> str:
         if self.is_empty():
-            return 'Grid.empty()'
-        result = ''
+            return 'IslandGrid.empty()'
         current_row = 0
+        result = ''
         for position, island in self:
             if position.r != current_row:
                 result += '\n'
                 current_row = position.r
-            if isinstance(island, int):
-                result += self.get_str(position)
+            if isinstance(island, Island):
+                result += repr(island)
             else:
-                result += str(island)
+                result += self.get_str_new(position)
         return result
 
-    def get_str(self, position: Position) -> str:
-        current_position = position
-        while current_position.left in self.islands.keys():
-            current_position = current_position.left
-            value = self.__getitem__(current_position)
-            if isinstance(value, Island) and value.direction_position_bridges.get(Direction.right()) is not None:
-                return '───'
-        current_position = position
-        while current_position.right in self.islands.keys():
-            current_position = current_position.right
-            value = self.__getitem__(current_position)
-            if isinstance(value, Island) and value.direction_position_bridges.get(Direction.left()) is not None:
-                return '───'
-        current_position = position
-        while current_position.down in self.islands.keys():
-            current_position = current_position.down
-            value = self.__getitem__(current_position)
-            if isinstance(value, Island) and value.direction_position_bridges.get(Direction.up()) is not None:
-                return ' │ '
-        current_position = position
-        while current_position.up in self.islands.keys():
-            current_position = current_position.up
-            value = self.__getitem__(current_position)
-            if isinstance(value, Island) and value.direction_position_bridges.get(Direction.down()) is not None:
-                return ' | '
-        return '   '
+    def get_str_new(self, position: Position) -> str:
+        island = Island(position, 0)
+        for direction in Direction.orthogonal():
+            iteration = 1
+            while position.after(direction, iteration) in self:
+                if position.after(direction, iteration) in self.islands.keys():
+                    bridges_numbers = self.islands[position.after(direction, iteration)].bridges_number(direction.opposite)
+                    island.set_bridge(position.after(direction, iteration), bridges_numbers)
+                    break
+                iteration += 1
+        island.set_bridges_count_according_to_directions_bridges()
+        island_repr = repr(island)
+        return island_repr

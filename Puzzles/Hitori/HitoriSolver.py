@@ -269,11 +269,11 @@ class HitoriSolver(GameSolver):
         for r in range(1, self._grid.rows_number - 4):
             for c, dc in {(0, 1), (self._grid.columns_number - 1, -1)}:
                 constraints.append(self._solver.Implies(self._solver.And(self._solver.Not(self._grid_z3.value(r, c)), self._solver.Not(self._grid_z3.value(r + 4, c)), self._solver.Not(self._grid_z3.value(r + 1, c + dc)), self._solver.Not(self._grid_z3.value(r + 3, c + dc))),
-                                           self._grid_z3.value(r + 2, c + 2 * dc)))
+                                                        self._grid_z3.value(r + 2, c + 2 * dc)))
         for c in range(1, self._grid.columns_number - 4):
             for r, dr in {(0, 1), (self._grid.rows_number - 1, -1)}:
                 constraints.append(self._solver.Implies(self._solver.And(self._solver.Not(self._grid_z3.value(r, c)), self._solver.Not(self._grid_z3.value(r, c + 4)), self._solver.Not(self._grid_z3.value(r + dr, c + 1)), self._solver.Not(self._grid_z3.value(r + dr, c + 3))),
-                                           self._grid_z3.value(r + 2 * dr, c + 2)))
+                                                        self._grid_z3.value(r + 2 * dr, c + 2)))
         self._solver.add(constraints)
 
     def print_proposition(self, proposition_grid: Grid):

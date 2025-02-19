@@ -53,7 +53,7 @@ class BimaruSolver(GameSolver):
         if not self._solver.has_solution():
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[model.eval(self._grid_z3[Position(r, c)]).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[model.eval(self._grid_z3[Position(r, c)])() for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._last_solution_grid = grid
         return grid
 
@@ -149,7 +149,7 @@ class BimaruSolver(GameSolver):
 
     def _add_ship_middle_horizontal_implies_constraint(self, position: Position):
         self._solver.add(self._solver.Implies(self._ship(position) == BimaruSolver.ship_middle_horizontal,
-                                 self._solver.And([self._ship(neighbor_position) == BimaruSolver.water for neighbor_position in self._grid.neighbors_positions(position, "diagonal") if neighbor_position != position.left and neighbor_position != position.right])))
+                                              self._solver.And([self._ship(neighbor_position) == BimaruSolver.water for neighbor_position in self._grid.neighbors_positions(position, "diagonal") if neighbor_position != position.left and neighbor_position != position.right])))
         if position.c > 0:
             self._solver.add(self._solver.Implies(self._ship(position) == BimaruSolver.ship_middle_horizontal, self._solver.Or(self._ship(position.left) == BimaruSolver.ship_left, self._ship(position.left) == BimaruSolver.ship_middle_horizontal)))
         else:
@@ -161,7 +161,7 @@ class BimaruSolver(GameSolver):
 
     def _add_ship_middle_vertical_implies_constraint(self, position: Position):
         self._solver.add(self._solver.Implies(self._ship(position) == BimaruSolver.ship_middle_vertical,
-                                 self._solver.And([self._ship(neighbor_position) == BimaruSolver.water for neighbor_position in self._grid.neighbors_positions(position, "diagonal") if neighbor_position != position.up and neighbor_position != position.down])))
+                                              self._solver.And([self._ship(neighbor_position) == BimaruSolver.water for neighbor_position in self._grid.neighbors_positions(position, "diagonal") if neighbor_position != position.up and neighbor_position != position.down])))
         if position.r > 0:
             self._solver.add(self._solver.Implies(self._ship(position) == BimaruSolver.ship_middle_vertical, self._solver.Or(self._ship(position.up) == BimaruSolver.ship_top, self._ship(position.up) == BimaruSolver.ship_middle_vertical)))
         else:

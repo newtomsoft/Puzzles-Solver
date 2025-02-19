@@ -40,7 +40,7 @@ class StitchesSolver(GameSolver):
         if not self._solver.has_solution():
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[model.eval(self._matrix_connexion_z3[i][j]).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[model.eval(self._matrix_connexion_z3[i][j])() for j in range(self.columns_number)] for i in range(self.rows_number)])
         self._last_solution_grid = grid
         return grid
 

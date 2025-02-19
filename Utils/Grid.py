@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator
+from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generic
 
 from bitarray import bitarray
 
@@ -10,7 +10,7 @@ from Utils.colors import console_back_ground_colors, console_police_colors
 T = TypeVar('T')
 
 
-class Grid[T]:
+class Grid(Generic[T]):
     def __init__(self, matrix: List[List[T]]):
         self._matrix = matrix
         self.rows_number = len(matrix)
@@ -35,7 +35,7 @@ class Grid[T]:
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self) -> Generator[Tuple[Position, int | T]]:
+    def __iter__(self) -> Generator[Tuple[Position, int | T], None, None]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell

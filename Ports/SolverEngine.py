@@ -11,7 +11,7 @@ class SolverEngine(ABC):
         pass
 
     @abstractmethod
-    def add(self, constraint):
+    def add(self, *constraints):
         pass
 
     @abstractmethod
@@ -19,7 +19,7 @@ class SolverEngine(ABC):
         pass
 
     @abstractmethod
-    def And(self, *constraints):
+    def And(self, constraints: list):
         pass
 
     @abstractmethod
