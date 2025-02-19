@@ -1,8 +1,8 @@
-﻿from SolverEngine.Z3SolverEngine import Z3SolverEngine
-from flask import Flask, request, jsonify
+﻿from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from BinairoPlusSolver import BinairoPlusSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 app = Flask(__name__)

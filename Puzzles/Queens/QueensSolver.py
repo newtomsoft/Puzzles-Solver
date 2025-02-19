@@ -1,6 +1,4 @@
-﻿from z3 import Bool
-
-from Ports.SolverEngine import SolverEngine
+﻿from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
 from Utils.Position import Position
@@ -25,7 +23,7 @@ class QueensSolver(GameSolver):
         self._grid_z3 = None
 
     def get_solution(self) -> Grid | None:
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         if not self._solver.has_solution():
             return None

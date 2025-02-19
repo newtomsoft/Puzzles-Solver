@@ -40,7 +40,7 @@ class NonogramSolver(GameSolver):
         model = self._solver.model()
         solution = []
         for i_row in range(self.rows_number):
-            row_value = model[self._rows_z3[i_row]].as_long()
+            row_value = model[self._rows_z3[i_row]]()
             row_list = [(row_value >> j) & 1 for j in range(self.columns_number - 1, -1, -1)]
             solution.append(row_list)
         return Grid(solution)

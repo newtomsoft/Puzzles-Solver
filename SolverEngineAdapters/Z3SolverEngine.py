@@ -1,4 +1,4 @@
-﻿from z3 import z3
+﻿import z3
 
 from Ports.SolverEngine import SolverEngine
 
@@ -40,8 +40,8 @@ class Z3SolverEngine(SolverEngine):
     def is_true(self, param) -> bool:
         return z3.is_true(param)
 
-    def add(self, constraint):
-        self.solver.add(constraint)
+    def add(self, *constraints):
+        self.solver.add(*constraints)
 
     def has_solution(self):
         check = self.solver.check()
@@ -51,4 +51,10 @@ class Z3SolverEngine(SolverEngine):
         return self.solver.model()
 
     def eval(self, expr):
-        return self.solver.model().eval(expr)
+        result = self.solver.model().eval(expr)
+        if z3.is_int_value(result):
+            return result.as_long()
+        elif z3.is_bool(result):
+            return z3.is_true(result)
+        else:
+            raise TypeError("Type not currently supported")

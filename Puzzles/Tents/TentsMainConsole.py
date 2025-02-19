@@ -1,10 +1,10 @@
 ﻿import time
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
 from playwright.sync_api import BrowserContext
 
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from Puzzles.Tents.TentsSolver import TentsSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 

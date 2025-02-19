@@ -40,8 +40,10 @@ from GridProviders.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
 from GridProviders.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
 from GridProviders.PuzzleHashiGridProvider import PuzzleHashiGridProvider
 from GridProviders.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
+from GridProviders.PuzzleJigsawSudokuGridProvider import PuzzleJigsawSudokuGridProvider
 from GridProviders.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
+from GridProviders.PuzzleKillerSudokuGridProvider import PuzzleKillerSudokuGridProvider
 from GridProviders.PuzzleMasyuGridProvider import PuzzleMasyuGridProvider
 from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 from GridProviders.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
@@ -60,6 +62,8 @@ from GridProviders.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvi
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
+from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
+from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Puzzles.Akari.AkariSolver import AkariSolver
 from Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -94,6 +98,8 @@ from Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
+SOLVER_ENGINE = Z3SolverEngine()
+
 
 class PuzzleMainConsole:
     @staticmethod
@@ -122,8 +128,10 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
             r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
+            r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
+            r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
@@ -151,17 +159,16 @@ class PuzzleMainConsole:
                 game_player: GridPlayer | None = player_class() if player_class is not None else None
                 game_data, browser_context = grid_provider.get_grid(console_input)
                 return game_solver, game_data, browser_context, game_player
-        raise ValueError("No grid grid provider found")
+        raise ValueError("No grid provider found")
 
     @staticmethod
     def run(puzzle_game: type(GameSolver), data_game):
-        solver_engine = Z3SolverEngine()
         if type(data_game) is tuple:
             grid = data_game[0]
             extra_data = data_game[1:]
-            game_solver = puzzle_game(grid, *extra_data, solver_engine)
+            game_solver = puzzle_game(grid, *extra_data, SOLVER_ENGINE)
         else:
-            game_solver = puzzle_game(data_game, solver_engine)
+            game_solver = puzzle_game(data_game, SOLVER_ENGINE)
 
         start_time = time.time()
         solution = game_solver.get_solution()

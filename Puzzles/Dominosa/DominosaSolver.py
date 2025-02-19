@@ -35,7 +35,7 @@ class DominosaSolver(GameSolver):
             return Grid.empty()
         model = self._solver.model()
         dominoes_positions = {
-            (value0, value1): [Position(int(model.eval(r).as_long()), int(model.eval(c).as_long())) for r, c in positions]
+            (value0, value1): [Position(int(model.eval(r)()), int(model.eval(c)())) for r, c in positions]
             for (value0, value1), positions in self._dominoes_positions_z3.items()
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])

@@ -1,9 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from SolverEngine.Z3SolverEngine import Z3SolverEngine
-
 from Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 from Utils.Position import Position
 
