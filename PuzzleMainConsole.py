@@ -12,6 +12,7 @@ from GridPlayers.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
 from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
 from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
+from GridPlayers.PuzzleHeyawakeGridPlayer import PuzzleHeyawakeGridPlayer
 from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
 from GridPlayers.PuzzleKakurasuGridPlayer import PuzzleKakurasuGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
@@ -39,6 +40,7 @@ from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridPro
 from GridProviders.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
 from GridProviders.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
 from GridProviders.PuzzleHashiGridProvider import PuzzleHashiGridProvider
+from GridProviders.PuzzleHeyawakeGridProvider import PuzzleHeyawakeGridProvider
 from GridProviders.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from GridProviders.PuzzleJigsawSudokuGridProvider import PuzzleJigsawSudokuGridProvider
 from GridProviders.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
@@ -62,6 +64,7 @@ from GridProviders.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvi
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
+from Heyawake.HeyawakeSolver import HeyawakeSolver
 from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Puzzles.Akari.AkariSolver import AkariSolver
@@ -127,6 +130,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiGridPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiGridPlayer),
+            r"https://.*\.puzzle-heyawake\.com": (HeyawakeSolver, PuzzleHeyawakeGridProvider, PuzzleHeyawakeGridPlayer),
             r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriGridPlayer),
             r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
