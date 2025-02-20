@@ -1,6 +1,4 @@
-﻿from z3 import Bool, sat
-
-from Ports.SolverEngine import SolverEngine
+﻿from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
 from Utils.ShapeGenerator import ShapeGenerator
@@ -14,7 +12,7 @@ class HitoriSolver(GameSolver):
         self._last_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -27,7 +25,7 @@ class HitoriSolver(GameSolver):
 
     def _ensure_all_white_connected(self):
         proposition_count = 0
-        while self._solver.has_solution() == sat:
+        while self._solver.has_solution():
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])

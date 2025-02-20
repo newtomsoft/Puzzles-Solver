@@ -52,7 +52,7 @@ class AquariumSolver(GameSolver):
             for aquarium_row_cells in cells_by_row_index.values():
                 if len(positions) > 1:
                     all_cells_full = self._solver.And([self._grid_z3[position] for position in aquarium_row_cells])
-                    all_cells_empty = self._solver.And([(self._grid_z3[position] == False) for position in aquarium_row_cells])
+                    all_cells_empty = self._solver.And([self._solver.Not(self._grid_z3[position]) for position in aquarium_row_cells])
                     self._solver.add(self._solver.Or(all_cells_full, all_cells_empty))
 
                 row = aquarium_row_cells[0][0]
