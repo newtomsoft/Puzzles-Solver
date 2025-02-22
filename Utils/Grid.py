@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generic
+from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generic, Iterable
 
 from bitarray import bitarray
 
@@ -44,6 +44,9 @@ class Grid(Generic[T]):
         if self.is_empty():
             return 'Grid.empty()'
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
+
+    def __hash__(self):
+        return hash(str(self._matrix))
 
     @property
     def matrix(self):
@@ -95,12 +98,15 @@ class Grid(Generic[T]):
                 regions[self._matrix[r][c]].add(Position(r, c))
         return {key: frozenset(value) for key, value in regions.items()} if regions else {}
 
-    def are_all_cells_connected(self, value=True, mode='orthogonal') -> bool:
+    def are_cells_connected(self, value: T = True, mode='orthogonal') -> bool:
         position = self._get_cell_of_value(value)
         if position is None:
             return False
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
+
+    def are_all_cells_connected(self, mode='orthogonal') -> bool:
+        return all([self.are_cells_connected(region_key, mode) for region_key in self.get_regions().keys()])
 
     def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []
@@ -218,3 +224,31 @@ class Grid(Generic[T]):
 
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
+
+    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
+        positions = set()
+        for r in range(grid.rows_number - self.rows_number + 1):
+            for c in range(grid.columns_number - self.columns_number + 1):
+                position = Position(r, c)
+                if self._is_in_grid_at_position(grid, position, value_to_ignore):
+                    positions.add(position)
+        return positions
+
+    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
+        for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
+            if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
+                return False
+            if value != grid[current_position]:
+                return False
+        return True
+
+    @classmethod
+    def from_positions(cls, positions: Iterable[Position], set_value=True, default_value=False) -> ('Grid', Position):
+        min_r = min(position.r for position in positions)
+        max_r = max(position.r for position in positions)
+        min_c = min(position.c for position in positions)
+        max_c = max(position.c for position in positions)
+        matrix = [[default_value for _ in range(max_c - min_c + 1)] for _ in range(max_r - min_r + 1)]
+        for position in [position - Position(min_r, min_c) for position in positions]:
+            matrix[position.r][position.c] = set_value
+        return cls(matrix), Position(min_r, min_c)

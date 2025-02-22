@@ -103,7 +103,7 @@ class StitchesSolverTests(TestCase):
         dots = Grid([[cell > 0 for cell in row] for row in solution.matrix])
         self.assertEqual(expected_dots, dots)
         other_solution = game_solver.get_other_solution()
-        other_dots = Grid([[cell > 0 for cell in row] for row in other_solution.matrix])
+        other_dots = Grid([[cell > 0 for cell in row] for row in other_solution.matrix_a])
         self.assertTrue(other_dots.is_empty() or other_dots == dots)
 
     def test_solution_adding_2_by_2_crossing_2_regions(self):

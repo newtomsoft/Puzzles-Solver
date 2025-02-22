@@ -22,7 +22,7 @@ def get_solution():
     if not solution_grid:
         return jsonify({"message": "No solution found"}), 200
 
-    return jsonify(solution_grid.matrix), 200
+    return jsonify(solution_grid.matrix_a), 200
 
 
 if __name__ == '__main__':

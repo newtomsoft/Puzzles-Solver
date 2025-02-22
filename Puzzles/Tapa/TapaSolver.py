@@ -117,7 +117,7 @@ class TapaSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in range(self._grid_z3.rows_number)])
-            is_solution = current_grid.are_all_cells_connected()
+            is_solution = current_grid.are_cells_connected()
             if is_solution:
                 return TapaSolver.crop_grid(current_grid), proposition_count
 

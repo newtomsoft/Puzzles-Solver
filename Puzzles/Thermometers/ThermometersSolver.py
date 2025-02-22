@@ -127,9 +127,9 @@ class ThermometersSolver(GameSolver):
 
     def _add_sum_constraints(self):
         constraints = []
-        for i, row in enumerate(self._grid_z3.matrix):
+        for i, row in enumerate(self._grid_z3.matrix_a):
             constraints.append(self._solver.sum(row) == self.rows_full_numbers[i])
-        for i, column in enumerate(zip(*self._grid_z3.matrix)):
+        for i, column in enumerate(zip(*self._grid_z3.matrix_a)):
             constraints.append(self._solver.sum(column) == self.columns_full_numbers[i])
         self._solver.add(constraints)
 
