@@ -15,8 +15,7 @@ class PuzzleHeyawakeGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
             index = position.r * solution.columns_number + position.c
             if not value:
                 cells[index].click()
-            else:
-                cells[index].click(button='right')
 
+        sleep(2)
         cls.submit_score(page)
         sleep(60)

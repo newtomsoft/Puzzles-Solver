@@ -42,7 +42,7 @@ class NurikabeSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[1 if self._solver.is_true(model.eval(self._grid_z3[Position(i, j)])) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
-            river_compliant = current_grid.are_all_cells_connected(1)
+            river_compliant = current_grid.are_cells_connected(1)
             islands = current_grid.get_all_shapes(0)
             if self._recompute_islands_without_island_area_or_wrong(islands):
                 continue

@@ -1,6 +1,7 @@
 from typing import List, Set
 
 from Utils.Grid import Grid
+from Utils.Position import Position
 
 
 class RegionsGrid(Grid):
@@ -9,43 +10,39 @@ class RegionsGrid(Grid):
         self._matrix = self._compute_regions_grid()
 
     def _compute_regions_grid(self):
+        cells_number = self.rows_number * self.columns_number
         while True:
             visited_regions = set()
             regions_count = 0
             matrix = [[None for _ in range(self.columns_number)] for _ in range(self.rows_number)]
-            for r in range(self.rows_number):
-                for c in range(self.columns_number):
-                    if (r, c) in visited_regions:
-                        continue
-                    regions_count += 1
-                    region = self._depth_first_search_regions(r, c)
-                    for rr, cc in region:
-                        matrix[rr][cc] = regions_count
-                    visited_regions.update(region)
-            if len(visited_regions) == self.rows_number * self.columns_number:
+            for position, _ in self:
+                if position in visited_regions:
+                    continue
+                regions_count += 1
+                region = self._depth_first_search_regions(position)
+                for rr, cc in region:
+                    matrix[rr][cc] = regions_count
+                visited_regions.update(region)
+            if len(visited_regions) == cells_number:
                 break
         return matrix
 
-    def _depth_first_search_regions(self, r, c, visited=None):
+    def _depth_first_search_regions(self, current_position: Position, visited=None):
         if visited is None:
             visited = set()
-        if (r, c) in visited:
+        if current_position in visited:
             return visited
-        visited.add((r, c))
+        visited.add(current_position)
 
-        directions = {
-            'right': (0, 1),
-            'left': (0, -1),
-            'bottom': (1, 0),
-            'top': (-1, 0)
+        positions = {
+            'right': Position(0, 1),
+            'left': Position(0, -1),
+            'bottom': Position(1, 0),
+            'top': Position(-1, 0)
         }
-        opened = self._matrix[r][c]
-        for direction in directions:
-            if direction in opened:
-                dr, dc = directions[direction]
-                if 0 <= r + dr < self.rows_number and 0 <= c + dc < self.columns_number:
-                    new_visited = self._depth_first_search_regions(r + dr, c + dc, visited)
-                    if new_visited != visited:
-                        return new_visited
-
+        opened_on = self[current_position]
+        for new_position in [current_position + positions[position] for position in positions if position in opened_on and current_position + positions[position] in self]:
+            new_visited = self._depth_first_search_regions(new_position, visited)
+            if new_visited != visited:
+                return new_visited
         return visited
