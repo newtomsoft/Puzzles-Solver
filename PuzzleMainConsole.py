@@ -16,6 +16,7 @@ from GridPlayers.PuzzleHeyawakeGridPlayer import PuzzleHeyawakeGridPlayer
 from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
 from GridPlayers.PuzzleKakurasuGridPlayer import PuzzleKakurasuGridPlayer
 from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
+from GridPlayers.PuzzleLitsGridPlayer import PuzzleLitsGridPlayer
 from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
 from GridPlayers.PuzzleMinesweeperGridPlayer import PuzzleMinesweeperGridPlayer
 from GridPlayers.PuzzleMinesweeperMosaicGridPlayer import PuzzleMinesweeperMosaicGridPlayer
@@ -46,6 +47,7 @@ from GridProviders.PuzzleJigsawSudokuGridProvider import PuzzleJigsawSudokuGridP
 from GridProviders.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 from GridProviders.PuzzleKillerSudokuGridProvider import PuzzleKillerSudokuGridProvider
+from GridProviders.PuzzleLitsGridProvider import PuzzleLitsGridProvider
 from GridProviders.PuzzleMasyuGridProvider import PuzzleMasyuGridProvider
 from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 from GridProviders.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
@@ -67,6 +69,7 @@ from GridProviders.QueensGridProvider import QueensGridProvider
 from Heyawake.HeyawakeSolver import HeyawakeSolver
 from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
+from Lits.LitsSolver import LitsSolver
 from Puzzles.Akari.AkariSolver import AkariSolver
 from Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -136,6 +139,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
+            r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
