@@ -4,6 +4,7 @@ from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generi
 
 from bitarray import bitarray
 
+from Pipes.PipeShapeTransition import PipeShapeTransition
 from Utils.Position import Position
 from Utils.colors import console_back_ground_colors, console_police_colors
 
@@ -35,7 +36,7 @@ class Grid(Generic[T]):
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self) -> Generator[Tuple[Position, int | T], None, None]:
+    def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
@@ -43,6 +44,8 @@ class Grid(Generic[T]):
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'
+        if isinstance(self[Position(0, 0)], PipeShapeTransition):
+            return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
 
     def __hash__(self):
@@ -219,6 +222,18 @@ class Grid(Generic[T]):
     def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
         return [position for position in position.neighbors(mode) if position in self]
 
+    def neighbor_position_up(self, position: Position) -> Position:
+        return position.up if position.up in self else None
+
+    def neighbor_position_down(self, position: Position) -> Position:
+        return position.down if position.down in self else None
+
+    def neighbor_position_left(self, position: Position) -> Position:
+        return position.left if position.left in self else None
+
+    def neighbor_position_right(self, position: Position) -> Position:
+        return position.right if position.right in self else None
+
     def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
         return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
@@ -243,12 +258,12 @@ class Grid(Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, default_value=False) -> ('Grid', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)
         max_c = max(position.c for position in positions)
-        matrix = [[default_value for _ in range(max_c - min_c + 1)] for _ in range(max_r - min_r + 1)]
+        matrix = [[unset_value for _ in range(max_c - min_c + 1)] for _ in range(max_r - min_r + 1)]
         for position in [position - Position(min_r, min_c) for position in positions]:
             matrix[position.r][position.c] = set_value
         return cls(matrix), Position(min_r, min_c)

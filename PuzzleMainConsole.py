@@ -23,6 +23,7 @@ from GridPlayers.PuzzleMinesweeperMosaicGridPlayer import PuzzleMinesweeperMosai
 from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
 from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
 from GridPlayers.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
+from GridPlayers.PuzzlePipesGridPlayer import PuzzlePipesGridPlayer
 from GridPlayers.PuzzleShikakuGridPlayer import PuzzleShikakuGridPlayer
 from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
 from GridPlayers.PuzzleStarBattleGridPlayer import PuzzleStarBattleGridPlayer
@@ -53,6 +54,7 @@ from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperM
 from GridProviders.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
 from GridProviders.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 from GridProviders.PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
+from GridProviders.PuzzlePipesGridProvider import PuzzlePipesGridProvider
 from GridProviders.PuzzleRenzokuGridProvider import PuzzleRenzokuGridProvider
 from GridProviders.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from GridProviders.PuzzleShingokiGridProvider import PuzzleShingokiGridProvider
@@ -70,6 +72,7 @@ from Heyawake.HeyawakeSolver import HeyawakeSolver
 from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Lits.LitsSolver import LitsSolver
+from Pipes.PipesSolver import PipesSolver
 from Puzzles.Akari.AkariSolver import AkariSolver
 from Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -146,6 +149,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
+            r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuGridPlayer),
