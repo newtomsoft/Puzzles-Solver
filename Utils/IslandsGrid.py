@@ -120,10 +120,10 @@ class IslandGrid(Grid[Island]):
             if isinstance(island, Island):
                 result += repr(island)
             else:
-                result += self.get_str_new(position)
+                result += self.get_str(position)
         return result
 
-    def get_str_new(self, position: Position) -> str:
+    def get_str(self, position: Position) -> str:
         island = Island(position, 0)
         for direction in Direction.orthogonal():
             iteration = 1
