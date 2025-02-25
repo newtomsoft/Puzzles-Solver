@@ -2,12 +2,12 @@
 
 from GameSolver import GameSolver
 from Ports.SolverEngine import SolverEngine
-from Sudoku.SudokuSolver import SudokuSolver
+from Sudoku.SudokuBaseSolver import SudokuBaseSolver
 from Utils.Grid import Grid
 from Utils.Position import Position
 
 
-class KillerSudokuSolver(SudokuSolver, GameSolver):
+class KillerSudokuSolver(SudokuBaseSolver, GameSolver):
     def __init__(self, grid: Grid, cages: Dict[int, Tuple[List[Position], int]], solver_engine: SolverEngine):
         super().__init__(grid, solver_engine)
         self.cages = cages
@@ -17,9 +17,9 @@ class KillerSudokuSolver(SudokuSolver, GameSolver):
             raise ValueError("Initial numbers must be different in cages")
 
     def _add_specific_constraints(self):
-        self._add_distinct_in_jigsaw_regions_constraints()
+        self._add_distinct_in_cages_constraints()
 
-    def _add_distinct_in_jigsaw_regions_constraints(self):
+    def _add_distinct_in_cages_constraints(self):
         for cage, cage_sum in self.cages.values():
             constraint = self._solver.sum([self._grid_z3[position] for position in cage]) == cage_sum
             self._solver.add(constraint)

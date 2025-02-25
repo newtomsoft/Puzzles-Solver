@@ -149,11 +149,13 @@ class JigsawSudokuSolverTests(TestCase):
             [Position(4, 4), Position(5, 5), Position(6, 5), Position(6, 6), Position(5, 4), Position(6, 3), Position(6, 4)]
         ]
         expected_solution = Grid([
-            [4, 3, 5, 2, 1],
-            [2, 5, 4, 1, 3],
-            [5, 1, 3, 4, 2],
-            [1, 4, 2, 3, 5],
-            [3, 2, 1, 5, 4],
+            [4, 1, 2, 3, 6, 5, 7],
+            [6, 3, 7, 2, 5, 1, 4],
+            [7, 4, 1, 6, 2, 3, 5],
+            [5, 2, 3, 7, 4, 6, 1],
+            [1, 6, 5, 4, 3, 7, 2],
+            [2, 5, 6, 1, 7, 4, 3],
+            [3, 7, 4, 5, 1, 2, 6],
         ])
         game = JigsawSudokuSolver(grid, regions, self.get_solver_engine())
 
