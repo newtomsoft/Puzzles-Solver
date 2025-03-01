@@ -1,8 +1,8 @@
-﻿from Pipes.PipeShape import PipeShape
+﻿from Pipes.Pipe import Pipe
 
 
 class PipeShapeTransition:
-    def __init__(self, initial_pipe_shape: PipeShape, final_pipe_shape: PipeShape):
+    def __init__(self, initial_pipe_shape: Pipe, final_pipe_shape: Pipe):
         if initial_pipe_shape.shape != final_pipe_shape.shape:
             raise ValueError("Pipe shapes must be of the same type")
         self.shape = final_pipe_shape

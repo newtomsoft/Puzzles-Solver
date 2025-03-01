@@ -20,8 +20,7 @@ class KakuroSolver(GameSolver):
         self._add_constraints()
         if not self._solver.has_solution():
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid([[model.eval(self._grid_z3[r][c])() if self._grid_z3[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[self._solver.eval(self._grid_z3[r][c]) if self._grid_z3[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
         return grid
 
     def _add_constraints(self):
