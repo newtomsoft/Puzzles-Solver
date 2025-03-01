@@ -5,7 +5,7 @@ from Utils.IslandsGrid import IslandGrid
 from Utils.Position import Position
 
 
-class IslandGridTest(TestCase):
+class IslandsGridTest(TestCase):
     def test_empty(self):
         island_grid = IslandGrid.empty()
         island_grid_repr = repr(island_grid)

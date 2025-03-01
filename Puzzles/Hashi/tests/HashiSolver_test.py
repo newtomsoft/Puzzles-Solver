@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 
 from Puzzles.Hashi.HashiSolver import HashiSolver
-from SolverEngineAdapters.OrToolsSolverEngine import Z3SolverEngine
+from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 from Utils.Island import Island
 from Utils.IslandsGrid import IslandGrid

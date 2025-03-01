@@ -35,13 +35,12 @@ class SurizaSolver(GameSolver):
     def _ensure_all_islands_connected(self) -> (Grid, int):
         proposition_count = 0
         while self._solver.has_solution():
-            model = self._solver.model()
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = model.eval(bridges)()
+                    bridges_number = self._solver.eval(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:

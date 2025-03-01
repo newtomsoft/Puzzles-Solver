@@ -2,22 +2,17 @@
 from unittest import TestCase
 
 from Puzzles.Nonogram.NonogramSolver import NonogramSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
 
 
 class NonogramSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
-
     def test_solution_left_not_compliant(self):
         numbers_by_top_left = {
             'top': [[3], [3], [1], [3, 3], [4]],
             'left': [[4], [1], [5]],
         }
         with self.assertRaises(ValueError) as context:
-            NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            NonogramSolver(numbers_by_top_left)
         self.assertEqual("Rows number must be divisible by 5", str(context.exception))
 
     def test_solution_top_not_compliant(self):
@@ -26,7 +21,7 @@ class NonogramSolverTests(TestCase):
             'left': [[3], [3], [1], [3, 3], [4]],
         }
         with self.assertRaises(ValueError) as context:
-            NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            NonogramSolver(numbers_by_top_left)
         self.assertEqual("Columns number must be divisible by 5", str(context.exception))
 
     def test_solution_missing_number_left(self):
@@ -35,7 +30,7 @@ class NonogramSolverTests(TestCase):
             'left': [[3], [], [1], [3, 3], [4]],
         }
         with self.assertRaises(ValueError) as context:
-            NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            NonogramSolver(numbers_by_top_left)
         self.assertEqual("Missing number for row", str(context.exception))
 
     def test_solution_missing_number_top(self):
@@ -44,7 +39,7 @@ class NonogramSolverTests(TestCase):
             'left': [[3], [3], [1], [3, 3], [4]],
         }
         with self.assertRaises(ValueError) as context:
-            NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            NonogramSolver(numbers_by_top_left)
         self.assertEqual("Missing number for column", str(context.exception))
 
     def test_solution_number_too_big_(self):
@@ -53,7 +48,7 @@ class NonogramSolverTests(TestCase):
             'left': [[1], [1], [1], [1], [1]],
         }
         with self.assertRaises(ValueError) as context:
-            game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            game_solver = NonogramSolver(numbers_by_top_left)
             game_solver.get_solution()
         self.assertEqual("Numbers for columns must be positive and less or equal than rows number", str(context.exception))
 
@@ -63,7 +58,7 @@ class NonogramSolverTests(TestCase):
             'left': [[0], [6], [0], [0], [0]],
         }
         with self.assertRaises(ValueError) as context:
-            game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+            game_solver = NonogramSolver(numbers_by_top_left)
             game_solver.get_solution()
         self.assertEqual("Numbers for rows must be positive and less or equal than columns number", str(context.exception))
 
@@ -79,7 +74,7 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -95,7 +90,7 @@ class NonogramSolverTests(TestCase):
             [0, 1, 0, 0, 0],
             [0, 1, 0, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -111,7 +106,7 @@ class NonogramSolverTests(TestCase):
             [1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -127,7 +122,7 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -143,7 +138,7 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 1, 1],
             [1, 1, 1, 1, 1]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -159,7 +154,7 @@ class NonogramSolverTests(TestCase):
             [0, 0, 1, 0, 1],
             [0, 0, 0, 0, 1]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -175,7 +170,7 @@ class NonogramSolverTests(TestCase):
             [1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -196,7 +191,7 @@ class NonogramSolverTests(TestCase):
             [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
             [0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -222,7 +217,7 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
             [0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1],
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -253,7 +248,7 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
             [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -274,7 +269,7 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 1, 0],
             [1, 0, 0, 0, 1]
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

@@ -6,7 +6,7 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Pipes.PipeShape import PipeShape
+from Pipes.Pipe import Pipe
 from Utils.Grid import Grid
 
 
@@ -37,7 +37,7 @@ class PuzzlePipesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobil
             column = index % columns_number
             for pipe_class, code in pipe_classes_to_codes.items():
                 if pipe_class in dot_div['class']:
-                    matrix[row][column] = PipeShape(code)
+                    matrix[row][column] = Pipe(code)
                     break
 
         return Grid(matrix)

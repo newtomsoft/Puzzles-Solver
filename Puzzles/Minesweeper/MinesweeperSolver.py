@@ -17,7 +17,7 @@ class MinesweeperSolver(GameSolver):
         self._add_constraints()
         if not self._solver.has_solution():
             return None
-        grid = Grid([[self._solver.is_true(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constraints(self):

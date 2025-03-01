@@ -27,8 +27,7 @@ class FutoshikiSolver(GameSolver):
             self._init_solver()
         if not self._solver.has_solution():
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid([[model.eval(self._number(Position(r, c)))() for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[self._solver.eval(self._number(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._last_solution_grid = grid
         return grid
 

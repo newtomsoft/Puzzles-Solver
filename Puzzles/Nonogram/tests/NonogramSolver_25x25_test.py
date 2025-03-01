@@ -45,7 +45,7 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
         ])
-        game_solver = NonogramSolver(numbers_by_top_left, self.get_solver_engine())
+        game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

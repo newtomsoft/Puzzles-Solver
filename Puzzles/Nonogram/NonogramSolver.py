@@ -1,15 +1,11 @@
-﻿import time
+﻿from bitarray import bitarray
+from z3 import Solver, sat, Or, BitVec, Extract
 
-from bitarray import bitarray
-from z3 import BitVec, Extract
-
-from Ports.SolverEngine import SolverEngine
-from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
 
 
-class NonogramSolver(GameSolver):
-    def __init__(self, numbers_by_top_left: dict[str, list[list[int]]], solver_engine: SolverEngine):
+class NonogramSolver:
+    def __init__(self, numbers_by_top_left: dict[str, list[list[int]]]):
         self._numbers_left = numbers_by_top_left['left']
         self._numbers_top = numbers_by_top_left['top']
         self.rows_number = len(self._numbers_left)
@@ -22,16 +18,16 @@ class NonogramSolver(GameSolver):
             raise ValueError("Missing number for row")
         if any([len(numbers) == 0 for numbers in self._numbers_top]):
             raise ValueError("Missing number for column")
-        self._solver = solver_engine
+        self._solver = None
         self._rows_z3: list[BitVec] = []
         self._columns_z3: list[BitVec] = []
 
     def get_solution(self) -> Grid:
         self._rows_z3: list[BitVec] = [BitVec(f"row_{r}", self.columns_number) for r in range(self.rows_number)]
         self._columns_z3: list[BitVec] = [BitVec(f"column_{c}", self.rows_number) for c in range(self.columns_number)]
-        self.reset_time()
+        self._solver = Solver()
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() != sat:
             return Grid.empty()
 
         return self._compute_solution()
@@ -40,14 +36,10 @@ class NonogramSolver(GameSolver):
         model = self._solver.model()
         solution = []
         for i_row in range(self.rows_number):
-            row_value = model[self._rows_z3[i_row]]()
+            row_value = model[self._rows_z3[i_row]].as_long()
             row_list = [(row_value >> j) & 1 for j in range(self.columns_number - 1, -1, -1)]
             solution.append(row_list)
         return Grid(solution)
-
-    @staticmethod
-    def reset_time():
-        NonogramSolver.instant_time = time.time()
 
     def _add_constraints(self):
         self._add_row_column_intersection_constraints()
@@ -118,10 +110,11 @@ class NonogramSolver(GameSolver):
                 new_bitarray.append(0)
             NonogramSolver.backtrack_generate_combinations(new_bitarray, block_index + 1, line_length, blocks_lengths, combinations)
 
-    def compute_line_constraint(self, combinations: list[bitarray], line_z3: BitVec):
+    @staticmethod
+    def compute_line_constraint(combinations: list[bitarray], line_z3: BitVec):
         constraints = []
         for combination in combinations:
             combination_int = int(combination.to01(), 2)
             constraint = line_z3 == combination_int
             constraints.append(constraint)
-        return self._solver.Or(constraints)
+        return Or(constraints)

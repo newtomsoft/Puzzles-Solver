@@ -33,10 +33,9 @@ class DominosaSolver(GameSolver):
         self._add_constraints()
         if not self._solver.has_solution():
             return Grid.empty()
-        model = self._solver.model()
         dominoes_positions = {
-            (value0, value1): [Position(int(model.eval(r)()), int(model.eval(c)())) for r, c in positions]
-            for (value0, value1), positions in self._dominoes_positions_z3.items()
+            (value0, value1): [Position(self._solver.eval(r), self._solver.eval(c)) for r, c in positions_z3]
+            for (value0, value1), positions_z3 in self._dominoes_positions_z3.items()
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
         for _, positions in dominoes_positions.items():

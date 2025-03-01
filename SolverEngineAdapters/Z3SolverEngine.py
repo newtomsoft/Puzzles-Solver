@@ -50,11 +50,10 @@ class Z3SolverEngine(SolverEngine):
     def model(self):
         return self.solver.model()
 
-    def eval(self, expr):
+    def eval(self, expr) -> int:
         result = self.solver.model().eval(expr)
         if z3.is_int_value(result):
             return result.as_long()
         if z3.is_bool(result):
             return z3.is_true(result)
-        return 0
         raise TypeError("Type not currently supported")
