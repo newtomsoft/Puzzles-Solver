@@ -15,8 +15,10 @@ class KillerSudokuSolver(SudokuBaseSolver, GameSolver):
             raise ValueError("The cages must cover the whole grid")
         if not self._are_initial_numbers_different_in_cage():
             raise ValueError("Initial numbers must be different in cages")
+        self._init_sub_squares()
 
     def _add_specific_constraints(self):
+        self._add_distinct_in_sub_squares_constraints()
         self._add_distinct_in_cages_constraints()
 
     def _add_distinct_in_cages_constraints(self):

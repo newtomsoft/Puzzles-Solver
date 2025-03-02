@@ -82,6 +82,8 @@ class KillerSudokuSolverTests(TestCase):
         game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_2x3x4_hard(self):
         grid = Grid([
@@ -122,6 +124,8 @@ class KillerSudokuSolverTests(TestCase):
         game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_3x3x4_easy(self):
         grid = Grid([
@@ -173,19 +177,21 @@ class KillerSudokuSolverTests(TestCase):
         }
 
         expected_solution = Grid([
-            [8, 3, 1, 9, 6, 2, 4, 7, 5],
+            [8, 3, 9, 1, 6, 2, 4, 7, 5],
             [6, 4, 5, 7, 8, 3, 1, 9, 2],
             [1, 7, 2, 4, 9, 5, 8, 3, 6],
             [5, 2, 3, 6, 4, 9, 7, 8, 1],
             [4, 8, 7, 2, 5, 1, 3, 6, 9],
             [9, 1, 6, 8, 3, 7, 2, 5, 4],
-            [3, 6, 9, 1, 7, 4, 5, 2, 8],
+            [3, 6, 1, 9, 7, 4, 5, 2, 8],
             [2, 5, 8, 3, 1, 6, 9, 4, 7],
             [7, 9, 4, 5, 2, 8, 6, 1, 3],
         ])
         game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_3x3x4_hard(self):
         grid = Grid([
@@ -250,6 +256,8 @@ class KillerSudokuSolverTests(TestCase):
         game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
