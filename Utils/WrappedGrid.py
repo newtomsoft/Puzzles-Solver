@@ -1,91 +1,36 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generic, Iterable
+from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generic, Iterable
 
 from bitarray import bitarray
 
-from Pipes.PipeShapeTransition import PipeShapeTransition
+from Utils.Grid import Grid
 from Utils.GridBase import GridBase
 from Utils.Position import Position
-from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')
 
 
-class Grid(GridBase[T], Generic[T]):
+class WrappedGrid(GridBase[T], Generic[T]):
     def __init__(self, matrix: List[List[T]]):
         super().__init__(matrix)
-        self._matrix = matrix
-        self.rows_number = len(matrix)
-        self.columns_number = len(matrix[0])
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
-            return self._matrix[key.r][key.c]
+            key = Position(key.r % self.rows_number, key.c % self.columns_number)
+            try:
+                return self._matrix[key.r][key.c]
+            except IndexError:
+                return None
+
         if isinstance(key, tuple):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
 
     def __contains__(self, item):
-        if isinstance(item, Position):
-            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
-        raise TypeError(f'Position expected, got {type(item)}')
-
-    def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
-        for r, row in enumerate(self._matrix):
-            for c, cell in enumerate(row):
-                yield Position(r, c), cell
-
-    def __repr__(self) -> str:
-        if self.is_empty():
-            return 'Grid.empty()'
-        if isinstance(self[Position(0, 0)], PipeShapeTransition):
-            return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
-        return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
-
-    def __hash__(self):
-        return hash(str(self._matrix))
-
-    @property
-    def matrix(self):
-        return self._matrix
-
-    @staticmethod
-    def empty() -> 'Grid':
-        return Grid([[]])
-
-    def value(self, r_or_position, c=None) -> T:
-        if isinstance(r_or_position, Position):
-            return self._matrix[r_or_position.r][r_or_position.c]
-        return self._matrix[r_or_position][c]
-
-    def set_value(self, position: Position, value):
-        self._matrix[position.r][position.c] = value
-
-    def get_index(self, position: Position) -> int:
-        return position.r * self.columns_number + position.c
-
-    def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
-        matrix = self._matrix.copy()
-        if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
-            matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
-        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in
-                        range(self.rows_number)]
-        background_color_matrix = [
-            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in
-            range(self.rows_number)]
-        end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
-        end_space = ' ' if back_ground_color_grid else ''
-        result = []
-        cell_len = max(len(f'{cell}') for row in matrix for cell in row)
-        for r in range(self.rows_number):
-            result.append(self._row_to_string(matrix, r, cell_len, background_color_matrix, color_matrix, end_color, end_space))
-            if interline and r < self.rows_number - 1:
-                result.append(''.join(f'{background_color_matrix[r][c]}{end_color}' for c in range(self.columns_number)))
-        return '\n'.join(result)
-
-    def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
-        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
+        if not isinstance(item, Position):
+            raise TypeError(f'Position expected, got {type(item)}')
+        return True
 
     def get_regions(self) -> Dict[int, FrozenSet[Position]]:
         regions = defaultdict(set)
@@ -165,11 +110,6 @@ class Grid(GridBase[T], Generic[T]):
                         return new_visited
 
         return visited
-
-    def _get_cell_of_value(self, value, excluded=None) -> Position or None:
-        if excluded is None:
-            excluded = []
-        return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
 
     @staticmethod
     def get_adjacent_combinations(neighbour_length, block_length, circular) -> list[list[bool]]:

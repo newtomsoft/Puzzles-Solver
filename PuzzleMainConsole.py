@@ -73,6 +73,7 @@ from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Lits.LitsSolver import LitsSolver
 from Pipes.PipesSolver import PipesSolver
+from PipesWrap.PipesWrapSolver import PipesWrapSolver
 from Puzzles.Akari.AkariSolver import AkariSolver
 from Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -115,7 +116,7 @@ class PuzzleMainConsole:
     def main():
         game_solver, data_game, browser, game_player = PuzzleMainConsole.get_game_data_player()
         solution = PuzzleMainConsole.run(game_solver, data_game)
-        if game_player is not None:
+        if game_player is not None and solution != Grid.empty():
             game_player.play(solution, browser)
 
     @staticmethod
@@ -149,6 +150,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
+            r"https://.*\.puzzle-pipes\.com/\?size=\d+": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
@@ -192,6 +194,7 @@ class PuzzleMainConsole:
             return solution
         else:
             print(f"No solution found")
+            return solution
 
 
 if __name__ == '__main__':

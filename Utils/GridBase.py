@@ -5,16 +5,14 @@ from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generi
 from bitarray import bitarray
 
 from Pipes.PipeShapeTransition import PipeShapeTransition
-from Utils.GridBase import GridBase
 from Utils.Position import Position
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')
 
 
-class Grid(GridBase[T], Generic[T]):
+class GridBase(Generic[T]):
     def __init__(self, matrix: List[List[T]]):
-        super().__init__(matrix)
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
@@ -25,6 +23,13 @@ class Grid(GridBase[T], Generic[T]):
         if isinstance(key, tuple):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
+
+    def __eq__(self, other):
+        if not issubclass(type(other), GridBase):
+            return False
+        if all(isinstance(cell, bool) for cell in self._matrix):
+            return all(value == other.value(position) for position, value in self)
+        return self.matrix == other.matrix
 
     def __contains__(self, item):
         if isinstance(item, Position):
@@ -51,8 +56,8 @@ class Grid(GridBase[T], Generic[T]):
         return self._matrix
 
     @staticmethod
-    def empty() -> 'Grid':
-        return Grid([[]])
+    def empty() -> 'GridBase':
+        return GridBase([[]])
 
     def value(self, r_or_position, c=None) -> T:
         if isinstance(r_or_position, Position):
@@ -212,7 +217,7 @@ class Grid(GridBase[T], Generic[T]):
         return sum(values)
 
     def is_empty(self):
-        return self == Grid.empty()
+        return self == GridBase.empty()
 
     def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
         return [position for position in position.neighbors(mode) if position in self]
