@@ -275,6 +275,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_6x6_hard(self):
         input_grid = Grid([
@@ -296,6 +298,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_8x8_hard(self):
         input_grid = Grid([
@@ -321,6 +325,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)        
 
     def test_solution_10x10_hard(self):
         input_grid = Grid([
@@ -350,6 +356,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_15x15_hard(self):
         input_grid = Grid([
@@ -389,6 +397,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_20x20_hard(self):
         input_grid = Grid([
@@ -438,6 +448,8 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid, self.get_solver_engine())
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = lits_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
