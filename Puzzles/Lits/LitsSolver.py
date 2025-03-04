@@ -23,6 +23,7 @@ class LitsSolver(GameSolver):
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._grid_z3: Grid | None = None
+        self.previous_solution: Grid | None = None
         self._solver = solver_engine
 
     def get_solution(self) -> Grid:
@@ -30,8 +31,13 @@ class LitsSolver(GameSolver):
         self._add_constraints()
         if not self._solver.has_solution():
             return Grid.empty()
-        grid = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        return grid
+        self.previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return self.previous_solution
+
+    def get_other_solution(self):
+        exclusion_constraint = self._solver.Not(self._solver.And([self._grid_z3[Position(r, c)] == self.previous_solution[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number)]))
+        self._solver.add(exclusion_constraint)
+        return self.get_solution()
 
     def _add_constraints(self):
         self._add_range_constraints()
