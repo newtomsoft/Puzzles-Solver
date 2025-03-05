@@ -67,6 +67,7 @@ from GridProviders.PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from GridProviders.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvider
 from GridProviders.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
+from GridProviders.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from Heyawake.HeyawakeSolver import HeyawakeSolver
 from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
@@ -107,6 +108,7 @@ from Puzzles.Tents.TentsSolver import TentsSolver
 from Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
+from YinYang.YinYangSolver import YinYangSolver
 
 SOLVER_ENGINE = Z3SolverEngine()
 
@@ -165,6 +167,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleTentaiShowGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
+            r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
         }
         for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
             if re.match(pattern, console_input):
