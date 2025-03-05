@@ -1,6 +1,4 @@
-﻿from z3 import Bool
-
-from Ports.SolverEngine import SolverEngine
+﻿from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
 
@@ -18,7 +16,7 @@ class BinairoSolver(GameSolver):
         self._matrix_z3 = None
 
     def get_solution(self) -> Grid:
-        self._matrix_z3 = [[Bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._matrix_z3 = [[self._solver.bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
         if not self._solver.has_solution():
             return Grid.empty()

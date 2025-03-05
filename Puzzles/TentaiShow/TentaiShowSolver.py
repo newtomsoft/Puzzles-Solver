@@ -15,7 +15,7 @@ class TentaiShowSolver(GameSolver):
         self.columns_number = self._grid.columns_number
         self._solver = solver_engine
         self._grid_z3 = None
-        self._last_solution = None
+        self._previous_solution = None
 
     def _init_solver(self):
         self._grid_z3 = Grid([[self._solver.int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -26,7 +26,7 @@ class TentaiShowSolver(GameSolver):
             self._init_solver()
 
         solution, _ = self._ensure_all_shapes_compliant()
-        self._last_solution = solution
+        self._previous_solution = solution
         return solution
 
     def _ensure_all_shapes_compliant(self) -> (Grid, int):
@@ -59,7 +59,7 @@ class TentaiShowSolver(GameSolver):
 
     def _exclude_previous_solution(self):
         previous_solution_constraints = []
-        for position, value in self._last_solution:
+        for position, value in self._previous_solution:
             previous_solution_constraints.append(self._grid_z3[position] == value)
         self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
 

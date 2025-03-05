@@ -22,17 +22,6 @@ class LitsSolverTest(unittest.TestCase):
 
         self.assertEqual("The grid must have at least 4 cells per region", str(context.exception))
 
-    def test_get_solution_region_4_not_compliant(self):
-        grid = Grid([
-            [1, 1, 1, 2],
-            [2, 2, 2, 2],
-            [2, 2, 1, 2]
-        ])
-        with self.assertRaises(ValueError) as context:
-            LitsSolver(grid, self.get_solver_engine())
-
-        self.assertEqual("The regions must have all cells connected", str(context.exception))
-
     @parameterized.expand([
         ("I horizontal", Grid([
             [1, 1, 1, 1],

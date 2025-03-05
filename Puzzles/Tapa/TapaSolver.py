@@ -117,11 +117,10 @@ class TapaSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in range(self._grid_z3.rows_number)])
-            is_solution = current_grid.are_cells_connected()
-            if is_solution:
+            black_shapes = current_grid.get_all_shapes()
+            if len(black_shapes) == 1:
                 return TapaSolver.crop_grid(current_grid), proposition_count
 
-            black_shapes = current_grid.get_all_shapes()
             biggest_shape = max(black_shapes, key=len)
             black_shapes.remove(biggest_shape)
             for black_shape in black_shapes:

@@ -16,7 +16,7 @@ class HashiSolver(GameSolver):
         self.init_island_grid()
         self._solver = solver_engine
         self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
-        self._last_solution: IslandGrid | None = None
+        self._previous_solution: IslandGrid | None = None
 
     def init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), self._input_grid[Position(r, c)]) if isinstance(self._input_grid[Position(r, c)], int) else None for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
@@ -32,7 +32,7 @@ class HashiSolver(GameSolver):
             self._init_solver()
 
         solution, _ = self.get_grid_when_shape_is_loop()
-        self._last_solution = solution
+        self._previous_solution = solution
         return solution
 
     def get_grid_when_shape_is_loop(self):
@@ -45,13 +45,13 @@ class HashiSolver(GameSolver):
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
 
-            self._last_solution = self._island_grid
+            self._previous_solution = self._island_grid
             connected_positions = self._island_grid.get_connected_positions()
             if len(connected_positions) == 1:
                 return self._island_grid, proposition_count
 
             wrong_solution_constraints = []
-            for island in self._last_solution.islands.values():
+            for island in self._previous_solution.islands.values():
                 for direction, (_, value) in island.direction_position_bridges.items():
                     wrong_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
             self._solver.add(self._solver.Not(self._solver.And(wrong_solution_constraints)))
@@ -61,7 +61,7 @@ class HashiSolver(GameSolver):
 
     def get_other_solution(self):
         previous_solution_constraints = []
-        for island in self._last_solution.islands.values():
+        for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
         self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))

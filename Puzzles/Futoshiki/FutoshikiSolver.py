@@ -16,7 +16,7 @@ class FutoshikiSolver(GameSolver):
             raise ValueError("The grid must be at least 4x4")
         self._solver = solver_engine
         self._grid_z3: Grid | None = None
-        self._last_solution_grid: Grid | None = None
+        self._previous_solution_grid: Grid | None = None
 
     def _init_solver(self):
         self._grid_z3 = Grid([[self._solver.int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -28,11 +28,11 @@ class FutoshikiSolver(GameSolver):
         if not self._solver.has_solution():
             return Grid.empty()
         grid = Grid([[self._solver.eval(self._number(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._last_solution_grid = grid
+        self._previous_solution_grid = grid
         return grid
 
     def get_other_solution(self):
-        exclusion_constraint = self._solver.Not(self._solver.And([self._number(Position(r, c)) == self._last_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._last_solution_grid.value(r, c)]))
+        exclusion_constraint = self._solver.Not(self._solver.And([self._number(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 

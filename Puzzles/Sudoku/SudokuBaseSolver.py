@@ -22,7 +22,7 @@ class SudokuBaseSolver(GameSolver):
             raise ValueError("initial numbers must be between 1 and n x n")
         self._grid_z3 = None
         self._solver = solver_engine
-        self._last_solution: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def _init_sub_squares(self):
         if is_perfect_square(self.rows_number):
@@ -43,12 +43,12 @@ class SudokuBaseSolver(GameSolver):
         self._add_specific_constraints()
         if not self._solver.has_solution():
             return Grid.empty()
-        self._last_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        return self._last_solution
+        self._previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return self._previous_solution
 
     def get_other_solution(self):
         constraints = []
-        for position, value in self._last_solution:
+        for position, value in self._previous_solution:
             constraints.append(self._grid_z3[position] == value)
         self._solver.add(self._solver.Not(self._solver.And(constraints)))
         return self.get_solution()

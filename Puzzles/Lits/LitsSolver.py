@@ -18,8 +18,6 @@ class LitsSolver(GameSolver):
         self._regions = self._grid.get_regions()
         if any(len(region) < 4 for region in self._regions.values()):
             raise ValueError("The grid must have at least 4 cells per region")
-        if not self._grid.are_all_cells_connected():
-            raise ValueError("The regions must have all cells connected")
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._grid_z3: Grid | None = None
