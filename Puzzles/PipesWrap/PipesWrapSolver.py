@@ -15,7 +15,7 @@ class PipesWrapSolver(PipesSolver):
     def __init__(self, grid: GridBase[Pipe], solver_engine: SolverEngine):
         super().__init__(grid, solver_engine)
         self._grid_z3: WrappedGrid | None = None
-        self._last_solution: WrappedGrid[Pipe] | None = None
+        self._previous_solution: WrappedGrid[Pipe] | None = None
 
     def _init_solver(self):
         self._grid_z3 = WrappedGrid([
@@ -50,7 +50,7 @@ class PipesWrapSolver(PipesSolver):
 
             connected_positions, is_loop = current_grid.get_connected_positions_and_is_loop()
             if len(connected_positions) == 1 and not is_loop:
-                self._last_solution = current_grid
+                self._previous_solution = current_grid
                 transition_grid = WrappedGrid([[
                     PipeShapeTransition(self._input_grid[Position(r, c)], current_grid[Position(r, c)])
                     for c in range(self._columns_number)]

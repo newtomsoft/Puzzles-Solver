@@ -16,7 +16,7 @@ class MasyuSolver(GameSolver):
         self.init_island_grid()
         self._solver = solver_engine
         self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
-        self._last_solution: IslandGrid | None = None
+        self._previous_solution: IslandGrid | None = None
 
     def init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number)] for r in range(self.input_grid.rows_number)])
@@ -51,7 +51,7 @@ class MasyuSolver(GameSolver):
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
-                self._last_solution = self._island_grid
+                self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count
 
             not_loop_constraints = []
@@ -68,7 +68,7 @@ class MasyuSolver(GameSolver):
 
     def get_other_solution(self):
         previous_solution_constraints = []
-        for island in self._last_solution.islands.values():
+        for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
         self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))

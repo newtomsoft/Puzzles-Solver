@@ -17,7 +17,7 @@ class PipesSolver(GameSolver):
         self._columns_number = grid.columns_number
         self._solver = solver_engine
         self._grid_z3: GridBase | None = None
-        self._last_solution: GridBase[Pipe] | None = None
+        self._previous_solution: GridBase[Pipe] | None = None
 
     def _init_solver(self):
         self._grid_z3 = GridBase([
@@ -59,7 +59,7 @@ class PipesSolver(GameSolver):
 
             connected_positions, is_loop = current_grid.get_connected_positions_and_is_loop()
             if len(connected_positions) == 1 and not is_loop:
-                self._last_solution = current_grid
+                self._previous_solution = current_grid
                 transition_grid = GridBase([[
                     PipeShapeTransition(self._input_grid[Position(r, c)], current_grid[Position(r, c)])
                     for c in range(self._columns_number)]
@@ -83,7 +83,7 @@ class PipesSolver(GameSolver):
 
     def get_other_solution(self):
         previous_solution_constraints = []
-        for position, pipe in self._last_solution:
+        for position, pipe in self._previous_solution:
             open_to = pipe.get_open_to()
             previous_solution_constraints.append(self._grid_z3[position][Direction.up()] == open_to[Direction.up()])
             previous_solution_constraints.append(self._grid_z3[position][Direction.down()] == open_to[Direction.down()])

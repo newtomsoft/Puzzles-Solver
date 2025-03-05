@@ -9,7 +9,7 @@ class HitoriSolver(GameSolver):
         self._grid = grid
         self._solver = solver_engine
         self._grid_z3 = None
-        self._last_solution: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def _init_solver(self):
         self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
@@ -20,7 +20,7 @@ class HitoriSolver(GameSolver):
             self._init_solver()
 
         solution, _ = self._ensure_all_white_connected()
-        self._last_solution = solution
+        self._previous_solution = solution
         return solution
 
     def _ensure_all_white_connected(self):
@@ -44,7 +44,7 @@ class HitoriSolver(GameSolver):
 
     def get_other_solution(self):
         previous_solution_constraints = []
-        for position, _ in [(position, value) for (position, value) in self._last_solution if not value]:
+        for position, _ in [(position, value) for (position, value) in self._previous_solution if not value]:
             previous_solution_constraints.append(self._solver.Not(self._grid_z3[position]))
         self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
 

@@ -103,8 +103,16 @@ class Grid(GridBase[T], Generic[T]):
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def are_all_cells_connected(self, mode='orthogonal') -> bool:
-        return all([self.are_cells_connected(region_key, mode) for region_key in self.get_regions().keys()])
+    def get_connected_positions(self, value_to_search: T = True) -> list[set[Position]]:
+        total_positions = self.columns_number * self.rows_number
+        visited_list: list[set[Position]] = []
+        visited_flat: set[Position] = set()
+        while len(visited_flat) != total_positions:
+            position = next(position for position, value in self if position not in visited_flat and value == value_to_search)
+            visited_in_this_pass = self._depth_first_search(position, value_to_search)
+            visited_list.append(visited_in_this_pass)
+            visited_flat.update(visited_in_this_pass)
+        return visited_list
 
     def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []

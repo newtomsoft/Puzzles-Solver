@@ -29,7 +29,7 @@ class NurikabeSolver(GameSolver):
         return solution
 
     def get_other_solution(self):
-        self._exclude_solution(self._last_solution)
+        self._exclude_solution(self._previous_solution)
         return self._ensure_all_black_connected_and_no_island_without_number()
 
     def _exclude_solution(self, solution):
@@ -47,7 +47,7 @@ class NurikabeSolver(GameSolver):
             if self._recompute_islands_without_island_area_or_wrong(islands):
                 continue
             if river_compliant and len(islands) == self.island_count:
-                self._last_solution = current_grid
+                self._previous_solution = current_grid
                 return current_grid
 
             if not river_compliant:

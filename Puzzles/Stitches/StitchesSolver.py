@@ -27,7 +27,7 @@ class StitchesSolver(GameSolver):
         self._solver = solver_engine
         self._matrix_z3 = None
         self._matrix_connexion_z3 = None
-        self._last_solution_grid = None
+        self._previous_solution_grid = None
 
     def _init_solver(self):
         self._matrix_connexion_z3 = [[self._solver.int(f"connexion_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
@@ -40,11 +40,11 @@ class StitchesSolver(GameSolver):
         if not self._solver.has_solution():
             return Grid.empty()
         grid = Grid([[self._solver.eval(self._matrix_connexion_z3[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        self._last_solution_grid = grid
+        self._previous_solution_grid = grid
         return grid
 
     def get_other_solution(self):
-        self._exclude_solution(self._last_solution_grid)
+        self._exclude_solution(self._previous_solution_grid)
         solution = self.get_solution()
         return solution
 

@@ -16,9 +16,9 @@ class ShapeGenerator:
         return all_shapes
 
     @staticmethod
-    def around_shape(shape):
+    def around_shape(shape) -> set[Position]:
         shape_set = set(shape)
-        enlarged_shape = set()
+        enlarged_shape: set[Position] = set()
         for position in shape:
             for position_delta in [Position(-1, 0), Position(1, 0), Position(0, -1), Position(0, 1)]:
                 adjacent_cell = position + position_delta

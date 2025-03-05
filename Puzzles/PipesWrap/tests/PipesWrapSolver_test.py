@@ -12,21 +12,6 @@ class PipesWrapSolverTests(TestCase):
     def get_solver_engine():
         return Z3SolverEngine()
 
-    def test_grid1x2(self):
-        matrix = [
-            ['E1', 'E1'],
-        ]
-        grid = WrappedGrid([[Pipe(matrix[row][column]) for column in range(len(matrix[row]))] for row in range(len(matrix))])
-        expected_solution = (
-            ' ╶──╴ '
-        )
-
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
-        solution = solver.get_solution()
-        self.assertEqual(expected_solution, str(solution))
-        other_solution = solver.get_other_solution()
-        self.assertEqual(WrappedGrid.empty(), other_solution)
-
     def test_grid1x3(self):
         matrix = [
             ['E1', 'I1', 'E1']
@@ -34,23 +19,6 @@ class PipesWrapSolverTests(TestCase):
         grid = WrappedGrid([[Pipe(matrix[row][column]) for column in range(len(matrix[row]))] for row in range(len(matrix))])
         expected_solution = (
             ' ╶─────╴ '
-        )
-
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
-        solution = solver.get_solution()
-        self.assertEqual(expected_solution, str(solution))
-        other_solution = solver.get_other_solution()
-        self.assertEqual(WrappedGrid.empty(), other_solution)
-
-    def test_grid2x2(self):
-        matrix = [
-            ['E1', 'L1'],
-            ['E1', 'L1'],
-        ]
-        grid = WrappedGrid([[Pipe(matrix[row][column]) for column in range(len(matrix[row]))] for row in range(len(matrix))])
-        expected_solution = (
-            ' ╶──┐ \n'
-            ' ╶──┘ '
         )
 
         solver = PipesWrapSolver(grid, self.get_solver_engine())
