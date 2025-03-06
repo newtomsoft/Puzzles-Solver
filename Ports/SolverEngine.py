@@ -61,3 +61,11 @@ class SolverEngine(ABC):
     @abstractmethod
     def has_constraints(self):
         pass
+
+    @abstractmethod
+    def push(self):
+        pass
+
+    @abstractmethod
+    def pop(self):
+        pass
