@@ -243,6 +243,9 @@ class Grid(GridBase[T], Generic[T]):
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
+    def edges_positions(self) -> Set[Position]:
+        return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
+
     def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
