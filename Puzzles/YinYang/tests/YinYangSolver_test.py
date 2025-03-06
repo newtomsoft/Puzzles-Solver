@@ -34,7 +34,7 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_square_diag(self):
+    def test_solution_square_diagonal_constraint(self):
         grid = Grid([
             [1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0],
