@@ -4,6 +4,12 @@ from Ports.SolverEngine import SolverEngine
 
 
 class Z3SolverEngine(SolverEngine):
+    def push(self):
+        self.solver.push()
+
+    def pop(self):
+        self.solver.pop()
+
     def has_constraints(self):
         return self.solver.assertions()
 
