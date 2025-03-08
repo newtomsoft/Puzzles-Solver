@@ -75,6 +75,8 @@ class BinairoSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_using_initial_constraint_and_count(self):
         grid = Grid([
@@ -97,6 +99,8 @@ class BinairoSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_using_initial_constraint_and_count_and_unique_row(self):
         grid = Grid([
@@ -147,6 +151,8 @@ class BinairoSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_using_all_constraints_adjacent_row(self):
         grid = Grid([
@@ -194,6 +200,8 @@ class BinairoSolverTests(TestCase):
         game_solver = BinairoSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_8x8(self):
         grid = Grid([
@@ -219,6 +227,8 @@ class BinairoSolverTests(TestCase):
         game_solver = BinairoSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x10(self):
         grid = Grid([
@@ -248,6 +258,8 @@ class BinairoSolverTests(TestCase):
         game_solver = BinairoSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
