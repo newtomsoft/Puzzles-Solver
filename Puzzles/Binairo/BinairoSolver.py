@@ -13,20 +13,27 @@ class BinairoSolver(GameSolver):
         if self.rows_number % 2 != 0 or self.columns_number % 2 != 0:
             raise ValueError("Binairo grid must have an even number of rows/columns")
         self._solver = solver_engine
-        self._grid_z3 = None
+        self._grid_z3: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[self._solver.bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
+
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def get_other_solution(self) -> Grid:
+        self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def _compute_solution(self) -> Grid:
         if not self._solver.has_solution():
             return Grid.empty()
 
-        return self._compute_solution()
-
-    def _compute_solution(self) -> Grid:
         model = self._solver.model()
-        solution = [[self._solver.is_true(model.eval(self._grid_z3[r][c])) for c in range(self.columns_number)] for r in range(self.rows_number)]
-        return Grid(solution)
+        return Grid([[self._solver.is_true(model.eval(self._grid_z3[r][c])) for c in range(self.columns_number)] for r in range(self.rows_number)])
 
     def _add_constraints(self):
         self._add_initial_constraints()
