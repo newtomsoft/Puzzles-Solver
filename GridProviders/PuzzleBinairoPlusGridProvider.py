@@ -1,4 +1,6 @@
-﻿from bs4 import BeautifulSoup
+﻿from typing import Tuple
+
+from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
@@ -12,7 +14,7 @@ class PuzzleBinairoPlusGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url) -> (Grid, dict[str, list[Position]]):
+    def scrap_grid(self, browser: BrowserContext, url) -> (Grid, dict[str, list[Tuple[Position, Position]]]):
         page = browser.pages[0]
         page.goto(url)
         self.new_game(page, 'div.cell')
@@ -31,44 +33,40 @@ class PuzzleBinairoPlusGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
             for c in range(columns_number):
                 row.append(values[r * columns_number + c])
             matrix.append(row)
-        comparison_operators = self.scrap_comparison_operators(soup)
-        return Grid(matrix), comparison_operators
+        comparisons = self.get_comparisons_positions(soup)
+        return Grid(matrix), comparisons
 
     @staticmethod
-    def scrap_comparison_operators(soup):
+    def get_comparisons_positions(soup) -> dict[str, list[Tuple[Position, Position]]]:
         cell_size = 35
+        equal = []
+        non_equal = []
 
-        equal_on_columns = []
         for div_equal_horizontal in soup.find_all('div', class_='eqh'):
             style = div_equal_horizontal['style']
             index_row = int(style.split('top: ')[1].split('px')[0]) // cell_size - 1
             index_column = int(style.split('left: ')[1].split('px')[0]) // cell_size
-            equal_on_columns.append(Position(index_row, index_column))
+            equal.append((Position(index_row, index_column), Position(index_row + 1, index_column)))
 
-        non_equal_on_columns = []
         for non_equal_horizontal_div in soup.find_all('div', class_='neh'):
             style = non_equal_horizontal_div['style']
             index_row = int(style.split('top: ')[1].split('px')[0]) // cell_size - 1
             index_column = int(style.split('left: ')[1].split('px')[0]) // cell_size
-            non_equal_on_columns.append(Position(index_row, index_column))
+            non_equal.append((Position(index_row, index_column), Position(index_row + 1, index_column)))
 
-        equal_on_rows = []
         for div_equal_vertical in soup.find_all('div', class_='eqv'):
             style = div_equal_vertical['style']
             index_row = int(style.split('top: ')[1].split('px')[0]) // cell_size
             index_column = int(style.split('left: ')[1].split('px')[0]) // cell_size - 1
-            equal_on_rows.append(Position(index_row, index_column))
+            equal.append((Position(index_row, index_column), Position(index_row, index_column + 1)))
 
-        non_equal_on_rows = []
         for non_equal_vertical_div in soup.find_all('div', class_='nev'):
             style = non_equal_vertical_div['style']
             index_row = int(style.split('top: ')[1].split('px')[0]) // cell_size
             index_column = int(style.split('left: ')[1].split('px')[0]) // cell_size - 1
-            non_equal_on_rows.append(Position(index_row, index_column))
+            non_equal.append((Position(index_row, index_column), Position(index_row, index_column + 1)))
 
         return {
-            'equal_on_columns': equal_on_columns,
-            'non_equal_on_columns': non_equal_on_columns,
-            'equal_on_rows': equal_on_rows,
-            'non_equal_on_rows': non_equal_on_rows
+            'equal': equal,
+            'non_equal': non_equal,
         }
