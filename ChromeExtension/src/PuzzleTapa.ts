@@ -55,10 +55,6 @@
                     const middleX = coordinates.left + coordinates.width / 2.0;
                     const middleY = coordinates.top + coordinates.height / 2.0;
                     createSquare(middleX, middleY);
-                    // if (cellDiv.classList.contains('cell-off')) {
-                    //     cellDiv.classList.remove('cell-off');
-                    //     cellDiv.classList.add('cell-on');
-                    // }
                 }
             });
         });
