@@ -1,13 +1,15 @@
-﻿from Ports.SolverEngine import SolverEngine
+﻿from typing import Tuple
+
+from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
 from Utils.Position import Position
 
 
 class BinairoPlusSolver(GameSolver):
-    def __init__(self, grid: Grid, comparison_operators: dict[str, list[Position]], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, comparisons_positions: dict[str, list[Tuple[Position, Position]]], solver_engine: SolverEngine):
         self._grid = grid
-        self._comparison_operators = comparison_operators
+        self._comparisons_positions = comparisons_positions
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number < 6:
@@ -61,11 +63,7 @@ class BinairoPlusSolver(GameSolver):
                 self._solver.add(self._solver.Not(self._solver.And(self._grid_z3[r][c] == self._grid_z3[r + 1][c], self._grid_z3[r + 1][c] == self._grid_z3[r + 2][c])))
 
     def _add_comparison_operators_constraints(self):
-        for position in self._comparison_operators['equal_on_columns']:
-            self._solver.add(self._grid_z3[position] == self._grid_z3[position.down])
-        for position in self._comparison_operators['non_equal_on_columns']:
-            self._solver.add(self._grid_z3[position] != self._grid_z3[position.down])
-        for position in self._comparison_operators['equal_on_rows']:
-            self._solver.add(self._grid_z3[position] == self._grid_z3[position.right])
-        for position in self._comparison_operators['non_equal_on_rows']:
-            self._solver.add(self._grid_z3[position] != self._grid_z3[position.right])
+        for position0, position1 in self._comparisons_positions['equal']:
+            self._solver.add(self._grid_z3[position0] == self._grid_z3[position1])
+        for position0, position1 in self._comparisons_positions['non_equal']:
+            self._solver.add(self._grid_z3[position0] != self._grid_z3[position1])
