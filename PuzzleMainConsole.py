@@ -7,6 +7,7 @@ from playwright.sync_api import BrowserContext
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
+from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
 from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
@@ -36,6 +37,7 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
+from GridProviders.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
 from GridProviders.PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from GridProviders.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 from GridProviders.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
@@ -108,6 +110,7 @@ from Puzzles.Tents.TentsSolver import TentsSolver
 from Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
+from Vectors.VectorsSolver import VectorsSolver
 from YinYang.YinYangSolver import YinYangSolver
 
 SOLVER_ENGINE = Z3SolverEngine()
@@ -168,6 +171,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
+            r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsGridPlayer),
         }
         for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
             if re.match(pattern, console_input):
