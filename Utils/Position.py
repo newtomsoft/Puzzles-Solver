@@ -8,6 +8,13 @@ class Position:
         self.r = row
         self.c = column
 
+    def distance(self, other: 'Position') -> float:
+        if self.r == other.r:
+            return abs(self.c - other.c)
+        if self.c == other.c:
+            return abs(self.r - other.r)
+        return math.sqrt(math.pow(self.r - other.r, 2) + math.pow(self.c - other.c, 2))
+
     def neighbors(self, mode='orthogonal') -> list['Position']:
         neighbors = [self.down, self.up, self.right, self.left]
         if mode == 'diagonal':
@@ -50,6 +57,9 @@ class Position:
         if direction == Direction.left():
             return Position(self.r, self.c - count)
         return self
+
+    def before(self, direction):
+        return self.after(direction.opposite)
 
     @property
     def left(self):
