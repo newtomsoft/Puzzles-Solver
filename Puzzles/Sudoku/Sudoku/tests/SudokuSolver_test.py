@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Puzzles.Sudoku.SudokuSolver import SudokuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from Utils.Grid import Grid
 
 

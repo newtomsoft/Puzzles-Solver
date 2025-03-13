@@ -72,8 +72,6 @@ from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridP
 from GridProviders.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from Heyawake.HeyawakeSolver import HeyawakeSolver
-from JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
-from KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Lits.LitsSolver import LitsSolver
 from Pipes.PipesSolver import PipesSolver
 from PipesWrap.PipesWrapSolver import PipesWrapSolver
@@ -101,7 +99,9 @@ from Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
 from Puzzles.Stitches.StitchesSolver import StitchesSolver
-from Puzzles.Sudoku.SudokuSolver import SudokuSolver
+from Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
+from Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
+from Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 from Puzzles.Suriza.SurizaSolver import SurizaSolver
 from Puzzles.Tapa.TapaSolver import TapaSolver
