@@ -15,6 +15,8 @@ class PuzzleBaronVectorsGridProvider(GridProvider, PlaywrightGridProvider, Puzzl
         page.goto(url)
         self.new_game(page, 'div.gridbox')
         grid_box_divs = page.query_selector_all('div.gridbox')
+        div_to_view = page.query_selector('#container')
+        div_to_view.scroll_into_view_if_needed()
         numbers = [int(inner_text) if (inner_text := number_div.inner_text()) else '' for number_div in grid_box_divs]
         cells_count = len(grid_box_divs)
         rows_count = len(page.query_selector_all('table.numberlink tr'))
