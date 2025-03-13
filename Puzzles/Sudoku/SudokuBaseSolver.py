@@ -4,6 +4,7 @@ from abc import abstractmethod
 from Ports.SolverEngine import SolverEngine
 from Puzzles.GameSolver import GameSolver
 from Utils.Grid import Grid
+from Utils.Position import Position
 from Utils.utils import is_perfect_square
 
 
@@ -57,20 +58,23 @@ class SudokuBaseSolver(GameSolver):
         self._initials_constraints()
         self._add_distinct_in_rows_and_columns_constraints()
 
+    @abstractmethod
+    def _add_specific_constraints(self):
+        pass
+
     def _initials_constraints(self):
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                if self._grid.value(r, c) == -1:
-                    self._solver.add(self._grid_z3.value(r, c) >= 1)
-                    self._solver.add(self._grid_z3.value(r, c) <= self.rows_number)
-                else:
-                    self._solver.add(self._grid_z3.value(r, c) == self._grid.value(r, c))
+        for position, value in self._grid:
+            if value != -1:
+                self._solver.add(self._grid_z3[position] == value)
+            else:
+                self._solver.add(self._grid_z3[position] >= 1)
+                self._solver.add(self._grid_z3[position] <= self.rows_number)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
-            self._solver.add(self._solver.distinct([self._grid_z3.value(r, c) for c in range(self.columns_number)]))
+            self._solver.add(self._solver.distinct([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]))
         for c in range(self.columns_number):
-            self._solver.add(self._solver.distinct([self._grid_z3.value(r, c) for r in range(self.rows_number)]))
+            self._solver.add(self._solver.distinct([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]))
 
     def _add_distinct_in_sub_squares_constraints(self):
         for sub_square_row in range(0, self.rows_number, self._sub_square_row_number):
@@ -116,7 +120,3 @@ class SudokuBaseSolver(GameSolver):
             for r in range(self.rows_number)
             for c in range(self.columns_number)
         )
-
-    @abstractmethod
-    def _add_specific_constraints(self):
-        pass
