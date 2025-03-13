@@ -135,3 +135,25 @@ class Pipe:
             return {Direction.up(): False, Direction.down(): True, Direction.left(): False, Direction.right(): False}
 
         raise ValueError("Invalid pipe shape")
+
+    @staticmethod
+    def from_repr(shape_repr: str):
+        shape_map = {
+            ' └─': "L0",
+            '─┘ ': "L1",
+            '─┐ ': "L2",
+            ' ┌─': "L3",
+            ' │ ': "I0",
+            '───': "I1",
+            '─┬─': "T0",
+            ' ├─': "T1",
+            '─┴─': "T2",
+            '─┤ ': "T3",
+            ' ╶─': "E0",
+            ' ╵ ': "E1",
+            '─╴ ': "E2",
+            ' ╷ ': "E3"
+        }
+        if shape_repr not in shape_map:
+            raise ValueError("Invalid shape representation")
+        return Pipe(shape_map[shape_repr])
