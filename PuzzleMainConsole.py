@@ -155,7 +155,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
-            r"https://.*\.puzzle-pipes\.com/\?size=\d+": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
+            r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
