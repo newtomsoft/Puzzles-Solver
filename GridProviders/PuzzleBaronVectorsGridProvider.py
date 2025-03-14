@@ -1,4 +1,5 @@
-﻿from playwright.sync_api import BrowserContext
+﻿from bs4 import BeautifulSoup
+from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -14,12 +15,12 @@ class PuzzleBaronVectorsGridProvider(GridProvider, PlaywrightGridProvider, Puzzl
         page = browser.pages[0]
         page.goto(url)
         self.new_game(page, 'div.gridbox')
-        grid_box_divs = page.query_selector_all('div.gridbox')
-        div_to_view = page.query_selector('#container')
-        div_to_view.scroll_into_view_if_needed()
-        numbers = [int(inner_text) if (inner_text := number_div.inner_text()) else '' for number_div in grid_box_divs]
+        html_page = page.content()
+        soup = BeautifulSoup(html_page, 'html.parser')
+        grid_box_divs = soup.find_all('div', class_='gridbox')
+        numbers = [int(inner_text) if ((inner_text := number_div.get_text()) != '') else '' for number_div in grid_box_divs]
         cells_count = len(grid_box_divs)
-        rows_count = len(page.query_selector_all('table.numberlink tr'))
+        rows_count = len(soup.find_all('table', class_='numberlink')[0].find_all_next('tr'))
         columns_count = cells_count // rows_count
         matrix = []
         for i in range(0, cells_count, columns_count):
