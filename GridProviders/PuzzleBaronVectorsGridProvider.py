@@ -18,9 +18,9 @@ class PuzzleBaronVectorsGridProvider(GridProvider, PlaywrightGridProvider, Puzzl
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_box_divs = soup.find_all('div', class_='gridbox')
-        numbers = [int(inner_text) if ((inner_text := number_div.get_text()) != '') else '' for number_div in grid_box_divs]
+        numbers = [int(text) if ((text := number_div.get_text()) != '') else '' for number_div in grid_box_divs]
         cells_count = len(grid_box_divs)
-        rows_count = len(soup.find_all('table', class_='numberlink')[0].find_all_next('tr'))
+        rows_count = len(soup.find('table', class_='numberlink').find_all_next('tr'))
         columns_count = cells_count // rows_count
         matrix = []
         for i in range(0, cells_count, columns_count):
