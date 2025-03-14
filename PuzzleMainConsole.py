@@ -37,6 +37,7 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
+from GridProviders.PuzzleBaronKenKenGridProvider import PuzzleBaronKenKenGridProvider
 from GridProviders.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
 from GridProviders.PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from GridProviders.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
@@ -72,6 +73,7 @@ from GridProviders.PuzzleThermometersGridProvider import PuzzleThermometersGridP
 from GridProviders.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.QueensGridProvider import QueensGridProvider
 from Heyawake.HeyawakeSolver import HeyawakeSolver
+from KenKen.KenKenSolver import KenKenSolver
 from Lits.LitsSolver import LitsSolver
 from Pipes.PipesSolver import PipesSolver
 from PipesWrap.PipesWrapSolver import PipesWrapSolver
@@ -147,6 +149,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
+            r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronKenKenGridProvider, None),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
