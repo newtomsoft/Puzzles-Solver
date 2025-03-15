@@ -38,60 +38,55 @@ class PuzzleBaronKenKenGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
             positions_numbers_operators[position] = value
 
         regions = self.get_regions(rows_count, grid_box_divs)
+        position_to_region = {position: region for region in regions for position in region}
         regions_operators_results = []
         for position, (result, operator) in positions_numbers_operators.items():
-            for region in regions:
-                if position in region:
-                    regions_operators_results.append((region, operator, result))
-                    break
+            region = position_to_region[position]
+            regions_operators_results.append((region, operator, result))
+
         return regions_operators_results
 
     @staticmethod
     def get_regions(column_count, cells) -> list[list[Position]]:
         row_count = column_count
-        opens = {'right', 'left', 'top', 'bottom'}
+        open_matrix = PuzzleBaronKenKenGridProvider._build_open_borders_matrix(row_count, column_count, cells)
+        regions_grid = RegionsGrid(open_matrix)
+        regions_dict = regions_grid.get_regions()
+        return [list(region) for region in regions_dict.values()]
+
+    @staticmethod
+    def _build_open_borders_matrix(row_count, column_count, cells):
         open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
         for i, cell in enumerate(cells):
             row = i // column_count
             col = i % column_count
-            layout_class: str = next((cls for cls in cell.get('class', []) if re.match(r'^layout', cls)), '')
-            layout = int(layout_class.removeprefix("layout"))
-            match layout:
-                case 1:
-                    cell_borders = {}
-                case 2:
-                    cell_borders = {'left'}
-                case 3:
-                    cell_borders = {'top'}
-                case 4:
-                    cell_borders = {'right'}
-                case 5:
-                    cell_borders = {'bottom'}
-                case 6:
-                    cell_borders = {'left', 'top'}
-                case 7:
-                    cell_borders = {'left', 'right'}
-                case 8:
-                    cell_borders = {'left', 'bottom'}
-                case 9:
-                    cell_borders = {'top', 'right'}
-                case 10:
-                    cell_borders = {'top', 'bottom'}
-                case 11:
-                    cell_borders = {'right', 'bottom'}
-                case 12:
-                    cell_borders = {'left', 'top', 'right'}
-                case 13:
-                    cell_borders = {'right', 'top', 'bottom'}
-                case 14:
-                    cell_borders = {'left', 'right', 'bottom'}
-                case 15:
-                    cell_borders = {'left', 'top', 'bottom'}
-                case _:
-                    raise ValueError(f"Invalid layout class: {layout_class}")
-            open_matrix[row][col] = opens - cell_borders
+            open_borders = PuzzleBaronKenKenGridProvider._get_cell_borders(cell)
+            open_matrix[row][col] = open_borders
 
-        regions_grid = RegionsGrid(open_matrix)
-        regions_dict = regions_grid.get_regions()
-        regions = [list(region) for region in regions_dict.values()]
-        return regions
+        return open_matrix
+
+    @staticmethod
+    def _get_cell_borders(cell):
+        open_border_mappings = {
+            1: {'right', 'left', 'top', 'bottom'},
+            2: {'right', 'top', 'bottom'},
+            3: {'right', 'left', 'bottom'},
+            4: {'left', 'top', 'bottom'},
+            5: {'right', 'left', 'top'},
+            6: {'right', 'bottom'},
+            7: {'top', 'bottom'},
+            8: {'right', 'top'},
+            9: {'left', 'bottom'},
+            10: {'right', 'left'},
+            11: {'left', 'top'},
+            12: {'bottom'},
+            13: {'left'},
+            14: {'top'},
+            15: {'right'},
+        }
+        layout_class: str = next((cls for cls in cell.get('class', []) if re.match(r'^layout', cls)), '')
+        layout = int(layout_class.removeprefix("layout"))
+        if layout not in open_border_mappings:
+            raise ValueError(f"Invalid layout class: layout{layout}")
+
+        return open_border_mappings[layout]
