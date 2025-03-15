@@ -8,6 +8,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
 from GridPlayers.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
+from GridPlayers.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
 from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
@@ -38,7 +39,9 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
+from GridProviders.PuzzleBaronAkariGridProvider import PuzzleBaronAkariGridProvider
 from GridProviders.PuzzleBaronKenKenGridProvider import PuzzleBaronKenKenGridProvider
+from GridProviders.PuzzleBaronStarBattleGridProvider import PuzzleBaronStarBattleGridProvider
 from GridProviders.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
 from GridProviders.PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from GridProviders.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
@@ -96,7 +99,6 @@ from Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicS
 from Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 from Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-from Puzzles.Queens.QueensSolver import QueensSolver
 from Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
@@ -112,6 +114,7 @@ from Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 from Puzzles.Tents.TentsSolver import TentsSolver
 from Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from StarBattle.StarBattleSolver import StarBattleSolver
 from Utils.Grid import Grid
 from Vectors.VectorsSolver import VectorsSolver
 from YinYang.YinYangSolver import YinYangSolver
@@ -137,6 +140,7 @@ class PuzzleMainConsole:
 
         url_patterns = {
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
+            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronAkariGridProvider, None),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
@@ -161,11 +165,12 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),
-            r"https://www\.linkedin\.com/games/queens": (QueensSolver, QueensGridProvider, None),
-            r"https://.*\.puzzle-star-battle\.com": (QueensSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuGridPlayer),
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
+            r"https://.*\.puzzle-star-battle\.com": (StarBattleSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
+            r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattleGridPlayer),
+            r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, None),
             r"https://.*\.puzzle-stitches\.com": (StitchesSolver, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
             r"https://.*\.puzzle-sudoku\.com": (SudokuSolver, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
             r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu

@@ -4,7 +4,7 @@ from Utils.Grid import Grid
 from Utils.Position import Position
 
 
-class QueensSolver(GameSolver):
+class StarBattleSolver(GameSolver):
     def __init__(self, grid: Grid, stars_count_by_region_column_row: int, solver_engine: SolverEngine):
         self._grid = grid
         self._stars_count_by_region_column_row = stars_count_by_region_column_row
@@ -30,6 +30,9 @@ class QueensSolver(GameSolver):
         model = self._solver.model()
         grid = Grid([[self._solver.is_true(model.eval(self.queen(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
+
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
 
     def queen(self, position):
         return self._grid_z3[position]

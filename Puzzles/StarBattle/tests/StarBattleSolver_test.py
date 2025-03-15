@@ -1,12 +1,12 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Puzzles.Queens.QueensSolver import QueensSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from StarBattle.StarBattleSolver import StarBattleSolver
 from Utils.Grid import Grid
 
 
-class QueensSolverTests(TestCase):
+class StarBattleSolverTests(TestCase):
     @staticmethod
     def get_solver_engine():
         return Z3SolverEngine()
@@ -17,7 +17,7 @@ class QueensSolverTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1, self.get_solver_engine())
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_4(self):
@@ -27,7 +27,7 @@ class QueensSolverTests(TestCase):
             [0, 0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1, self.get_solver_engine())
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_color_less_than_columns_number(self):
@@ -38,7 +38,7 @@ class QueensSolverTests(TestCase):
             [0, 1, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            QueensSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1, self.get_solver_engine())
         self.assertEqual("The grid must have the same number of regions as rows/column", str(context.exception))
 
     def test_solution_1(self):
@@ -48,7 +48,7 @@ class QueensSolverTests(TestCase):
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ])
-        game_solver = QueensSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertIsNone(solution)
 
@@ -65,7 +65,7 @@ class QueensSolverTests(TestCase):
             [0, 0, 0, 1],
             [0, 1, 0, 0],
         ])
-        game_solver = QueensSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -92,7 +92,7 @@ class QueensSolverTests(TestCase):
             [0, 0, 0, 0, 0, 1, 0, 0, 0],
             [1, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game_solver = QueensSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -119,7 +119,7 @@ class QueensSolverTests(TestCase):
             [0, 1, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 1]
         ])
-        game_solver = QueensSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -137,7 +137,7 @@ class QueensSolverTests(TestCase):
         ])
         stars_count_by_region_column_row = 0
         with self.assertRaises(ValueError) as context:
-            QueensSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
+            StarBattleSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
         self.assertEqual("The stars count by region/column/row must be at least 1", str(context.exception))
 
     def test_solution_when_stars_count_equal_2(self):
@@ -166,7 +166,7 @@ class QueensSolverTests(TestCase):
             [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
         ])
         stars_count_by_region_column_row = 2
-        game_solver = QueensSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
