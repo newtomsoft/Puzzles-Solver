@@ -7,6 +7,7 @@ from playwright.sync_api import BrowserContext
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
+from GridPlayers.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
 from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
 from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
 from GridPlayers.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
@@ -149,7 +150,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
-            r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronKenKenGridProvider, None),
+            r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronKenKenGridProvider, PuzzleBaronKenKenGridPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
