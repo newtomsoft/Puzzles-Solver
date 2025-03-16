@@ -28,6 +28,9 @@ class AkariSolver(GameSolver):
 
         return self._compute_solution()
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _compute_solution(self) -> Grid:
         model = self._solver.model()
         solution = [[1 if self._solver.is_true(model.eval(self._bulbs_z3[r][c])) else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
