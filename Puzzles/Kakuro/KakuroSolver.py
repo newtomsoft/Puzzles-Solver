@@ -23,6 +23,9 @@ class KakuroSolver(GameSolver):
         grid = Grid([[self._solver.eval(self._grid_z3[r][c]) if self._grid_z3[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
         return grid
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _add_constraints(self):
         self._add_constraint_numbers_between_1_9()
         self._add_constraint_rows()

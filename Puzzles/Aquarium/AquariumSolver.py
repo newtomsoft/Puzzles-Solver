@@ -31,6 +31,9 @@ class AquariumSolver(GameSolver):
         grid = Grid([[self._solver.eval(model.eval(self._grid_z3[Position(i, j)])) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _add_constrains(self):
         self._add_sum_constraints()
         self._add_aquariums_constraints()

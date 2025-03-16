@@ -35,6 +35,9 @@ class TapaSolver(GameSolver):
         solution, _ = self._ensure_all_black_connected()
         return solution
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _init_borders_white(self):
         self._solver.add([self._solver.Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])
         self._solver.add([self._solver.Not(self._grid_z3.value(r, self._grid_z3.columns_number - 1)) for r in range(self._grid_z3.rows_number)])

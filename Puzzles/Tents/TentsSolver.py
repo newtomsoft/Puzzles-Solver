@@ -32,6 +32,9 @@ class TentsSolver(GameSolver):
         grid = Grid([[self._solver.is_true(model.eval(self.tent(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def tent(self, position: Position):
         return self._grid_z3[position]
 
