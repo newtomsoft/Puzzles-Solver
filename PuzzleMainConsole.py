@@ -7,6 +7,7 @@ from playwright.sync_api import BrowserContext
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
+from GridPlayers.PuzzleBaronAkariGridPlayer import PuzzleBaronAkariGridPlayer
 from GridPlayers.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
 from GridPlayers.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
 from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
@@ -140,7 +141,7 @@ class PuzzleMainConsole:
 
         url_patterns = {
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
-            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronAkariGridProvider, None),
+            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronAkariGridProvider, PuzzleBaronAkariGridPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
