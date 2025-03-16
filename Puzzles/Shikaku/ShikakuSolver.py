@@ -33,6 +33,9 @@ class ShikakuSolver(GameSolver):
         grid = Grid([[self._solver.eval(self._matrix_z3[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _add_constraints(self):
         self._add_rectangles_constraints()
 

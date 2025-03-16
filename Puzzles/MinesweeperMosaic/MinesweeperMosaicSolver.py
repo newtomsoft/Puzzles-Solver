@@ -22,6 +22,9 @@ class MinesweeperMosaicSolver(GameSolver):
         grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
+    def get_other_solution(self) -> Grid:
+        raise NotImplemented("This method is not yet implemented")
+
     def _add_constraints(self):
         constraints = []
 
