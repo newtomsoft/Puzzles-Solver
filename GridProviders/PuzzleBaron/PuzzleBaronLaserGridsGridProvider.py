@@ -8,7 +8,7 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 
 
-class PuzzleBaronAkariGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
+class PuzzleBaronLaserGridsGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

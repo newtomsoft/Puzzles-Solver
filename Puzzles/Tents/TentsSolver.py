@@ -14,10 +14,8 @@ class TentsSolver(GameSolver):
         self.tents_numbers_by_column_row: dict[str, list[int]] = tents_numbers_by_column_row
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        if self.rows_number != self.columns_number:
-            raise ValueError("The grid must be square")
-        if self.rows_number < 6:
-            raise ValueError("The grid must be at least 6x6")
+        if self.rows_number < 5:
+            raise ValueError("The rows number must be at least 5")
         self.columns_tents_numbers = self.tents_numbers_by_column_row['column']
         self.rows_tents_numbers = self.tents_numbers_by_column_row['row']
         self._solver = solver_engine

@@ -8,6 +8,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
 from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
 from GridPlayers.PuzzleBaronAkariGridPlayer import PuzzleBaronAkariGridPlayer
+from GridPlayers.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
 from GridPlayers.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
 from GridPlayers.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
 from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
@@ -39,8 +40,9 @@ from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlaye
 from GridProviders.GridProvider import GridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronAkariGridProvider import PuzzleBaronAkariGridProvider
+from GridProviders.PuzzleBaron.PuzzleBaronCampsitesGridProvider import PuzzleBaronCampsitesGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronKenKenGridProvider import PuzzleBaronKenKenGridProvider
+from GridProviders.PuzzleBaron.PuzzleBaronLaserGridsGridProvider import PuzzleBaronLaserGridsGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronStarBattleGridProvider import PuzzleBaronStarBattleGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -141,7 +143,7 @@ class PuzzleMainConsole:
 
         url_patterns = {
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
-            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronAkariGridProvider, PuzzleBaronAkariGridPlayer),
+            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronAkariGridPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
@@ -179,6 +181,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaGridPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleTentaiShowGridProvider, None),
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsGridPlayer),
+            r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesGridPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersGridPlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsGridPlayer),
