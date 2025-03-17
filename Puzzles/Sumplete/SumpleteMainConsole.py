@@ -1,4 +1,4 @@
-﻿from GridProviders.PlaySumpleteGridProvider import PlaySumpleteGridProvider
+﻿from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.StringGridProvider import StringGridProvider
 from SumpleteSolver import SumpleteSolver
 from Utils.Grid import Grid
