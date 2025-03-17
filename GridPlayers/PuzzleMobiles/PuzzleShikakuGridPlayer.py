@@ -3,7 +3,7 @@ from time import sleep
 from playwright.sync_api import BrowserContext
 
 from GridPlayers.GridPlayer import GridPlayer
-from GridPlayers.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 from Utils.Grid import Grid
 
 

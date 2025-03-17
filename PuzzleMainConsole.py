@@ -5,38 +5,38 @@ from typing import Tuple, Any
 from playwright.sync_api import BrowserContext
 
 from GridPlayers.GridPlayer import GridPlayer
-from GridPlayers.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
-from GridPlayers.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
-from GridPlayers.PuzzleBaronAkariGridPlayer import PuzzleBaronAkariGridPlayer
-from GridPlayers.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
-from GridPlayers.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
-from GridPlayers.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
-from GridPlayers.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
-from GridPlayers.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
-from GridPlayers.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
-from GridPlayers.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
-from GridPlayers.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
-from GridPlayers.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
-from GridPlayers.PuzzleHeyawakeGridPlayer import PuzzleHeyawakeGridPlayer
-from GridPlayers.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
-from GridPlayers.PuzzleKakurasuGridPlayer import PuzzleKakurasuGridPlayer
-from GridPlayers.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
-from GridPlayers.PuzzleLitsGridPlayer import PuzzleLitsGridPlayer
-from GridPlayers.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
-from GridPlayers.PuzzleMinesweeperGridPlayer import PuzzleMinesweeperGridPlayer
-from GridPlayers.PuzzleMinesweeperMosaicGridPlayer import PuzzleMinesweeperMosaicGridPlayer
-from GridPlayers.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
-from GridPlayers.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
-from GridPlayers.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
-from GridPlayers.PuzzlePipesGridPlayer import PuzzlePipesGridPlayer
-from GridPlayers.PuzzleShikakuGridPlayer import PuzzleShikakuGridPlayer
-from GridPlayers.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
-from GridPlayers.PuzzleStarBattleGridPlayer import PuzzleStarBattleGridPlayer
-from GridPlayers.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
-from GridPlayers.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
-from GridPlayers.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
-from GridPlayers.PuzzleTentsGridPlayer import PuzzleTentsGridPlayer
-from GridPlayers.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleAquariumGridPlayer import PuzzleAquariumGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronLaserGridsGridPlayer import PuzzleBaronLaserGridsGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronKenKenGridPlayer import PuzzleBaronKenKenGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleBimaruGridPlayer import PuzzleBimaruGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleBinairoGridPlayer import PuzzleBinairoGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleDominosaGridPlayer import PuzzleDominosaGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleFutoshikiGridPlayer import PuzzleFutoshikiGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleHashiGridPlayer import PuzzleHashiGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleHeyawakeGridPlayer import PuzzleHeyawakeGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleHitoriGridPlayer import PuzzleHitoriGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleKakurasuGridPlayer import PuzzleKakurasuGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleKakuroGridPlayer import PuzzleKakuroGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleLitsGridPlayer import PuzzleLitsGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleMasyuGridPlayer import PuzzleMasyuGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleMinesweeperGridPlayer import PuzzleMinesweeperGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleMinesweeperMosaicGridPlayer import PuzzleMinesweeperMosaicGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleNonogramsGridPlayer import PuzzleNonogramsGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleNorinoriGridPlayer import PuzzleNorinoriGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleNurikabeGridPlayer import PuzzleNurikabeGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlePipesGridPlayer import PuzzlePipesGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleShikakuGridPlayer import PuzzleShikakuGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleSkyscrapersGridPlayer import PuzzleSkyScrapersGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleStarBattleGridPlayer import PuzzleStarBattleGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleStitchesGridPlayer import PuzzleStitchesGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleSudokuGridPlayer import PuzzleSudokuGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleTentsGridPlayer import PuzzleTentsGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
 from GridProviders.GridProvider import GridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
@@ -143,7 +143,7 @@ class PuzzleMainConsole:
 
         url_patterns = {
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariGridPlayer),
-            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronAkariGridPlayer),
+            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronLaserGridsGridPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumGridPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
