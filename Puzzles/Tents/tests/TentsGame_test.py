@@ -11,33 +11,17 @@ class TentsSolverTests(TestCase):
     def get_solver_engine():
         return Z3SolverEngine()
 
-    def test_grid_must_be_square_raises_value_error(self):
-        grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-        ])
-        tents_numbers_by_column_row = {'column': [3, 0, 1, 1, 1, 1], 'row': [2, 0, 1, 1, 0, 3, 1]}
-        with self.assertRaises(ValueError) as context:
-            TentsSolver(grid, tents_numbers_by_column_row, self.get_solver_engine())
-        self.assertEqual(str(context.exception), "The grid must be square")
-
-    def test_grid_must_be_at_least_6x6_raises_value_error(self):
+    def test_rows_must_be_at_least_5_raises_value_error(self):
         grid = Grid([
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
         ])
-        tents_numbers_by_column_row = {'column': [3, 0, 1, 1, 1], 'row': [2, 0, 1, 1, 0]}
+        tents_numbers_by_column_row = {'column': [3, 0, 1, 1, 1], 'row': [2, 0, 1, 1]}
         with self.assertRaises(ValueError) as context:
             TentsSolver(grid, tents_numbers_by_column_row, self.get_solver_engine())
-        self.assertEqual(str(context.exception), "The grid must be at least 6x6")
+        self.assertEqual(str(context.exception), "The rows number must be at least 5")
 
     def test_with_constraint_sum_in_row_column(self):
         grid = Grid([
