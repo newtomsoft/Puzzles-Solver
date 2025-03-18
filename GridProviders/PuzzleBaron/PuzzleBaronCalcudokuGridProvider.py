@@ -12,7 +12,7 @@ from Utils.Position import Position
 from Utils.RegionsGrid import RegionsGrid
 
 
-class PuzzleBaronKenKenGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
+class PuzzleBaronCalcudokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
@@ -49,7 +49,7 @@ class PuzzleBaronKenKenGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
     @staticmethod
     def get_regions(column_count, cells) -> list[list[Position]]:
         row_count = column_count
-        open_matrix = PuzzleBaronKenKenGridProvider._build_open_borders_matrix(row_count, column_count, cells)
+        open_matrix = PuzzleBaronCalcudokuGridProvider._build_open_borders_matrix(row_count, column_count, cells)
         regions_grid = RegionsGrid(open_matrix)
         regions_dict = regions_grid.get_regions()
         return [list(region) for region in regions_dict.values()]
@@ -60,7 +60,7 @@ class PuzzleBaronKenKenGridProvider(GridProvider, PlaywrightGridProvider, Puzzle
         for i, cell in enumerate(cells):
             row = i // column_count
             col = i % column_count
-            open_borders = PuzzleBaronKenKenGridProvider._get_cell_borders(cell)
+            open_borders = PuzzleBaronCalcudokuGridProvider._get_cell_borders(cell)
             open_matrix[row][col] = open_borders
 
         return open_matrix

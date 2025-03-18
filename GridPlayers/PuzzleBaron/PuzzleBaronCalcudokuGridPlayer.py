@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 from GridPlayers.GridPlayer import GridPlayer
 
 
-class PuzzleBaronKenKenGridPlayer(GridPlayer):
+class PuzzleBaronCalcudokuGridPlayer(GridPlayer):
     @classmethod
     def play(cls, solution, browser: BrowserContext):
         page = browser.pages[0]
