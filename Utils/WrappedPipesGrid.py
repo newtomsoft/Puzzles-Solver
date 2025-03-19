@@ -31,12 +31,12 @@ class WrappedPipesGrid(WrappedGrid[Pipe]):
         visited_positions.add(position)
 
         current_pipe = self[position]
-        open_to = current_pipe.get_open_to()
-        for direction in [direction for direction, is_open_to in open_to.items() if is_open_to and direction != forbidden_direction]:
+        connected_to = current_pipe.get_connected_to()
+        for direction in [direction for direction in connected_to if direction != forbidden_direction]:
             next_pos = position.after(direction)
             next_pos = self.normalize_position(next_pos)
             next_pipe = self[next_pos]
-            if next_pipe.get_open_to().get(direction.opposite, False):
+            if direction.opposite in next_pipe.get_connected_to():
                 self._depth_first_search_pipes_and_is_loop(next_pos, visited_positions, direction.opposite)
 
         return visited_positions, False
