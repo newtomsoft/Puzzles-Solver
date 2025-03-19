@@ -48,12 +48,7 @@ class PipesSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = PipesGrid([[
-                Pipe.from_connection(
-                    up=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.up()])),
-                    down=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.down()])),
-                    left=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.left()])),
-                    right=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.right()]))
-                )
+                self._create_pipe_from_model(model, Position(r, c))
                 for c in range(self._columns_number)]
                 for r in range(self._rows_number)])
 
@@ -72,11 +67,11 @@ class PipesSolver(GameSolver):
 
             constraints = []
             for position in connected_positions:
-                open_to = current_grid[position].get_open_to()
-                constraints.append(self._grid_z3[position][Direction.up()] == open_to[Direction.up()])
-                constraints.append(self._grid_z3[position][Direction.down()] == open_to[Direction.down()])
-                constraints.append(self._grid_z3[position][Direction.left()] == open_to[Direction.left()])
-                constraints.append(self._grid_z3[position][Direction.right()] == open_to[Direction.right()])
+                connected_to = current_grid[position].get_connected_to()
+                constraints.append(self._grid_z3[position][Direction.up()] == (Direction.up() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
             self._solver.add(self._solver.Not(self._solver.And(constraints)))
 
         return GridBase.empty(), proposition_count
@@ -84,11 +79,11 @@ class PipesSolver(GameSolver):
     def get_other_solution(self):
         previous_solution_constraints = []
         for position, pipe in self._previous_solution:
-            open_to = pipe.get_open_to()
-            previous_solution_constraints.append(self._grid_z3[position][Direction.up()] == open_to[Direction.up()])
-            previous_solution_constraints.append(self._grid_z3[position][Direction.down()] == open_to[Direction.down()])
-            previous_solution_constraints.append(self._grid_z3[position][Direction.left()] == open_to[Direction.left()])
-            previous_solution_constraints.append(self._grid_z3[position][Direction.right()] == open_to[Direction.right()])
+            connected_to = pipe.get_connected_to()
+            previous_solution_constraints.append(self._grid_z3[position][Direction.up()] == (Direction.up() in connected_to))
+            previous_solution_constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
+            previous_solution_constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
+            previous_solution_constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
 
         self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
         return self.get_solution()
@@ -161,3 +156,15 @@ class PipesSolver(GameSolver):
                 self._solver.add(self._grid_z3[position][Direction.left()] == self._grid_z3[position_left][Direction.right()])
             if position_right is not None:
                 self._solver.add(self._grid_z3[position][Direction.right()] == self._grid_z3[position_right][Direction.left()])
+
+    def _create_pipe_from_model(self, model, position: Position):
+        directions = []
+        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.up()])):
+            directions.append(Direction.up())
+        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.left()])):
+            directions.append(Direction.left())
+        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.down()])):
+            directions.append(Direction.down())
+        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.right()])):
+            directions.append(Direction.right())
+        return Pipe.from_connection(frozenset(directions))

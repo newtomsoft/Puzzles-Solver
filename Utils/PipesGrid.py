@@ -16,14 +16,14 @@ class PipesGrid(Grid[Pipe]):
         is_loop = False
         while len(visited_flat) != total_positions:
             position = next(position for position, _ in self if position not in visited_flat)
-            visited_in_this_pass, is_loop_in_this_pass = self._depth_first_search_and_is_loop(position)
+            visited_in_this_pass, is_loop_in_this_pass = self._depth_first_search_pipes_and_is_loop(position)
             if is_loop_in_this_pass:
                 is_loop = True
             visited_list.append(visited_in_this_pass)
             visited_flat.update(visited_in_this_pass)
         return visited_list, is_loop
 
-    def _depth_first_search_and_is_loop(self, position: Position, visited_positions=None, forbidden_direction=None) -> Tuple[set[Position], bool]:
+    def _depth_first_search_pipes_and_is_loop(self, position: Position, visited_positions=None, forbidden_direction=None) -> Tuple[set[Position], bool]:
         if visited_positions is None:
             visited_positions = set()
         if position in visited_positions:
@@ -31,13 +31,13 @@ class PipesGrid(Grid[Pipe]):
         visited_positions.add(position)
 
         current_pipe = self[position]
-        open_to = current_pipe.get_open_to()
-        for direction in [direction for direction, is_open_to in open_to.items() if is_open_to and direction != forbidden_direction]:
+        connected_to = current_pipe.get_connected_to()
+        for direction in [direction for direction in connected_to if direction != forbidden_direction]:
             next_pos = position.after(direction)
             if next_pos not in self:
                 continue
             next_pipe = self[next_pos]
-            if next_pipe.get_open_to().get(direction.opposite, False):
-                self._depth_first_search_and_is_loop(next_pos, visited_positions, direction.opposite)
+            if direction.opposite in next_pipe.get_connected_to():
+                self._depth_first_search_pipes_and_is_loop(next_pos, visited_positions, direction.opposite)
 
         return visited_positions, False

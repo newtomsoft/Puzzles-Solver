@@ -39,12 +39,7 @@ class PipesWrapSolver(PipesSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = WrappedPipesGrid([[
-                Pipe.from_connection(
-                    up=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.up()])),
-                    down=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.down()])),
-                    left=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.left()])),
-                    right=self._solver.is_true(model.eval(self._grid_z3[Position(r, c)][Direction.right()]))
-                )
+                self._create_pipe_from_model(model, Position(r, c))
                 for c in range(self._columns_number)]
                 for r in range(self._rows_number)])
 
@@ -63,11 +58,11 @@ class PipesWrapSolver(PipesSolver):
 
             constraints = []
             for position in connected_positions:
-                open_to = current_grid[position].get_open_to()
-                constraints.append(self._grid_z3[position][Direction.up()] == open_to[Direction.up()])
-                constraints.append(self._grid_z3[position][Direction.down()] == open_to[Direction.down()])
-                constraints.append(self._grid_z3[position][Direction.left()] == open_to[Direction.left()])
-                constraints.append(self._grid_z3[position][Direction.right()] == open_to[Direction.right()])
+                connected_to = current_grid[position].get_connected_to()
+                constraints.append(self._grid_z3[position][Direction.up()] == (Direction.up() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
+                constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
             self._solver.add(self._solver.Not(self._solver.And(constraints)))
 
         return WrappedGrid.empty(), proposition_count
