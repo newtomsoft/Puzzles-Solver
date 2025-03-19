@@ -15,8 +15,7 @@ class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
         cells = page.query_selector_all("div.selectable")
         for position, pipe_shape_transition in solution:
             index = position.r * solution.columns_number + position.c
-            for _ in range(pipe_shape_transition.clockwise_rotation):
-                cells[index].click()
+            cells[index].click(click_count=pipe_shape_transition.clockwise_rotation)
 
         sleep(2)
         cls.submit_score(page)
