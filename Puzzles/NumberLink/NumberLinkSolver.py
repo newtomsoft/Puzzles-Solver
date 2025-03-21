@@ -30,7 +30,7 @@ class NumberLinkSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self._add_sum_constraints()
+        self._add_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
         for position, value in self._grid_z3:
@@ -39,7 +39,7 @@ class NumberLinkSolver(GameSolver):
             else:
                 self._solver.add(value > 0)
 
-    def _add_sum_constraints(self):
-        for position, grid_position_value in self._grid:
-            neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in self._grid_z3.neighbors_values(position)])
-            self._solver.add(neighbors_count == 1) if grid_position_value > 0 else self._solver.add(neighbors_count == 2)
+    def _add_neighbors_count_constraints(self):
+        for position, position_value in self._grid:
+            same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in self._grid_z3.neighbors_values(position)])
+            self._solver.add(same_value_neighbors_count == 1) if position_value > 0 else self._solver.add(same_value_neighbors_count == 2)
