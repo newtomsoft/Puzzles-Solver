@@ -144,10 +144,10 @@ class PipesSolver(GameSolver):
 
     def _add_connected_constraints(self):
         for position, value in self._grid_z3:
-            position_up = self._grid_z3.neighbor_position_up(position)
-            position_down = self._grid_z3.neighbor_position_down(position)
-            position_left = self._grid_z3.neighbor_position_left(position)
-            position_right = self._grid_z3.neighbor_position_right(position)
+            position_up = self._grid_z3.neighbor_up(position)
+            position_down = self._grid_z3.neighbor_down(position)
+            position_left = self._grid_z3.neighbor_left(position)
+            position_right = self._grid_z3.neighbor_right(position)
             if position_up is not None:
                 self._solver.add(self._grid_z3[position][Direction.up()] == self._grid_z3[position_up][Direction.down()])
             if position_down is not None:

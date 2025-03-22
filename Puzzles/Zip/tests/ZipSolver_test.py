@@ -2,6 +2,7 @@
 
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Utils.Grid import Grid
+from Utils.Position import Position
 from Zip.ZipSolver import ZipSolver
 
 
@@ -70,6 +71,61 @@ class ZipSolverTests(TestCase):
             [7, 7, 7, 7, 8, 2, 5],
             [3, 3, 3, 3, 3, 3, 5],
             [4, 4, 4, 4, 4, 4, 5],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_6x6_with_wall(self):
+        grid = Grid([
+            [3, 0, 0, 0, 0, 9],
+            [0, 2, 0, 0, 10, 0],
+            [0, 0, 1, 8, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 4, 0, 0, 6, 0],
+            [0, 0, 5, 7, 0, 0],
+        ])
+        grid.add_walls(
+            {
+                frozenset([Position(0, 2), Position(0, 3)]),
+                frozenset([Position(1, 2), Position(1, 3)]),
+                frozenset([Position(2, 2), Position(2, 3)]),
+                frozenset([Position(4, 2), Position(4, 3)]),
+                frozenset([Position(5, 2), Position(5, 3)]),
+            }
+        )
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [3, 2, 2, 8, 8, 9],
+            [3, 2, 2, 8, 10, 9],
+            [3, 1, 1, 8, 7, 7],
+            [3, 3, 5, 5, 5, 7],
+            [4, 4, 5, 6, 6, 7],
+            [4, 4, 5, 7, 7, 7],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_6x6_with_u_turn(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 2, 0, 0, 5],
+            [0, 0, 0, 0, 0, 3],
+            [6, 0, 0, 0, 0, 0],
+            [1, 0, 0, 4, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+        ])
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [5, 5, 5, 5, 5, 5],
+            [5, 1, 2, 4, 4, 5],
+            [5, 1, 2, 4, 3, 3],
+            [6, 1, 2, 4, 3, 2],
+            [1, 1, 2, 4, 3, 2],
+            [1, 1, 2, 2, 2, 2],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()

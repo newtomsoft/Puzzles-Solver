@@ -222,55 +222,6 @@ class Grid(GridBase[T], Generic[T]):
     def is_empty(self):
         return self == Grid.empty()
 
-    def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
-        return [position for position in position.neighbors(mode) if position in self]
-
-    def neighbor_position_up(self, position: Position) -> Position:
-        return position.up if position.up in self else None
-
-    def neighbor_position_down(self, position: Position) -> Position:
-        return position.down if position.down in self else None
-
-    def neighbor_position_left(self, position: Position) -> Position:
-        return position.left if position.left in self else None
-
-    def neighbor_position_right(self, position: Position) -> Position:
-        return position.right if position.right in self else None
-
-    def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
-        return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
-
-    def all_positions_up(self, position: Position) -> List[Position]:
-        positions = []
-        while position.up in self:
-            position = position.up
-            positions.append(position)
-        return positions
-
-    def all_positions_down(self, position: Position) -> List[Position]:
-        positions = []
-        while position.down in self:
-            position = position.down
-            positions.append(position)
-        return positions
-
-    def all_positions_left(self, position: Position) -> List[Position]:
-        positions = []
-        while position.left in self:
-            position = position.left
-            positions.append(position)
-        return positions
-
-    def all_positions_right(self, position: Position) -> List[Position]:
-        positions = []
-        while position.right in self:
-            position = position.right
-            positions.append(position)
-        return positions
-
-    def all_orthogonal_positions(self, position: Position) -> Set[Position]:
-        return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
-
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 

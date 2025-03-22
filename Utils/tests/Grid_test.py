@@ -487,6 +487,39 @@ class GridTest(TestCase):
         expected_neighbors = {Position(0, 1), Position(1, 0), Position(1, 2), Position(2, 1), Position(0, 0), Position(0, 2), Position(2, 0), Position(2, 2)}
         self.assertEqual(expected_neighbors, set(neighbors))
 
+    def test_neighbors_positions_3_3_with_walls(self):
+        grid = Grid([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+        ])
+        grid.add_walls(
+            {
+                frozenset([Position(0, 1), Position(1, 1)]),
+                frozenset([Position(1, 0), Position(1, 1)]),
+                frozenset([Position(2, 1), Position(1, 1)]),
+                frozenset([Position(1, 2), Position(1, 1)]),
+            }
+        )
+        neighbors_1_1 = grid.neighbors_positions(Position(1, 1))
+        self.assertEqual(0, len(neighbors_1_1))
+
+        neighbors_0_1 = grid.neighbors_positions(Position(0, 1))
+        expected_neighbors_0_1 = {Position(0, 0), Position(0, 2)}
+        self.assertEqual(expected_neighbors_0_1, neighbors_0_1)
+
+        neighbors_1_0 = grid.neighbors_positions(Position(1, 0))
+        expected_neighbors_1_0 = {Position(0, 0), Position(2, 0)}
+        self.assertEqual(expected_neighbors_1_0, neighbors_1_0)
+
+        neighbors_1_2 = grid.neighbors_positions(Position(1, 2))
+        expected_neighbors_1_2 = {Position(0, 2), Position(2, 2)}
+        self.assertEqual(expected_neighbors_1_2, neighbors_1_2)
+
+        neighbors_2_1 = grid.neighbors_positions(Position(2, 1))
+        expected_neighbors_2_1 = {Position(2, 0), Position(2, 2)}
+        self.assertEqual(expected_neighbors_2_1, neighbors_2_1)
+
     def test_repr_non_empty_grid(self):
         grid = Grid([[1, 2], [3, 4]])
         expected_repr = "1 2\n3 4"
