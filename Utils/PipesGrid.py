@@ -34,7 +34,7 @@ class PipesGrid(Grid[Pipe]):
         connected_to = current_pipe.get_connected_to()
         for direction in [direction for direction in connected_to if direction != forbidden_direction]:
             next_pos = position.after(direction)
-            if next_pos not in self:
+            if next_pos not in self or {position, next_pos} in self._walls:
                 continue
             next_pipe = self[next_pos]
             if direction.opposite in next_pipe.get_connected_to():

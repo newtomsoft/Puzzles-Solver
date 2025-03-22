@@ -16,6 +16,7 @@ class GridBase(Generic[T]):
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
+        self._walls: Set[Set[Position, Position]] = set()
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
@@ -212,6 +213,9 @@ class GridBase(Generic[T]):
                     bitarrays.append(current_bitarray)
         return bitarrays
 
+    def add_walls(self, walls: Set[FrozenSet[Position]]):
+        self._walls = walls
+
     @staticmethod
     def list_to_string(values):
         return sum(values)
@@ -219,28 +223,75 @@ class GridBase(Generic[T]):
     def is_empty(self):
         return self == GridBase.empty()
 
-    def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
-        return [position for position in position.neighbors(mode) if position in self]
+    def all_orthogonal_positions(self, position: Position) -> Set[Position]:
+        return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
 
-    def neighbor_position_up(self, position: Position) -> Position:
-        return position.up if position.up in self else None
+    def neighbors_positions(self, position: Position, mode='orthogonal') -> Set[Position]:
+        orthogonal_neighbors = {self.neighbor_up(position), self.neighbor_down(position), self.neighbor_left(position), self.neighbor_right(position)} - {None}
+        if mode == 'orthogonal':
+            return orthogonal_neighbors
+        diagonal_neighbors = {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
+        return orthogonal_neighbors | diagonal_neighbors
 
-    def neighbor_position_down(self, position: Position) -> Position:
-        return position.down if position.down in self else None
+    def neighbor_up(self, position: Position) -> Position:
+        return position.up if position.up in self and {position, position.up} not in self._walls else None
 
-    def neighbor_position_left(self, position: Position) -> Position:
-        return position.left if position.left in self else None
+    def neighbor_down(self, position: Position) -> Position:
+        return position.down if position.down in self and {position, position.down} not in self._walls else None
 
-    def neighbor_position_right(self, position: Position) -> Position:
-        return position.right if position.right in self else None
+    def neighbor_left(self, position: Position) -> Position:
+        return position.left if position.left in self and {position, position.left} not in self._walls else None
+
+    def neighbor_right(self, position: Position) -> Position:
+        return position.right if position.right in self and {position, position.right} not in self._walls else None
+
+    def neighbor_up_left(self, position: Position) -> Position:
+        return position.up_left if position.up_left in self else None  # check if wall is not between position and position.up_left ?
+
+    def neighbor_up_right(self, position: Position) -> Position:
+        return position.up_right if position.up_right in self else None  # check if wall is not between position and position.up_right ?
+
+    def neighbor_down_left(self, position: Position) -> Position:
+        return position.down_left if position.down_left in self else None  # check if wall is not between position and position.down_left ?
+
+    def neighbor_down_right(self, position: Position) -> Position:
+        return position.down_right if position.down_right in self else None  # check if wall is not between position and position.down_right ?
 
     def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
         return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
+    def all_positions_up(self, position: Position) -> List[Position]:
+        positions = []
+        while position.up in self and {position, position.up} not in self._walls:
+            position = position.up
+            positions.append(position)
+        return positions
+
+    def all_positions_down(self, position: Position) -> List[Position]:
+        positions = []
+        while position.down in self and {position, position.down} not in self._walls:
+            position = position.down
+            positions.append(position)
+        return positions
+
+    def all_positions_left(self, position: Position) -> List[Position]:
+        positions = []
+        while position.left in self and {position, position.left} not in self._walls:
+            position = position.left
+            positions.append(position)
+        return positions
+
+    def all_positions_right(self, position: Position) -> List[Position]:
+        positions = []
+        while position.right in self and {position, position.right} not in self._walls:
+            position = position.right
+            positions.append(position)
+        return positions
+
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'GridBase', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
@@ -249,7 +300,7 @@ class GridBase(Generic[T]):
                     positions.add(position)
         return positions
 
-    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
+    def _is_in_grid_at_position(self, grid: 'GridBase', position: Position, value_to_ignore):
         for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
             if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
                 return False
@@ -258,7 +309,7 @@ class GridBase(Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('GridBase', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

@@ -157,16 +157,16 @@ class WrappedGrid(GridBase[T], Generic[T]):
     def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
         return [position for position in position.neighbors(mode) if position in self]
 
-    def neighbor_position_up(self, position: Position) -> Position:
+    def neighbor_up(self, position: Position) -> Position:
         return position.up if position.up in self else None
 
-    def neighbor_position_down(self, position: Position) -> Position:
+    def neighbor_down(self, position: Position) -> Position:
         return position.down if position.down in self else None
 
-    def neighbor_position_left(self, position: Position) -> Position:
+    def neighbor_left(self, position: Position) -> Position:
         return position.left if position.left in self else None
 
-    def neighbor_position_right(self, position: Position) -> Position:
+    def neighbor_right(self, position: Position) -> Position:
         return position.right if position.right in self else None
 
     def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
