@@ -6,7 +6,7 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
-from Utils.RegionsGrid import RegionsGrid
+from Domain.Grid.RegionsGrid import RegionsGrid
 
 
 class PuzzleBaronStarBattleGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):

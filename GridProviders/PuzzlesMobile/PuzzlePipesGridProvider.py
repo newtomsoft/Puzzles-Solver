@@ -7,7 +7,7 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Pipes.Pipe import Pipe
-from Utils.Grid import Grid
+from Domain.Grid.Grid import Grid
 
 
 class PuzzlePipesGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
