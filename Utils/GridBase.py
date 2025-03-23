@@ -216,6 +216,9 @@ class GridBase(Generic[T]):
     def add_walls(self, walls: Set[FrozenSet[Position]]):
         self._walls = walls
 
+    def copy_walls_from_grid(self, other_grid: 'GridBase'):
+        self._walls = other_grid._walls
+
     @staticmethod
     def list_to_string(values):
         return sum(values)
