@@ -18,10 +18,11 @@ class ZipSolver(GameSolver):
 
     def get_solution(self) -> (Grid, int):
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3.copy_walls_from_grid(self._grid)
         self._add_common_constraints()
-        self._add_algo0_constraints()
+        self._add_without_u_turn_constraints()
         if not self._solver.has_solution():
-            self._add_algo1_constraints()
+            self._add_with_u_turn_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
@@ -49,29 +50,29 @@ class ZipSolver(GameSolver):
         same_value_neighbors_count = self._solver.sum([neighbor_value == finish_value for neighbor_value in neighbors_values])
         self._solver.add(same_value_neighbors_count == 0)
 
-    def _add_algo0_constraints(self):
+    def _add_without_u_turn_constraints(self):
         self._solver.push()
-        self._add_checkpoints_neighbors_count_constraints(algorithm=0)
-        self._add_path_neighbors_count_constraints(algorithm=0)
+        self._add_checkpoints_neighbors_count_constraints(u_turn=False)
+        self._add_path_neighbors_count_constraints(u_turn=False)
 
-    def _add_algo1_constraints(self):
+    def _add_with_u_turn_constraints(self):
         self._solver.pop()
-        self._add_checkpoints_neighbors_count_constraints(algorithm=1)
-        self._add_path_neighbors_count_constraints(algorithm=1)
+        self._add_checkpoints_neighbors_count_constraints(u_turn=True)
+        self._add_path_neighbors_count_constraints(u_turn=True)
 
-    def _add_path_neighbors_count_constraints(self, algorithm=0):
+    def _add_path_neighbors_count_constraints(self, u_turn: bool):
         for position in self._path_positions:
             neighbors_values = self._get_neighbors_values(position)
             same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in neighbors_values])
-            self._solver.add(same_value_neighbors_count == 2) if algorithm == 0 else self._solver.add(same_value_neighbors_count >= 2)
+            self._solver.add(same_value_neighbors_count == 2) if not u_turn else self._solver.add(same_value_neighbors_count >= 2)
 
-    def _add_checkpoints_neighbors_count_constraints(self, algorithm=0):
-        self._add_checkpoint_same_neighbors_count_constraint(self._start_position, algorithm)
-        self._add_checkpoint_minus_one_same_neighbors_count_constraint(self._finish_position, algorithm)
+    def _add_checkpoints_neighbors_count_constraints(self, u_turn: bool):
+        self._add_checkpoint_same_neighbors_count_constraint(self._start_position, u_turn)
+        self._add_checkpoint_minus_one_same_neighbors_count_constraint(self._finish_position, u_turn)
 
         for position in self._checkpoints_positions - {self._start_position, self._finish_position}:
-            self._add_checkpoint_same_neighbors_count_constraint(position, algorithm)
-            self._add_checkpoint_minus_one_same_neighbors_count_constraint(position, algorithm)
+            self._add_checkpoint_same_neighbors_count_constraint(position, u_turn)
+            self._add_checkpoint_minus_one_same_neighbors_count_constraint(position, u_turn)
 
     def _add_checkpoint_same_neighbors_count_constraint(self, position, algorithm):
         neighbors_values = self._get_neighbors_values(position)
