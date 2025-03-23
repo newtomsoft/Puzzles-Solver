@@ -4,9 +4,9 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Utils.Grid import Grid
-from Utils.Island import Island
-from Utils.Position import Position
+from Domain.Grid.Grid import Grid
+from Domain.Island import Island
+from Domain.Position import Position
 
 
 class PuzzleHashiGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):

@@ -3,9 +3,9 @@
 from playwright.sync_api import BrowserContext, Mouse
 
 from GridPlayers.GridPlayer import GridPlayer
-from Utils.Direction import Direction
-from Utils.Grid import Grid
-from Utils.Position import Position
+from Domain.Direction import Direction
+from Domain.Grid.Grid import Grid
+from Domain.Position import Position
 
 
 class PuzzleBaronVectorsGridPlayer(GridPlayer):

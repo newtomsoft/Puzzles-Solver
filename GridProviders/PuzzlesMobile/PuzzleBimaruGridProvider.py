@@ -5,7 +5,7 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Puzzles.Bimaru.BimaruSolver import BimaruSolver
-from Utils.Grid import Grid
+from Domain.Grid.Grid import Grid
 
 
 class PuzzleBimaruGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):

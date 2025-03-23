@@ -4,7 +4,7 @@ from playwright.sync_api import BrowserContext
 
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Utils.Direction import Direction
+from Domain.Direction import Direction
 
 
 class PuzzleThermometersGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
