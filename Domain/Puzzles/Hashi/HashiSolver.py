@@ -4,9 +4,9 @@ from Domain.Direction import Direction
 from Domain.Grid.Grid import Grid
 from Domain.Grid.IslandsGrid import IslandGrid
 from Domain.Island import Island
+from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Position import Position
 from GameSolver import GameSolver
-from Ports.SolverEngine import SolverEngine
 
 
 class HashiSolver(GameSolver):

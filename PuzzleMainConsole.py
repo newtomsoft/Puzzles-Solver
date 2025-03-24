@@ -4,6 +4,47 @@ from typing import Tuple, Any
 
 from playwright.sync_api import BrowserContext
 
+from Domain.Grid.Grid import Grid
+from Domain.Puzzles.Akari.AkariSolver import AkariSolver
+from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
+from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
+from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
+from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
+from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
+from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
+from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
+from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
+from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
+from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
+from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
+from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
+from Domain.Puzzles.Lits.LitsSolver import LitsSolver
+from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
+from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
+from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
+from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
+from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
+from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
+from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
+from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
+from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
+from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
+from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
+from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
+from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
+from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
+from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
+from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
+from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
+from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
+from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
+from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
+from Domain.Puzzles.Tents.TentsSolver import TentsSolver
+from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
+from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
+from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
@@ -43,6 +84,7 @@ from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGrid
 from GridProviders.PuzzleBaron.PuzzleBaronCalcudokuGridProvider import PuzzleBaronCalcudokuGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronCampsitesGridProvider import PuzzleBaronCampsitesGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronLaserGridsGridProvider import PuzzleBaronLaserGridsGridProvider
+from GridProviders.PuzzleBaron.PuzzleBaronNumberLinksGridProvider import PuzzleBaronNumberLinksGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronStarBattleGridProvider import PuzzleBaronStarBattleGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleAkariGridProvider import PuzzleAkariGridProvider
@@ -79,48 +121,8 @@ from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTenta
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
-from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
-from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
-from Domain.Puzzles.Lits.LitsSolver import LitsSolver
-from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
-from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
-from Domain.Puzzles.Akari.AkariSolver import AkariSolver
-from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
-from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
-from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
-from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
-from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
-from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
-from Domain.Puzzles.GameSolver import GameSolver
-from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
-from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
-from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
-from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
-from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
-from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
-from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
-from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
-from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
-from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
-from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
-from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
-from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
-from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
-from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
-from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
-from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
-from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
-from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
-from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
-from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
-from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
-from Domain.Puzzles.Tents.TentsSolver import TentsSolver
-from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
-from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
-from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
+from NumberLink.NumberLinkSolver import NumberLinkSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Domain.Grid.Grid import Grid
 
 SOLVER_ENGINE = Z3SolverEngine()
 
@@ -165,6 +167,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
+            r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, None),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),

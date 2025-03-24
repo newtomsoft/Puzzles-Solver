@@ -48,6 +48,35 @@ class NUmberLinkSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_solution_9x9(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 6, 0, 0, 0, 0],
+            [0, 0, 4, 0, 4, 0, 0, 0, 0],
+            [0, 0, 5, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0, 0],
+            [0, 2, 5, 1, 0, 0, 0, 0, 0],
+            [0, 3, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 3, 0, 0, 6, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ])
+        game_solver = NumberLinkSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [4, 4, 4, 4, 4, 4, 4, 4, 4],
+            [4, 1, 1, 1, 6, 6, 6, 6, 4],
+            [4, 4, 4, 1, 4, 4, 4, 6, 4],
+            [5, 5, 5, 1, 1, 1, 4, 6, 4],
+            [5, 2, 2, 2, 2, 1, 4, 6, 4],
+            [5, 2, 5, 1, 1, 1, 4, 6, 4],
+            [5, 3, 5, 5, 4, 4, 4, 6, 4],
+            [5, 3, 3, 5, 4, 6, 6, 6, 4],
+            [5, 5, 5, 5, 4, 4, 4, 4, 4],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
     def test_solution_15x15(self):
         grid = Grid([
             [0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 9, 0, 0, 0, 0],

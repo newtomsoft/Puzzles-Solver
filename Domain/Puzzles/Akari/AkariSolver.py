@@ -1,8 +1,8 @@
 ﻿from z3 import Bool
 
 from Domain.Grid.Grid import Grid
+from Domain.Ports.SolverEngine import SolverEngine
 from GameSolver import GameSolver
-from Ports.SolverEngine import SolverEngine
 
 
 class AkariSolver(GameSolver):
