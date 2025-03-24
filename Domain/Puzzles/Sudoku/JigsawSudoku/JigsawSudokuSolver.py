@@ -1,9 +1,9 @@
 ﻿from typing import List
 
 from Domain.Grid.Grid import Grid
+from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Position import Position
 from GameSolver import GameSolver
-from Ports.SolverEngine import SolverEngine
 from Sudoku.SudokuBaseSolver import SudokuBaseSolver
 
 

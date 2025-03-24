@@ -1,6 +1,6 @@
 ﻿from Domain.Grid.Grid import Grid
+from Domain.Ports.SolverEngine import SolverEngine
 from GameSolver import GameSolver
-from Ports.SolverEngine import SolverEngine
 from Utils.ShapeCollection import ShapeCollection
 from Utils.ShapeGenerator import ShapeGenerator
 

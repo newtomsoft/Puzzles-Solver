@@ -1,6 +1,6 @@
 ﻿import z3
 
-from Ports.SolverEngine import SolverEngine
+from Domain.Ports.SolverEngine import SolverEngine
 
 
 class Z3SolverEngine(SolverEngine):

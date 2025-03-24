@@ -168,3 +168,26 @@ class ZipSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_2025_03_24(self):
+        grid = Grid([
+            [6, 0, 0, 0, 0, 7],
+            [0, 3, 0, 0, 0, 0],
+            [0, 0, 0, 5, 0, 0],
+            [0, 0, 4, 0, 0, 0],
+            [0, 0, 0, 0, 2, 0],
+            [1, 0, 0, 0, 0, 8],
+        ])
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [6, 6, 6, 6, 6, 7],
+            [5, 3, 2, 2, 2, 7],
+            [5, 3, 4, 5, 2, 7],
+            [5, 3, 4, 5, 2, 7],
+            [5, 5, 5, 5, 2, 7],
+            [1, 1, 1, 1, 1, 8],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
