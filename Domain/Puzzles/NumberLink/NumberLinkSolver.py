@@ -34,12 +34,12 @@ class NumberLinkSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, value in self._grid_z3:
-            if self._grid[position] > 0:
+            if self._grid[position] >= 0:
                 self._solver.add(value == self._grid[position])
             else:
-                self._solver.add(value > 0)
+                self._solver.add(value >= 0)
 
     def _add_neighbors_count_constraints(self):
         for position, position_value in self._grid:
             same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in self._grid_z3.neighbors_values(position)])
-            self._solver.add(same_value_neighbors_count == 1) if position_value > 0 else self._solver.add(same_value_neighbors_count == 2)
+            self._solver.add(same_value_neighbors_count == 1) if position_value >= 0 else self._solver.add(same_value_neighbors_count == 2)

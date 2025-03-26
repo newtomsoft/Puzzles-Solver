@@ -25,6 +25,7 @@ from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
+from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
@@ -49,6 +50,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronLaserGridsGridPlayer import PuzzleBaronLaserGridsGridPlayer
+from GridPlayers.PuzzleBaron.PuzzleBaronNumberLinksGridPlayer import PuzzleBaronNumberLinksGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattleGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzleAkariGridPlayer import PuzzleAkariGridPlayer
@@ -121,7 +123,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTenta
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
-from NumberLink.NumberLinkSolver import NumberLinkSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 SOLVER_ENGINE = Z3SolverEngine()
@@ -167,7 +168,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
-            r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, None),
+            r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),
