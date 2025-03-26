@@ -2,10 +2,10 @@
 
 from playwright.sync_api import BrowserContext, Mouse
 
-from GridPlayers.GridPlayer import GridPlayer
 from Domain.Direction import Direction
 from Domain.Grid.Grid import Grid
 from Domain.Position import Position
+from GridPlayers.GridPlayer import GridPlayer
 
 
 class PuzzleBaronVectorsGridPlayer(GridPlayer):
@@ -18,8 +18,7 @@ class PuzzleBaronVectorsGridPlayer(GridPlayer):
         for start_position, value in solution:
             if numbers[solution.get_index(start_position)] == 0:
                 continue
-            all_directions = [Direction.left(), Direction.down(), Direction.right(), Direction.up()]
-            for direction in all_directions:
+            for direction in Direction.orthogonals():
                 end_position = Position(start_position.r, start_position.c)
                 while end_position in solution and solution[end_position] == value:
                     end_position = end_position.after(direction)

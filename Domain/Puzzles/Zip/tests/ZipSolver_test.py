@@ -191,3 +191,70 @@ class ZipSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_2025_03_25(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0],
+            [2, 0, 0, 0, 4, 0],
+            [0, 0, 6, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+            [3, 0, 7, 0, 5, 0],
+            [0, 0, 1, 0, 0, 0],
+        ])
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 1, 1, 1, 1, 1],
+            [2, 3, 3, 3, 4, 1],
+            [2, 3, 6, 5, 4, 1],
+            [2, 3, 6, 5, 4, 1],
+            [3, 3, 7, 5, 5, 1],
+            [3, 3, 1, 1, 1, 1],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_2025_03_26(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 0],
+            [0, 4, 0, 0, 0, 0],
+            [0, 0, 0, 0, 3, 0],
+            [0, 0, 0, 0, 2, 0],
+            [0, 0, 0, 0, 0, 0],
+        ])
+        grid.add_walls(
+            {
+                frozenset([Position(1, 0), Position(1, 1)]),
+                frozenset([Position(2, 0), Position(2, 1)]),
+                frozenset([Position(3, 0), Position(3, 1)]),
+                frozenset([Position(4, 0), Position(4, 1)]),
+
+                frozenset([Position(1, 2), Position(1, 3)]),
+                frozenset([Position(2, 2), Position(2, 3)]),
+                frozenset([Position(3, 2), Position(3, 3)]),
+                frozenset([Position(4, 2), Position(4, 3)]),
+
+                frozenset([Position(1, 4), Position(1, 5)]),
+                frozenset([Position(2, 4), Position(2, 5)]),
+                frozenset([Position(3, 4), Position(3, 5)]),
+                frozenset([Position(4, 4), Position(4, 5)]),
+
+                frozenset([Position(2, 1), Position(3, 1)]),
+                frozenset([Position(2, 2), Position(3, 2)]),
+            }
+        )
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 1, 3, 3, 2, 2],
+            [1, 1, 3, 3, 2, 2],
+            [1, 4, 3, 3, 2, 2],
+            [1, 1, 1, 3, 3, 2],
+            [1, 1, 1, 1, 2, 2],
+            [1, 1, 1, 1, 2, 2],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)

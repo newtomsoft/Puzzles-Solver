@@ -23,7 +23,7 @@ class HashiSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: self._solver.int(f"{island.position}_{direction}") for direction in Direction.orthogonal()} for island in self._island_grid.islands.values()
+            island.position: {direction: self._solver.int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
 

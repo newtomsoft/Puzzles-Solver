@@ -20,7 +20,7 @@
         self._value = value
 
     @staticmethod
-    def orthogonal():
+    def orthogonals():
         return [Direction.up(), Direction.left(), Direction.down(), Direction.right()]
 
     @staticmethod

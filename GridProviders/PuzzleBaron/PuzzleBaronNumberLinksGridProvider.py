@@ -20,7 +20,7 @@ class PuzzleBaronNumberLinksGridProvider(GridProvider, PlaywrightGridProvider, P
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_box_divs = soup.find_all('div', class_='gridbox')
-        numbers = [int(text) if ((text := number_div.get_text()) != '') else 0 for number_div in grid_box_divs]
+        numbers = [int(text) if ((text := number_div.get_text()) != '') else -1 for number_div in grid_box_divs]
         cells_count = len(grid_box_divs)
         rows_count = int(math.sqrt(cells_count))
         columns_count = rows_count

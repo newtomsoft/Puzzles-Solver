@@ -20,7 +20,7 @@ class ZipSolver(GameSolver):
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._grid_z3.copy_walls_from_grid(self._grid)
         self._add_common_constraints()
-        self._add_without_u_turn_constraints()
+        self._add_without_u_turn_constraints()  # maybe without U-turn is not necessary for all cases. if it is not necessary, we can remove it.
         if not self._solver.has_solution():
             self._add_with_u_turn_constraints()
         self._previous_solution = self._compute_solution()
@@ -43,6 +43,9 @@ class ZipSolver(GameSolver):
     def _add_initial_constraints(self):
         for position in self._checkpoints_positions:
             self._solver.add(self._grid_z3[position] == self._grid[position])
+        for position in self._path_positions:
+            self._solver.add(self._grid_z3[position] >= self._grid[self._start_position])
+            self._solver.add(self._grid_z3[position] < self._grid[self._finish_position])
 
     def _add_finish_checkpoint_same_value_neighbors_count_constraints(self):
         neighbors_values = self._get_neighbors_values(self._finish_position)
