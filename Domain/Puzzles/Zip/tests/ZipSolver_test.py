@@ -224,27 +224,25 @@ class ZipSolverTests(TestCase):
             [0, 0, 0, 0, 2, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        grid.add_walls(
-            {
-                frozenset([Position(1, 0), Position(1, 1)]),
-                frozenset([Position(2, 0), Position(2, 1)]),
-                frozenset([Position(3, 0), Position(3, 1)]),
-                frozenset([Position(4, 0), Position(4, 1)]),
+        grid.add_walls({
+            frozenset([Position(1, 0), Position(1, 1)]),
+            frozenset([Position(2, 0), Position(2, 1)]),
+            frozenset([Position(3, 0), Position(3, 1)]),
+            frozenset([Position(4, 0), Position(4, 1)]),
 
-                frozenset([Position(1, 2), Position(1, 3)]),
-                frozenset([Position(2, 2), Position(2, 3)]),
-                frozenset([Position(3, 2), Position(3, 3)]),
-                frozenset([Position(4, 2), Position(4, 3)]),
+            frozenset([Position(1, 2), Position(1, 3)]),
+            frozenset([Position(2, 2), Position(2, 3)]),
+            frozenset([Position(3, 2), Position(3, 3)]),
+            frozenset([Position(4, 2), Position(4, 3)]),
 
-                frozenset([Position(1, 4), Position(1, 5)]),
-                frozenset([Position(2, 4), Position(2, 5)]),
-                frozenset([Position(3, 4), Position(3, 5)]),
-                frozenset([Position(4, 4), Position(4, 5)]),
+            frozenset([Position(1, 4), Position(1, 5)]),
+            frozenset([Position(2, 4), Position(2, 5)]),
+            frozenset([Position(3, 4), Position(3, 5)]),
+            frozenset([Position(4, 4), Position(4, 5)]),
 
-                frozenset([Position(2, 1), Position(3, 1)]),
-                frozenset([Position(2, 2), Position(3, 2)]),
-            }
-        )
+            frozenset([Position(2, 1), Position(3, 1)]),
+            frozenset([Position(2, 2), Position(3, 2)]),
+        })
         game_solver = ZipSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
@@ -254,6 +252,63 @@ class ZipSolverTests(TestCase):
             [1, 1, 1, 3, 3, 2],
             [1, 1, 1, 1, 2, 2],
             [1, 1, 1, 1, 2, 2],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_2025_03_27(self):
+        grid = Grid([
+            [6, 0, 0, 0, 0, 5],
+            [0, 0, 0, 0, 0, 0],
+            [0, 7, 1, 8, 2, 0],
+            [0, 0, 0, 0, 0, 0],
+            [3, 0, 0, 0, 0, 4],
+            [0, 0, 0, 0, 0, 0],
+        ])
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [6, 5, 5, 5, 5, 5],
+            [6, 6, 1, 1, 1, 4],
+            [7, 7, 1, 8, 2, 4],
+            [7, 7, 7, 7, 2, 4],
+            [3, 2, 2, 2, 2, 4],
+            [3, 3, 3, 3, 3, 3],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_2025_03_28(self):
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 5, 3, 0],
+            [0, 0, 4, 0, 0, 0],
+            [0, 0, 0, 2, 0, 0],
+            [0, 1, 6, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0],
+        ])
+        grid.add_walls({
+            frozenset([Position(0, 1), Position(1, 1)]),
+            frozenset([Position(0, 2), Position(1, 2)]),
+            frozenset([Position(1, 1), Position(1, 2)]),
+            frozenset([Position(2, 1), Position(2, 2)]),
+
+            frozenset([Position(2, 3), Position(3, 3)]),
+            frozenset([Position(2, 4), Position(3, 4)]),
+            frozenset([Position(3, 3), Position(3, 4)]),
+            frozenset([Position(4, 3), Position(4, 4)]),
+        })
+        game_solver = ZipSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [5, 5, 5, 5, 2, 2],
+            [5, 5, 4, 5, 3, 2],
+            [5, 5, 4, 3, 3, 2],
+            [5, 1, 1, 2, 2, 2],
+            [5, 1, 6, 2, 2, 2],
+            [5, 5, 5, 2, 2, 2],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()

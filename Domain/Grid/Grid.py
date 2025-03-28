@@ -62,9 +62,6 @@ class Grid(GridBase[T], Generic[T]):
     def set_value(self, position: Position, value):
         self._matrix[position.r][position.c] = value
 
-    def get_index(self, position: Position) -> int:
-        return position.r * self.columns_number + position.c
-
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
