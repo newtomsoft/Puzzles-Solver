@@ -16,7 +16,7 @@ class PuzzleBaronVectorsGridPlayer(GridPlayer):
         numbers = [int(inner_text) if (inner_text := number_div.inner_text()) else 0 for number_div in grid_box_divs]
 
         for start_position, value in solution:
-            if numbers[solution.get_index(start_position)] == 0:
+            if numbers[solution.get_index_from_position(start_position)] == 0:
                 continue
             for direction in Direction.orthogonals():
                 end_position = Position(start_position.r, start_position.c)
@@ -30,12 +30,12 @@ class PuzzleBaronVectorsGridPlayer(GridPlayer):
 
     @classmethod
     def move_and_click(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, grid_box_divs):
-        start_index = solution.get_index(start_position)
+        start_index = solution.get_index_from_position(start_position)
         start_bounding_box = grid_box_divs[start_index].bounding_box()
         start_x = start_bounding_box['x'] + start_bounding_box['width'] / 2
         start_y = start_bounding_box['y'] + start_bounding_box['height'] / 2
 
-        end_index = solution.get_index(end_position)
+        end_index = solution.get_index_from_position(end_position)
         end_bounding_box = grid_box_divs[end_index].bounding_box()
         end_x = end_bounding_box['x'] + end_bounding_box['width'] / 2
         end_y = end_bounding_box['y'] + end_bounding_box['height'] / 2

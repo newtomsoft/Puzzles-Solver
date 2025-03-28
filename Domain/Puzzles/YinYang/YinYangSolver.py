@@ -135,7 +135,7 @@ class YinYangSolver(GameSolver):
         if white_count <= 1 and black_count <= 1 or white_count == 0 or black_count == 0:
             return
 
-        array_fixed_edges = [(self._get_position_from_index(index), None) for index in range((2 * (self.rows_number + self.columns_number) - 4))]
+        array_fixed_edges = [(self._get_position_from_edge_index(index), None) for index in range((2 * (self.rows_number + self.columns_number) - 4))]
         for position, value in positions_values:
             index = self._clockwise_key((position, 0))
             array_fixed_edges[index] = (position, value)
@@ -174,7 +174,7 @@ class YinYangSolver(GameSolver):
             return self.columns_number + self.rows_number - 1 + (self.columns_number - 1 - position.c)
         return 2 * self.columns_number + self.rows_number - 3 + (self.rows_number - 1 - position.r)
 
-    def _get_position_from_index(self, index):
+    def _get_position_from_edge_index(self, index):
         total_edges = 2 * (self.rows_number + self.columns_number) - 4
         index = index % total_edges
         if index < self.columns_number:

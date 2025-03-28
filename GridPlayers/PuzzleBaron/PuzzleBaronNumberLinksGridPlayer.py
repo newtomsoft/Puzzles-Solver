@@ -16,7 +16,7 @@ class PuzzleBaronNumberLinksGridPlayer(GridPlayer):
 
         numbers_processed = set()
         for start_position, start_value in solution:
-            if numbers[solution.get_index(start_position)] == -1 or start_value in numbers_processed:
+            if numbers[solution.get_index_from_position(start_position)] == -1 or start_value in numbers_processed:
                 continue
             numbers_processed.add(start_value)
             positions_processed = {start_position}
@@ -32,7 +32,7 @@ class PuzzleBaronNumberLinksGridPlayer(GridPlayer):
 
     @classmethod
     def mouse_move(cls, mouse: Mouse, solution: Grid, next_position: Position, grid_box_divs):
-        end_index = solution.get_index(next_position)
+        end_index = solution.get_index_from_position(next_position)
         end_bounding_box = grid_box_divs[end_index].bounding_box()
         end_x = end_bounding_box['x'] + end_bounding_box['width'] / 2
         end_y = end_bounding_box['y'] + end_bounding_box['height'] / 2

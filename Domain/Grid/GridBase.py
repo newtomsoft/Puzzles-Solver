@@ -68,8 +68,11 @@ class GridBase(Generic[T]):
     def set_value(self, position: Position, value):
         self._matrix[position.r][position.c] = value
 
-    def get_index(self, position: Position) -> int:
+    def get_index_from_position(self, position: Position) -> int:
         return position.r * self.columns_number + position.c
+
+    def get_position_from_index(self, index: int) -> Position:
+        return Position(index // self.columns_number, index % self.columns_number)
 
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
         matrix = self._matrix.copy()
