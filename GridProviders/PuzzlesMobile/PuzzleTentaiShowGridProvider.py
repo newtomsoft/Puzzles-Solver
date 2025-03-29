@@ -4,7 +4,7 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Domain.Position import Position
+from Domain.Board.Position import Position
 
 
 # also known as Galaxies

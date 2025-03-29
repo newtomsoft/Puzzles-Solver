@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Shingoki.ShingokiSolver import ShingokiSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
@@ -756,7 +756,7 @@ class ShingokiSolverTests(TestCase):
         )
         self.assertEqual(expected_solution_string, str(solution))
         # other_solution = game_solver.get_other_solution()
-        # self.assertEqual(Grid.empty(), other_solution)
+        # self.assertEqual(Board.empty(), other_solution)
 
     @unittest.skip('This test is too slow (around 120 seconds)')
     def test_solution_41x41(self):

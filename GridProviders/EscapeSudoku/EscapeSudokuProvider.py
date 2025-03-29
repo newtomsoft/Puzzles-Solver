@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright, BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Utils.utils import is_perfect_square
 
 

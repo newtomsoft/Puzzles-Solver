@@ -1,10 +1,10 @@
-from Domain.Direction import Direction
-from Domain.Grid.GridBase import GridBase
-from Domain.Grid.WrappedGrid import WrappedGrid
-from Domain.Grid.WrappedPipesGrid import WrappedPipesGrid
+from Domain.Board.Direction import Direction
+from Domain.Board.GridBase import GridBase
+from Domain.Board.Pipe import Pipe
+from Domain.Board.Position import Position
+from Domain.Board.WrappedGrid import WrappedGrid
+from Domain.Board.WrappedPipesGrid import WrappedPipesGrid
 from Domain.Ports.SolverEngine import SolverEngine
-from Domain.Position import Position
-from Pipes.Pipe import Pipe
 from Pipes.PipeShapeTransition import PipeShapeTransition
 from Pipes.PipesSolver import PipesSolver
 

@@ -1,6 +1,6 @@
 ﻿from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from NumberLink.NumberLinkSolver import NumberLinkSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

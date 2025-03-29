@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
-from Pipes.Pipe import Pipe, PipeString
+from Domain.Board.Grid import Grid
+from Domain.Board.Pipe import Pipe, PipeString
 from Pipes.PipesSolver import PipesSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

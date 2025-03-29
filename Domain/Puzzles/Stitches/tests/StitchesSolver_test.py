@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Direction import Direction
-from Domain.Grid.Grid import Grid
+from Domain.Board.Direction import Direction
+from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Stitches.StitchesSolver import StitchesSolver
 

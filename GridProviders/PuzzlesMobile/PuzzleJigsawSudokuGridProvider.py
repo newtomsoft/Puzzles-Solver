@@ -6,9 +6,9 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from Domain.Grid.RegionsGrid import RegionsGrid
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
+from Domain.Board.RegionsGrid import RegionsGrid
 
 
 class PuzzleJigsawSudokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):

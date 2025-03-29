@@ -4,8 +4,8 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 
 
 class PuzzleRenzokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
@@ -24,7 +24,7 @@ class PuzzleRenzokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMob
         columns_number = sum(1 for cell in cells if 'top: 1px' in cell['style'])
         rows_number = sum(1 for cell in cells if 'left: 1px' in cell['style'])
         if columns_number * rows_number != cells_count:
-            raise ValueError("Grid parsing error")
+            raise ValueError("Board parsing error")
         matrix = []
         for r in range(rows_number):
             row = []

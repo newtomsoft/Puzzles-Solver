@@ -1,7 +1,7 @@
 ﻿from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from TapaSolver import TapaSolver
 

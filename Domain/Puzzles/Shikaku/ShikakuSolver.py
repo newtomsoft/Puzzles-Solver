@@ -1,6 +1,6 @@
 ﻿from sympy import divisors
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
 from GameSolver import GameSolver
 

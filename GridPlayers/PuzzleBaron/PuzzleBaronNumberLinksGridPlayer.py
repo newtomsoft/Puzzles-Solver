@@ -1,13 +1,13 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext, Mouse
+from playwright.sync_api import BrowserContext
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from GridPlayers.GridPlayer import GridPlayer
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
+from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class PuzzleBaronNumberLinksGridPlayer(GridPlayer):
+class PuzzleBaronNumberLinksGridPlayer(PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution: Grid, browser: BrowserContext):
         page = browser.pages[0]
@@ -31,21 +31,5 @@ class PuzzleBaronNumberLinksGridPlayer(GridPlayer):
         sleep(20)
 
     @classmethod
-    def mouse_move(cls, mouse: Mouse, solution: Grid, next_position: Position, grid_box_divs):
-        end_index = solution.get_index_from_position(next_position)
-        end_bounding_box = grid_box_divs[end_index].bounding_box()
-        end_x = end_bounding_box['x'] + end_bounding_box['width'] / 2
-        end_y = end_bounding_box['y'] + end_bounding_box['height'] / 2
-        mouse.move(end_x, end_y)
-
-    @classmethod
     def _next_position(cls, solution: Grid[int], start_position: Position, start_value: int, positions_processed: set[Position]) -> Position:
         return next((neighbor_position for neighbor_position in solution.neighbors_positions(start_position) if neighbor_position not in positions_processed and solution[neighbor_position] == start_value), None)
-
-    @classmethod
-    def mouse_down(cls, mouse):
-        mouse.down()
-
-    @classmethod
-    def mouse_up(cls, mouse):
-        mouse.up()

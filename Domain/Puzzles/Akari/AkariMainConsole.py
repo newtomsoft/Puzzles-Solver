@@ -3,7 +3,7 @@
 # from AkariSolver import AkariSolver
 # from GridProviders.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class AkariMainConsole:
@@ -45,7 +45,7 @@
 #             print(f"No solution found")
 # 
 #     @staticmethod
-#     def generate_html(solution_grid: Grid):
+#     def generate_html(solution_grid: Board):
 #         with open("solution.html", "w") as file:
 #             file.write("<html><head><style>table {border-collapse: collapse;} td {border: 1px solid black; width: 20px; height: 20px; text-align: center;}</style></head><body><table>")
 #             for r in range(solution_grid.rows_number):

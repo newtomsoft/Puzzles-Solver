@@ -1,4 +1,4 @@
-﻿from Pipes.Pipe import Pipe
+﻿from Domain.Board.Pipe import Pipe
 
 
 class PipeShapeTransition:

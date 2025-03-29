@@ -1,4 +1,4 @@
-﻿from Domain.Grid.Grid import Grid
+﻿from Domain.Board.Grid import Grid
 from Lits.LitsType import LitsType
 
 

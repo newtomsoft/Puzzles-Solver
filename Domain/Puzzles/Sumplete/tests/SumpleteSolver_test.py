@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Sumplete.SumpleteSolver import SumpleteSolver
 

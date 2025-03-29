@@ -3,7 +3,7 @@
 # from Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 # from Puzzles.GameSolver import GameSolver
 # from Ports.Ports import Ports
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class SumpleteBenchmark:
@@ -78,7 +78,7 @@
 #     def loop_game_xxx(self, x: int | str):
 #         grids = self.grids_by_size[x]
 #         for grid in grids:
-#             game_solver = SumpleteSolver(Grid(grid))
+#             game_solver = SumpleteSolver(Board(grid))
 #             solution = game_solver.get_solution()
 #             assert solution is not None
 # 

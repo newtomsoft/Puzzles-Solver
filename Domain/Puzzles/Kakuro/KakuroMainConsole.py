@@ -5,7 +5,7 @@
 # from GridProviders.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Kakuro.KakuroSolver import KakuroSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # from Utils.Position import Position
 # 
 # 
@@ -36,7 +36,7 @@
 #         return StringGridProvider().get_grid(console_input)
 # 
 #     @staticmethod
-#     def run(grid: Grid):
+#     def run(grid: Board):
 #         try:
 #             game_solver = KakuroSolver(grid, self.solver_engine)
 # 
@@ -44,9 +44,9 @@
 #             print(f"Error: {e}")
 #             return
 #         solution_grid = game_solver.get_solution()
-#         if solution_grid != Grid.empty():
+#         if solution_grid != Board.empty():
 #             print(f"Solution found")
-#             printable_grid = Grid([[solution_grid.value(r, c) if solution_grid.value(r, c) != 0 else '•' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
+#             printable_grid = Board([[solution_grid.value(r, c) if solution_grid.value(r, c) != 0 else '•' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
 #             print(printable_grid.to_console_string())
 #             for r in range(grid.rows_number):
 #                 for c in range(grid.columns_number):
@@ -58,17 +58,17 @@
 #             print(f"No solution found")
 # 
 #     @staticmethod
-#     def generate_html(grid: Grid):
+#     def generate_html(grid: Board):
 #         file_path = "solution.html"
 #         with open(file_path, "w", encoding="utf-8") as file:
 #             file.write("<html><head><style>")
 #             file.write("table {border-collapse: collapse;} ")
 #             file.write("td.number-cell, td.sum-cell {border: 1px solid black; width: 50px; height: 50px; text-align: center;} ")
-#             file.write(".sum-cell {background-color: lightgray;  start_position: relative;}")
-#             file.write("td.sum-cell span.row {start_position: absolute; top: 8%; left: 18%; width: 100%; text-align: center;}")
-#             file.write("td.sum-cell span.column {start_position: absolute; bottom: 8%; right: 18%; width: 100%; text-align: center;}")
+#             file.write(".sum-cell {background-color: lightgray;  position: relative;}")
+#             file.write("td.sum-cell span.row {position: absolute; top: 8%; left: 18%; width: 100%; text-align: center;}")
+#             file.write("td.sum-cell span.column {position: absolute; bottom: 8%; right: 18%; width: 100%; text-align: center;}")
 #             file.write(".number-cell {background-color: white;} ")
-#             file.write('.line {start_position: absolute;top: 0;left: 0; width: 100%;height: 100%;}')
+#             file.write('.line {position: absolute;top: 0;left: 0; width: 100%;height: 100%;}')
 #             file.write("</style></head>\n<body><table>")
 #             for r in range(grid.rows_number):
 #                 file.write("<tr>\n")

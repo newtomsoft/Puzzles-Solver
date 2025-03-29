@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

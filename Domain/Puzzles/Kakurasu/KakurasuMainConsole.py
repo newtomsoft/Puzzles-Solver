@@ -2,7 +2,7 @@
 # 
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class KakurasuMainConsole:
@@ -43,8 +43,8 @@
 # 
 #     @staticmethod
 #     def get_console_grid(solution_grid):
-#         background_grid = Grid([[1 if solution_grid.value(r, c) else 0 for c in range(solution_grid.columns_number)] for r in range(solution_grid.rows_number)])
-#         text_grid = Grid([[' ' for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
+#         background_grid = Board([[1 if solution_grid.value(r, c) else 0 for c in range(solution_grid.columns_number)] for r in range(solution_grid.rows_number)])
+#         text_grid = Board([[' ' for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
 #         console_grid = text_grid.to_console_string(None, background_grid)
 #         return console_grid
 # 

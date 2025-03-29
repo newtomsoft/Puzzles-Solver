@@ -1,7 +1,7 @@
 ﻿# import timeit
 # 
 # from Puzzles.Dominosa.DominosaSolver import DominosaSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class DominosaBenchmark:
@@ -98,7 +98,7 @@
 #     def loop_game_xxx(self, x: int | str):
 #         grids = self.grids_by_size[x]
 #         for grid in grids:
-#             game_solver = DominosaSolver(Grid(grid))
+#             game_solver = DominosaSolver(Board(grid))
 #             solution = game_solver.get_solution()
 #             assert solution != {}
 # 

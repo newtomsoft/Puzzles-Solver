@@ -1,6 +1,6 @@
-﻿from Domain.Grid.Grid import Grid
+﻿from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from Domain.Position import Position
 from GameSolver import GameSolver
 
 

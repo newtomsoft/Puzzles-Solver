@@ -1,6 +1,6 @@
 ﻿from z3 import Bool
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
 from GameSolver import GameSolver
 

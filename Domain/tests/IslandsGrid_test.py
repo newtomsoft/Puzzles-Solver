@@ -1,8 +1,8 @@
 ﻿from unittest import TestCase
 
-from Domain.Island import Island
-from Domain.Grid.IslandsGrid import IslandGrid
-from Domain.Position import Position
+from Domain.Board.Island import Island
+from Domain.Board.IslandsGrid import IslandGrid
+from Domain.Board.Position import Position
 
 
 class IslandsGridTest(TestCase):
