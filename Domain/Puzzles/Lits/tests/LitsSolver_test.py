@@ -2,7 +2,7 @@
 
 from parameterized import parameterized
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Lits.LitsSolver import LitsSolver
 from Lits.LitsType import LitsType
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine

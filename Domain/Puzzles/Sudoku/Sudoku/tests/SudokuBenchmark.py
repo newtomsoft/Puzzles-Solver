@@ -3,7 +3,7 @@
 # from Puzzles.Sudoku.SudokuSolver import SudokuSolver
 # from Puzzles.GameSolver import GameSolver
 # from Ports.Ports import Ports
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class HitoriBenchmark:
@@ -189,7 +189,7 @@
 #     def loop_hitori_game_xxx(self, x):
 #         grids = self.grids_by_size[x]
 #         for grid in grids:
-#             game_solver = SudokuSolver(Grid(grid))
+#             game_solver = SudokuSolver(Board(grid))
 #             solution = game_solver.get_solution()
 #             assert solution is not None
 #             print("*", end="")

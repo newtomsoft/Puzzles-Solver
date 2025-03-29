@@ -1,7 +1,7 @@
 from typing import List, Set
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 
 
 class RegionsGrid(Grid):

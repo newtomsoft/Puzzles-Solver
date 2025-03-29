@@ -1,11 +1,11 @@
 from typing import Dict
 
-from Domain.Direction import Direction
-from Domain.Grid.Grid import Grid
-from Domain.Grid.IslandsGrid import IslandGrid
-from Domain.Island import Island
+from Domain.Board.Direction import Direction
+from Domain.Board.Grid import Grid
+from Domain.Board.Island import Island
+from Domain.Board.IslandsGrid import IslandGrid
+from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from Domain.Position import Position
 from GameSolver import GameSolver
 
 

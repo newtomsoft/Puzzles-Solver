@@ -1,6 +1,6 @@
 ﻿import math
 
-from Domain.Direction import Direction
+from Domain.Board.Direction import Direction
 
 
 class Position:

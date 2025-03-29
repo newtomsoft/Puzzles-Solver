@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 
 from GridProviders.GridProvider import GridProvider
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class HitoriConquestGridProvider(GridProvider):

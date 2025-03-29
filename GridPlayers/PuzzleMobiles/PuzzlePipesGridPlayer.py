@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 from Pipes.PipeShapeTransition import PipeShapeTransition
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):

@@ -1,36 +1,95 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generic, Iterable
+from typing import (
+    Dict,
+    FrozenSet,
+    Generator,
+    Generic,
+    Iterable,
+    List,
+    Set,
+    Tuple,
+    TypeVar,
+)
 
 from bitarray import bitarray
+from Pipes.PipeShapeTransition import PipeShapeTransition
 
-from Domain.Grid.Grid import Grid
-from Domain.Grid.GridBase import GridBase
-from Domain.Position import Position
+from Domain.Board.GridBase import GridBase
+from Domain.Board.Position import Position
+from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')
 
 
-class WrappedGrid(GridBase[T], Generic[T]):
+class Grid(GridBase[T], Generic[T]):
     def __init__(self, matrix: List[List[T]]):
         super().__init__(matrix)
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
-            key = Position(key.r % self.rows_number, key.c % self.columns_number)
-            try:
-                return self._matrix[key.r][key.c]
-            except IndexError:
-                return None
-
+            return self._matrix[key.r][key.c]
         if isinstance(key, tuple):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
 
     def __contains__(self, item):
-        if not isinstance(item, Position):
-            raise TypeError(f'Position expected, got {type(item)}')
-        return True
+        if isinstance(item, Position):
+            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
+        raise TypeError(f'Position expected, got {type(item)}')
+
+    def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
+        for r, row in enumerate(self._matrix):
+            for c, cell in enumerate(row):
+                yield Position(r, c), cell
+
+    def __repr__(self) -> str:
+        if self.is_empty():
+            return 'Board.empty()'
+        if isinstance(self[Position(0, 0)], PipeShapeTransition):
+            return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
+        return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
+
+    def __hash__(self):
+        return hash(str(self._matrix))
+
+    @property
+    def matrix(self):
+        return self._matrix
+
+    @staticmethod
+    def empty() -> 'Board':
+        return Grid([[]])
+
+    def value(self, r_or_position, c=None) -> T:
+        if isinstance(r_or_position, Position):
+            return self._matrix[r_or_position.r][r_or_position.c]
+        return self._matrix[r_or_position][c]
+
+    def set_value(self, position: Position, value):
+        self._matrix[position.r][position.c] = value
+
+    def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
+        matrix = self._matrix.copy()
+        if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
+            matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
+        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in
+                        range(self.rows_number)]
+        background_color_matrix = [
+            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in
+            range(self.rows_number)]
+        end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
+        end_space = ' ' if back_ground_color_grid else ''
+        result = []
+        cell_len = max(len(f'{cell}') for row in matrix for cell in row)
+        for r in range(self.rows_number):
+            result.append(self._row_to_string(matrix, r, cell_len, background_color_matrix, color_matrix, end_color, end_space))
+            if interline and r < self.rows_number - 1:
+                result.append(''.join(f'{background_color_matrix[r][c]}{end_color}' for c in range(self.columns_number)))
+        return '\n'.join(result)
+
+    def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
+        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
     def get_regions(self) -> Dict[int, FrozenSet[Position]]:
         regions = defaultdict(set)
@@ -48,8 +107,16 @@ class WrappedGrid(GridBase[T], Generic[T]):
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def are_all_cells_connected(self, mode='orthogonal') -> bool:
-        return all([self.are_cells_connected(region_key, mode) for region_key in self.get_regions().keys()])
+    def get_connected_positions(self, value_to_search: T = True) -> list[set[Position]]:
+        total_positions = self.columns_number * self.rows_number
+        visited_list: list[set[Position]] = []
+        visited_flat: set[Position] = set()
+        while len(visited_flat) != total_positions:
+            position = next(position for position, value in self if position not in visited_flat and value == value_to_search)
+            visited_in_this_pass = self._depth_first_search(position, value_to_search)
+            visited_list.append(visited_in_this_pass)
+            visited_flat.update(visited_in_this_pass)
+        return visited_list
 
     def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []
@@ -111,6 +178,11 @@ class WrappedGrid(GridBase[T], Generic[T]):
 
         return visited
 
+    def _get_cell_of_value(self, value, excluded=None) -> Position or None:
+        if excluded is None:
+            excluded = []
+        return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
+
     @staticmethod
     def get_adjacent_combinations(neighbour_length, block_length, circular) -> list[list[bool]]:
         if block_length == 0:
@@ -154,28 +226,13 @@ class WrappedGrid(GridBase[T], Generic[T]):
     def is_empty(self):
         return self == Grid.empty()
 
-    def neighbors_positions(self, position: Position, mode='orthogonal') -> list[Position]:
-        return [position for position in position.neighbors(mode) if position in self]
-
-    def neighbor_up(self, position: Position) -> Position:
-        return position.up if position.up in self else None
-
-    def neighbor_down(self, position: Position) -> Position:
-        return position.down if position.down in self else None
-
-    def neighbor_left(self, position: Position) -> Position:
-        return position.left if position.left in self else None
-
-    def neighbor_right(self, position: Position) -> Position:
-        return position.right if position.right in self else None
-
-    def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
-        return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
-
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
+    def edges_positions(self) -> Set[Position]:
+        return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
+
+    def find_all_positions_in(self, grid: 'Board', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
@@ -184,7 +241,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
                     positions.add(position)
         return positions
 
-    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
+    def _is_in_grid_at_position(self, grid: 'Board', position: Position, value_to_ignore):
         for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
             if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
                 return False
@@ -193,7 +250,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Board', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

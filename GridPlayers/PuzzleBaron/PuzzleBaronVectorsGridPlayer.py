@@ -1,14 +1,13 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext, Mouse
+from playwright.sync_api import BrowserContext
 
-from Domain.Direction import Direction
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from GridPlayers.GridPlayer import GridPlayer
+from Domain.Board.Direction import Direction
+from Domain.Board.Position import Position
+from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class PuzzleBaronVectorsGridPlayer(GridPlayer):
+class PuzzleBaronVectorsGridPlayer(PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution, browser: BrowserContext):
         page = browser.pages[0]
@@ -24,23 +23,6 @@ class PuzzleBaronVectorsGridPlayer(GridPlayer):
                     end_position = end_position.after(direction)
                 end_position = end_position.before(direction)
                 if end_position != start_position:
-                    cls.move_and_click(page.mouse, solution, start_position, end_position, grid_box_divs)
+                    cls.move_start_down_move_end_up(page.mouse, solution, start_position, end_position, grid_box_divs)
 
         sleep(20)
-
-    @classmethod
-    def move_and_click(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, grid_box_divs):
-        start_index = solution.get_index_from_position(start_position)
-        start_bounding_box = grid_box_divs[start_index].bounding_box()
-        start_x = start_bounding_box['x'] + start_bounding_box['width'] / 2
-        start_y = start_bounding_box['y'] + start_bounding_box['height'] / 2
-
-        end_index = solution.get_index_from_position(end_position)
-        end_bounding_box = grid_box_divs[end_index].bounding_box()
-        end_x = end_bounding_box['x'] + end_bounding_box['width'] / 2
-        end_y = end_bounding_box['y'] + end_bounding_box['height'] / 2
-
-        mouse.move(start_x, start_y)
-        mouse.down()
-        mouse.move(end_x, end_y, steps=int(end_position.distance(start_position)))
-        mouse.up()

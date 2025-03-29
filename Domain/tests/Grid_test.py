@@ -3,9 +3,13 @@ from unittest import TestCase
 
 from bitarray import bitarray
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from Utils.colors import console_police_colors, console_back_ground_colors, remove_ansi_escape_sequences
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
+from Utils.colors import (
+    console_back_ground_colors,
+    console_police_colors,
+    remove_ansi_escape_sequences,
+)
 
 
 class GridTest(TestCase):
@@ -493,7 +497,7 @@ class GridTest(TestCase):
             [4, 5, 6],
             [7, 8, 9],
         ])
-        grid.add_walls(
+        grid.set_walls(
             {
                 frozenset([Position(0, 1), Position(1, 1)]),
                 frozenset([Position(1, 0), Position(1, 1)]),
@@ -527,7 +531,7 @@ class GridTest(TestCase):
 
     def test_repr_empty_grid(self):
         grid = Grid([[]])
-        expected_repr = "Grid.empty()"
+        expected_repr = "Board.empty()"
         self.assertEqual(repr(grid), expected_repr)
 
     def test_repr_fully_populated_grid(self):

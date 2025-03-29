@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Futoshiki.FutoshikiSolver import FutoshikiSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

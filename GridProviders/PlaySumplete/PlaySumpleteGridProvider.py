@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 
 from GridProviders.GridProvider import GridProvider
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class PlaySumpleteGridProvider(GridProvider):
@@ -14,7 +14,7 @@ class PlaySumpleteGridProvider(GridProvider):
         numbers = [int(button.find('div').text) for button in grid.find_all('button')]
         size = len(numbers) ** 0.5
         if size != int(size):
-            raise ValueError("Grid is not square")
+            raise ValueError("Board is not square")
         matrix = [numbers[i:i + int(size)] for i in range(0, len(numbers), int(size))]
 
         sums_divs = PlaySumpleteGridProvider.get_sums(grid)

@@ -4,7 +4,7 @@
 # from Puzzles.Tapa.TapaSolver import TapaSolver
 # from Puzzles.GameSolver import GameSolver
 # from Ports.Ports import Ports
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class TapaBenchmark:
@@ -563,7 +563,7 @@
 #     def loop_game_xxx(self, x: int | str):
 #         grids = self.grids_by_size[x]
 #         for grid in grids:
-#             game_solver = TapaSolver(Grid(grid))
+#             game_solver = TapaSolver(Board(grid))
 #             solution, attempts = game_solver.get_solution()
 #             assert solution is not None
 #             x = int(re.sub(r'\D', '', str(x))) if isinstance(x, str) else x

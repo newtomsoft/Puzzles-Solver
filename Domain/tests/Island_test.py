@@ -1,8 +1,8 @@
 import unittest
 from unittest import TestCase
 
-from Domain.Island import Island
-from Domain.Position import Position
+from Domain.Board.Island import Island
+from Domain.Board.Position import Position
 
 
 class IslandTest(TestCase):

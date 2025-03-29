@@ -7,9 +7,9 @@ from playwright.sync_api import BrowserContext
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from Domain.Grid.RegionsGrid import RegionsGrid
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
+from Domain.Board.RegionsGrid import RegionsGrid
 
 
 class PuzzleBaronCalcudokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):

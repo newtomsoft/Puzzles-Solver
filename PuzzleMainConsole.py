@@ -4,7 +4,7 @@ from typing import Tuple, Any
 
 from playwright.sync_api import BrowserContext
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver

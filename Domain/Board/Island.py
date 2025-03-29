@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 
-from Domain.Direction import Direction
-from Domain.Position import Position
+from Domain.Board.Direction import Direction
+from Domain.Board.Position import Position
 
 
 class Island:

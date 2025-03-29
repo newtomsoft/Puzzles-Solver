@@ -2,8 +2,8 @@
 
 from playwright.sync_api import BrowserContext
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
@@ -34,7 +34,7 @@ class ZipGridProvider(GridProvider, PlaywrightGridProvider):
         grid = Grid(matrix)
 
         walls = self._get_walls(game_board, columns_number)
-        grid.add_walls(walls)
+        grid.set_walls(walls)
         return grid
 
     @staticmethod

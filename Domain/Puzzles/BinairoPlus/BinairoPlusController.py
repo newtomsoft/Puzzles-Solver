@@ -2,7 +2,7 @@
 from flask_cors import CORS
 
 from BinairoPlusSolver import BinairoPlusSolver
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 app = Flask(__name__)

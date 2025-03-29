@@ -1,11 +1,11 @@
 ﻿from typing import Tuple
 
-from Domain.Grid.Grid import Grid
-from Domain.Position import Position
-from Pipes.Pipe import Pipe
+from Domain.Board.Pipe import Pipe
+from Domain.Board.Position import Position
+from Domain.Board.WrappedGrid import WrappedGrid
 
 
-class PipesGrid(Grid[Pipe]):
+class WrappedPipesGrid(WrappedGrid[Pipe]):
     def __init__(self, input_matrix: list[list[Pipe]]):
         super().__init__(input_matrix)
 
@@ -34,10 +34,22 @@ class PipesGrid(Grid[Pipe]):
         connected_to = current_pipe.get_connected_to()
         for direction in [direction for direction in connected_to if direction != forbidden_direction]:
             next_pos = position.after(direction)
-            if next_pos not in self or {position, next_pos} in self._walls:
+            if {position, next_pos} in self._walls:
                 continue
+            next_pos = self.normalize_position(next_pos)
             next_pipe = self[next_pos]
             if direction.opposite in next_pipe.get_connected_to():
                 self._depth_first_search_pipes_and_is_loop(next_pos, visited_positions, direction.opposite)
 
         return visited_positions, False
+
+    def normalize_position(self, position: Position) -> Position:
+        if position.r < 0:
+            position = Position(self.rows_number - 1, position.c)
+        if position.r >= self.rows_number:
+            position = Position(0, position.c)
+        if position.c < 0:
+            position = Position(position.r, self.columns_number - 1)
+        if position.c >= self.columns_number:
+            position = Position(position.r, 0)
+        return position

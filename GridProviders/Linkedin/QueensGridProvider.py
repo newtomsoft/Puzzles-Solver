@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class QueensGridProvider(GridProvider, PlaywrightGridProvider):

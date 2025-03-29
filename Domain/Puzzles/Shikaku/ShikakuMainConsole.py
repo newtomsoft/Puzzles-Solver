@@ -3,7 +3,7 @@
 # from GridProviders.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class ShikakuMainConsole:
@@ -32,16 +32,16 @@
 #         return StringGridProvider().get_grid(console_input)
 # 
 #     @staticmethod
-#     def run(grid: Grid):
+#     def run(grid: Board):
 #         game_solver = ShikakuSolver(grid, self.solver_engine)
 # 
 #         start_time = time.time()
 #         solution_grid = game_solver.get_solution()
 #         execution_time = time.time() - start_time
-#         if solution_grid != Grid.empty():
+#         if solution_grid != Board.empty():
 #             print(f"Solution found in {execution_time:.2f} seconds")
-#             printable_grid = Grid([[' ' for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
-#             police_color_grid = Grid([[16 for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
+#             printable_grid = Board([[' ' for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
+#             police_color_grid = Board([[16 for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
 #             printable_grid_string = printable_grid.to_console_string(police_color_grid, solution_grid)
 #             print(printable_grid_string)
 #         else:

@@ -4,8 +4,8 @@ from playwright.sync_api import BrowserContext
 
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Domain.Direction import Direction
-from Domain.Grid.IslandsGrid import IslandGrid
+from Domain.Board.Direction import Direction
+from Domain.Board.IslandsGrid import IslandGrid
 
 
 class PuzzleHashiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):

@@ -1,6 +1,6 @@
 ﻿from abc import ABC, abstractmethod
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class GameSolver(ABC):

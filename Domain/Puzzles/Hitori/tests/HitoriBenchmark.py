@@ -1,7 +1,7 @@
 ﻿# import timeit
 # 
 # from Puzzles.Hitori.HitoriSolver import HitoriSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class HitoriBenchmark:
@@ -203,7 +203,7 @@
 #     def loop_hitori_game_xxx(self, x):
 #         grids = self.grids_by_size[x]
 #         for grid in grids:
-#             game_solver = HitoriSolver(Grid(grid))
+#             game_solver = HitoriSolver(Board(grid))
 #             solution, attempts = game_solver.get_solution()
 #             self.attempts[x] += attempts
 #             assert solution is not None

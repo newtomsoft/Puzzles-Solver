@@ -1,7 +1,7 @@
 ﻿# from GridProviders.PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # from Utils.Position import Position
 # 
 # 
@@ -33,7 +33,7 @@
 #     def run(grid):
 #         nurikabe = NurikabeSolver(grid)
 #         solution_grid, _ = nurikabe.get_solution()
-#         if solution_grid != Grid.empty():
+#         if solution_grid != Board.empty():
 #             print(f"Solution found:")
 #             for r in range(solution_grid.rows_number):
 #                 for c in range(solution_grid.columns_number):

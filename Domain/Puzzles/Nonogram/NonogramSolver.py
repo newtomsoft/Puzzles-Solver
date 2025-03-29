@@ -1,7 +1,7 @@
 ﻿from bitarray import bitarray
 from z3 import Solver, sat, Or, BitVec, Extract
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 
 
 class NonogramSolver:

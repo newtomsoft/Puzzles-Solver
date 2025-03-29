@@ -1,10 +1,10 @@
-from Domain.Direction import Direction
-from Domain.Grid.GridBase import GridBase
-from Domain.Grid.PipesGrid import PipesGrid
+from Domain.Board.Direction import Direction
+from Domain.Board.GridBase import GridBase
+from Domain.Board.Pipe import Pipe
+from Domain.Board.PipesGrid import PipesGrid
+from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from Domain.Position import Position
 from GameSolver import GameSolver
-from Pipes.Pipe import Pipe
 from Pipes.PipeShapeTransition import PipeShapeTransition
 
 FALSE = False  # for avoid PyCharm warning

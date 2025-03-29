@@ -1,7 +1,7 @@
 ﻿# from GridProviders.HitoriConquestGridProvider import HitoriConquestGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Hitori.HitoriSolver import HitoriSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # from Utils.Position import Position
 # 
 # 
@@ -35,7 +35,7 @@
 #         hitori = HitoriSolver(grid, self.solver_engine)
 # 
 #         solution_grid = hitori.get_solution()
-#         if solution_grid != Grid.empty():
+#         if solution_grid != Board.empty():
 #             print(f"Solution found:")
 #             for r in range(solution_grid.rows_number):
 #                 for c in range(solution_grid.columns_number):

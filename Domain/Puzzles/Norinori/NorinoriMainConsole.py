@@ -3,7 +3,7 @@
 # from GridProviders.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.Norinori.NorinoriSolver import NorinoriSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # 
 # 
 # class NorinoriMainConsole:
@@ -30,7 +30,7 @@
 #         return StringGridProvider().get_grid(console_input)
 # 
 #     @staticmethod
-#     def run(grid: Grid):
+#     def run(grid: Board):
 #         try:
 #             game_solver = NorinoriSolver(grid)
 #         except ValueError as e:
@@ -39,8 +39,8 @@
 #         solution_grid = game_solver.get_solution()
 #         if solution_grid:
 #             print(f"Solution found")
-#             printable_grid = Grid([['■' if solution_grid.value(r, c) else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
-#             police_color_grid = Grid([[16 for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
+#             printable_grid = Board([['■' if solution_grid.value(r, c) else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
+#             police_color_grid = Board([[16 for _ in range(grid.columns_number)] for _ in range(grid.rows_number)])
 #             printable_grid_string = printable_grid.to_console_string(police_color_grid, grid)
 #             print(printable_grid_string)
 #             NorinoriMainConsole.generate_html(grid, solution_grid)
@@ -48,7 +48,7 @@
 #             print(f"No solution found")
 # 
 #     @staticmethod
-#     def generate_html(grid: Grid, solution_grid: Grid):
+#     def generate_html(grid: Board, solution_grid: Board):
 #         color_map = {
 #             0: "#bba3e2",
 #             1: "#ffc992",

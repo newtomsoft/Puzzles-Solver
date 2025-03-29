@@ -1,9 +1,9 @@
 from typing import Dict
 
-from Domain.Direction import Direction
-from Domain.Grid.Grid import Grid
-from Domain.Island import Island
-from Domain.Position import Position
+from Domain.Board.Direction import Direction
+from Domain.Board.Grid import Grid
+from Domain.Board.Island import Island
+from Domain.Board.Position import Position
 
 
 class IslandGrid(Grid[Island]):

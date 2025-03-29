@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from Domain.Grid.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider

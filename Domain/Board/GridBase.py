@@ -1,23 +1,32 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import Tuple, FrozenSet, Dict, List, TypeVar, Set, Generator, Generic, Iterable
+from typing import (
+    Dict,
+    FrozenSet,
+    Generator,
+    Generic,
+    Iterable,
+    List,
+    Set,
+    Tuple,
+    TypeVar,
+)
 
 from bitarray import bitarray
 
-from Domain.Grid.GridBase import GridBase
-from Domain.Position import Position
+from Domain.Board.Position import Position
 from Pipes.PipeShapeTransition import PipeShapeTransition
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')
 
 
-class Grid(GridBase[T], Generic[T]):
+class GridBase(Generic[T]):
     def __init__(self, matrix: List[List[T]]):
-        super().__init__(matrix)
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
+        self._walls: Set[Set[Position, Position]] = set()
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
@@ -25,6 +34,13 @@ class Grid(GridBase[T], Generic[T]):
         if isinstance(key, tuple):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
+
+    def __eq__(self, other):
+        if not issubclass(type(other), GridBase):
+            return False
+        if all(isinstance(cell, bool) for cell in self._matrix):
+            return all(value == other.value(position) for position, value in self)
+        return self.matrix == other.matrix
 
     def __contains__(self, item):
         if isinstance(item, Position):
@@ -38,7 +54,7 @@ class Grid(GridBase[T], Generic[T]):
 
     def __repr__(self) -> str:
         if self.is_empty():
-            return 'Grid.empty()'
+            return 'Board.empty()'
         if isinstance(self[Position(0, 0)], PipeShapeTransition):
             return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
@@ -50,9 +66,13 @@ class Grid(GridBase[T], Generic[T]):
     def matrix(self):
         return self._matrix
 
+    @property
+    def walls(self):
+        return self._walls
+
     @staticmethod
-    def empty() -> 'Grid':
-        return Grid([[]])
+    def empty() -> 'GridBase':
+        return GridBase([[]])
 
     def value(self, r_or_position, c=None) -> T:
         if isinstance(r_or_position, Position):
@@ -61,6 +81,12 @@ class Grid(GridBase[T], Generic[T]):
 
     def set_value(self, position: Position, value):
         self._matrix[position.r][position.c] = value
+
+    def get_index_from_position(self, position: Position) -> int:
+        return position.r * self.columns_number + position.c
+
+    def get_position_from_index(self, index: int) -> Position:
+        return Position(index // self.columns_number, index % self.columns_number)
 
     def to_console_string(self, police_color_grid=None, back_ground_color_grid=None, interline=False):
         matrix = self._matrix.copy()
@@ -100,16 +126,8 @@ class Grid(GridBase[T], Generic[T]):
         visited = self._depth_first_search(position, value, mode)
         return len(visited) == sum(cell == value for row in self._matrix for cell in row)
 
-    def get_connected_positions(self, value_to_search: T = True) -> list[set[Position]]:
-        total_positions = self.columns_number * self.rows_number
-        visited_list: list[set[Position]] = []
-        visited_flat: set[Position] = set()
-        while len(visited_flat) != total_positions:
-            position = next(position for position, value in self if position not in visited_flat and value == value_to_search)
-            visited_in_this_pass = self._depth_first_search(position, value_to_search)
-            visited_list.append(visited_in_this_pass)
-            visited_flat.update(visited_in_this_pass)
-        return visited_list
+    def are_all_cells_connected(self, mode='orthogonal') -> bool:
+        return all([self.are_cells_connected(region_key, mode) for region_key in self.get_regions().keys()])
 
     def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
         excluded = []
@@ -212,20 +230,88 @@ class Grid(GridBase[T], Generic[T]):
                     bitarrays.append(current_bitarray)
         return bitarrays
 
+    def set_walls(self, walls: Set[FrozenSet[Position]]):
+        self._walls = walls
+
+    def copy_walls_from_grid(self, other_grid: 'GridBase'):
+        self._walls = other_grid._walls
+
     @staticmethod
     def list_to_string(values):
         return sum(values)
 
     def is_empty(self):
-        return self == Grid.empty()
+        return self == GridBase.empty()
+
+    def all_orthogonal_positions(self, position: Position) -> Set[Position]:
+        return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
+
+    def neighbors_positions(self, position: Position, mode='orthogonal') -> Set[Position]:
+        orthogonal_neighbors = {self.neighbor_up(position), self.neighbor_down(position), self.neighbor_left(position), self.neighbor_right(position)} - {None}
+        if mode == 'orthogonal':
+            return orthogonal_neighbors
+        diagonal_neighbors = {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
+        return orthogonal_neighbors | diagonal_neighbors
+
+    def neighbor_up(self, position: Position) -> Position:
+        return position.up if position.up in self and {position, position.up} not in self._walls else None
+
+    def neighbor_down(self, position: Position) -> Position:
+        return position.down if position.down in self and {position, position.down} not in self._walls else None
+
+    def neighbor_left(self, position: Position) -> Position:
+        return position.left if position.left in self and {position, position.left} not in self._walls else None
+
+    def neighbor_right(self, position: Position) -> Position:
+        return position.right if position.right in self and {position, position.right} not in self._walls else None
+
+    def neighbor_up_left(self, position: Position) -> Position:
+        return position.up_left if position.up_left in self else None  # check if wall is not between position and position.up_left ?
+
+    def neighbor_up_right(self, position: Position) -> Position:
+        return position.up_right if position.up_right in self else None  # check if wall is not between position and position.up_right ?
+
+    def neighbor_down_left(self, position: Position) -> Position:
+        return position.down_left if position.down_left in self else None  # check if wall is not between position and position.down_left ?
+
+    def neighbor_down_right(self, position: Position) -> Position:
+        return position.down_right if position.down_right in self else None  # check if wall is not between position and position.down_right ?
+
+    def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
+        return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
+
+    def all_positions_up(self, position: Position) -> List[Position]:
+        positions = []
+        while position.up in self and {position, position.up} not in self._walls:
+            position = position.up
+            positions.append(position)
+        return positions
+
+    def all_positions_down(self, position: Position) -> List[Position]:
+        positions = []
+        while position.down in self and {position, position.down} not in self._walls:
+            position = position.down
+            positions.append(position)
+        return positions
+
+    def all_positions_left(self, position: Position) -> List[Position]:
+        positions = []
+        while position.left in self and {position, position.left} not in self._walls:
+            position = position.left
+            positions.append(position)
+        return positions
+
+    def all_positions_right(self, position: Position) -> List[Position]:
+        positions = []
+        while position.right in self and {position, position.right} not in self._walls:
+            position = position.right
+            positions.append(position)
+        return positions
 
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def edges_positions(self) -> Set[Position]:
-        return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
-
-    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'GridBase', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
@@ -234,7 +320,7 @@ class Grid(GridBase[T], Generic[T]):
                     positions.add(position)
         return positions
 
-    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
+    def _is_in_grid_at_position(self, grid: 'GridBase', position: Position, value_to_ignore):
         for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
             if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
                 return False
@@ -243,7 +329,7 @@ class Grid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('GridBase', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

@@ -3,7 +3,7 @@
 # from GridProviders.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 # from GridProviders.StringGridProvider import StringGridProvider
 # from Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
-# from Utils.Grid import Grid
+# from Utils.Board import Board
 # from Utils.Position import Position
 # 
 # 
@@ -43,15 +43,15 @@
 #                         solution_grid.set_value(Position(r, c), 16)
 #                     if solution_grid.value(Position(r, c)) is True:
 #                         solution_grid.set_value(Position(r, c), 6)
-#             police_color_grid = Grid([[11 for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
-#             clean_grid = Grid([[grid.value(Position(r, c)) if grid.value(Position(r, c)) != -1 else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
+#             police_color_grid = Board([[11 for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
+#             clean_grid = Board([[grid.value(Position(r, c)) if grid.value(Position(r, c)) != -1 else ' ' for c in range(grid.columns_number)] for r in range(grid.rows_number)])
 #             print(clean_grid.to_console_string(police_color_grid, solution_grid))
 #             MinesweeperMosaicMainConsole.generate_html(grid, solution_grid)
 #         else:
 #             print(f"No solution found")
 # 
 #     @staticmethod
-#     def generate_html(grid: Grid, solution_grid: Grid):
+#     def generate_html(grid: Board, solution_grid: Board):
 #         with open("solution.html", "w") as file:
 #             file.write("<html><head><style>table {border-collapse: collapse;} td {border: 1px solid black; width: 20px; height: 20px; text-align: center;}</style></head><body><table>")
 #             for r in range(solution_grid.rows_number):

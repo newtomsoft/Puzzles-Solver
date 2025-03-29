@@ -1,6 +1,6 @@
 ﻿import itertools
 
-from Domain.Position import Position
+from Domain.Board.Position import Position
 
 
 class ShapeGenerator:
