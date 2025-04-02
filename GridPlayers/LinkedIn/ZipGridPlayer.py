@@ -15,8 +15,8 @@ class ZipGridPlayer(PlaywrightGridPlayer):
         cells_divs = game_board.query_selector_all('div.trail-cell')
 
         for position in solution.path:
-            cls.mouse_move(page.mouse, solution, position, cells_divs)
-            page.mouse.down()
-            page.mouse.up()
+            cls.mouse_click(page.mouse, solution, position, cells_divs)
 
         sleep(20)
+
+
