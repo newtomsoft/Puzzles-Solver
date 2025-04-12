@@ -87,8 +87,8 @@ class ShingokiSolver(GameSolver):
         constraints = [self._solver.Or(direction_bridges == 0, direction_bridges == 1) for _island_bridges_z3 in self._island_bridges_z3.values() for direction_bridges in _island_bridges_z3.values()]
         self._solver.add(constraints)
         constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
-        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number-1, c)][Direction.down()] == 0 for c in range(self._island_grid.columns_number)]
-        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number-1)][Direction.right()] == 0 for r in range(self._island_grid.rows_number)]
+        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in range(self._island_grid.columns_number)]
+        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in range(self._island_grid.rows_number)]
         constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
         self._solver.add(constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left)
 
@@ -110,16 +110,52 @@ class ShingokiSolver(GameSolver):
     def _add_dots_count_constraints(self):
         for position, cell_value in self.input_grid:
             color, segments_count = self._convert_cell_value_to_color_and_segments_count(cell_value)
-            if color == 'w':
-                white_constraints = self._white_constraints(position, segments_count)
-                self._solver.add(self._solver.Or(white_constraints))
-            if color == 'b':
-                black_constraints = self._black_constraints(position, segments_count)
-                self._solver.add(self._solver.Or(black_constraints))
-                if segments_count == 2:
+            match color, segments_count:
+                case ' ', _:
+                    pass
+                case 'b', 0:
+                    black_constraints = self._black_constraints_when_no_segment_len_constraint(position)
+                    self._solver.add(self._solver.Or(black_constraints))
                     self._solver.add(self._not_loop_black2_constraint(position))
+                case 'b', 2:
+                    black_constraints = self._black_constraints(position, segments_count)
+                    self._solver.add(self._solver.Or(black_constraints))
+                    self._solver.add(self._not_loop_black2_constraint(position))
+                case 'b', _:
+                    black_constraints = self._black_constraints(position, segments_count)
+                    self._solver.add(self._solver.Or(black_constraints))
+                case 'w', 0:
+                    white_constraints = self._white_constraints_when_no_segment_len_constraint(position)
+                    self._solver.add(self._solver.Or(white_constraints))
+                case 'w', _:
+                    white_constraints = self._white_constraints(position, segments_count)
+                    self._solver.add(self._solver.Or(white_constraints))
+                case 'g', 0:
+                    gray_constraints = self._black_and_white_constraints_when_no_segment_len_constraint(position)
+                    self._solver.add(self._solver.Or(gray_constraints))
+                    self._solver.add(self._not_loop_black2_constraint(position))
+                case 'g', 2:
+                    gray_constraints = self._black_and_white_constraints(position, segments_count)
+                    self._solver.add(self._solver.Or(gray_constraints))
+                    self._solver.add(self._not_loop_black2_constraint(position))
+                case 'g', _:
+                    gray_constraints = self._black_and_white_constraints(position, segments_count)
+                    self._solver.add(self._solver.Or(gray_constraints))
+                case _:
+                    pass
 
-    def _white_constraints(self, position, segments_count):
+    def _white_constraints_when_no_segment_len_constraint(self, position: Position):
+        vertical_constraint = self._white_vertical_constraint_when_no_segment_len_constraint(position)
+        horizontal_constraint = self._white_horizontal_constraint_when_no_segment_len_constraint(position)
+        return self._solver.Or(vertical_constraint, horizontal_constraint)
+
+    def _white_vertical_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.up()] == 1, self._island_bridges_z3[position][Direction.down()] == 1)
+
+    def _white_horizontal_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position][Direction.right()] == 1)
+
+    def _white_constraints(self, position: Position, segments_count: int):
         white_constraints = []
         for first_part_count in range(1, segments_count):
             second_part_count = segments_count - first_part_count
@@ -128,7 +164,7 @@ class ShingokiSolver(GameSolver):
             white_constraints.append(self._solver.Or(self._solver.Or(vertical_constraints), self._solver.Or(horizontal_constraints)))
         return white_constraints
 
-    def _white_vertical_constraints(self, position, first_part_count, second_part_count):
+    def _white_vertical_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         vertical_positions = (
                 [position.after(Direction.up(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -140,7 +176,7 @@ class ShingokiSolver(GameSolver):
                 [self._island_bridges_z3[position][Direction.up()] == 1 for position in vertical_positions[1:first_part_count + 1]]
                 + [self._island_bridges_z3[position][Direction.down()] == 1 for position in vertical_positions[first_part_count:-1]]
             )
-            up_left_constraint, down_left_constraint, up_right_constraint, down_right_constraint = False, False, False, False
+            up_left_constraint = down_left_constraint = up_right_constraint = down_right_constraint = False
             if Direction.left() in self._island_bridges_z3[vertical_positions[0]]:
                 up_left_constraint = self._island_bridges_z3[vertical_positions[0]][Direction.left()] == 1
             if Direction.right() in self._island_bridges_z3[vertical_positions[0]]:
@@ -153,7 +189,7 @@ class ShingokiSolver(GameSolver):
             vertical_constraints.append(self._solver.And(first_constraint_vertical, second_constraint))
         return vertical_constraints
 
-    def _white_horizontal_constraints(self, position, first_part_count, second_part_count):
+    def _white_horizontal_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         horizontal_positions = (
                 [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -165,7 +201,7 @@ class ShingokiSolver(GameSolver):
                 [self._island_bridges_z3[position][Direction.left()] == 1 for position in horizontal_positions[1:first_part_count + 1]]
                 + [self._island_bridges_z3[position][Direction.right()] == 1 for position in horizontal_positions[first_part_count:-1]]
             )
-            left_up_constraint, left_down_constraint, right_up_constraint, right_down_constraint = False, False, False, False
+            left_up_constraint = left_down_constraint = right_up_constraint = right_down_constraint = False
             if Direction.up() in self._island_bridges_z3[horizontal_positions[0]]:
                 left_up_constraint = self._island_bridges_z3[horizontal_positions[0]][Direction.up()] == 1
             if Direction.down() in self._island_bridges_z3[horizontal_positions[0]]:
@@ -178,7 +214,26 @@ class ShingokiSolver(GameSolver):
             horizontal_constraints.append(self._solver.And(first_constraint_horizontal, second_constraint))
         return horizontal_constraints
 
-    def _black_constraints(self, position, segments_count):
+    def _black_constraints_when_no_segment_len_constraint(self, position: Position):
+        right_down_constraint = self._black_right_down_constraint_when_no_segment_len_constraint(position)
+        right_up_constraint = self._black_right_up_constraint_when_no_segment_len_constraint(position)
+        left_down_constraint = self._black_left_down_constraint_when_no_segment_len_constraint(position)
+        left_up_constraint = self._black_left_up_constraint_when_no_segment_len_constraint(position)
+        return self._solver.Or(right_down_constraint, right_up_constraint,left_down_constraint, left_up_constraint)
+
+    def _black_right_down_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position][Direction.down()] == 1)
+
+    def _black_right_up_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.right()] == 1, self._island_bridges_z3[position][Direction.up()] == 1)
+
+    def _black_left_down_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position][Direction.down()] == 1)
+
+    def _black_left_up_constraint_when_no_segment_len_constraint(self, position):
+        return self._solver.And(self._island_bridges_z3[position][Direction.left()] == 1, self._island_bridges_z3[position][Direction.up()] == 1)
+
+    def _black_constraints(self, position: Position, segments_count: int):
         black_constraints = []
         for first_part_count in range(1, segments_count):
             second_part_count = segments_count - first_part_count
@@ -189,7 +244,7 @@ class ShingokiSolver(GameSolver):
             black_constraints.append(self._solver.Or(self._solver.Or(right_down_constraints), self._solver.Or(right_up_constraints), self._solver.Or(left_down_constraints), self._solver.Or(left_up_constraints)))
         return black_constraints
 
-    def _black_right_down_constraints(self, position, first_part_count, second_part_count):
+    def _black_right_down_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         right_down_positions = (
                 [position.after(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -200,7 +255,7 @@ class ShingokiSolver(GameSolver):
             first_constraint_right_down = self._solver.And(
                 [self._island_bridges_z3[position][Direction.right()] == 1 for position in right_down_positions[1:first_part_count + 1]] + [
                     self._island_bridges_z3[position][Direction.down()] == 1 for position in right_down_positions[first_part_count:-1]])
-            right_up_constraint, right_down_constraint, down_right_constraint, down_left_constraint = False, False, False, False
+            right_up_constraint = right_down_constraint = down_right_constraint = down_left_constraint = False
             if Direction.up() in self._island_bridges_z3[right_down_positions[0]]:
                 right_up_constraint = self._island_bridges_z3[right_down_positions[0]][Direction.up()] == 1
             if Direction.down() in self._island_bridges_z3[right_down_positions[0]]:
@@ -213,7 +268,7 @@ class ShingokiSolver(GameSolver):
             right_down_constraints.append(self._solver.And(first_constraint_right_down, second_constraint))
         return right_down_constraints
 
-    def _black_right_up_constraints(self, position, first_part_count, second_part_count):
+    def _black_right_up_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         right_up_positions = (
                 [position.after(Direction.right(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -224,7 +279,7 @@ class ShingokiSolver(GameSolver):
             first_constraint_right_up = self._solver.And(
                 [self._island_bridges_z3[position][Direction.right()] == 1 for position in right_up_positions[1:first_part_count + 1]] + [
                     self._island_bridges_z3[position][Direction.up()] == 1 for position in right_up_positions[first_part_count:-1]])
-            right_up_constraint, right_down_constraint, up_right_constraint, up_left_constraint = False, False, False, False
+            right_up_constraint = right_down_constraint = up_right_constraint = up_left_constraint = False
             if Direction.up() in self._island_bridges_z3[right_up_positions[0]]:
                 right_up_constraint = self._island_bridges_z3[right_up_positions[0]][Direction.up()] == 1
             if Direction.down() in self._island_bridges_z3[right_up_positions[0]]:
@@ -237,7 +292,7 @@ class ShingokiSolver(GameSolver):
             right_up_constraints.append(self._solver.And(first_constraint_right_up, second_constraint))
         return right_up_constraints
 
-    def _black_left_down_constraints(self, position, first_part_count, second_part_count):
+    def _black_left_down_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         left_down_positions = (
                 [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -248,7 +303,7 @@ class ShingokiSolver(GameSolver):
             first_constraint_left_down = self._solver.And(
                 [self._island_bridges_z3[position][Direction.left()] == 1 for position in left_down_positions[1:first_part_count + 1]] + [
                     self._island_bridges_z3[position][Direction.down()] == 1 for position in left_down_positions[first_part_count:-1]])
-            left_up_constraint, left_down_constraint, down_left_constraint, down_right_constraint = False, False, False, False
+            left_up_constraint = left_down_constraint = down_left_constraint = down_right_constraint = False
             if Direction.up() in self._island_bridges_z3[left_down_positions[0]]:
                 left_up_constraint = self._island_bridges_z3[left_down_positions[0]][Direction.up()] == 1
             if Direction.down() in self._island_bridges_z3[left_down_positions[0]]:
@@ -261,7 +316,7 @@ class ShingokiSolver(GameSolver):
             left_down_constraints.append(self._solver.And(first_constraint_left_down, second_constraint))
         return left_down_constraints
 
-    def _black_left_up_constraints(self, position, first_part_count, second_part_count):
+    def _black_left_up_constraints(self, position: Position, first_part_count: int, second_part_count: int):
         left_up_positions = (
                 [position.after(Direction.left(), count) for count in reversed(range(1, first_part_count + 1))] +
                 [position] +
@@ -272,7 +327,7 @@ class ShingokiSolver(GameSolver):
             first_constraint_left_up = self._solver.And(
                 [self._island_bridges_z3[position][Direction.left()] == 1 for position in left_up_positions[1:first_part_count + 1]] + [
                     self._island_bridges_z3[position][Direction.up()] == 1 for position in left_up_positions[first_part_count:-1]])
-            left_up_constraint, left_down_constraint, up_left_constraint, up_right_constraint = False, False, False, False
+            left_up_constraint = left_down_constraint = up_left_constraint = up_right_constraint = False
             if Direction.up() in self._island_bridges_z3[left_up_positions[0]]:
                 left_up_constraint = self._island_bridges_z3[left_up_positions[0]][Direction.up()] == 1
             if Direction.down() in self._island_bridges_z3[left_up_positions[0]]:
@@ -284,6 +339,18 @@ class ShingokiSolver(GameSolver):
             second_constraint = self._solver.And(self._solver.Or(left_up_constraint, left_down_constraint), self._solver.Or(up_left_constraint, up_right_constraint))
             left_up_constraints.append(self._solver.And(first_constraint_left_up, second_constraint))
         return left_up_constraints
+
+    def _black_and_white_constraints_when_no_segment_len_constraint(self, position):
+        white_constraint = self._white_constraints_when_no_segment_len_constraint(position)
+        black_constraint = self._black_constraints_when_no_segment_len_constraint(position)
+        black_and_white_constraints = [white_constraint, black_constraint]
+        return black_and_white_constraints
+
+    def _black_and_white_constraints(self, position: Position, segments_count: int):
+        white_constraints = self._white_constraints(position, segments_count)
+        black_constraints = self._black_constraints(position, segments_count)
+        black_and_white_constraints = white_constraints + black_constraints
+        return black_and_white_constraints
 
     @staticmethod
     def _convert_cell_value_to_color_and_segments_count(cell_value: str):
@@ -317,3 +384,4 @@ class ShingokiSolver(GameSolver):
             constraints.append(self._solver.Implies(left_down_constraint, then_left_down_constraint))
 
         return self._solver.And(constraints)
+

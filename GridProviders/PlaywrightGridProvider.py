@@ -12,7 +12,7 @@ class PlaywrightGridProvider(ABC):
         self.config_dir_path = os.path.dirname(os.path.abspath(__file__))
         self.extensions_path = ''
         self.user_data_path = ''
-        self.headless = None
+        self.headless = True
         self.email = ''
         self.password = ''
         self.config = self.get_config()
@@ -51,8 +51,10 @@ class PlaywrightGridProvider(ABC):
 
     def with_playwright(self, callback, source):
         playwright = sync_playwright().start()
-        browser = playwright.chromium.launch_persistent_context(
+        browser_context = playwright.chromium.launch_persistent_context(
             self.user_data_path,
+            record_video_dir="videos/",
+            record_video_size={"width": 1920, "height": 1080},
             headless=self.headless,
             no_viewport=True,
             args=[
@@ -61,5 +63,5 @@ class PlaywrightGridProvider(ABC):
                 '--start-maximized'
             ]
         )
-        var = callback(browser, source)
-        return var, browser
+        var = callback(browser_context, source)
+        return var, browser_context
