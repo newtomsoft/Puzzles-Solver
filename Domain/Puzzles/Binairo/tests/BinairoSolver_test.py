@@ -5,6 +5,8 @@ from Binairo.BinairoSolver import BinairoSolver
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
+_ = -1
+
 
 class BinairoSolverTests(TestCase):
     @staticmethod
@@ -13,11 +15,11 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_grid_too_small(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1],
-            [-1, -1, 0, -1, 0],
-            [1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [0, 0, -1, -1, 0],
+            [_, _, _, _, _],
+            [_, _, 0, _, 0],
+            [1, _, _, _, _],
+            [_, _, _, _, _],
+            [0, 0, _, _, 0],
         ])
 
         with self.assertRaises(ValueError) as context:
@@ -27,12 +29,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_not_even_size_column(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1, 0, -1],
-            [-1, -1, 0, -1, 0, -1, -1],
-            [1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1],
-            [0, 0, -1, -1, 0, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1],
+            [_, _, _, _, _, 0, _],
+            [_, _, 0, _, 0, _, _],
+            [1, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _],
+            [0, 0, _, _, 0, _, _],
+            [_, _, _, _, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
             BinairoSolver(grid, self.get_solver_engine())
@@ -41,13 +43,13 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_not_even_size_row(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1, 0],
-            [-1, -1, 0, -1, 0, -1],
-            [1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [0, 0, -1, -1, 0, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
+            [_, _, _, _, _, 0],
+            [_, _, 0, _, 0, _],
+            [1, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [0, 0, _, _, 0, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
             BinairoSolver(grid, self.get_solver_engine())
@@ -80,12 +82,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_initial_constraint_and_count(self):
         grid = Grid([
-            [-1, 1, 1, 0, 0, -1],
-            [0, -1, 1, 0, -1, 0],
-            [1, 0, -1, -1, 1, 0],
-            [1, 0, -1, -1, 0, 1],
-            [0, -1, 0, 1, -1, 0],
-            [-1, 0, 0, 1, 0, -1],
+            [_, 1, 1, 0, 0, _],
+            [0, _, 1, 0, _, 0],
+            [1, 0, _, _, 1, 0],
+            [1, 0, _, _, 0, 1],
+            [0, _, 0, 1, _, 0],
+            [_, 0, 0, 1, 0, _],
         ])
         expected_grid = Grid([
             [0, 1, 1, 0, 0, 1],
@@ -104,12 +106,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_initial_constraint_and_count_and_unique_row(self):
         grid = Grid([
-            [-1, 1, 1, 0, 0, 1],
-            [-1, 1, 1, 0, 0, 1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
+            [_, 1, 1, 0, 0, 1],
+            [_, 1, 1, 0, 0, 1],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
         ])
         game_solver = BinairoSolver(grid, self.get_solver_engine())
 
@@ -118,12 +120,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_initial_constraint_and_count_and_unique_column(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1, -1],
-            [0, 0, -1, -1, -1, -1],
-            [1, 1, -1, -1, -1, -1],
-            [1, 1, -1, -1, -1, -1],
-            [0, 0, -1, -1, -1, -1],
-            [1, 1, -1, -1, -1, -1],
+            [_, _, _, _, _, _],
+            [0, 0, _, _, _, _],
+            [1, 1, _, _, _, _],
+            [1, 1, _, _, _, _],
+            [0, 0, _, _, _, _],
+            [1, 1, _, _, _, _],
         ])
         game_solver = BinairoSolver(grid, self.get_solver_engine())
 
@@ -132,12 +134,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_initial_constraint_and_count_and_unique(self):
         grid = Grid([
-            [1, 0, 1, 0, 1, -1],
-            [0, 1, 0, 1, -1, 1],
-            [-1, 0, 1, 0, -1, -1],
-            [0, 1, -1, -1, 1, -1],
-            [1, 0, -1, -1, 0, -1],
-            [-1, -1, 0, 1, -1, -1],
+            [1, 0, 1, 0, 1, _],
+            [0, 1, 0, 1, _, 1],
+            [_, 0, 1, 0, _, _],
+            [0, 1, _, _, 1, _],
+            [1, 0, _, _, 0, _],
+            [_, _, 0, 1, _, _],
         ])
         expected_grid = Grid([
             [1, 0, 1, 0, 1, 0],
@@ -156,12 +158,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_all_constraints_adjacent_row(self):
         grid = Grid([
-            [0, 0, 0, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
+            [0, 0, 0, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
         ])
         game_solver = BinairoSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
@@ -169,12 +171,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_using_all_constraints_adjacent_column(self):
         grid = Grid([
-            [0, -1, -1, -1, -1, -1],
-            [0, -1, -1, -1, -1, -1],
-            [0, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
+            [0, _, _, _, _, _],
+            [0, _, _, _, _, _],
+            [0, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
         ])
         game_solver = BinairoSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
@@ -182,12 +184,12 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_6x6(self):
         grid = Grid([
-            [0, -1, 0, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, 0, -1, 0, 0, -1],
-            [0, -1, -1, -1, -1, -1],
-            [-1, -1, 0, 0, -1, -1],
-            [-1, -1, -1, -1, 1, -1],
+            [0, _, 0, _, _, _],
+            [_, _, _, _, _, _],
+            [_, 0, _, 0, 0, _],
+            [0, _, _, _, _, _],
+            [_, _, 0, 0, _, _],
+            [_, _, _, _, 1, _],
         ])
         expected_grid = Grid([
             [0, 1, 0, 1, 0, 1],
@@ -205,14 +207,14 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_8x8(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, 1, -1],
-            [-1, -1, -1, -1, 1, -1, -1, 1],
-            [1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, 1, -1, 1, -1, 0],
-            [1, -1, -1, -1, -1, -1, -1, -1],
-            [1, -1, -1, 0, 0, -1, -1, -1],
-            [-1, -1, 0, 0, -1, -1, 0, -1],
+            [_, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, 1, _],
+            [_, _, _, _, 1, _, _, 1],
+            [1, _, _, _, _, _, _, _],
+            [_, _, _, 1, _, 1, _, 0],
+            [1, _, _, _, _, _, _, _],
+            [1, _, _, 0, 0, _, _, _],
+            [_, _, 0, 0, _, _, 0, _],
         ])
         expected_grid = Grid([
             [1, 0, 1, 1, 0, 0, 1, 0],
@@ -232,16 +234,16 @@ class BinairoSolverTests(TestCase):
 
     def test_solution_10x10(self):
         grid = Grid([
-            [0, 0, 1, 0, 1, 0, 1, -1, -1, 1],
-            [-1, -1, 0, 1, 0, 1, -1, -1, 1, 0],
-            [-1, -1, 1, 0, 1, 0, 0, 1, 0, 1],
-            [-1, -1, 0, 1, -1, -1, 1, 0, 1, 0],
-            [1, -1, -1, 0, -1, -1, -1, -1, -1, 0],
-            [-1, 0, -1, -1, 1, -1, -1, 1, 0, 1],
-            [-1, -1, -1, -1, -1, 1, -1, 0, 1, 0],
-            [-1, 1, -1, -1, -1, -1, -1, 0, 1, 0],
-            [0, -1, -1, -1, -1, -1, -1, 1, 0, 1],
-            [-1, -1, -1, -1, 1, -1, -1, -1, -1, 1],
+            [0, 0, 1, 0, 1, 0, 1, _, _, 1],
+            [_, _, 0, 1, 0, 1, _, _, 1, 0],
+            [_, _, 1, 0, 1, 0, 0, 1, 0, 1],
+            [_, _, 0, 1, _, _, 1, 0, 1, 0],
+            [1, _, _, 0, _, _, _, _, _, 0],
+            [_, 0, _, _, 1, _, _, 1, 0, 1],
+            [_, _, _, _, _, 1, _, 0, 1, 0],
+            [_, 1, _, _, _, _, _, 0, 1, 0],
+            [0, _, _, _, _, _, _, 1, 0, 1],
+            [_, _, _, _, 1, _, _, _, _, 1],
         ])
         expected_grid = Grid([
             [0, 0, 1, 0, 1, 0, 1, 1, 0, 1],

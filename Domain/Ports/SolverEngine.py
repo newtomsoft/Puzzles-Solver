@@ -11,6 +11,10 @@ class SolverEngine(ABC):
         pass
 
     @abstractmethod
+    def abs(self, constraint):
+        pass
+
+    @abstractmethod
     def add(self, *constraints):
         pass
 
