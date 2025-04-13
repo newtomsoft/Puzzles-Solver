@@ -37,6 +37,9 @@ class Z3SolverEngine(SolverEngine):
     def sum(self, param):
         return z3.Sum(param)
 
+    def abs(self, constraint):
+        return z3.Abs(constraint)
+
     def And(self, *constraints):
         return z3.And(*constraints)
 

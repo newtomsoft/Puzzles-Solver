@@ -1,5 +1,8 @@
-﻿from abc import ABC
+﻿import datetime
+import os
+from abc import ABC, abstractmethod
 
+from moviepy import VideoFileClip
 from playwright.async_api import BrowserContext, Mouse
 from playwright.sync_api import ElementHandle
 
@@ -9,6 +12,7 @@ from Board.Position import Position
 
 class PlaywrightGridPlayer(ABC):
     @classmethod
+    @abstractmethod
     def play(cls, solution, browser: BrowserContext):
         pass
 
@@ -52,3 +56,12 @@ class PlaywrightGridPlayer(ABC):
         mouse.down()
         mouse.move(end_x, end_y, steps=int(end_position.distance(start_position)))
         mouse.up()
+
+    @classmethod
+    def crop_video(cls, input_video_path: str, x1: int, y1: int, x2: int, y2: int):
+        clip = VideoFileClip(input_video_path, audio=False)
+        cropped_clip = clip.cropped(x1=x1, y1=y1, x2=x2, y2=y2)
+        date_yyyy_mm_dd = datetime.datetime.now().strftime('%Y-%m-%d')
+        output_path = f'{input_video_path[:-5]}-{date_yyyy_mm_dd}.mp4'
+        cropped_clip.write_videofile(output_path)
+        os.remove(input_video_path)

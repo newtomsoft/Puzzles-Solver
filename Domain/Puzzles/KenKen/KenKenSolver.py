@@ -1,6 +1,4 @@
 ﻿import math
-import operator
-from functools import reduce
 from typing import List, Tuple
 
 from Domain.Board.Grid import Grid
@@ -21,8 +19,7 @@ class KenKenSolver(GameSolver):
 
     def get_solution(self) -> (Grid | None, int):
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._add_constraints()
-        if not self._solver.has_solution():
+        if self._add_constraints() is False:
             return Grid.empty()
         self._previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
@@ -37,7 +34,15 @@ class KenKenSolver(GameSolver):
     def _add_constraints(self):
         self._initials_constraints()
         self._add_distinct_in_rows_and_columns_constraints()
-        self._add_operations_constraints()
+        self._add_operations_add_constraints()
+        self._add_operations_sub_constraints()
+        if not self._solver.has_solution():
+            return False
+        self._add_operations_mul_constraints()
+        self._add_operations_div_constraints()
+        if not self._solver.has_solution():
+            return False
+        return True
 
     def _initials_constraints(self):
         for position, value in self._grid_z3:
@@ -50,25 +55,31 @@ class KenKenSolver(GameSolver):
         for c in range(self.columns_number):
             self._solver.add(self._solver.distinct([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]))
 
-    def _add_operations_constraints(self):
-        for region, operator_str, result in self._regions_operators_results:
-            match operator_str:
-                case '+':
-                    constraint = reduce(operator.add, [self._grid_z3[position] for position in region]) == result
-                case 'x':
-                    constraint = math.prod([self._grid_z3[position] for position in region]) == result
-                case '-':
-                    constraint = self._solver.Or(
-                        reduce(operator.sub, [self._grid_z3[position] for position in region]) == result,
-                        reduce(operator.sub, [self._grid_z3[position] for position in reversed(region)]) == result
-                    )
-                case '÷':
-                    constraint = self._solver.Or(
-                        reduce(operator.truediv, [self._grid_z3[position] for position in region]) == result,
-                        reduce(operator.truediv, [self._grid_z3[position] for position in reversed(region)]) == result
-                    )
-                case _:
-                    raise ValueError("Invalid operator_str")
+    def _add_operations_mul_constraints(self):
+        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == 'x']:
+            constraint = math.prod([self._grid_z3[position] for position in region]) == result
+            self._solver.add(constraint)
+
+    def _add_operations_div_constraints(self):
+        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '÷']:
+            if len(region) != 2:
+                raise ValueError("Division can only be applied to two positions")
+            constraint = self._solver.Or(
+                self._grid_z3[region[0]] * result == self._grid_z3[region[1]],
+                self._grid_z3[region[1]] * result == self._grid_z3[region[0]]
+            )
+            self._solver.add(constraint)
+
+    def _add_operations_add_constraints(self):
+        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '+']:
+            constraint = sum([self._grid_z3[position] for position in region]) == result
+            self._solver.add(constraint)
+
+    def _add_operations_sub_constraints(self):
+        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '-']:
+            if len(region) != 2:
+                raise ValueError("Subtraction can only be applied to two positions")
+            constraint = self._solver.abs(self._grid_z3[region[0]] - self._grid_z3[region[1]]) == result
             self._solver.add(constraint)
 
     def _get_rows_columns_number(self) -> (int, int):
