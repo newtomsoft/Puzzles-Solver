@@ -4,7 +4,7 @@ from abc import abstractmethod
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
+from Domain.Puzzles.GameSolver import GameSolver
 from Utils.utils import is_perfect_square
 
 

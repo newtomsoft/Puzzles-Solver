@@ -2,10 +2,10 @@
 
 from playwright.sync_api import BrowserContext
 
+from Domain.Board.Grid import Grid
+from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Pipes.PipeShapeTransition import PipeShapeTransition
-from Domain.Board.Grid import Grid
 
 
 class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):

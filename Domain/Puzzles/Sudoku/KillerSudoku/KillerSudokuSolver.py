@@ -3,8 +3,8 @@
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
-from Sudoku.SudokuBaseSolver import SudokuBaseSolver
+from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 
 
 class KillerSudokuSolver(SudokuBaseSolver, GameSolver):

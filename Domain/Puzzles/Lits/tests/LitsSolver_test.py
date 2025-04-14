@@ -3,8 +3,8 @@
 from parameterized import parameterized
 
 from Domain.Board.Grid import Grid
-from Lits.LitsSolver import LitsSolver
-from Lits.LitsType import LitsType
+from Domain.Puzzles.Lits.LitsSolver import LitsSolver
+from Domain.Puzzles.Lits.LitsType import LitsType
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

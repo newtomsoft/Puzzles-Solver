@@ -2,8 +2,8 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Sudoku.Sudoku.SudokuSolver import SudokuSolver
 
 _ = -1
 

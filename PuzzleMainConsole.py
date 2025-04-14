@@ -46,6 +46,7 @@ from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
+from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiGridPlayer import GridPuzzleShingokiGridPlayer
 from GridPlayers.LinkedIn.ZipGridPlayer import ZipGridPlayer
@@ -129,7 +130,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Zip.ZipSolver import ZipSolver
 
 SOLVER_ENGINE = Z3SolverEngine()
 

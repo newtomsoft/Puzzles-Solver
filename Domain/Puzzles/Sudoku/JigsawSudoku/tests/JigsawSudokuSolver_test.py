@@ -3,8 +3,8 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 
 
 class JigsawSudokuSolverTests(TestCase):

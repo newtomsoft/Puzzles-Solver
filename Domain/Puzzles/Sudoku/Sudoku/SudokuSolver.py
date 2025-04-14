@@ -1,7 +1,7 @@
 ﻿from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
-from Sudoku.SudokuBaseSolver import SudokuBaseSolver
+from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 from Utils.utils import is_perfect_square
 
 
