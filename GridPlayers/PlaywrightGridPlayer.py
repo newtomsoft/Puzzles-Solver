@@ -58,6 +58,22 @@ class PlaywrightGridPlayer(ABC):
         mouse.up()
 
     @classmethod
+    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int):
+        game_board_wrapper = frame.wait_for_selector(selector)
+        bounding_box = game_board_wrapper.bounding_box()
+        x1 = int(bounding_box['x']) + x_offset
+        y1 = int(bounding_box['y']) + y_offset
+        x2 = int(bounding_box['width']) + x1 + width_offset
+        y2 = int(bounding_box['height']) + y1 + height_offset
+        video = page.video
+        return video, x1, x2, y1, y2
+
+    @classmethod
+    def process_video(cls, video, x1, y1, x2, y2):
+        input_video_path = video.path()
+        cls.crop_video(input_video_path, x1, y1, x2, y2)
+
+    @classmethod
     def crop_video(cls, input_video_path: str, x1: int, y1: int, x2: int, y2: int):
         clip = VideoFileClip(input_video_path, audio=False)
         cropped_clip = clip.cropped(x1=x1, y1=y1, x2=x2, y2=y2)
