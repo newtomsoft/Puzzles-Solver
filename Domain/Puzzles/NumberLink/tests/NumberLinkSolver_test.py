@@ -6,7 +6,8 @@ from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
-class NUmberLinkSolverTests(TestCase):
+
+class NumberLinkSolverTests(TestCase):
     @staticmethod
     def get_solver_engine():
         return Z3SolverEngine()
