@@ -7,9 +7,9 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
-from Lits.LitsGridBuilder import LitsGridBuilder
-from Lits.LitsType import LitsType
+from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Lits.LitsGridBuilder import LitsGridBuilder
+from Domain.Puzzles.Lits.LitsType import LitsType
 
 
 class LitsSolver(GameSolver):

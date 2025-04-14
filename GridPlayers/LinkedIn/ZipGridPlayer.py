@@ -2,7 +2,7 @@
 
 from playwright.sync_api import BrowserContext
 
-from Board.LinearPathGrid import LinearPathGrid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 

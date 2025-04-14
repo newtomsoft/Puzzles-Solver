@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Pipe import Pipe, PipeString
-from Pipes.PipesSolver import PipesSolver
+from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

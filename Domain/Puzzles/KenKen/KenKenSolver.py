@@ -4,7 +4,7 @@ from typing import List, Tuple
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
+from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KenKenSolver(GameSolver):

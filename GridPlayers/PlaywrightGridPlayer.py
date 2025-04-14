@@ -6,8 +6,8 @@ from moviepy import VideoFileClip
 from playwright.async_api import BrowserContext, Mouse
 from playwright.sync_api import ElementHandle
 
-from Board.Grid import Grid
-from Board.Position import Position
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 
 
 class PlaywrightGridPlayer(ABC):

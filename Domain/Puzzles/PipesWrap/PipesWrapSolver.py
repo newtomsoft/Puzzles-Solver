@@ -5,8 +5,8 @@ from Domain.Board.Position import Position
 from Domain.Board.WrappedGrid import WrappedGrid
 from Domain.Board.WrappedPipesGrid import WrappedPipesGrid
 from Domain.Ports.SolverEngine import SolverEngine
-from Pipes.PipeShapeTransition import PipeShapeTransition
-from Pipes.PipesSolver import PipesSolver
+from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
+from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 
 FALSE = False
 

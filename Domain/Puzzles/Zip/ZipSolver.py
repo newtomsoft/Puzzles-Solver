@@ -1,8 +1,8 @@
-﻿from Board.LinearPathGrid import LinearPathGrid
-from Domain.Board.Grid import Grid
+﻿from Domain.Board.Grid import Grid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
-from GameSolver import GameSolver
+from Domain.Puzzles.GameSolver import GameSolver
 
 
 class ZipSolver(GameSolver):
