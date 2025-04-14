@@ -5,9 +5,10 @@ from playwright.sync_api import BrowserContext
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class GridPuzzleShingokiGridPlayer(GridPlayer):
+class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution: IslandGrid, browser: BrowserContext):
         page = browser.pages[0]
@@ -20,6 +21,8 @@ class GridPuzzleShingokiGridPlayer(GridPlayer):
         height = bounded_box['height']
         cell_width = width / columns_number
         cell_height = height / rows_number
+        video, x1, x2, y1, y2 = cls.get_data_video(page, page, '#puzzle_container', -20, -20, 40, 40)
+
         for island in solution.islands.values():
             if Direction.right() in island.direction_position_bridges:
                 page.mouse.move(x0 + cell_width / 2 + island.position.c * cell_width, y0 + cell_height / 2 + island.position.r * cell_height)
@@ -32,3 +35,6 @@ class GridPuzzleShingokiGridPlayer(GridPlayer):
                 page.mouse.move(x0 + cell_width / 2 + island.position.c * cell_width, y0 + cell_height / 2 + (island.position.r + 1) * cell_height)
                 page.mouse.up()
         sleep(3)
+
+        browser.close()
+        cls.process_video(video, x1, y1, x2, y2)
