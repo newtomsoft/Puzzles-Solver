@@ -4,10 +4,10 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class SnakeSolver(GameSolver):
-    def __init__(self, grid: Grid, row_numbers: list[int], column_numbers: list[int], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, row_sums: list[int], column_sums: list[int], solver_engine: SolverEngine):
         self._grid = grid
-        self._row_numbers = row_numbers
-        self._column_numbers = column_numbers
+        self._row_sums = row_sums
+        self._column_sums = column_sums
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._solver = solver_engine
@@ -15,7 +15,7 @@ class SnakeSolver(GameSolver):
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> (Grid, int):
-        self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -33,13 +33,22 @@ class SnakeSolver(GameSolver):
     def _add_constraints(self):
         self._add_initial_constraints()
         self._add_cells_sum_constraints()
+        self._add_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
+        for position, value in self._grid_z3:
+            self._solver.add(value >= 0)
+            self._solver.add(value <= 1)
         for position in [position for position, value in self._grid if value == 1]:
-            self._solver.add(self._grid_z3[position])
+            self._solver.add(self._grid_z3[position] == 1)
 
     def _add_cells_sum_constraints(self):
-        for row_index, row_number in enumerate(range(self.rows_number)):
-            self._solver.add(self._solver.sum([self._grid_z3[row_index, c] for c in range(self.columns_number)]) == self._row_numbers[row_index])
-        for column_index, column_number in enumerate(range(self.columns_number)):
-            self._solver.add(self._solver.sum([self._grid_z3[r, column_index] for r in range(self.rows_number)]) == self._column_numbers[column_index])
+        for row_index, row_sum in enumerate(self._row_sums):
+            self._solver.add(self._solver.sum([self._grid_z3[row_index, c] for c in range(self.columns_number)]) == row_sum)
+        for column_index, column_sum in enumerate(self._column_sums):
+            self._solver.add(self._solver.sum([self._grid_z3[r, column_index] for r in range(self.rows_number)]) == column_sum)
+
+    def _add_neighbors_count_constraints(self):
+        for position, position_value in self._grid:
+            same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in self._grid_z3.neighbors_values(position)])
+            self._solver.add(same_value_neighbors_count == 1) if position_value == 1 else self._solver.add(same_value_neighbors_count == 2)

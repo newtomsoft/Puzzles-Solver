@@ -49,11 +49,11 @@ class SnakeSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, _],
-            [_, _, 1, _, _, _],
             [1, _, _, _, _, _],
             [1, _, _, _, _, _],
-            [1, 1, _, 1, 1, _],
-            [1, _, _, 1, _, 1],
+            [1, _, _, _, _, _],
+            [1, 1, 1, 1, _, _],
+            [_, _, _, 1, 1, 1],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
