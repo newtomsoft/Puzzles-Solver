@@ -26,9 +26,13 @@ class SnakeSolver(GameSolver):
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
-        if not self._solver.has_solution():
-            return Grid.empty()
-        return Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        while True:
+            if not self._solver.has_solution():
+                return Grid.empty()
+            candidate = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+            if candidate.are_cells_connected():
+                return candidate
+            self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in candidate])))
 
     def _add_constraints(self):
         self._add_initial_constraints()

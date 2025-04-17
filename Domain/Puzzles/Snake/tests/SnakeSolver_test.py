@@ -59,7 +59,6 @@ class SnakeSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-
     def test_solution_6x6_l89r4(self):
         # https://gridpuzzle.com/snake/l89r4
         grid = Grid([
@@ -71,7 +70,7 @@ class SnakeSolverTests(TestCase):
             [1, _, _, _, _, _],
         ])
         row_numbers = [4, 2, 3, 3, 1, 1]
-        column_numbers = [3, 1,4, 1, 2, 3]
+        column_numbers = [3, 1, 4, 1, 2, 3]
 
         game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
@@ -86,7 +85,6 @@ class SnakeSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
-
 
     def test_solution_6x6_some_unknown_sums_lqr79(self):
         # https://gridpuzzle.com/snake/lqr79
@@ -104,12 +102,39 @@ class SnakeSolverTests(TestCase):
         game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [0, 0, 0, 0, 1, 1],
-            [1, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 1, 1],
-            [1, 1, 1, 0, 1, 0],
-            [0, 0, 1, 1, 1, 0],
+            [_, _, _, _, 1, 1],
+            [1, _, _, _, _, 1],
+            [1, _, _, _, _, 1],
+            [1, _, _, _, 1, 1],
+            [1, 1, 1, _, 1, _],
+            [_, _, 1, 1, 1, _],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_6x6_evil_dn07p(self):
+        # https://gridpuzzle.com/snake/dn07p
+        grid = Grid([
+            [_, _, _, _, 1, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [1, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+        ])
+        row_numbers = [-1, 2, -1, -1, 3, -1]
+        column_numbers = [3, -1, -1, -1, 4, 3]
+
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [_, _, _, _, 1, _],
+            [_, _, _, _, 1, 1],
+            [_, _, _, _, _, 1],
+            [1, _, _, _, 1, 1],
+            [1, _, _, 1, 1, _],
+            [1, 1, 1, 1, _, _],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
