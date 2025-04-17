@@ -33,6 +33,7 @@ from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
+from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
 from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
 from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
 from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
@@ -86,6 +87,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersGridPlayer import PuzzleThermom
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
+from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
@@ -182,6 +184,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiGridPlayer),
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
+            r"https://.*gridpuzzle\.com/snake": (SnakeSolver, GridPuzzleSnakeGridProvider, None),
             r"https://.*\.puzzle-star-battle\.com": (StarBattleSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
             r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattleGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, None),
