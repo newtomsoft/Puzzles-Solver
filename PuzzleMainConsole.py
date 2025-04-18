@@ -50,6 +50,7 @@ from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiGridPlayer import GridPuzzleShingokiGridPlayer
+from GridPlayers.GridPuzzle.GridPuzzleSnakeGridPlayer import GridPuzzleSnakeGridPlayer
 from GridPlayers.LinkedIn.ZipGridPlayer import ZipGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuGridPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesGridPlayer
@@ -184,7 +185,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
             r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiGridPlayer),
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersGridPlayer),
-            r"https://.*gridpuzzle\.com/snake": (SnakeSolver, GridPuzzleSnakeGridProvider, None),
+            r"https://.*gridpuzzle\.com/snake": (SnakeSolver, GridPuzzleSnakeGridProvider, GridPuzzleSnakeGridPlayer),
             r"https://.*\.puzzle-star-battle\.com": (StarBattleSolver, PuzzleStarBattleGridProvider, PuzzleStarBattleGridPlayer),
             r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattleGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, None),
