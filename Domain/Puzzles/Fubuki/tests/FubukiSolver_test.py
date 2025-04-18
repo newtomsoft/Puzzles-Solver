@@ -87,7 +87,7 @@ class FubukiSolverTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_evil(self):
+    def test_solution_hard(self):
         grid = Grid([
             [_, 8, _],
             [_, _, _],
@@ -100,6 +100,26 @@ class FubukiSolverTests(TestCase):
             [6, 8, 3],
             [4, 5, 2],
             [7, 9, 1],
+        ])
+        game = FubukiSolver(grid, row_sums, column_sums, self.get_solver_engine())
+        solution = game.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_evil(self):
+        grid = Grid([
+            [_, _, _],
+            [_, _, _],
+            [_, _, _],
+        ])
+        row_sums = [19, 10, 16]
+        column_sums = [23, 15, 7]
+
+        expected_solution = Grid([
+            [8, 7, 4],
+            [6, 3, 1],
+            [9, 5, 2],
         ])
         game = FubukiSolver(grid, row_sums, column_sums, self.get_solver_engine())
         solution = game.get_solution()
