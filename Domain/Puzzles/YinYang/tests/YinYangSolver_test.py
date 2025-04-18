@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from YinYang.YinYangSolver import YinYangSolver
+from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 
 _ = ''
 

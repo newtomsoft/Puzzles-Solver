@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Shikaku.ShikakuSolver import ShikakuSolver
+from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

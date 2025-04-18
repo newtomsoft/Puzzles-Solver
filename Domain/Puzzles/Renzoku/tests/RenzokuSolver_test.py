@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Renzoku.RenzokuSolver import RenzokuSolver
+from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

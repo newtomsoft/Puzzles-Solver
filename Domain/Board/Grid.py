@@ -33,7 +33,7 @@ class Grid(GridBase[T], Generic[T]):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
 
-    def __contains__(self, item):
+    def __contains__(self, item: Position) -> bool:
         if isinstance(item, Position):
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
@@ -58,7 +58,7 @@ class Grid(GridBase[T], Generic[T]):
         return self._matrix
 
     @staticmethod
-    def empty() -> 'Board':
+    def empty() -> 'Grid':
         return Grid([[]])
 
     def value(self, r_or_position, c=None) -> T:
@@ -73,10 +73,12 @@ class Grid(GridBase[T], Generic[T]):
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
             matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
-        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in
+        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)]
+                        for r in
                         range(self.rows_number)]
         background_color_matrix = [
-            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in
+            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in
+             range(self.columns_number)] for r in
             range(self.rows_number)]
         end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
         end_space = ' ' if back_ground_color_grid else ''
@@ -232,7 +234,7 @@ class Grid(GridBase[T], Generic[T]):
     def edges_positions(self) -> Set[Position]:
         return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
 
-    def find_all_positions_in(self, grid: 'Board', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
@@ -241,7 +243,7 @@ class Grid(GridBase[T], Generic[T]):
                     positions.add(position)
         return positions
 
-    def _is_in_grid_at_position(self, grid: 'Board', position: Position, value_to_ignore):
+    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
         for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
             if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
                 return False
@@ -250,7 +252,7 @@ class Grid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Board', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)
@@ -259,3 +261,9 @@ class Grid(GridBase[T], Generic[T]):
         for position in [position - Position(min_r, min_c) for position in positions]:
             matrix[position.r][position.c] = set_value
         return cls(matrix), Position(min_r, min_c)
+
+    def enlarge(self, top: int, bottom: int, left: int, right: int, value=True) -> 'Grid':
+        enlarged_matrix = [[
+            self[Position(r - top, c - left)] if left <= c < self.columns_number + left and top <= r < self.rows_number + top else value
+            for c in range(self.columns_number + left + right)] for r in range(self.rows_number + top + bottom)]
+        return Grid(enlarged_matrix)

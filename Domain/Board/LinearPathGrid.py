@@ -58,6 +58,7 @@ class LinearPathGrid(Grid[PathCell]):
         value = self[position]
         if value.is_start():
             return position.get_next_position(value)
+        return None
 
 
 class LinearPath:

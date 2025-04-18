@@ -4,7 +4,7 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from TentaiShow.TentaiShowSolver import TentaiShowSolver
+from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 
 
 class TentaiShowSolverTests(TestCase):

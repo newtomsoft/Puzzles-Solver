@@ -2,7 +2,7 @@ import unittest
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Shingoki.ShingokiSolver import ShingokiSolver
+from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 ____ = ' '

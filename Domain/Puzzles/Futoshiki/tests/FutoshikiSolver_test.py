@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Futoshiki.FutoshikiSolver import FutoshikiSolver
+from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

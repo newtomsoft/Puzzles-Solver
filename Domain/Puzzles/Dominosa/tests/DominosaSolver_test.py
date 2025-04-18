@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Dominosa.DominosaSolver import DominosaSolver
+from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

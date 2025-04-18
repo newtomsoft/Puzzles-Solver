@@ -5,7 +5,7 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
-from Hashi.HashiSolver import HashiSolver
+from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

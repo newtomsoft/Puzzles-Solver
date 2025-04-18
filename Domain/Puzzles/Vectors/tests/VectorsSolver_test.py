@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Vectors.VectorsSolver import VectorsSolver
+from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 
 _ = ''
 

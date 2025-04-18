@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Aquarium.AquariumSolver import AquariumSolver
+from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

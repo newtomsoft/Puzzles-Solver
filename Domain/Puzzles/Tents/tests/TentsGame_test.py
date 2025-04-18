@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Tents.TentsSolver import TentsSolver
+from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 
 
 class TentsSolverTests(TestCase):

@@ -4,7 +4,7 @@ from unittest import TestCase
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Stitches.StitchesSolver import StitchesSolver
+from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
 
 
 class StitchesSolverTests(TestCase):

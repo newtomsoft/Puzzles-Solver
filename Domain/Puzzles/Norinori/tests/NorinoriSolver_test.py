@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Norinori.NorinoriSolver import NorinoriSolver
+from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

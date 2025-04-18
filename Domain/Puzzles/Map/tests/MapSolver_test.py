@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Map.MapSolver import MapSolver
+from Domain.Puzzles.Map.MapSolver import MapSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
