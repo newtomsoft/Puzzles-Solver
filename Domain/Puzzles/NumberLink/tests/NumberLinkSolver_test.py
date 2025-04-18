@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from NumberLink.NumberLinkSolver import NumberLinkSolver
+from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1

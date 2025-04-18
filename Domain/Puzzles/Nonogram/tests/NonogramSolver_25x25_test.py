@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Nonogram.NonogramSolver import NonogramSolver
+from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

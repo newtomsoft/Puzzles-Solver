@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Suriza.SurizaSolver import SurizaSolver
+from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
 
 _ = ' '
 

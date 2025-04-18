@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Sumplete.SumpleteSolver import SumpleteSolver
+from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 
 
 class SumpleteSolverTests(TestCase):

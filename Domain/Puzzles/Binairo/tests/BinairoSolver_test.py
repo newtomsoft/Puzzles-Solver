@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Binairo.BinairoSolver import BinairoSolver
+from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

@@ -26,13 +26,18 @@ class SnakeSolver(GameSolver):
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
+        attempted_solutions_number = 1
         while True:
             if not self._solver.has_solution():
                 return Grid.empty()
-            candidate = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
-            if candidate.are_cells_connected():
-                return candidate
-            self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in candidate])))
+            attempt = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+            if attempt.enlarge(value=0, top=1, left=1, bottom=1, right=1).are_all_cells_connected():
+                print(f"Found solution in {attempted_solutions_number} attempts")
+                return attempt
+            attempted_solutions_number += 1
+            if attempted_solutions_number > 1000000:
+                return Grid.empty()
+            self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in attempt])))
 
     def _add_constraints(self):
         self._add_initial_constraints()

@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Masyu.MasyuSolver import MasyuSolver
+from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

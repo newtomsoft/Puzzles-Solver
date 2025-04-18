@@ -3,7 +3,7 @@
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Zip.ZipSolver import ZipSolver
+from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 
 
 class ZipSolverTests(TestCase):

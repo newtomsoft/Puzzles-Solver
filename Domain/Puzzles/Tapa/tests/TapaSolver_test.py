@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Tapa.TapaSolver import TapaSolver
+from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
 
 
 class TapaSolverTests(TestCase):

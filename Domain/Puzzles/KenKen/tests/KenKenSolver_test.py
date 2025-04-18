@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from KenKen.KenKenSolver import KenKenSolver
+from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

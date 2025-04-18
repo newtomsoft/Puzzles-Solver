@@ -1,7 +1,7 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Akari.AkariSolver import AkariSolver
+from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 

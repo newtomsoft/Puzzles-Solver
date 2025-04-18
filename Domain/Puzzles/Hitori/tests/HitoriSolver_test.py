@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Hitori.HitoriSolver import HitoriSolver
+from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

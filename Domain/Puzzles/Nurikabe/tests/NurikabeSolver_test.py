@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Nurikabe.NurikabeSolver import NurikabeSolver
+from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 

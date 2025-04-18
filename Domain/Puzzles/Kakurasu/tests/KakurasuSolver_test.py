@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Kakurasu.KakurasuSolver import KakurasuSolver
+from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
