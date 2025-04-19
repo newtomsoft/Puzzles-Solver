@@ -13,6 +13,19 @@ class Str8tsSolverTests(TestCase):
     def get_solver_engine():
         return Z3SolverEngine()
 
+    def test_solution_grid_not_square(self):
+        numbers_grid = Grid([
+            [2, 1, _],
+            [1, 2, 3],
+        ])
+        blacks_grid = Grid([
+            [o, o, x],
+            [x, o, o],
+        ])
+        with self.assertRaises(ValueError) as context:
+            Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        self.assertEqual("Str8ts has to be a square", str(context.exception))
+
     def test_initial_constraints(self):
         numbers_grid = Grid([
             [2, 1, _],
