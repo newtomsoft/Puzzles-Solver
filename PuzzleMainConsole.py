@@ -89,6 +89,7 @@ from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProv
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
+from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
@@ -132,6 +133,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTenta
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
+from Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 SOLVER_ENGINE = Z3SolverEngine()
@@ -190,6 +192,7 @@ class PuzzleMainConsole:
             r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattleGridPlayer),
             r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, None),
             r"https://.*\.puzzle-stitches\.com": (StitchesSolver, PuzzleStitchesGridProvider, PuzzleStitchesGridPlayer),
+            r"https://.*gridpuzzle\.com/str8ts.": (Str8tsSolver, GridPuzzleStr8tsGridProvider, None),
             r"https://.*\.puzzle-sudoku\.com": (SudokuSolver, PuzzleSudokuGridProvider, PuzzleSudokuGridPlayer),
             r"https://escape-sudoku.com/": (SudokuSolver, EscapeSudokuGridProvider, None),
             r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuGridPlayer),  # same player as masyu
