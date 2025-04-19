@@ -31,10 +31,10 @@ class GridPuzzleSnakeGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesM
                 col = i % column_count
                 matrix[row][col] = 1
 
-        sums_v = [self.method_name('vl', row_count, soup) for row_count in range(1, row_count + 1)]
-        sums_h = [self.method_name('ht', column_count, soup) for column_count in range(1, column_count + 1)]
+        sums_v = [self.extract_sum_value('vl', row_count, soup) for row_count in range(1, row_count + 1)]
+        sums_h = [self.extract_sum_value('ht', column_count, soup) for column_count in range(1, column_count + 1)]
         return Grid(matrix), sums_v, sums_h,
 
     @staticmethod
-    def method_name(name, column_count, soup):
+    def extract_sum_value(name: str, column_count: int, soup: BeautifulSoup):
         return int(soup.find('div', id=f'{name}_{column_count}').text) if soup.find('div', id=f'{name}_{column_count}').text != '\xa0' else -1
