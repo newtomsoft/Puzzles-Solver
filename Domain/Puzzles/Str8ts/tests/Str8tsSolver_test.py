@@ -39,14 +39,14 @@ class Str8tsSolverTests(TestCase):
         ])
 
         game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
+        solution, __ =game_solver.get_solution()
         expected_solution = Grid([
             [2, 1, _],
             [1, 2, 3],
             [3, _, 2],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
+        other_solution, __ = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_distinct_constraints(self):
@@ -62,14 +62,14 @@ class Str8tsSolverTests(TestCase):
         ])
 
         game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
+        solution, __  =game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 3],
             [2, _, 1],
             [3, 1, 2],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
+        other_solution, __ = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_many_black_cell_distinct_constraints(self):
@@ -85,14 +85,14 @@ class Str8tsSolverTests(TestCase):
         ])
 
         game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
+        solution, __  =game_solver.get_solution()
         expected_solution = Grid([
             [1, _, 2],
             [2, _, _],
             [3, 2, 1],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
+        other_solution, __ = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_adjacent_constraints(self):
@@ -108,14 +108,14 @@ class Str8tsSolverTests(TestCase):
         ])
 
         game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
+        solution, __  =game_solver.get_solution()
         expected_solution = Grid([
             [2, 1, _],
             [1, 2, 3],
             [3, _, 2],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
+        other_solution, __ = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution(self):
@@ -135,7 +135,7 @@ class Str8tsSolverTests(TestCase):
         ])
 
         game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
+        solution, __  =game_solver.get_solution()
         expected_solution = Grid([
             [0, 3, 4, 0, 0],
             [3, 1, 5, 2, 4],
@@ -144,5 +144,5 @@ class Str8tsSolverTests(TestCase):
             [5, 0, 2, 3, 1],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
+        other_solution, __ = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
