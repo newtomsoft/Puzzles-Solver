@@ -14,17 +14,24 @@ class Str8tsSolver:
         self._solver = solver_engine
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
+        self._blank_grid = self._get_blank_grid()
 
-    def get_solution(self) -> (Grid, int):
+    def _get_blank_grid(self):
+        blank_grid = Grid([[False for c in range(self._columns_number)] for r in range(self._rows_number)])
+        for position, value in [(position, value) for position, value in self._numbers_grid if value == 0 and self._blacks_grid[position] == False]:
+            blank_grid.set_value(position, True)
+        return blank_grid
+
+    def get_solution(self) -> (Grid, Grid):
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
-        return self._previous_solution
+        return self._previous_solution, self._blank_grid
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> (Grid, Grid):
         self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution if value > 0])))
         self._previous_solution = self._compute_solution()
-        return self._previous_solution
+        return self._previous_solution, self._blank_grid
 
     def _compute_solution(self) -> Grid:
         if not self._solver.has_solution():
