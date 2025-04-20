@@ -98,8 +98,11 @@ class Str8tsSolver:
             self.add_consecutive_constraint(cells)
 
     def add_consecutive_constraint(self, cells: list):
-        for index_cell, cell_0 in enumerate(cells):
-            constraints = []
-            for cell_i in [cells[i] for i in range(len(cells)) if i != index_cell]:
-                constraints.append(self._solver.abs(cell_0 - cell_i) == 1)
-            self._solver.add(self._solver.Or(constraints))
+        min_val = cells[0]
+        max_val = cells[0]
+        for i in range(1, len(cells)):
+            min_val = self._solver.If(cells[i] < min_val, cells[i], min_val)
+            max_val = self._solver.If(cells[i] > max_val, cells[i], max_val)
+
+        self._solver.add(max_val - min_val == len(cells) - 1)
+
