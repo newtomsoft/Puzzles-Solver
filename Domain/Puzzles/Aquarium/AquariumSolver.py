@@ -21,18 +21,25 @@ class AquariumSolver(GameSolver):
         self.rows_water_numbers = numbers[grid.rows_number:]
         self._solver = solver_engine
         self._grid_z3: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def get_other_solution(self) -> Grid:
+        self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def _compute_solution(self):
         if not self._solver.has_solution():
             return Grid.empty()
         model = self._solver.model()
         grid = Grid([[self._solver.eval(model.eval(self._grid_z3[Position(i, j)])) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
-
-    def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
 
     def _add_constrains(self):
         self._add_sum_constraints()

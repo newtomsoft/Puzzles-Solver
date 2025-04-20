@@ -5,6 +5,8 @@ from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Board.Grid import Grid
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
+_ = 0
+
 
 class AquariumSolverTests(TestCase):
     @staticmethod
@@ -63,16 +65,18 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         expected_grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
         ])
         game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_1_cell_full(self):
         grid = Grid([
@@ -85,16 +89,18 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         expected_grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [1, _, _, _, _, _],
         ])
         game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_6x6(self):
         grid = Grid([
@@ -107,16 +113,18 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [5, 2, 3, 5, 5, 5, 3, 5, 4, 5, 4, 4]
         expected_grid = Grid([
-            [1, 1, 1, 0, 0, 0],
-            [1, 0, 1, 1, 1, 1],
-            [1, 0, 0, 1, 1, 1],
-            [1, 1, 0, 1, 1, 1],
-            [1, 0, 0, 1, 1, 1],
-            [0, 0, 1, 1, 1, 1]
+            [1, 1, 1, _, _, _],
+            [1, _, 1, 1, 1, 1],
+            [1, _, _, 1, 1, 1],
+            [1, 1, _, 1, 1, 1],
+            [1, _, _, 1, 1, 1],
+            [_, _, 1, 1, 1, 1]
         ])
         game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_10x10(self):
         grid = Grid([
@@ -133,20 +141,22 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [1, 3, 2, 3, 4, 2, 3, 3, 4, 3, 4, 7, 2, 2, 1, 1, 3, 3, 3, 2]
         expected_grid = Grid([
-            [1, 1, 0, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
-            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-            [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-            [0, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-            [0, 0, 0, 1, 1, 0, 0, 0, 0, 0]
+            [1, 1, _, 1, 1, _, _, _, _, _],
+            [_, _, 1, 1, 1, 1, 1, 1, 1, _],
+            [_, _, 1, _, _, _, _, _, _, 1],
+            [_, _, _, _, 1, 1, _, _, _, _],
+            [_, 1, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, 1, _, _, _],
+            [_, _, _, _, _, _, _, 1, 1, 1],
+            [_, 1, _, _, _, _, _, _, 1, 1],
+            [_, _, _, _, _, _, 1, 1, 1, _],
+            [_, _, _, 1, 1, _, _, _, _, _]
         ])
         game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_get_solution_15x15(self):
         grid = Grid([
@@ -168,25 +178,27 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [7, 7, 7, 7, 9, 11, 11, 8, 8, 7, 6, 8, 11, 10, 5, 7, 10, 7, 6, 6, 4, 8, 12, 13, 13, 9, 5, 5, 3, 14]
         expected_grid = Grid([
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0],
-            [1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0],
-            [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1],
-            [1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
-            [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0],
-            [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0],
-            [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-            [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1],
+            [_, _, _, _, 1, 1, 1, _, _, _, 1, 1, 1, 1, _],
+            [1, 1, _, 1, 1, 1, 1, 1, 1, _, _, _, 1, 1, _],
+            [1, 1, _, _, _, _, _, 1, 1, _, _, 1, 1, 1, _],
+            [_, _, _, _, _, _, 1, 1, _, _, _, 1, 1, 1, 1],
+            [1, 1, _, _, _, 1, 1, 1, _, _, _, _, _, _, 1],
+            [1, _, _, _, _, 1, _, _, _, _, _, _, 1, _, 1],
+            [_, _, 1, 1, 1, 1, 1, _, _, _, _, 1, 1, 1, _],
+            [_, _, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, _],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, _],
+            [_, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1, 1, 1, 1],
+            [_, _, _, _, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, _],
+            [_, _, _, _, 1, 1, 1, _, 1, 1, _, _, _, _, _],
+            [_, _, 1, 1, _, _, _, _, 1, 1, 1, _, _, _, _],
+            [1, 1, 1, _, _, _, _, _, _, _, _, _, _, _, _],
+            [1, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1, 1, 1],
         ])
         game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
