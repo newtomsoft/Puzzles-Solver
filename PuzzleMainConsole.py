@@ -86,8 +86,10 @@ from GridPlayers.PuzzleMobiles.PuzzleSudokuGridPlayer import PuzzleSudokuGridPla
 from GridPlayers.PuzzleMobiles.PuzzleTapaGridPlayer import PuzzleTapaGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzleTentsGridPlayer import PuzzleTentsGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzleThermometersGridPlayer import PuzzleThermometersGridPlayer
+from GridPlayers.VingtMinutes.VingtMinutesKemaruGridPlayer import VingtMinutesKemaruGridPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
+from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
@@ -134,6 +136,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTenta
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
+from Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
@@ -172,6 +175,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuGridPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroGridPlayer),
+            r"https://www\.20minutes\.fr/services/jeux/kemaru": (KemaruSolver, VingtMinutesKemaruGridProvider, VingtMinutesKemaruGridPlayer),
             r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuGridPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsGridPlayer),
