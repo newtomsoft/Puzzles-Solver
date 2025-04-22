@@ -23,6 +23,7 @@ from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
@@ -49,6 +50,7 @@ from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.GridPuzzle.GridPuzzleNo4InARowGridPlayer import GridPuzzleNo4InARowGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiGridPlayer import GridPuzzleShingokiGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSnakeGridPlayer import GridPuzzleSnakeGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsGridPlayer import GridPuzzleStr8tsGridPlayer
@@ -89,7 +91,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersGridPlayer import PuzzleThermom
 from GridPlayers.VingtMinutes.VingtMinutesKemaruGridPlayer import VingtMinutesKemaruGridPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
-from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
+from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
@@ -136,6 +138,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTenta
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
+from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
 from Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
@@ -184,6 +187,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperGridPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
+            r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowGridPlayer),
             r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
