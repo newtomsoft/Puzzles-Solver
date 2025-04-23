@@ -21,7 +21,7 @@ class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
         height = bounded_box['height']
         cell_width = width / columns_number
         cell_height = height / rows_number
-        video, x1, x2, y1, y2 = cls.get_data_video(page, page, '#puzzle_container', -20, -20, 40, 40)
+        video, rectangle = cls.get_data_video(page, page, '#puzzle_container', -20, -20, 40, 40)
 
         for island in solution.islands.values():
             if Direction.right() in island.direction_position_bridges:
@@ -37,4 +37,4 @@ class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
         sleep(3)
 
         browser.close()
-        cls.process_video(video, x1, y1, x2, y2)
+        cls.process_video(video, "shingoki", rectangle)
