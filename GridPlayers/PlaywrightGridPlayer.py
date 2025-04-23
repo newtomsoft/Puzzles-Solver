@@ -1,6 +1,8 @@
 ﻿import datetime
 import os
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Protocol
 
 from moviepy import VideoFileClip
 from playwright.async_api import BrowserContext, Mouse
@@ -8,6 +10,51 @@ from playwright.sync_api import ElementHandle
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+
+
+class VideoFile(Protocol):
+    def path(self) -> str:
+        ...
+
+
+@dataclass
+class Point:
+    x: int
+    y: int
+
+
+@dataclass
+class Rectangle:
+    top_left: Point
+    bottom_right: Point
+
+    @property
+    def x1(self) -> int:
+        return self.top_left.x
+
+    @property
+    def y1(self) -> int:
+        return self.top_left.y
+
+    @property
+    def x2(self) -> int:
+        return self.bottom_right.x
+
+    @property
+    def y2(self) -> int:
+        return self.bottom_right.y
+
+    @property
+    def width(self) -> int:
+        return self.bottom_right.x - self.top_left.x
+
+    @property
+    def height(self) -> int:
+        return self.bottom_right.y - self.top_left.y
+
+    @classmethod
+    def from_coordinates(cls, x1: int, y1: int, x2: int, y2: int) -> 'Rectangle':
+        return cls(Point(x1, y1), Point(x2, y2))
 
 
 class PlaywrightGridPlayer(ABC):
@@ -58,25 +105,26 @@ class PlaywrightGridPlayer(ABC):
         mouse.up()
 
     @classmethod
-    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int):
+    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[VideoFile, Rectangle]:
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) + x_offset
         y1 = int(bounding_box['y']) + y_offset
         x2 = int(bounding_box['width']) + x1 + width_offset
         y2 = int(bounding_box['height']) + y1 + height_offset
-        video = page.video
-        return video, x1, x2, y1, y2
+        rectangle = Rectangle(Point(x1, y1), Point(x2, y2))
+        return page.video, rectangle
 
     @classmethod
-    def process_video(cls, video, x1, y1, x2, y2):
-        input_video_path = video.path()
-        cls.crop_video(input_video_path, x1, y1, x2, y2)
+    def process_video(cls, video_file: VideoFile, rect: Rectangle) -> str:
+        video_path = video_file.path()
+        cls.crop_video(video_path, rect)
+        return video_path
 
     @classmethod
-    def crop_video(cls, input_video_path: str, x1: int, y1: int, x2: int, y2: int):
+    def crop_video(cls, input_video_path: str, rect: Rectangle):
         clip = VideoFileClip(input_video_path, audio=False)
-        cropped_clip = clip.cropped(x1=x1, y1=y1, x2=x2, y2=y2)
+        cropped_clip = clip.cropped(x1=rect.x1, y1=rect.y1, x2=rect.x2, y2=rect.y2)
         date_yyyy_mm_dd = datetime.datetime.now().strftime('%Y-%m-%d')
         output_path = f'{input_video_path[:-5]}-{date_yyyy_mm_dd}.mp4'
         cropped_clip.write_videofile(output_path)
