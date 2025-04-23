@@ -1,6 +1,5 @@
 ﻿from Domain.Board.Grid import Grid
 from Domain.Board.LinearPathGrid import LinearPathGrid
-from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
@@ -18,19 +17,19 @@ class ZipSolver(GameSolver):
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
-    def get_solution(self) -> (Grid, list[Position]):
+    def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._grid_z3.copy_walls_from_grid(self._grid)
         self._add_constraints()
         return self._compute_solution()
 
-    def get_other_solution(self) -> (Grid, list[Position]):
+    def get_other_solution(self) -> Grid:
         self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
         while self._solver.has_solution():
-            grid_solution = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+            grid_solution = Grid([[(self._solver.eval(self._grid_z3.value(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
             grid_solution.set_walls(self._grid.walls)
             linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(grid_solution, self._checkpoints)
             if linear_path_grid == Grid.empty():
@@ -42,9 +41,9 @@ class ZipSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self._add_finish_checkpoint_no_same_value_neighbors_constraints()
-        self._add_checkpoints_neighbors_count_constraints()
-        self._add_path_neighbors_count_constraints()
+        self._add_finish_checkpoint_not_same_value_neighbors_constraints()
+        self._add_on_checkpoints_neighbors_count_constraints()
+        self._add_along_path_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
         for position in self._checkpoints.values():
@@ -53,18 +52,18 @@ class ZipSolver(GameSolver):
             self._solver.add(self._grid_z3[position] >= self._grid[self._start_position])
             self._solver.add(self._grid_z3[position] < self._grid[self._finish_position])
 
-    def _add_finish_checkpoint_no_same_value_neighbors_constraints(self):
+    def _add_finish_checkpoint_not_same_value_neighbors_constraints(self):
         neighbors_values = self._get_neighbors_values(self._finish_position)
         finish_value = self._grid[self._finish_position]
         self._solver.add([neighbor_value != finish_value for neighbor_value in neighbors_values])
 
-    def _add_path_neighbors_count_constraints(self):
+    def _add_along_path_neighbors_count_constraints(self):
         for position in self._path_positions:
             neighbors_values = self._get_neighbors_values(position)
             same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in neighbors_values])
             self._solver.add(same_value_neighbors_count >= 2)
 
-    def _add_checkpoints_neighbors_count_constraints(self):
+    def _add_on_checkpoints_neighbors_count_constraints(self):
         self._add_checkpoint_same_neighbors_count_constraint(self._start_position)
         self._add_checkpoint_minus_one_same_neighbors_count_constraint(self._finish_position)
 
