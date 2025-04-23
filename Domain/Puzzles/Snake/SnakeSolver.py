@@ -14,7 +14,7 @@ class SnakeSolver(GameSolver):
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
-    def get_solution(self) -> (Grid, int):
+    def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
@@ -41,7 +41,8 @@ class SnakeSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self._add_cells_sum_constraints()
+        self._add_cells_row_sum_constraints()
+        self._add_cells_column_sum_constraints()
         self._add_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
@@ -51,16 +52,19 @@ class SnakeSolver(GameSolver):
         for position in [position for position, value in self._grid if value == 1]:
             self._solver.add(self._grid_z3[position] == 1)
 
-    def _add_cells_sum_constraints(self):
-        for row_index, row_sum in [(i, row_sum) for i, row_sum in enumerate(self._row_sums) if row_sum >= 0]:
+    def _add_cells_row_sum_constraints(self):
+        for row_index, row_sum in [(row_index, row_sum) for row_index, row_sum in enumerate(self._row_sums) if row_sum >= 0]:
             self._solver.add(self._solver.sum([self._grid_z3[row_index, c] for c in range(self.columns_number)]) == row_sum)
-        for column_index, column_sum in [(i, column_sum) for i, column_sum in enumerate(self._column_sums) if column_sum >= 0]:
+
+    def _add_cells_column_sum_constraints(self):
+        for column_index, column_sum in [(column_index, column_sum) for column_index, column_sum in enumerate(self._column_sums) if column_sum >= 0]:
             self._solver.add(self._solver.sum([self._grid_z3[r, column_index] for r in range(self.rows_number)]) == column_sum)
 
     def _add_neighbors_count_constraints(self):
+        start_or_end_value = 1
         for position, position_value in self._grid:
             same_value_neighbors_count = self._solver.sum([self._grid_z3[position] == neighbor_value for neighbor_value in self._grid_z3.neighbors_values(position)])
-            if position_value == 1:
+            if position_value == start_or_end_value:
                 self._solver.add(same_value_neighbors_count == 1)
                 continue
             self._solver.add(self._solver.Implies(self._grid_z3[position] == 1, same_value_neighbors_count == 2))
