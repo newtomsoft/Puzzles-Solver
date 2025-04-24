@@ -30,9 +30,7 @@ class NumberChainSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        attempted_solutions_number = 0
         while self._solver.has_solution():
-            attempted_solutions_number += 1
             matrix_number = [[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)]
             attempt = Grid(matrix_number)
             attempt_bool = Grid([[True if matrix_number[i][j] > 0 else False for j in range(self.columns_number)] for i in range(self.rows_number)])
