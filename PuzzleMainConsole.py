@@ -18,6 +18,7 @@ from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
 from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
 from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
+from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
@@ -26,6 +27,7 @@ from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import Minesweeper
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
+from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
 from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
@@ -37,6 +39,7 @@ from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
 from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
 from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
 from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
+from Domain.Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
@@ -92,6 +95,7 @@ from GridPlayers.VingtMinutes.VingtMinutesKemaruGridPlayer import VingtMinutesKe
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
+from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
@@ -139,8 +143,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.Kemaru.KemaruSolver import KemaruSolver
-from Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 SOLVER_ENGINE = Z3SolverEngine()
@@ -188,6 +190,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsGridPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriGridPlayer),
             r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowGridPlayer),
+            r"https://.*gridpuzzle\.com/number-chain": (NumberChainSolver, GridPuzzleNumberChainGridProvider, None),
             r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksGridPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabeGridPlayer),
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesGridPlayer),  # same player and same grid provider as pipes
