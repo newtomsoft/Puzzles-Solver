@@ -1,4 +1,6 @@
-﻿from Domain.Board.Grid import Grid
+﻿from collections import defaultdict
+
+from Domain.Board.Grid import Grid
 from Domain.Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Position import Position
 from Domain.Ports.SolverEngine import SolverEngine
@@ -30,17 +32,17 @@ class NumberChainSolver(GameSolver):
     def _compute_solution(self) -> Grid:
         attempted_solutions_number = 1
         while self._solver.has_solution():
+            attempted_solutions_number += 1
+            if attempted_solutions_number > 1000:  # todo do better than this
+                return Grid.empty()
             matrix_number = [[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)]
             attempt = Grid(matrix_number)
             attempt_bool = Grid([[True if matrix_number[i][j] > 0 else False for j in range(self.columns_number)] for i in range(self.rows_number)])
             attempt_bool.set_value(self._end_position, 2)
             linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(attempt_bool, {1: self._start_position, 2: self._end_position})
             if linear_path_grid == Grid.empty():
-                self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in attempt])))
+                self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in attempt if value > 0])))
                 continue
-            attempted_solutions_number += 1
-            if attempted_solutions_number > 1000000:
-                return Grid.empty()
             self._previous_solution = attempt
             return linear_path_grid
         return Grid.empty()
@@ -55,7 +57,6 @@ class NumberChainSolver(GameSolver):
         for position, value in self._grid_z3:
             self._solver.add(value >= -self._end_value)
             self._solver.add(value <= self._end_value)
-            self._solver.add(self._solver.Implies(value > 0, value == self._grid[position]))
         self._solver.add(self._grid_z3[self._start_position] == self._start_value)
         self._solver.add(self._grid_z3[self._end_position] == self._end_value)
 
@@ -71,4 +72,17 @@ class NumberChainSolver(GameSolver):
         self._solver.add(self._solver.sum([self._solver.If(self._grid_z3[position] > 0, 1, 0) for position, _ in self._grid]) == self._end_value)
 
     def _add_distinct_cells_constraint(self):
-        self._solver.add(self._solver.distinct([value for _, value in self._grid_z3]))
+        values_to_positions = defaultdict(list)
+        for position, value in self._grid:
+            values_to_positions[value].append(position)
+
+        for value, positions in values_to_positions.items():
+            if len(positions) == 1:
+                self._solver.add(self._grid_z3[positions[0]] == value)
+                continue
+            self._solver.add(self._solver.distinct([self._grid_z3[position] for position in positions]))
+            for position in positions:
+                self._solver.add(self._solver.Or(self._grid_z3[position] == value, self._grid_z3[position] < 0))
+
+
+
