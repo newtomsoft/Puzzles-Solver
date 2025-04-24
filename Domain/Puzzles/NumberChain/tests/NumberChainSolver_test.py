@@ -22,8 +22,8 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-            ' ╶──┐    \n'
-            ' ┌──┘    \n'
+            ' ╶──┐  · \n'
+            ' ┌──┘  · \n'
             ' └────→  '
         )
         self.assertEqual(expected_solution, str(solution))
@@ -40,8 +40,8 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-            ' ╶──┐    \n'
-            ' ┌──┘    \n'
+            ' ╶──┐  · \n'
+            ' ┌──┘  · \n'
             ' └────→  '
         )
         self.assertEqual(expected_solution, str(solution))
@@ -62,8 +62,8 @@ class SnakeSolverTests(TestCase):
         expected_solution = (
             ' ╷  ┌─────┐ \n'
             ' └──┘  ┌──┘ \n'
-            '       │    \n'
-            '       └─→  '
+            ' ·  ·  │  · \n'
+            ' ·  ·  └─→  '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -83,10 +83,10 @@ class SnakeSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶───────────┐ \n'
-            '    ┌────────┘ \n'
-            '    │          \n'
-            '    └────────┐ \n'
-            '             ↓ '
+            ' ·  ┌────────┘ \n'
+            ' ·  │  ·  ·  · \n'
+            ' ·  └────────┐ \n'
+            ' ·  ·  ·  ·  ↓ '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -105,11 +105,11 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-            ' ╷        ┌──┐ \n'
-            ' └──┐     │  │ \n'
-            '    │  ┌──┘  │ \n'
-            '    └──┘     │ \n'
-            '             ↓ '
+            ' ╷  ·  ·  ┌──┐ \n'
+            ' └──┐  ·  │  │ \n'
+            ' ·  │  ┌──┘  │ \n'
+            ' ·  └──┘  ·  │ \n'
+            ' ·  ·  ·  ·  ↓ '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -129,12 +129,12 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-            ' ╶────────┐       \n'
-            '    ┌─────┘       \n'
-            '    └──┐          \n'
-            '       │  ┌─────┐ \n'
-            '       └──┘     │ \n'
-            '                ↓ '
+            ' ╶────────┐  ·  · \n'
+            ' ·  ┌─────┘  ·  · \n'
+            ' ·  └──┐  ·  ·  · \n'
+            ' ·  ·  │  ┌─────┐ \n'
+            ' ·  ·  └──┘  ·  │ \n'
+            ' ·  ·  ·  ·  ·  ↓ '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -153,14 +153,16 @@ class SnakeSolverTests(TestCase):
 
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
+
         expected_solution = (
-            ' ╶────────┐       \n'
-            '       ┌──┘       \n'
-            '       │  ┌─────┐ \n'
-            '       └──┘  ┌──┘ \n'
-            '             │    \n'
-            '             └─→  '
+            ' ╶────────┐  ·  · \n'
+            ' ·  ·  ┌──┘  ·  · \n'
+            ' ·  ·  │  ┌─────┐ \n'
+            ' ·  ·  └──┘  ┌──┘ \n'
+            ' ·  ·  ·  ·  │  · \n'
+            ' ·  ·  ·  ·  └─→  '
         )
+
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -180,13 +182,172 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-            ' ╶────────┐          \n'
-            '    ┌─────┘          \n'
-            '    │        ┌──┐    \n'
-            '    └──┐     │  └──┐ \n'
-            '       └─────┘     │ \n'
-            '                   │ \n'
-            '                   ↓ '
+            ' ╶────────┐  ·  ·  · \n'
+            ' ·  ┌─────┘  ·  ·  · \n'
+            ' ·  │  ·  ·  ┌──┐  · \n'
+            ' ·  └──┐  ·  │  └──┐ \n'
+            ' ·  ·  └─────┘  ·  │ \n'
+            ' ·  ·  ·  ·  ·  ·  │ \n'
+            ' ·  ·  ·  ·  ·  ·  ↓ '
+        )
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_8x8_4n0m4(self):
+        # https://gridpuzzle.com/number-chain/4n0m4
+        grid = Grid([
+            [1, 20, 14, 20, 8, 14, 26, 7],
+            [8, 3, 20, 13, 18, 19, 24, 4],
+            [24, 6, 23, 14, 13, 12, 23, 26],
+            [26, 17, 14, 16, 5, 22, 24, 7],
+            [22, 21, 6, 17, 7, 21, 26, 9],
+            [5, 23, 11, 21, 18, 25, 16, 2],
+            [4, 22, 2, 15, 10, 11, 10, 14],
+            [26, 2, 18, 2, 4, 24, 20, 27]
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = (
+            ' ╷  ·  ·  ·  ·  ·  ·  · \n'
+            ' └──┐  ┌────────┐  ·  · \n'
+            ' ·  └──┘  ·  ·  │  ·  · \n'
+            ' ·  ·  ·  ·  ┌──┘  ·  · \n'
+            ' ·  ·  ·  ┌──┘  ·  ┌──┐ \n'
+            ' ·  ·  ·  │  ·  ┌──┘  │ \n'
+            ' ·  ·  ·  └──┐  │  ·  │ \n'
+            ' ·  ·  ·  ·  └──┘  ·  ↓ '
+        )
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_8x8_21wr8(self):
+        # https://gridpuzzle.com/number-chain/21wr8
+        grid = Grid([
+            [1, 11, 18, 16, 21, 19, 17, 24],
+            [7, 16, 10, 20, 3, 10, 13, 16],
+            [10, 12, 25, 24, 9, 16, 5, 12],
+            [14, 18, 21, 23, 8, 14, 21, 15],
+            [13, 11, 9, 24, 13, 7, 6, 12],
+            [22, 1, 14, 6, 17, 6, 8, 16],
+            [25, 11, 17, 4, 3, 26, 25, 10],
+            [16, 8, 16, 22, 2, 19, 3, 27]
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = (
+            ' ╶─────┐  ·  ·  ·  ·  · \n'
+            ' ·  ·  └──┐  ·  ·  ·  · \n'
+            ' ·  ·  ·  │  ┌────────┐ \n'
+            ' ·  ·  ·  └──┘  ┌─────┘ \n'
+            ' ·  ·  ·  ·  ┌──┘  ·  · \n'
+            ' ·  ·  ·  ┌──┘  ·  ·  · \n'
+            ' ·  ·  ·  │  ·  ┌──┐  · \n'
+            ' ·  ·  ·  └─────┘  └─→  '
+        )
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_9x9_0y9p1(self):
+        # https://gridpuzzle.com/number-chain/0y9p1
+        grid = Grid([
+            [1, 20, 19, 3, 15, 21, 29, 28, 22],
+            [10, 24, 30, 26, 12, 10, 24, 18, 25],
+            [22, 25, 12, 14, 19, 28, 17, 11, 7],
+            [2, 4, 13, 24, 2, 14, 9, 7, 21],
+            [16, 12, 7, 15, 5, 4, 6, 29, 8],
+            [6, 30, 21, 16, 7, 5, 14, 23, 25],
+            [2, 26, 15, 23, 24, 4, 29, 22, 8],
+            [12, 6, 12, 7, 22, 10, 13, 5, 27],
+            [23, 13, 11, 26, 24, 26, 17, 30, 31]
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+
+        expected_solution = (
+            ' ╶────────┐  ·  ·  ·  ·  · \n'
+            ' ·  ·  ┌──┘  ·  ┌─────┐  · \n'
+            ' ·  ┌──┘  ·  ·  │  ┌──┘  · \n'
+            ' ·  └──┐  ·  ┌──┘  │  ·  · \n'
+            ' ·  ·  │  ┌──┘  ·  └──┐  · \n'
+            ' ·  ·  └──┘  ·  ·  ·  │  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  └──┐ \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  │ \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  ↓ '
+        )
+
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_10x10_7j9yj(self):
+        # https://gridpuzzle.com/number-chain/7j9yj
+        grid = Grid([
+            [1, 13, 23, 26, 2, 12, 27, 31, 6, 22],
+            [12, 20, 14, 4, 14, 27, 5, 32, 19, 27],
+            [1, 21, 16, 7, 29, 2, 21, 24, 28, 32],
+            [10, 32, 9, 31, 18, 11, 27, 18, 10, 13],
+            [5, 12, 5, 22, 2, 3, 24, 8, 20, 21],
+            [7, 31, 2, 10, 19, 24, 14, 17, 8, 4],
+            [26, 23, 21, 29, 17, 21, 7, 32, 2, 30],
+            [6, 4, 8, 28, 8, 25, 2, 15, 30, 7],
+            [28, 22, 13, 22, 16, 30, 9, 16, 6, 3],
+            [20, 2, 28, 8, 14, 24, 25, 8, 25, 33]
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+
+        expected_solution = (
+            ' ╷  ┌─────┐  ·  ·  ·  ·  ·  · \n'
+            ' └──┘  ┌──┘  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  │  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  │  ┌────────┐  ·  ·  · \n'
+            ' ·  ·  └──┘  ┌─────┘  ·  ·  · \n'
+            ' ·  ·  ·  ┌──┘  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  │  ┌────────┐  ·  · \n'
+            ' ·  ·  ·  └──┘  ·  ·  └──┐  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  │  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  └─→  '
+        )
+
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_10x10_16rk0(self):
+        # https://gridpuzzle.com/number-chain/16rk0
+        grid = Grid([
+            [1, 7, 26, 21, 20, 16, 13, 3, 15, 29],
+            [17, 6, 22, 27, 18, 4, 26, 22, 9, 8],
+            [14, 12, 8, 2, 14, 9, 2, 19, 28, 20],
+            [24, 15, 1, 24, 23, 20, 13, 21, 9, 21],
+            [29, 9, 21, 23, 16, 31, 22, 12, 25, 32],
+            [18, 12, 27, 26, 25, 16, 30, 8, 19, 2],
+            [13, 6, 5, 10, 31, 29, 18, 10, 28, 5],
+            [15, 19, 14, 24, 28, 11, 19, 3, 24, 22],
+            [13, 14, 23, 31, 16, 26, 22, 2, 15, 30],
+            [31, 32, 16, 5, 29, 4, 26, 13, 19, 33]
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = (
+            ' ╷  ┌─────┐  ·  ·  ·  ·  ·  · \n'
+            ' └──┘  ·  └─────┐  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ┌──┘  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  └─────┐  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ┌──┘  ┌─────┐ \n'
+            ' ·  ·  ·  ·  ·  │  ·  │  ·  │ \n'
+            ' ·  ·  ·  ·  ·  │  ·  │  ┌──┘ \n'
+            ' ·  ·  ·  ·  ·  └─────┘  │  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  └──┐ \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  ·  ↓ '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()

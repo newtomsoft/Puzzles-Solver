@@ -30,11 +30,9 @@ class NumberChainSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        attempted_solutions_number = 1
+        attempted_solutions_number = 0
         while self._solver.has_solution():
             attempted_solutions_number += 1
-            if attempted_solutions_number > 1000:  # todo do better than this
-                return Grid.empty()
             matrix_number = [[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)]
             attempt = Grid(matrix_number)
             attempt_bool = Grid([[True if matrix_number[i][j] > 0 else False for j in range(self.columns_number)] for i in range(self.rows_number)])
@@ -63,7 +61,7 @@ class NumberChainSolver(GameSolver):
     def _add_neighbors_count_constraints(self):
         for position, position_value in self._grid:
             same_value_neighbors_count = self._solver.sum([neighbor_value > 0 for neighbor_value in self._grid_z3.neighbors_values(position)])
-            if position_value == self._start_value or position_value == self._end_value:
+            if position == self._start_position or position == self._end_position:
                 self._solver.add(same_value_neighbors_count >= 1)
                 continue
             self._solver.add(self._solver.Implies(self._grid_z3[position] > 0, same_value_neighbors_count >= 2))
@@ -80,9 +78,6 @@ class NumberChainSolver(GameSolver):
             if len(positions) == 1:
                 self._solver.add(self._grid_z3[positions[0]] == value)
                 continue
-            self._solver.add(self._solver.distinct([self._grid_z3[position] for position in positions]))
-            for position in positions:
-                self._solver.add(self._solver.Or(self._grid_z3[position] == value, self._grid_z3[position] < 0))
-
-
-
+            for index, position in enumerate(positions):
+                self._solver.add(self._solver.Or(self._grid_z3[position] == value, self._grid_z3[position] == -index))
+            self._solver.add(self._solver.sum([self._solver.If(self._grid_z3[position] == value, 1, 0) for position in positions]) == 1)
