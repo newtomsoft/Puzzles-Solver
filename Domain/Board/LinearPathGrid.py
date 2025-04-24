@@ -11,7 +11,7 @@ class LinearPathGrid(Grid[PathCell]):
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'
-        return '\n'.join(''.join(str(cell) if cell is not None else '   ' for cell in row) for row in self._matrix)
+        return '\n'.join(''.join(str(cell) if cell is not None else ' · ' for cell in row) for row in self._matrix)
 
     @staticmethod
     def from_grid_and_checkpoints(grid: Grid[int], checkpoints: dict[int, Position]) -> ('LinearPathGrid', list[Position]):
