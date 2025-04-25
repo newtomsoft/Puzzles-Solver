@@ -54,6 +54,28 @@ class LinearPathGrid(Grid[PathCell]):
                     return result
         return None
 
+    @staticmethod
+    def has_multy_path(grid: Grid, start_position: Position, end_position: Position) -> bool:
+        grid_positions_with_start_value = set([position for position, value in grid if value == grid[start_position]])
+        count_found = LinearPathGrid._has_multy_path(grid, start_position, grid_positions_with_start_value, end_position)
+        return count_found > 1
+
+    @staticmethod
+    def _has_multy_path(grid: Grid, start_position: Position, positions: set[Position], end_position: Position, current_path=None, found_count=0):
+        if current_path is None:
+            current_path = [start_position]
+        if len(current_path) == len(positions) and start_position in grid.neighbors_positions(end_position):
+            found_count += 1
+            return found_count
+        for next_position in grid.neighbors_positions(start_position):
+            if next_position in positions and next_position not in current_path:
+                new_path = current_path.copy()
+                new_path.append(next_position)
+                found_count = LinearPathGrid._has_multy_path(grid, next_position, positions, end_position, new_path, found_count)
+                if found_count > 1:
+                    return found_count
+        return found_count
+
     def next(self, position):
         value = self[position]
         if value.is_start():
