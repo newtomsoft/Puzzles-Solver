@@ -352,3 +352,41 @@ class SnakeSolverTests(TestCase):
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_13x13(self):
+        grid = Grid([
+            [1, 19, 16, 40, 2, 29, 9, 20, 21, 40, 15, 28, 15],
+            [25, 42, 40, 36, 34, 22, 37, 30, 1, 17, 32, 16, 22],
+            [37, 12, 7, 4, 14, 15, 31, 4, 38, 1, 19, 15, 35],
+            [19, 21, 3, 24, 35, 6, 42, 7, 43, 21, 33, 29, 8],
+            [37, 16, 15, 39, 39, 36, 20, 35, 26, 23, 27, 13, 11],
+            [38, 36, 19, 11, 19, 4, 30, 22, 27, 3, 41, 20, 21],
+            [23, 14, 10, 18, 16, 29, 9, 42, 1, 37, 20, 10, 15],
+            [5, 2, 8, 6, 27, 21, 1, 26, 40, 32, 33, 30, 24],
+            [25, 31, 35, 5, 41, 6, 20, 19, 40, 21, 34, 42, 2],
+            [24, 8, 37, 42, 25, 20, 42, 29, 5, 17, 11, 10, 33],
+            [28, 31, 23, 18, 42, 2, 6, 13, 28, 13, 1, 29, 7],
+            [6, 30, 17, 10, 1, 4, 12, 35, 43, 15, 15, 18, 3],
+            [39, 30, 17, 17, 16, 35, 15, 7, 14, 38, 32, 36, 43],
+        ])
+
+        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = (
+           ' ╷  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+           ' │  ┌──┐  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+           ' └──┘  └──┐  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+           ' ·  ·  ·  │  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+           ' ·  ·  ·  │  ·  ·  ·  ·  ┌──┐  ·  ·  · \n'
+           ' ·  ·  ┌──┘  ·  ·  ┌─────┘  └──┐  ·  · \n'
+           ' ·  ┌──┘  ┌────────┘  ·  ·  ·  │  ·  · \n'
+           ' ·  │  ┌──┘  ·  ·  ·  ·  ·  ·  │  ·  · \n'
+           ' ·  └──┘  ·  ·  ·  ·  ·  ·  ┌──┘  ·  · \n'
+           ' ·  ·  ·  ·  ·  ·  ·  ·  ┌──┘  ·  ·  · \n'
+           ' ·  ·  ·  ·  ·  ·  ·  ·  └──┐  ·  ·  · \n'
+           ' ·  ·  ·  ·  ·  ·  ·  ·  ·  │  ·  ·  · \n'
+           ' ·  ·  ·  ·  ·  ·  ·  ·  ·  └───────→  '
+        )
+        self.assertEqual(expected_solution, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)

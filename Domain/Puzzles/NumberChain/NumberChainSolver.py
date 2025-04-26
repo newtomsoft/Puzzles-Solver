@@ -69,7 +69,7 @@ class NumberChainSolver(GameSolver):
 
     def _add_distinct_cells_constraint(self):
         values_to_positions = defaultdict(list)
-        for position, value in self._grid:
+        for position, value in [(position, value) for position, value in self._grid if value > 0]:
             values_to_positions[value].append(position)
 
         for value, positions in values_to_positions.items():
