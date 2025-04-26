@@ -17,7 +17,7 @@ class NumberChainGenerator:
 
     def __init__(self, row_count: int, column_count: int, way_number: int):
         self.grid_path = None
-        self.grid: Grid | None = None
+        self.grid: Grid = Grid.empty()
         self.row_count = row_count
         self.column_count = column_count
         self.way_number = way_number
@@ -135,26 +135,37 @@ class NumberChainGenerator:
         self.grid.set_value(Position(self.row_count - 1, self.column_count - 1), way_count)
         to_fill = list(range(2, way_count))
         random.shuffle(to_fill)
-        for i, number_to_fill in enumerate(to_fill):
+        for i, candidate_to_fill in enumerate(to_fill):
             position = self.grid_path.path[i + 1]
-            self.grid.set_value(position, number_to_fill)
+            self.grid.set_value(position, candidate_to_fill)
 
-        for position, value in tqdm([(p, v) for p, v in self.grid if p not in self.grid_path.path]):
-            while True:
-                self.grid.set_value(position, random.randint(1, way_count))
+        pre_filled = []
+        for position, value in [(p, v) for p, v in self.grid if p not in self.grid_path.path and not any([neighbor in self.grid_path.path for neighbor in p.neighbors()])]:
+            self.grid.set_value(position, random.choice(to_fill))
+            pre_filled.append(position)
+
+        for position, value in tqdm([(p, v) for p, v in self.grid if p not in self.grid_path.path and p not in pre_filled]):
+            filled = False
+            random.shuffle(to_fill)
+            extremity = [1, way_count]
+            random.shuffle(extremity)
+            candidates_to_fill = to_fill + extremity
+            for candidate_to_fill in candidates_to_fill:
+                self.grid.set_value(position, candidate_to_fill)
                 game_solver = NumberChainSolver(self.grid, self.get_solver_engine())
-                solution = game_solver.get_solution()
-                if solution == Grid.empty():
-                    raise Exception("Impossible de trouver une solution")
+                _ = game_solver.get_solution()
                 other_solution = game_solver.get_other_solution()
                 if other_solution == Grid.empty():
+                    filled = True
                     break
+            if not filled:
+                raise Exception("Impossible de remplir la grille")
 
 
 if __name__ == "__main__":
-    row_count = 14
-    column_count = 14
-    way_count = 47
+    row_count = 13
+    column_count = 13
+    way_count = 43
 
     generator = NumberChainGenerator(row_count, column_count, way_count)
     generator.generate_as_linear_path_grid()
