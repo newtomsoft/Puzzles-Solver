@@ -35,10 +35,7 @@ class NumberChainGenerator:
             except Exception as e:
                 last_exception = e
 
-        if last_exception:
-            raise Exception(f"Impossible de générer une grille avec les contraintes données. Dernière erreur: {str(last_exception)}")
-        else:
-            raise Exception("Impossible de générer une grille avec les contraintes données")
+        raise Exception(f"Impossible de générer une grille avec les contraintes données. Dernière erreur: {str(last_exception)}")
 
     def _try_generate_path(self):
         grid = [[0 for _ in range(self.row_count)] for _ in range(self.row_count)]
@@ -133,23 +130,26 @@ class NumberChainGenerator:
     def fill_grid(self):
         self.grid.set_value(Position(0, 0), 1)
         self.grid.set_value(Position(self.row_count - 1, self.column_count - 1), way_count)
-        to_fill = list(range(2, way_count))
-        random.shuffle(to_fill)
-        for i, candidate_to_fill in enumerate(to_fill):
+        way_to_fill = list(range(2, way_count))
+        random.shuffle(way_to_fill)
+        for i, candidate_to_fill in enumerate(way_to_fill):
             position = self.grid_path.path[i + 1]
             self.grid.set_value(position, candidate_to_fill)
 
         pre_filled = []
         for position, value in [(p, v) for p, v in self.grid if p not in self.grid_path.path and not any([neighbor in self.grid_path.path for neighbor in p.neighbors()])]:
-            self.grid.set_value(position, random.choice(to_fill))
+            self.grid.set_value(position, random.choice(way_to_fill))
             pre_filled.append(position)
 
-        for position, value in tqdm([(p, v) for p, v in self.grid if p not in self.grid_path.path and p not in pre_filled]):
+        positions_reprocessed_count = 0
+        positions_to_fill = [position for position, _ in self.grid if position not in self.grid_path.path and position not in pre_filled]
+        random.shuffle(positions_to_fill)
+        for position in tqdm(positions_to_fill):
             filled = False
-            random.shuffle(to_fill)
+            random.shuffle(way_to_fill)
             extremity = [1, way_count]
             random.shuffle(extremity)
-            candidates_to_fill = to_fill + extremity
+            candidates_to_fill = way_to_fill + extremity
             for candidate_to_fill in candidates_to_fill:
                 self.grid.set_value(position, candidate_to_fill)
                 game_solver = NumberChainSolver(self.grid, self.get_solver_engine())
@@ -158,14 +158,16 @@ class NumberChainGenerator:
                 if other_solution == Grid.empty():
                     filled = True
                     break
+                positions_reprocessed_count += 1
             if not filled:
                 raise Exception("Impossible de remplir la grille")
+        print("reprocessed", positions_reprocessed_count)
 
 
 if __name__ == "__main__":
-    row_count = 13
-    column_count = 13
-    way_count = 43
+    row_count = 8
+    column_count = 8
+    way_count = 27
 
     generator = NumberChainGenerator(row_count, column_count, way_count)
     generator.generate_as_linear_path_grid()
