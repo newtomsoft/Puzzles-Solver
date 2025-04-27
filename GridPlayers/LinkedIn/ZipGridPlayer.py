@@ -19,6 +19,6 @@ class ZipGridPlayer(PlaywrightGridPlayer):
         for position in solution.path:
             cls.mouse_click(page.mouse, solution, position, cells_divs)
 
-        sleep(6)
+        sleep(5)
         browser.close()
         cls.process_video(video, "zip", rectangle, 2)
