@@ -27,6 +27,11 @@ class NumberChainGenerator:
             raise ValueError(f"La longueur du chemin doit être entre {min_way_length} et {max_way_length}")
         self.directions = Direction.orthogonals()
 
+    def generate_grid(self):
+        self._generate_as_linear_path_grid()
+        self._fill_grid()
+        return self.grid
+
     def generate_path(self):
         last_exception = None
         for _ in range(10000):
@@ -116,9 +121,11 @@ class NumberChainGenerator:
         grid_data = self.generate_path()
         return Grid(grid_data)
 
-    def generate_as_linear_path_grid(self):
+    def _generate_as_linear_path_grid(self):
         is_single_path = False
+        single_path_tries = 0
         while not is_single_path:
+            single_path_tries += 1
             self.grid = self.generate_as_grid()
             self.grid.set_value(Position(0, 0), 1)
             self.grid.set_value(Position(row_count - 1, row_count - 1), 2)
@@ -126,8 +133,9 @@ class NumberChainGenerator:
             if not has_multy_path:
                 is_single_path = True
                 self.grid_path = LinearPathGrid.from_grid_and_checkpoints(self.grid, {1: Position(0, 0), 2: Position(row_count - 1, column_count - 1)})
+        print(f"single path tries: {single_path_tries}")
 
-    def fill_grid(self):
+    def _fill_grid(self):
         self.grid.set_value(Position(0, 0), 1)
         self.grid.set_value(Position(self.row_count - 1, self.column_count - 1), way_count)
         way_to_fill = list(range(2, way_count))
@@ -161,7 +169,7 @@ class NumberChainGenerator:
                 positions_reprocessed_count += 1
             if not filled:
                 raise Exception("Impossible de remplir la grille")
-        print("reprocessed", positions_reprocessed_count)
+        print("positions reprocessed", positions_reprocessed_count)
 
 
 if __name__ == "__main__":
@@ -170,8 +178,6 @@ if __name__ == "__main__":
     way_count = 27
 
     generator = NumberChainGenerator(row_count, column_count, way_count)
-    generator.generate_as_linear_path_grid()
+    generator.generate_grid()
     print(generator.grid_path)
-    generator.fill_grid()
-    grid = generator.grid
-    print(grid)
+    print(generator.grid)

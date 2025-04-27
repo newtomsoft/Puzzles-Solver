@@ -7,7 +7,7 @@ from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 _ = 0
 
 
-class SnakeSolverTests(TestCase):
+class NumberChainSolverTests(TestCase):
     @staticmethod
     def get_solver_engine():
         return Z3SolverEngine()
@@ -409,19 +409,19 @@ class SnakeSolverTests(TestCase):
         game_solver = NumberChainSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = (
-           ' ╷  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
-           ' │  ┌──┐  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
-           ' └──┘  └──┐  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
-           ' ·  ·  ·  │  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
-           ' ·  ·  ·  │  ·  ·  ·  ·  ┌──┐  ·  ·  · \n'
-           ' ·  ·  ┌──┘  ·  ·  ┌─────┘  └──┐  ·  · \n'
-           ' ·  ┌──┘  ┌────────┘  ·  ·  ·  │  ·  · \n'
-           ' ·  │  ┌──┘  ·  ·  ·  ·  ·  ·  │  ·  · \n'
-           ' ·  └──┘  ·  ·  ·  ·  ·  ·  ┌──┘  ·  · \n'
-           ' ·  ·  ·  ·  ·  ·  ·  ·  ┌──┘  ·  ·  · \n'
-           ' ·  ·  ·  ·  ·  ·  ·  ·  └──┐  ·  ·  · \n'
-           ' ·  ·  ·  ·  ·  ·  ·  ·  ·  │  ·  ·  · \n'
-           ' ·  ·  ·  ·  ·  ·  ·  ·  ·  └───────→  '
+            ' ╷  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' │  ┌──┐  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' └──┘  └──┐  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  │  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  │  ·  ·  ·  ·  ┌──┐  ·  ·  · \n'
+            ' ·  ·  ┌──┘  ·  ·  ┌─────┘  └──┐  ·  · \n'
+            ' ·  ┌──┘  ┌────────┘  ·  ·  ·  │  ·  · \n'
+            ' ·  │  ┌──┘  ·  ·  ·  ·  ·  ·  │  ·  · \n'
+            ' ·  └──┘  ·  ·  ·  ·  ·  ·  ┌──┘  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  ┌──┘  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  └──┐  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  ·  │  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  ·  ·  └───────→  '
         )
         self.assertEqual(expected_solution, str(solution))
         other_solution = game_solver.get_other_solution()
