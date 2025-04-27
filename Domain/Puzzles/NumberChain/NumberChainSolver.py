@@ -45,8 +45,8 @@ class NumberChainSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self._add_cells_count_constraint()
-        self._add_distinct_cells_constraint()
+        self._add_way_cells_count_constraint()
+        self._add_way_distinct_cells_constraint()
         self._add_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
@@ -64,10 +64,10 @@ class NumberChainSolver(GameSolver):
                 continue
             self._solver.add(self._solver.Implies(self._grid_z3[position] > 0, same_value_neighbors_count >= 2))
 
-    def _add_cells_count_constraint(self):
+    def _add_way_cells_count_constraint(self):
         self._solver.add(self._solver.sum([self._solver.If(self._grid_z3[position] > 0, 1, 0) for position, _ in self._grid]) == self._end_value)
 
-    def _add_distinct_cells_constraint(self):
+    def _add_way_distinct_cells_constraint(self):
         values_to_positions = defaultdict(list)
         for position, value in [(position, value) for position, value in self._grid if value > 0]:
             values_to_positions[value].append(position)
