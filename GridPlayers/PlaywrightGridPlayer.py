@@ -129,7 +129,7 @@ class PlaywrightGridPlayer(ABC):
         clip = VideoFileClip(input_video_path, audio=False)
         clip = clip.subclipped(start_time=start_time)
         cropped_clip = clip.cropped(x1=rect.x1, y1=rect.y1, x2=rect.x2, y2=rect.y2)
-        date_time_format = datetime.datetime.now().strftime('%H-%M-%S_%Y-%m-%d')
+        date_time_format = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         new_video_name = f'{name}_{date_time_format}{video_name_extension}'
         output_path = os.path.join(video_path, new_video_name)
         cropped_clip.write_videofile(output_path)
