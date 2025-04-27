@@ -50,19 +50,25 @@ class NumberChainSolver(GameSolver):
         self._add_neighbors_count_constraints()
 
     def _add_initial_constraints(self):
+        self._solver.add(self._grid_z3[self._start_position] == self._start_value)
+        self._solver.add(self._grid_z3[self._end_position] == self._end_value)
         for position, value in self._grid_z3:
             self._solver.add(value >= -self._end_value)
             self._solver.add(value <= self._end_value)
-        self._solver.add(self._grid_z3[self._start_position] == self._start_value)
-        self._solver.add(self._grid_z3[self._end_position] == self._end_value)
 
     def _add_neighbors_count_constraints(self):
-        for position, position_value in self._grid:
-            same_value_neighbors_count = self._solver.sum([neighbor_value > 0 for neighbor_value in self._grid_z3.neighbors_values(position)])
-            if position == self._start_position or position == self._end_position:
-                self._solver.add(same_value_neighbors_count >= 1)
-                continue
-            self._solver.add(self._solver.Implies(self._grid_z3[position] > 0, same_value_neighbors_count >= 2))
+        same_value_start_position_neighbors_count = self._same_value_neighbors_count(self._start_position)
+        self._solver.add(same_value_start_position_neighbors_count >= 1)
+
+        same_value_end_position_neighbors_count = self._same_value_neighbors_count(self._end_position)
+        self._solver.add(same_value_end_position_neighbors_count >= 1)
+
+        for position in [position for position, _ in self._grid if position != self._start_position and position != self._end_position]:
+            same_value_start_position_neighbors_count = self._same_value_neighbors_count(position)
+            self._solver.add(self._solver.Implies(self._grid_z3[position] > 0, same_value_start_position_neighbors_count >= 2))
+
+    def _same_value_neighbors_count(self, position):
+        return self._solver.sum([neighbor_value > 0 for neighbor_value in self._grid_z3.neighbors_values(position)])
 
     def _add_way_cells_count_constraint(self):
         self._solver.add(self._solver.sum([self._solver.If(self._grid_z3[position] > 0, 1, 0) for position, _ in self._grid]) == self._end_value)
