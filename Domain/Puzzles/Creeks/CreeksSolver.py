@@ -29,27 +29,21 @@ class CreeksSolver(GameSolver):
     def _compute_solution(self) -> Grid:
         if not self._solver.has_solution():
             return Grid.empty()
-        return Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.solution_columns_number)] for i in range(self.solution_rows_number)])
 
     def _add_constraints(self):
-        self._add_sum_neighbors_constraints()
+        self._add_neighbors_count_constraints()
+        self._add_adjacent_watter_constraint()
 
-    def _add_sum_neighbors_constraints(self):
-        for position in self._grid.edges_positions():
-            if position.r == 0 and position.c == 0:
-                pass
+    def _add_neighbors_count_constraints(self):
+        for position, creek_count in [(position, value) for position, value in self._grid if value != -1]:
+            solution_positions = self._get_positions_in_solution_grid(self._grid_z3, position)
+            self._solver.add(self._solver.sum([self._grid_z3[solution_position] for solution_position in solution_positions]) == creek_count)
 
+    def _add_adjacent_watter_constraint(self):
+        pass
 
-    def map_position(self, grid: Grid, position: Position) -> set[Position]:
-        if position.r == 0 and position.c == 0:
-            return {position}
-        elif position.r == self.rows_number - 1 and position.c == self.columns_number - 1:
-            return {position.up_left}
-        elif position.r == self.rows_number - 1:
-            return {position.up}
-        elif position.c == self.columns_number - 1:
-            return {position.left}
-        else:
-            return {neighbor for neighbor in grid.straddled_neighbors_positions(Position(position.r-0.5, position.c -0.5))}
-
+    @staticmethod
+    def _get_positions_in_solution_grid(grid: Grid, position: Position) -> set[Position]:
+        return {neighbor for neighbor in grid.straddled_neighbors_positions(Position(position.r - 0.5, position.c - 0.5))}
 
