@@ -108,6 +108,27 @@ class CreeksSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_solution_4x4_with_adjacent_watter_constraint_3ekygn(self):
+        # https://gridpuzzle.com/creek/ekygn
+        grid = Grid([
+            [_, _, 1, _, _],
+            [_, 2, _, _, 1],
+            [2, _, _, _, _],
+            [_, 2, _, 1, _],
+            [0, _, _, _, _]
+        ])
+        game_solver = CreeksSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 0, 1, 1],
+            [1, 0, 0, 0],
+            [1, 1, 0, 1],
+            [0, 0, 0, 0],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
