@@ -68,3 +68,26 @@ class RenkatsuSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_5x5(self):
+        # https://gridpuzzle.com/renkatsu/310rd
+        grid = Grid([
+            [2, 2, 6, 1, 3],
+            [5, 2, 3, 2, 4],
+            [3, 4, 1, 1, 5],
+            [6, 1, 4, 1, 2],
+            [5, 2, 1, 6, 3]
+        ])
+
+        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 2, 2, 2, 2],
+            [1, 3, 3, 4, 2],
+            [1, 1, 3, 4, 2],
+            [1, 1, 5, 6, 6],
+            [5, 5, 5, 5, 5]
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
