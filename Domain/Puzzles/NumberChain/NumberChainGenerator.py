@@ -220,7 +220,7 @@ class NumberChainGenerator:
 
 
 if __name__ == "__main__":
-    line_number = 9
+    line_number = int(input("grid dimension ? "))
 
     line_number_last_number = {
         4: 11,
@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     generator = NumberChainGenerator(line_number, line_number, last_number)
 
-    grid = generator.extract_grid("8x8_1745787586.8666005")
+    grid = generator.extract_grid("15x15_1746003072.4328187")
 
     for i in range(10):
         generator.generate_grid()
