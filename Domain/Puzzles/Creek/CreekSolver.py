@@ -4,7 +4,7 @@ from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
-class CreeksSolver(GameSolver):
+class CreekSolver(GameSolver):
     def __init__(self, grid: Grid, solver_engine: SolverEngine):
         self._grid = grid
         self.rows_number = self._grid.rows_number
