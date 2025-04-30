@@ -116,13 +116,13 @@ class PlaywrightGridPlayer(ABC):
         return page.video, rectangle
 
     @classmethod
-    def process_video(cls, video_file: VideoFile, name: str, rect: Rectangle, start_time: int = 0) -> str:
+    def process_video(cls, video_file: VideoFile, name: str, rect: Rectangle, start_time: float = 0) -> str:
         video_path = video_file.path()
         cls.crop_video(video_path, name, rect, start_time)
         return video_path
 
     @classmethod
-    def crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: int):
+    def crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: float):
         video_name = os.path.basename(input_video_path)
         video_path = os.path.dirname(input_video_path)
         video_name_without_extension, video_name_extension = os.path.splitext(video_name)
