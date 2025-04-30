@@ -21,4 +21,4 @@ class ZipGridPlayer(PlaywrightGridPlayer):
 
         sleep(5)
         browser.close()
-        cls.process_video(video, "zip", rectangle, 2)
+        cls.process_video(video, "zip", rectangle, 1.5)

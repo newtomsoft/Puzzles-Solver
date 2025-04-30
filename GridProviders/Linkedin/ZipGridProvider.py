@@ -16,8 +16,6 @@ class ZipGridProvider(GridProvider, PlaywrightGridProvider):
         page = browser.pages[0]
         page.goto(url)
         frame = page.frames[1]
-        start_game_button = frame.wait_for_selector('button:has-text("Commencer une partie")')
-        start_game_button.click()
         game_board = frame.wait_for_selector('.game-board')
         cells_divs = game_board.query_selector_all('div.trail-cell')
 
