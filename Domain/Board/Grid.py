@@ -39,9 +39,9 @@ class Grid(GridBase[T], Generic[T]):
         raise TypeError(f'Position expected, got {type(item)}')
 
     def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
-        for r, row in enumerate(self._matrix):
-            for c, cell in enumerate(row):
-                yield Position(r, c), cell
+        for row_index, row in enumerate(self._matrix):
+            for column_index, cell in enumerate(row):
+                yield Position(row_index, column_index), cell
 
     def __repr__(self) -> str:
         if self.is_empty():
@@ -186,30 +186,30 @@ class Grid(GridBase[T], Generic[T]):
         return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
 
     @staticmethod
-    def get_adjacent_combinations(neighbour_length, block_length, circular) -> list[list[bool]]:
+    def get_adjacent_combinations(neighbor_length, block_length, circular) -> list[list[bool]]:
         if block_length == 0:
-            return [[False for _ in range(neighbour_length)]]
-        if block_length == neighbour_length:
-            return [[True for _ in range(neighbour_length)]]
+            return [[False for _ in range(neighbor_length)]]
+        if block_length == neighbor_length:
+            return [[True for _ in range(neighbor_length)]]
         result = []
-        for combo in combinations(range(neighbour_length), block_length):
+        for combo in combinations(range(neighbor_length), block_length):
             cell_adjacent = [True for i in range(1, block_length) if combo[i] - combo[i - 1] == 1]
-            if circular and combo[0] + neighbour_length - combo[-1] == 1:
+            if circular and combo[0] + neighbor_length - combo[-1] == 1:
                 cell_adjacent.append(True)
             if cell_adjacent.count(True) == block_length - 1:
-                indexes = [index in combo for index in range(neighbour_length)]
+                indexes = [index in combo for index in range(neighbor_length)]
                 result.append(indexes)
         return result
 
     @staticmethod
-    def get_bit_array_adjacent_combinations(neighbour_length, block_length, circular) -> list[bitarray]:
+    def get_bit_array_adjacent_combinations(neighbor_length, block_length, circular) -> list[bitarray]:
         bitarrays = []
-        first_bitarray = bitarray(neighbour_length)
+        first_bitarray = bitarray(neighbor_length)
         for i in range(block_length):
             first_bitarray[i] = True
         bitarrays.append(first_bitarray)
         current_bitarray = first_bitarray
-        for i in range(neighbour_length - block_length):
+        for i in range(neighbor_length - block_length):
             current_bitarray = current_bitarray >> 1
             if current_bitarray not in bitarrays:
                 bitarrays.append(current_bitarray)
