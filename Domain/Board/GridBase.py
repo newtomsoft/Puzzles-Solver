@@ -42,10 +42,8 @@ class GridBase(Generic[T]):
             return all(value == other.value(position) for position, value in self)
         return self.matrix == other.matrix
 
-    def __contains__(self, item):
-        if isinstance(item, Position):
-            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
-        raise TypeError(f'Position expected, got {type(item)}')
+    def __contains__(self, item: Position):
+        return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
 
     def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
         for r, row in enumerate(self._matrix):
