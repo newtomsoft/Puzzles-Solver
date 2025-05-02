@@ -9,10 +9,10 @@ def configure_single_regions_constraints(solver, matrix, steps, n, m, region_siz
 
     for index, step in enumerate(steps):
         region_id = index + 1
-        configure_single_region_constraints(solver, matrix, step, n, m, region_size, region_id)
+        configure_connected_cells_in_region_constraints(solver, matrix, step, n, m, region_size, region_id)
 
 
-def configure_single_region_constraints(solver, matrix, step, n, m, region_size, region_id):
+def configure_connected_cells_in_region_constraints(solver, matrix, step, n, m, region_size, region_id):
     solver.add(z3.Sum([matrix[i][j] == region_id for i in range(n) for j in range(m)]) == region_size)
 
     for i in range(n):
@@ -68,10 +68,7 @@ def solve_connected_region(n, m):
     solver = Solver()
     matrix_z3 = [[Int(f'cell_{i}_{j}') for j in range(m)] for i in range(n)]
     step0 = [[Int(f'step0_{i}_{j}') for j in range(m)] for i in range(n)]
-    step1 = [[Int(f'step1_{i}_{j}') for j in range(m)] for i in range(n)]
-    step2 = [[Int(f'step2_{i}_{j}') for j in range(m)] for i in range(n)]
-    step3 = [[Int(f'step3_{i}_{j}') for j in range(m)] for i in range(n)]
-    steps = [step0, step1, step2, step3]
+    steps = [step0]
     size = 4
     configure_single_regions_constraints(solver, matrix_z3, steps, n, m, size)
 
@@ -80,10 +77,7 @@ def solve_connected_region(n, m):
         count += 1
         model = solver.model()
         matrix_solved = [[(model.evaluate(matrix_z3[i][j])).as_long() for j in range(m)] for i in range(n)]
-        step_solved0 = [[(model.evaluate(step0[i][j])).as_long() for j in range(m)] for i in range(n)]
-        step_solved1 = [[(model.evaluate(step1[i][j])).as_long() for j in range(m)] for i in range(n)]
-        # print_solved(matrix_solved, n, m)
-        # print_step_solved(step_solved0, n, m)
+        print_solved(matrix_solved, n, m)
         exclude(solver, matrix_z3, matrix_solved, n, m)
         # input("Press ENTER to continue...")
     print("solutions count", count)
