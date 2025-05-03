@@ -17,7 +17,7 @@ class ZipSolver(GameSolver):
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> LinearPathGrid:
         self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._grid_z3.copy_walls_from_grid(self._grid)
         self._add_constraints()
@@ -27,7 +27,7 @@ class ZipSolver(GameSolver):
         self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
         return self._compute_solution()
 
-    def _compute_solution(self) -> Grid:
+    def _compute_solution(self) -> LinearPathGrid:
         while self._solver.has_solution():
             grid_solution = Grid([[(self._solver.eval(self._grid_z3.value(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
             grid_solution.set_walls(self._grid.walls)
@@ -37,7 +37,7 @@ class ZipSolver(GameSolver):
                 continue
             self._previous_solution = grid_solution
             return linear_path_grid
-        return Grid.empty()
+        return LinearPathGrid.empty()
 
     def _add_constraints(self):
         self._add_initial_constraints()
