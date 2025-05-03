@@ -82,6 +82,10 @@ class LinearPathGrid(Grid[PathCell]):
             return position.get_next_position(value)
         return None
 
+    @staticmethod
+    def empty() -> 'LinearPathGrid':
+        return LinearPathGrid([[]])
+
 
 class LinearPath:
     def __init__(self, path: list[Position]):
