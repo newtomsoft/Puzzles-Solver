@@ -5,7 +5,7 @@ from Domain.Board.Grid import Grid
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
-_ = 0
+_ = False
 
 
 class HitoriSolverTests(TestCase):
@@ -44,7 +44,6 @@ class HitoriSolverTests(TestCase):
         ])
         expected_solution = Grid(grid.matrix.copy())
         game_solver = HitoriSolver(grid, self.get_solver_engine())
-
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
