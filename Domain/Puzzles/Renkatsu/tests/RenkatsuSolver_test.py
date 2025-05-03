@@ -87,7 +87,29 @@ class RenkatsuSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    # @unittest.skip("This test is too slow (approx 30 sec)")
+    def test_solution_6x6_31k76(self):
+        # https://gridpuzzle.com/renkatsu/31k76
+        grid = Grid([
+            [1, 2, 5, 5, 3, 4],
+            [7, 2, 1, 6, 2, 5],
+            [3, 3, 1, 3, 6, 4],
+            [4, 4, 2, 2, 1, 3],
+            [6, 5, 2, 5, 1, 4],
+            [2, 1, 1, 3, 3, 1]
+        ])
+
+        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 1, 1, 2, 2, 2],
+            [1, 2, 2, 2, 3, 3],
+            [1, 4, 5, 5, 3, 3],
+            [1, 4, 5, 6, 3, 3],
+            [1, 4, 7, 6, 6, 6],
+            [4, 4, 7, 7, 6, 8],
+        ])
+        self.assertEqual(expected_solution, solution)
+    # @unittest.skip("This test is too slow (approx 25 sec)")
     def test_solution_6x6_31k50(self):
         # https://gridpuzzle.com/renkatsu/31k50
         grid = Grid([
@@ -137,7 +159,7 @@ class RenkatsuSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    # @unittest.skip("This test is too slow (approx 15 mn)")
+    # @unittest.skip("This test is too slow (approx 1 hour)")
     def test_solution_8x8_1nd00(self):
         # https://gridpuzzle.com/renkatsu/1nd00
         grid = Grid([
@@ -154,13 +176,14 @@ class RenkatsuSolverTests(TestCase):
         game_solver = RenkatsuSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 1, 1, 1, 1, 2, 3],
-            [4, 1, 4, 5, 2, 2, 3],
-            [4, 4, 4, 5, 2, 2, 3],
-            [4, 6, 5, 5, 7, 2, 8],
-            [6, 6, 6, 5, 7, 8, 8],
-            [6, 9, 9, 5, 7, 7, 10],
-            [11, 11, 9, 9, 9, 7, 10]
+            [1, 1, 1, 2, 2, 2, 3, 4],
+            [1, 1, 5, 2, 3, 2, 3, 3],
+            [5, 5, 5, 3, 3, 3, 3, 6],
+            [7, 5, 8, 3, 6, 6, 6, 6],
+            [7, 7, 8, 8, 9, 9, 10, 6],
+            [7, 7, 8, 9, 9, 9, 10, 6],
+            [7, 7, 8, 9, 9, 9, 10, 10],
+            [8, 8, 8, 11, 11, 11, 11, 11],
         ])
         self.assertEqual(expected_solution, solution)
 
