@@ -32,7 +32,8 @@ class FutoshikiSolver(GameSolver):
         return grid
 
     def get_other_solution(self):
-        exclusion_constraint = self._solver.Not(self._solver.And([self._number(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
+        exclusion_constraint = self._solver.Not(
+            self._solver.And([self._number(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 
@@ -40,15 +41,14 @@ class FutoshikiSolver(GameSolver):
         return self._grid_z3[position]
 
     def _add_constraints(self):
-        self._add_initial_constraints()
         self._add_range_constraints()
+        self._add_initial_constraints()
         self._add_distinct_constraints()
         self._add_higher_constraints()
 
     def _add_initial_constraints(self):
-        for position, value in self._grid:
-            if value != -1:
-                self._solver.add(self._number(position) == value)
+        for position, value in [(p, v) for p, v in self._grid if v != -1]:
+            self._solver.add(self._number(position) == value)
 
     def _add_range_constraints(self):
         for position, value in self._grid_z3:
