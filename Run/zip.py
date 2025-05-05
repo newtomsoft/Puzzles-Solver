@@ -1,7 +1,7 @@
-﻿from GridPlayers.LinkedIn.ZipGridPlayer import ZipGridPlayer
+﻿from Domain.Puzzles.Zip.ZipSolver import ZipSolver
+from GridPlayers.LinkedIn.ZipGridPlayer import ZipGridPlayer
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-from Zip.ZipSolver import ZipSolver
 
 grid_provider = ZipGridProvider()
 game_player = ZipGridPlayer()
