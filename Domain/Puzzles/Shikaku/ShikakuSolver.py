@@ -1,5 +1,4 @@
-﻿from sympy import divisors
-
+﻿
 from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
@@ -19,7 +18,7 @@ class ShikakuSolver(GameSolver):
         self._matrix_z3 = None
         self._position_number_by_rectangle_index = self._get_position_number_by_rectangle_index()
 
-    def _get_position_number_by_rectangle_index(self) -> dict[int, ((int, int), int)]:
+    def _get_position_number_by_rectangle_index(self) -> dict[int, tuple[tuple[int, int], int]]:
         rectangles = {}
         for i, (position, number) in enumerate([((r, c), self._grid.matrix[r][c]) for r in range(self.rows_number) for c in range(self.columns_number) if self._grid.value(r, c) != -1]):
             rectangles[i] = position, number
@@ -59,12 +58,15 @@ class ShikakuSolver(GameSolver):
             self._solver.add(self._solver.Or(current_rectangle_constraints))
 
     @staticmethod
-    def _get_all_rectangles_size(cells_number) -> set[(int, int)]:
-        divisors_list = divisors(cells_number)
-        possibles_sizes = set()
-        for divisor in divisors_list:
-            possibles_sizes.add((divisor, cells_number // divisor))
-        return possibles_sizes
+    def _get_all_rectangles_size(cells_number) -> set[tuple[int, int]]:
+        divisors = []
+        for i in range(1, int(cells_number**0.5) + 1):
+            if cells_number % i == 0:
+                divisors.append(i)
+                if i != cells_number // i:
+                    divisors.append(cells_number // i)
+
+        return {(divisor, cells_number // divisor) for divisor in divisors}
 
     @staticmethod
     def get_width_height_positions(possible_cells) -> (int, int, (int, int), (int, int)):
@@ -80,7 +82,7 @@ class ShikakuSolver(GameSolver):
     def _invert_width_height(width: int, height: int) -> (int, int):
         return height, width
 
-    def _get_cells_of_biggest_rectangle(self, position: (int, int)) -> set[(int, int)]:
+    def _get_cells_of_biggest_rectangle(self, position: (int, int)) -> set[tuple[int, int]]:
         moves_rows = [(1, 0), (-1, 0)]
         moves_columns = [(0, 1), (0, -1)]
         moves = moves_rows + moves_columns
