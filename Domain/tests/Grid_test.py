@@ -531,7 +531,7 @@ class GridTest(TestCase):
 
     def test_repr_empty_grid(self):
         grid = Grid([[]])
-        expected_repr = "Board.empty()"
+        expected_repr = "Grid.empty()"
         self.assertEqual(repr(grid), expected_repr)
 
     def test_repr_fully_populated_grid(self):

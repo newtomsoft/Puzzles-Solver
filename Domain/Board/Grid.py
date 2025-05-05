@@ -45,7 +45,7 @@ class Grid(GridBase[T], Generic[T]):
 
     def __repr__(self) -> str:
         if self.is_empty():
-            return 'Board.empty()'
+            return 'Grid.empty()'
         if isinstance(self[Position(0, 0)], PipeShapeTransition):
             return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
