@@ -241,7 +241,6 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip("20 sec")
     def test_solution_20x20_normal(self):
         grid = Grid([
             [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
@@ -293,7 +292,6 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("18 sec")
     def test_solution_20x20_hard(self):
         grid = Grid([
             [_, _, _, _, _, _, _, _, _, _, _, _, _, 0, _, _, _, _, _, _],
@@ -345,7 +343,7 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("2mn45")
+    @unittest.skip("2mn15")
     def test_solution_25x25_hard(self):
         grid = Grid([
             [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 0, _, _, _, _, _, _, _],
