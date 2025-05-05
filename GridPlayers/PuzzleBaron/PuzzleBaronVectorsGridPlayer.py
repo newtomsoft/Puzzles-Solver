@@ -23,6 +23,6 @@ class PuzzleBaronVectorsGridPlayer(PlaywrightGridPlayer):
                     end_position = end_position.after(direction)
                 end_position = end_position.before(direction)
                 if end_position != start_position:
-                    cls.move_start_down_move_end_up(page.mouse, solution, start_position, end_position, grid_box_divs)
+                    cls.drag_n_drop(page.mouse, solution, start_position, end_position, grid_box_divs)
 
-        sleep(20)
+        sleep(6)

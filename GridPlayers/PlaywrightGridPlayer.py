@@ -64,12 +64,12 @@ class PlaywrightGridPlayer(ABC):
         pass
 
     @classmethod
-    def mouse_move(cls, mouse: Mouse, solution: Grid, position: Position, cell_divs: list[ElementHandle]):
+    def mouse_move(cls, mouse: Mouse, solution: Grid, position: Position, cell_divs: list[ElementHandle], steps=1):
         index = solution.get_index_from_position(position)
         bounding_box = cell_divs[index].bounding_box()
         x = bounding_box['x'] + bounding_box['width'] / 2
         y = bounding_box['y'] + bounding_box['height'] / 2
-        mouse.move(x, y)
+        mouse.move(x, y, steps=steps)
 
     @classmethod
     def mouse_click(cls, mouse: Mouse, solution: Grid, position: Position, cells_divs: list[ElementHandle]):
@@ -88,24 +88,14 @@ class PlaywrightGridPlayer(ABC):
         mouse.up()
 
     @classmethod
-    def move_start_down_move_end_up(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, cell_divs: list[ElementHandle]):
-        start_index = solution.get_index_from_position(start_position)
-        start_bounding_box = cell_divs[start_index].bounding_box()
-        start_x = start_bounding_box['x'] + start_bounding_box['width'] / 2
-        start_y = start_bounding_box['y'] + start_bounding_box['height'] / 2
-
-        end_index = solution.get_index_from_position(end_position)
-        end_bounding_box = cell_divs[end_index].bounding_box()
-        end_x = end_bounding_box['x'] + end_bounding_box['width'] / 2
-        end_y = end_bounding_box['y'] + end_bounding_box['height'] / 2
-
-        mouse.move(start_x, start_y)
-        mouse.down()
-        mouse.move(end_x, end_y, steps=int(end_position.distance(start_position)))
-        mouse.up()
+    def drag_n_drop(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, cell_divs: list[ElementHandle]):
+        cls.mouse_move(mouse, solution, start_position, cell_divs)
+        cls.mouse_down(mouse)
+        cls.mouse_move(mouse, solution, end_position, cell_divs, steps=int(end_position.distance(start_position)))
+        cls.mouse_up(mouse)
 
     @classmethod
-    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[VideoFile, Rectangle]:
+    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) + x_offset
@@ -133,4 +123,6 @@ class PlaywrightGridPlayer(ABC):
         new_video_name = f'{name}_{date_time_format}{video_name_extension}'
         output_path = os.path.join(video_path, new_video_name)
         cropped_clip.write_videofile(output_path)
+        clip.close()
+        cropped_clip.close()
         os.remove(input_video_path)
