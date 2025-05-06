@@ -60,15 +60,11 @@ class CreekSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_neighbors_count_constraints()
-        self._add_adjacent_watter_constraint()
 
     def _add_neighbors_count_constraints(self):
         for position, creek_count in [(position, value) for position, value in self._grid if value != -1]:
             solution_positions = self._get_positions_in_solution_grid(self._grid_z3, position)
             self._solver.add(self._solver.sum([self._grid_z3[solution_position] for solution_position in solution_positions]) == creek_count)
-
-    def _add_adjacent_watter_constraint(self):
-        pass
 
     def _compute_solution(self) -> Grid:
         if not self._solver.has_solution():
