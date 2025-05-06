@@ -120,31 +120,6 @@ class CreekSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_7x7_evil_0g948(self):
-        # https://gridpuzzle.com/creek/0g948
-        grid = Grid([
-            [_, 0, _, _, _, 2, _, 0],
-            [_, _, _, _, _, _, _, _],
-            [1, _, 2, _, _, _, _, _],
-            [0, 1, _, 3, _, 3, _, _],
-            [_, _, 2, _, _, _, _, 1],
-            [0, 1, _, _, 4, _, 2, _],
-            [_, _, _, 3, _, _, _, _],
-            [_, _, 0, _, _, 2, _, _],
-        ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
-        expected_solution = Grid([
-            [1, 0, 1, 1],
-            [1, 0, 0, 0],
-            [1, 1, 0, 1],
-            [0, 0, 0, 0],
-        ])
-        self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
-
-
     def test_solution_7x7_medium_0vm8g(self):
         # https://gridpuzzle.com/creek/0vm8g
         grid = Grid([
@@ -172,8 +147,6 @@ class CreekSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-
-
     def test_solution_7x7_expert_0dd0r(self):
         #https://gridpuzzle.com/creek/0dd0r
         grid = Grid([
@@ -185,6 +158,30 @@ class CreekSolverTests(TestCase):
             [_, _, 1, _, 1, 1, _, 0],
             [1, _, _, _, 1, _, _, _],
             [0, _, 1, _, 0, 0, _, 1],
+        ])
+        game_solver = CreekSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 0, 1, 1],
+            [1, 0, 0, 0],
+            [1, 1, 0, 1],
+            [0, 0, 0, 0],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_7x7_evil_0g948(self):
+        # https://gridpuzzle.com/creek/0g948
+        grid = Grid([
+            [_, 0, _, _, _, 2, _, 0],
+            [_, _, _, _, _, _, _, _],
+            [1, _, 2, _, _, _, _, _],
+            [0, 1, _, 3, _, 3, _, _],
+            [_, _, 2, _, _, _, _, 1],
+            [0, 1, _, _, 4, _, 2, _],
+            [_, _, _, 3, _, _, _, _],
+            [_, _, 0, _, _, 2, _, _],
         ])
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
