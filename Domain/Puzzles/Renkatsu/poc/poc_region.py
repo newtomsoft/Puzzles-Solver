@@ -1,18 +1,20 @@
-﻿from z3 import *
+﻿from unittest import TestCase
+
+from z3 import *
 
 
-def configure_single_regions_constraints(solver, matrix, steps, n, m, region_size):
+def add_single_regions_constraints(solver, matrix, steps: list, regions_size: list, n, m):
     for i in range(n):
         for j in range(m):
-            solver.add(matrix[i][j] >= 0)
+            solver.add(matrix[i][j] >= 1)
             solver.add(matrix[i][j] <= len(steps))
 
     for index, step in enumerate(steps):
         region_id = index + 1
-        configure_connected_cells_in_region_constraints(solver, matrix, step, n, m, region_size, region_id)
+        add_connected_cells_in_region_constraints(solver, matrix, step, regions_size[index], n, m, region_id)
 
 
-def configure_connected_cells_in_region_constraints(solver, matrix, step, n, m, region_size, region_id):
+def add_connected_cells_in_region_constraints(solver, matrix, step, region_size: int, n, m, region_id):
     solver.add(z3.Sum([matrix[i][j] == region_id for i in range(n) for j in range(m)]) == region_size)
 
     for i in range(n):
@@ -64,13 +66,16 @@ def exclude(solver, matrix, matrix_solved, n, m):
     solver.add(Not(And([matrix[i][j] == matrix_solved[i][j] for j in range(m) for i in range(n)])))
 
 
-def solve_connected_region(n, m):
+def solve_connected_region(n, m) -> int:
     solver = Solver()
     matrix_z3 = [[Int(f'cell_{i}_{j}') for j in range(m)] for i in range(n)]
     step0 = [[Int(f'step0_{i}_{j}') for j in range(m)] for i in range(n)]
-    steps = [step0]
-    size = 4
-    configure_single_regions_constraints(solver, matrix_z3, steps, n, m, size)
+    step1 = [[Int(f'step1_{i}_{j}') for j in range(m)] for i in range(n)]
+    step2 = [[Int(f'step2_{i}_{j}') for j in range(m)] for i in range(n)]
+    step3 = [[Int(f'step3_{i}_{j}') for j in range(m)] for i in range(n)]
+    steps = [step0, step1, step2, step3]
+    sizes = [10, 3, 2, 1]
+    add_single_regions_constraints(solver, matrix_z3, steps, sizes, n, m)
 
     count = 0
     while solver.check() == sat:
@@ -78,9 +83,15 @@ def solve_connected_region(n, m):
         model = solver.model()
         matrix_solved = [[(model.evaluate(matrix_z3[i][j])).as_long() for j in range(m)] for i in range(n)]
         print_solved(matrix_solved, n, m)
+        # step_solved = [[(model.evaluate(steps[0][i][j])).as_long() for j in range(m)] for i in range(n)]
+        # print_step_solved(step_solved, n, m)
         exclude(solver, matrix_z3, matrix_solved, n, m)
         # input("Press ENTER to continue...")
-    print("solutions count", count)
+    # print("solutions count", count)
+    return count
 
 
-solve_connected_region(4, 4)
+class GeneratorTest(TestCase):
+    def test_Toto(self):
+        count = solve_connected_region(4, 4)
+        self.assertEqual(3400, count)
