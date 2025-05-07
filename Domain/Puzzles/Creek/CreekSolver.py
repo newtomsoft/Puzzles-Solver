@@ -42,16 +42,17 @@ class CreekSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self.solution_columns_number)] for i in range(self.solution_rows_number)])
-            river_shapes = current_grid.get_all_shapes(False)
+            river_shapes = current_grid.get_all_shapes(value=False)
             if len(river_shapes) == 1:
                 return current_grid, proposition_count
 
             biggest_river_shapes = max(river_shapes, key=len)
             river_shapes.remove(biggest_river_shapes)
             for river_shape in river_shapes:
-                around_river = ShapeGenerator.around_shape(river_shape)
-                around_river_are_not_all_black_constraint = self._solver.Not(self._solver.And([self._grid_z3[position] for position in around_river if position in self._grid_z3]))
-                self._solver.add(around_river_are_not_all_black_constraint)
+                in_all_river = self._solver.And([self._solver.Not(self._grid_z3[position]) for position in river_shape])
+                around_all_forest = self._solver.And([self._grid_z3[position] for position in ShapeGenerator.around_shape(river_shape) if position in self._grid_z3])
+                constraint = self._solver.Not(self._solver.And(around_all_forest, in_all_river))
+                self._solver.add(constraint)
 
         return Grid.empty(), proposition_count
 
@@ -71,8 +72,6 @@ class CreekSolver(GameSolver):
             return Grid.empty()
         return Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.solution_columns_number)] for i in range(self.solution_rows_number)])
 
-
     @staticmethod
     def _get_positions_in_solution_grid(grid: Grid, position: Position) -> set[Position]:
         return {neighbor for neighbor in grid.straddled_neighbors_positions(Position(position.r - 0.5, position.c - 0.5))}
-
