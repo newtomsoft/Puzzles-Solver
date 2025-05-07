@@ -6,6 +6,7 @@ from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
+x = 0
 
 
 class CreekSolverTests(TestCase):
@@ -29,30 +30,6 @@ class CreekSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-
-    def test_solution_5x5_grid(self):
-        # https://gridpuzzle.com/creek/51ppw
-        grid = Grid([
-            [_, 1, _, _, 0, _],
-            [_, _, 3, 2, _, _],
-            [_, 1, _, _, 2, _],
-            [_, _, 4, 2, _, _],
-            [_, 1, _, _, 2, _],
-            [_, _, _, _, _, _],
-        ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
-        solution = game_solver.get_solution()
-        expected_solution = Grid([
-            [0, 1, 1, 0, 0],
-            [0, 0, 1, 0, 1],
-            [0, 1, 1, 0, 1],
-            [0, 1, 1, 0, 1],
-            [0, 0, 0, 0, 1],
-        ])
-        self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
-
     def test_solution_4x4_3eyv2(self):
         # https://gridpuzzle.com/creek/3eyv2
         grid = Grid([
@@ -65,10 +42,10 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [0, 0, 0, 0],
-            [1, 1, 0, 1],
-            [1, 0, 0, 0],
-            [0, 0, 1, 0],
+            [x, x, x, x],
+            [1, 1, x, 1],
+            [1, x, x, x],
+            [x, x, 1, x],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -86,10 +63,33 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 0, 1, 1],
-            [1, 0, 0, 0],
-            [1, 1, 0, 1],
-            [0, 0, 0, 0],
+            [1, x, 1, 1],
+            [1, x, x, x],
+            [1, 1, x, 1],
+            [x, x, x, x],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_5x5_grid_51ppw(self):
+        # https://gridpuzzle.com/creek/51ppw
+        grid = Grid([
+            [_, 1, _, _, 0, _],
+            [_, _, 3, 2, _, _],
+            [_, 1, _, _, 2, _],
+            [_, _, 4, 2, _, _],
+            [_, 1, _, _, 2, _],
+            [_, _, _, _, _, _],
+        ])
+        game_solver = CreekSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [x, 1, 1, x, x],
+            [x, x, 1, x, 1],
+            [x, 1, 1, x, 1],
+            [x, 1, 1, x, 1],
+            [x, x, x, x, 1],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -109,12 +109,12 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 0, 0, 1, 1, 1,],
-            [1, 1, 0, 0, 0, 1,],
-            [0, 0, 0, 1, 0, 0,],
-            [1, 1, 0, 1, 1, 1,],
-            [0, 0, 0, 0, 0, 0,],
-            [0, 1, 1, 1, 0, 0,],
+            [1, x, x, 1, 1, 1, ],
+            [1, 1, x, x, x, 1, ],
+            [x, x, x, 1, x, x, ],
+            [1, 1, x, 1, 1, 1, ],
+            [x, x, x, x, x, x, ],
+            [x, 1, 1, 1, x, x, ],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -135,20 +135,20 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [0, 1, 1, 1, 1, 1, 0],
-            [0, 0, 1, 0, 0, 0, 0],
-            [1, 0, 1, 0, 1, 1, 0],
-            [1, 0, 0, 0, 1, 0, 0],
-            [1, 0, 0, 1, 1, 1, 1],
-            [1, 0, 1, 1, 0, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0],
+            [x, 1, 1, 1, 1, 1, x],
+            [x, x, 1, x, x, x, x],
+            [1, x, 1, x, 1, 1, x],
+            [1, x, x, x, 1, x, x],
+            [1, x, x, 1, 1, 1, 1],
+            [1, x, 1, 1, x, 1, 1],
+            [x, x, x, x, x, x, x],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_7x7_expert_0dd0r(self):
-        #https://gridpuzzle.com/creek/0dd0r
+        # https://gridpuzzle.com/creek/0dd0r
         grid = Grid([
             [_, _, 2, _, 2, _, 1, 0],
             [_, _, _, 2, _, 2, _, 0],
@@ -162,10 +162,13 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 0, 1, 1],
-            [1, 0, 0, 0],
-            [1, 1, 0, 1],
-            [0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, x],
+            [1, x, x, x, x, x, x],
+            [1, x, 1, x, 1, x, x],
+            [1, x, 1, 1, x, 1, x],
+            [1, x, 1, x, x, 1, x],
+            [1, x, x, 1, x, x, x],
+            [x, x, 1, x, x, x, 1],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -186,10 +189,56 @@ class CreekSolverTests(TestCase):
         game_solver = CreekSolver(grid, self.get_solver_engine())
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 0, 1, 1],
-            [1, 0, 0, 0],
-            [1, 1, 0, 1],
-            [0, 0, 0, 0],
+            [x, x, x, x, 1, 1, x],
+            [1, x, 1, x, x, x, x],
+            [x, x, 1, x, 1, 1, x],
+            [x, 1, 1, 1, 1, x, x],
+            [x, x, x, 1, 1, x, 1],
+            [x, 1, 1, 1, 1, x, 1],
+            [x, x, x, 1, 1, 1, 1],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_15x15_evil_0x6zx8(self):
+        # https://gridpuzzle.com/creek/0x6zx8
+        grid = Grid([
+            [_, _, _, 2, _, 1, 1, _, 1, _, 1, 0, _, _, _, _],
+            [_, 3, _, _, 1, _, 2, 2, _, _, 2, _, _, 2, _, _],
+            [_, _, 2, _, _, _, _, 2, _, 2, _, 3, _, _, 3, _],
+            [_, _, _, 1, 2, _, _, 2, _, _, _, 2, _, 1, 2, _],
+            [0, _, _, _, _, _, 3, _, _, _, 2, _, _, 1, _, 2],
+            [1, 2, _, 3, _, _, _, 2, _, 1, _, _, 1, _, _, _],
+            [1, _, 1, _, _, _, _, _, 1, _, 3, 3, _, _, 2, _],
+            [_, 2, _, 2, _, _, 3, _, _, 1, _, _, 3, _, _, _],
+            [0, _, 1, _, _, _, 2, _, 0, 2, _, 2, _, 1, _, 2],
+            [1, _, 2, _, _, 2, _, 2, _, _, _, _, _, _, 2, _],
+            [_, 2, _, 2, _, 1, _, _, _, 2, _, 2, _, 3, _, _],
+            [_, _, 2, 2, _, _, 2, _, 2, 1, _, _, _, _, 1, _],
+            [_, 1, _, _, 2, 2, _, 1, 3, _, 0, 1, _, 0, _, 2],
+            [_, _, 1, _, _, 2, 2, 1, _, _, 1, 2, _, _, 3, _],
+            [_, _, _, _, 2, _, _, _, _, _, _, _, 1, _, _, 1],
+            [0, _, 2, 2, _, 2, _, _, _, _, 2, _, 0, _, _, _],
+        ])
+        game_solver = CreekSolver(grid, self.get_solver_engine())
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [1, 1, 1, 1, x, 1, x, 1, x, 1, x, x, x, 1, 1],
+            [x, 1, x, x, x, 1, x, 1, x, 1, x, 1, x, 1, 1],
+            [x, 1, x, 1, 1, x, x, 1, x, 1, 1, 1, x, x, 1],
+            [x, x, x, x, x, x, 1, x, x, 1, x, x, 1, x, 1],
+            [x, 1, 1, 1, x, 1, 1, 1, x, x, 1, x, x, x, 1],
+            [1, x, x, 1, x, x, x, x, x, 1, 1, x, 1, x, 1],
+            [x, 1, x, 1, x, 1, 1, 1, x, x, 1, 1, x, x, 1],
+            [x, 1, x, 1, x, x, 1, x, x, 1, 1, 1, 1, x, 1],
+            [x, x, x, x, 1, x, 1, x, x, 1, x, x, x, x, 1],
+            [1, 1, 1, x, 1, x, 1, x, 1, 1, x, 1, 1, 1, x],
+            [x, x, 1, x, x, x, 1, x, x, x, x, 1, 1, x, x],
+            [x, 1, x, 1, x, 1, x, 1, 1, x, x, 1, x, x, 1],
+            [x, x, x, 1, x, 1, x, x, 1, x, x, x, x, x, 1],
+            [x, 1, x, x, x, 1, x, 1, x, x, 1, 1, x, 1, 1],
+            [x, 1, 1, 1, 1, 1, x, x, x, 1, 1, x, x, x, x],
         ])
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
