@@ -15,7 +15,6 @@ class TapaSolver(GameSolver):
             raise ValueError("The grid must contain at least one list number")
         self._solver = solver_engine
         self._grid_z3 = None
-        self.min_black = self._get_min_black()
 
     def get_solution(self) -> (Grid | None, int):
         matrix_z3 = [[self._solver.bool(f"bool_{r}_{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
@@ -24,8 +23,6 @@ class TapaSolver(GameSolver):
 
         self._init_borders_white()
         self._init_adjacent_cells()
-        self._min_black()
-        self._max_black()
         self._no_black_on_numbers_cell()
         self._black_around_number()
         self._no_black_square()
@@ -41,13 +38,6 @@ class TapaSolver(GameSolver):
         self._solver.add([self._solver.Not(self._grid_z3.value(r, self._grid_z3.columns_number - 1)) for r in range(self._grid_z3.rows_number)])
         self._solver.add([self._solver.Not(self._grid_z3.value(0, c)) for c in range(self._grid_z3.columns_number)])
         self._solver.add([self._solver.Not(self._grid_z3.value(self._grid_z3.rows_number - 1, c)) for c in range(self._grid_z3.columns_number)])
-
-    def _min_black(self):
-        self._solver.add(self._solver.sum([self._grid_z3.value(r, c) for r in range(1, self._grid_z3.rows_number - 1) for c in range(1, self._grid_z3.columns_number - 1)]) >= self.min_black)
-
-    def _max_black(self):
-        max_black = self.rows_number * self.columns_number - (self.rows_number // 2) * (self.columns_number // 2)
-        self._solver.add(self._solver.sum([self._grid_z3.value(r, c) for r in range(1, self._grid_z3.rows_number - 1) for c in range(1, self._grid_z3.columns_number - 1)]) <= max_black)
 
     def _no_black_on_numbers_cell(self):
         for r in range(self._grid.rows_number):
@@ -162,16 +152,3 @@ class TapaSolver(GameSolver):
     @staticmethod
     def list_to_string(array):
         return sum(array)
-
-    def _get_min_black(self):
-        number_sum = 0
-        for r in range(0, self._grid.rows_number, 5):
-            for c in range(0, self._grid.columns_number, 5):
-                max_number = 0
-                for dr in range(min(5, self._grid.rows_number - r)):
-                    for dc in range(min(5, self._grid.columns_number - c)):
-                        number = sum(self._grid.value(r + dr, c + dc)) if isinstance(self._grid.value(r + dr, c + dc), list) else 0
-                        if number > max_number:
-                            max_number = number
-                number_sum += max_number
-        return number_sum
