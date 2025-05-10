@@ -141,14 +141,3 @@ class TapaSolver(GameSolver):
     @staticmethod
     def _adjacent_count(block: list[bool]):
         return sum(block[i] and block[i + 1] for i in range(len(block) - 1)) + (block[0] and block[-1])
-
-    def get_console_grid(self, solution_grid):
-        background_grid = Grid([[1 if solution_grid.value(r, c) else 0 for c in range(solution_grid.columns_number)] for r in range(solution_grid.rows_number)])
-        numbers_grid = Grid([[TapaSolver.list_to_string(self._grid.value(r, c)) if isinstance(self._grid.value(r, c), list) else ' ' for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
-        police_color_grid = Grid([[16 for _ in range(solution_grid.columns_number)] for _ in range(solution_grid.rows_number)])
-        console_grid = numbers_grid.to_console_string(police_color_grid, background_grid)
-        return console_grid
-
-    @staticmethod
-    def list_to_string(array):
-        return sum(array)
