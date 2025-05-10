@@ -1,4 +1,5 @@
-﻿from Domain.Board.Grid import Grid
+﻿from Board.Position import Position
+from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
@@ -14,7 +15,7 @@ class TapaSolver(GameSolver):
         if not any(isinstance(cell, list) for row in self._grid.matrix for cell in row):
             raise ValueError("The grid must contain at least one list number")
         self._solver = solver_engine
-        self._grid_z3 = None
+        self._grid_z3: Grid | None = None
 
     def get_solution(self) -> (Grid | None, int):
         matrix_z3 = [[self._solver.bool(f"bool_{r}_{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
@@ -40,10 +41,8 @@ class TapaSolver(GameSolver):
         self._solver.add([self._solver.Not(self._grid_z3.value(self._grid_z3.rows_number - 1, c)) for c in range(self._grid_z3.columns_number)])
 
     def _no_black_on_numbers_cell(self):
-        for r in range(self._grid.rows_number):
-            for c in range(self._grid.columns_number):
-                if isinstance(self._grid.value(r, c), list):
-                    self._solver.add(self._solver.Not(self._grid_z3.value(r + 1, c + 1)))
+        for position in [position for position, value in self._grid if value != 0]:
+            self._solver.add(self._solver.Not(self._grid_z3[position + Position(1, 1)]))
 
     def _black_around_number(self):
         neighbours_adjacent_coordinates = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
@@ -90,7 +89,7 @@ class TapaSolver(GameSolver):
             for black_shape in black_shapes:
                 shape_not_all_black = self._solver.Not(self._solver.And([self._grid_z3[position] for position in black_shape]))
                 around_shape = ShapeGenerator.around_shape(black_shape)
-                around_not_all_white = self._solver.Not(self._solver.And([self._solver.Not(self._grid_z3.value(r, c)) for r, c in around_shape]))
+                around_not_all_white = self._solver.Not(self._solver.And([self._solver.Not(self._grid_z3[position]) for position in around_shape if position in self._grid_z3]))
                 constraint = self._solver.Or(shape_not_all_black, around_not_all_white)
                 self._solver.add(constraint)
 
