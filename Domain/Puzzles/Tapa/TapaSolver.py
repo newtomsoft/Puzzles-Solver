@@ -1,7 +1,6 @@
 ﻿from Domain.Board.Grid import Grid
 from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.ShapeCollection import ShapeCollection
 from Utils.ShapeGenerator import ShapeGenerator
 
 
@@ -30,7 +29,6 @@ class TapaSolver(GameSolver):
         self._no_black_on_numbers_cell()
         self._black_around_number()
         self._no_black_square()
-        self._no_isolated_black_shape()
 
         solution, _ = self._ensure_all_black_connected()
         return solution
@@ -86,33 +84,6 @@ class TapaSolver(GameSolver):
                     self._solver.Not(self._grid_z3.value(r, c + 1)),
                     self._solver.Not(self._grid_z3.value(r + 1, c + 1))
                 ))
-
-    def _no_isolated_black_shape(self):
-        max_size = min(self.min_black, int(min(self._grid.columns_number, self._grid.rows_number) / 2))
-        shapes_and_outlines = []
-        for current_max_size in range(1, max_size + 1):
-            shapes_and_outlines += ShapeCollection.get_shapes_around_by_size((1, current_max_size))
-
-        for shape_and_outline in shapes_and_outlines:
-            shape = shape_and_outline[0]
-            outline = shape_and_outline[1]
-            shape_rows_number = max([r for r, c in shape]) + 1
-            shape_columns_number = max([c for r, c in shape]) + 1
-            if shape_rows_number >= self._grid.rows_number - 1 or shape_columns_number >= self._grid.columns_number - 1:
-                continue
-            constraints = []
-            for r in range(1, self._grid_z3.rows_number - shape_rows_number):
-                for c in range(1, self._grid_z3.columns_number - shape_columns_number):
-                    if isinstance(self._grid.value(r - 1, c - 1), list):
-                        continue
-                    are_numbers = any([isinstance(self._grid.value(r + dr - 1, c + dc - 1), list) for dr, dc in shape])
-                    if are_numbers:
-                        continue
-                    shape_black = self._solver.And([self._grid_z3.value(r + dr, c + dc) for dr, dc in shape])
-                    around_all_white = self._solver.And([self._solver.Not(self._grid_z3.value(r + dr, c + dc)) for dr, dc in outline])
-                    around_not_all_white = self._solver.Not(around_all_white)
-                    constraints.append(self._solver.Implies(shape_black, around_not_all_white))
-            self._solver.add(constraints)
 
     def _ensure_all_black_connected(self) -> (Grid, int):
         proposition_count = 0
