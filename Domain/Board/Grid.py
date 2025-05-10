@@ -1,16 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import (
-    Dict,
-    FrozenSet,
-    Generator,
-    Generic,
-    Iterable,
-    List,
-    Set,
-    Tuple,
-    TypeVar,
-)
+from typing import Generator, Generic, TypeVar, Iterable
 
 from bitarray import bitarray
 
@@ -23,7 +13,7 @@ T = TypeVar('T')
 
 
 class Grid(GridBase[T], Generic[T]):
-    def __init__(self, matrix: List[List[T]]):
+    def __init__(self, matrix: list[list[T]]):
         super().__init__(matrix)
 
     def __getitem__(self, key) -> T:
@@ -38,7 +28,7 @@ class Grid(GridBase[T], Generic[T]):
             return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
         raise TypeError(f'Position expected, got {type(item)}')
 
-    def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
+    def __iter__(self) -> Generator[tuple[Position, T], None, None]:
         for row_index, row in enumerate(self._matrix):
             for column_index, cell in enumerate(row):
                 yield Position(row_index, column_index), cell
@@ -93,7 +83,7 @@ class Grid(GridBase[T], Generic[T]):
     def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
         return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
-    def get_regions(self) -> Dict[int, FrozenSet[Position]]:
+    def get_regions(self) -> dict[int, frozenset[Position]]:
         regions = defaultdict(set)
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -120,7 +110,7 @@ class Grid(GridBase[T], Generic[T]):
             visited_flat.update(visited_in_this_pass)
         return visited_list
 
-    def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> set[frozenset[Position]]:
         excluded = []
         shapes = set()
         while True:
@@ -135,7 +125,7 @@ class Grid(GridBase[T], Generic[T]):
             excluded.append(position)
         return shapes
 
-    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Position]]:
+    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> tuple[bool, set[Position]]:
         value = self.value(position)
         visited = self._depth_first_search(position, value, mode)
         if len(visited) <= 1:
@@ -146,9 +136,9 @@ class Grid(GridBase[T], Generic[T]):
                 border_cells.add(cell)
         return len(border_cells) >= 2, visited
 
-    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> Set[FrozenSet[Position]]:
+    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[frozenset[Position]]:
         excluded = []
-        cells_sets: Set[FrozenSet[Position]] = set()
+        cells_sets: set[frozenset[Position]] = set()
         while True:
             position = self._get_cell_of_value(value, excluded)
             if position is None:
@@ -162,7 +152,7 @@ class Grid(GridBase[T], Generic[T]):
             excluded.append(position)
         return cells_sets
 
-    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> Set[Position]:
+    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> set[Position]:
         if visited is None:
             visited = set()
         if (self.value(position) != value) or (position in visited):
@@ -228,13 +218,13 @@ class Grid(GridBase[T], Generic[T]):
     def is_empty(self):
         return self == Grid.empty()
 
-    def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
+    def straddled_neighbors_positions(self, position: Position) -> set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def edges_positions(self) -> Set[Position]:
+    def edges_positions(self) -> set[Position]:
         return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
 
-    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
