@@ -16,10 +16,11 @@ class Position:
         return math.sqrt(math.pow(self.r - other.r, 2) + math.pow(self.c - other.c, 2))
 
     def neighbors(self, mode='orthogonal') -> list['Position']:
-        neighbors = [self.down, self.up, self.right, self.left]
+        if mode == 'orthogonal':
+            return [self.up, self.left, self.down, self.right, ]
         if mode == 'diagonal':
-            neighbors.extend([self.up_left, self.up_right, self.down_left, self.down_right])
-        return neighbors
+            return [self.up, self.up_left, self.left, self.down_left, self.down, self.down_right, self.right, self.up_right]
+        raise ValueError(f"Unknown mode {mode}")
 
     def straddled_neighbors(self) -> set['Position']:
         r_floor = math.floor(self.r)
