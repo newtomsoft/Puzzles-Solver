@@ -176,7 +176,7 @@ class Grid(GridBase[T], Generic[T]):
         return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
 
     @staticmethod
-    def get_adjacent_combinations(neighbor_length, block_length, circular) -> list[list[bool]]:
+    def get_adjacent_combinations(neighbor_length: int, block_length: int, circular: bool) -> list[list[bool]]:
         if block_length == 0:
             return [[False for _ in range(neighbor_length)]]
         if block_length == neighbor_length:
@@ -192,7 +192,7 @@ class Grid(GridBase[T], Generic[T]):
         return result
 
     @staticmethod
-    def get_bit_array_adjacent_combinations(neighbor_length, block_length, circular) -> list[bitarray]:
+    def get_bit_array_adjacent_combinations(neighbor_length: int, block_length: int, circular: bool) -> list[bitarray]:
         bitarrays = []
         first_bitarray = bitarray(neighbor_length)
         for i in range(block_length):
