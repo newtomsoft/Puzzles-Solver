@@ -2,14 +2,11 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 
 
 class ThermometersSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_not_a_square(self):
         grid = Grid([
@@ -21,7 +18,7 @@ class ThermometersSolverTests(TestCase):
         ])
         full_by_column_row = {'column': [1, 1, 1, 1], 'row': [1, 1, 1, 1, 1]}
         with self.assertRaises(ValueError) as context:
-            ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+            ThermometersSolver(grid, full_by_column_row)
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_4(self):
@@ -32,7 +29,7 @@ class ThermometersSolverTests(TestCase):
         ])
         full_by_column_row = {'column': [1, 1, 1], 'row': [1, 1, 1]}
         with self.assertRaises(ValueError) as context:
-            ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+            ThermometersSolver(grid, full_by_column_row)
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_with_sum_thermometer_cells_constraint(self):
@@ -43,7 +40,7 @@ class ThermometersSolverTests(TestCase):
             ['e1', 'l1', 'l1', 'c3'],
         ])
         full_by_column_row = {'column': [2, 0, 1, 3], 'row': [1, 2, 1, 2]}
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertTrue(all([full_by_column_row['row'][i] == sum(row) for i, row in enumerate(solution.matrix)]))
         self.assertTrue(all([full_by_column_row['column'][i] == sum(column) for i, column in enumerate(zip(*solution.matrix))]))
@@ -56,7 +53,7 @@ class ThermometersSolverTests(TestCase):
             ['e1', 'l1', 'l1', 'c3'],
         ])
         full_by_column_row = {'column': [1, 0, 0, 0], 'row': [1, 0, 0, 0]}
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -74,7 +71,7 @@ class ThermometersSolverTests(TestCase):
             [0, 0, 0, 1],
             [0, 0, 1, 1],
         ])
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -98,7 +95,7 @@ class ThermometersSolverTests(TestCase):
             [1, 1, 0, 0, 1, 0],
             [1, 1, 0, 0, 0, 0],
         ])
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -130,7 +127,7 @@ class ThermometersSolverTests(TestCase):
             [0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
             [0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         ])
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -172,7 +169,7 @@ class ThermometersSolverTests(TestCase):
             [1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -214,7 +211,7 @@ class ThermometersSolverTests(TestCase):
             [1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
-        game_solver = ThermometersSolver(grid, full_by_column_row, self.get_solver_engine())
+        game_solver = ThermometersSolver(grid, full_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()

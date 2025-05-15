@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = False
 
 
 class HitoriSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_not_exist_2_black_adjacent(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class HitoriSolverTests(TestCase):
             [2, 2, 2],
             [3, 4, 5]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -31,7 +28,7 @@ class HitoriSolverTests(TestCase):
             [7, 2, 8, 9],
             [4, 2, 3, 6]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -43,7 +40,7 @@ class HitoriSolverTests(TestCase):
             [3, 1, 2]
         ])
         expected_solution = Grid(grid.matrix.copy())
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -59,7 +56,7 @@ class HitoriSolverTests(TestCase):
             [3, _, 2],
             [2, 3, 1]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -79,7 +76,7 @@ class HitoriSolverTests(TestCase):
             [_, 1, _, 4, 3],
             [5, 2, 1, 3, _]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -116,7 +113,7 @@ class HitoriSolverTests(TestCase):
             [9, 4, 6, 8, _, 7, 2, 3, 5, _, 10, _],
             [12, _, 3, 1, 7, 10, _, 11, _, 9, 2, 5]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -159,7 +156,7 @@ class HitoriSolverTests(TestCase):
             [4, 9, 11, 2, 14, _, 12, 1, _, 5, 8, 15, _, 10, 13],
             [_, 15, _, 4, _, 2, 11, _, 14, 6, 13, _, 9, 5, _]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -209,7 +206,7 @@ class HitoriSolverTests(TestCase):
             [20, 7, 18, 16, 1, 12, 8, 9, _, 17, 11, _, 15, _, 13, 6, 3, 10, _, 4],
             [9, _, 19, _, 16, _, 17, _, 15, 20, _, 1, 11, 4, 10, _, 5, _, 12, 13]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -262,7 +259,7 @@ class HitoriSolverTests(TestCase):
             [9, 16, 13, 4, 2, 5, 6, 3, _, 19, 17, 1, 7, 12, 8, _, 20, 11, _, 18],
             [_, 10, _, 3, _, 11, _, 20, 14, _, 15, _, 17, _, 1, 13, 6, _, 18, 12]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -325,7 +322,7 @@ class HitoriSolverTests(TestCase):
             [15, _, 23, _, 19, _, 22, 10, 17, _, 3, 13, _, 21, _, 7, 25, 14, 18, _, 1, 4, 24, 9, _],
             [_, 20, 14, 15, 1, 4, 24, _, 2, 8, _, 11, 17, 22, 13, _, 6, _, 21, 10, _, 7, _, 23, 19]
         ])
-        game_solver = HitoriSolver(grid, self.get_solver_engine())
+        game_solver = HitoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 

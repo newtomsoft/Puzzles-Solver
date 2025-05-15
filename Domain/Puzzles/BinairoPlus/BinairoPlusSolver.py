@@ -1,13 +1,14 @@
 ﻿from typing import Tuple
 
+from z3 import Solver, Bool, Not, And, unsat, is_true
+
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class BinairoPlusSolver(GameSolver):
-    def __init__(self, grid: Grid, comparisons_positions: dict[str, list[Tuple[Position, Position]]], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, comparisons_positions: dict[str, list[Tuple[Position, Position]]]):
         self._grid = grid
         self._comparisons_positions = comparisons_positions
         self.rows_number = self._grid.rows_number
@@ -16,13 +17,13 @@ class BinairoPlusSolver(GameSolver):
             raise ValueError("Binairo+ grid must be at least 6x6")
         if self.rows_number % 2 != 0 or self.columns_number % 2 != 0:
             raise ValueError("Binairo+ grid must have an even number of rows/columns")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3 = None
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[self._solver.bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
 
         return self._compute_solution()
@@ -32,7 +33,7 @@ class BinairoPlusSolver(GameSolver):
 
     def _compute_solution(self) -> Grid:
         model = self._solver.model()
-        solution = [[self._solver.is_true(model.eval(self._grid_z3[r][c])) for c in range(self.columns_number)] for r in range(self.rows_number)]
+        solution = [[is_true(model.eval(self._grid_z3[r][c])) for c in range(self.columns_number)] for r in range(self.rows_number)]
         return Grid(solution)
 
     def _add_constraints(self):
@@ -45,7 +46,7 @@ class BinairoPlusSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._grid.value(r, c) == 0:
-                    self._solver.add(self._solver.Not(self._grid_z3[r][c]))
+                    self._solver.add(Not(self._grid_z3[r][c]))
                 elif self._grid.value(r, c) == 1:
                     self._solver.add(self._grid_z3[r][c])
 
@@ -60,10 +61,10 @@ class BinairoPlusSolver(GameSolver):
     def _add_not_same_3_adjacent_constraints(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number - 2):
-                self._solver.add(self._solver.Not(self._solver.And(self._grid_z3[r][c] == self._grid_z3[r][c + 1], self._grid_z3[r][c + 1] == self._grid_z3[r][c + 2])))
+                self._solver.add(Not(And(self._grid_z3[r][c] == self._grid_z3[r][c + 1], self._grid_z3[r][c + 1] == self._grid_z3[r][c + 2])))
         for c in range(self.columns_number):
             for r in range(self.rows_number - 2):
-                self._solver.add(self._solver.Not(self._solver.And(self._grid_z3[r][c] == self._grid_z3[r + 1][c], self._grid_z3[r + 1][c] == self._grid_z3[r + 2][c])))
+                self._solver.add(Not(And(self._grid_z3[r][c] == self._grid_z3[r + 1][c], self._grid_z3[r + 1][c] == self._grid_z3[r + 2][c])))
 
     def _add_comparison_operators_constraints(self):
         for position0, position1 in self._comparisons_positions['equal']:

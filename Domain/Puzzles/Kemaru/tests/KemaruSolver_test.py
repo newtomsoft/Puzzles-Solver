@@ -1,17 +1,14 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 
 _ = 0
 
 
 class KemaruSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_grid_must_have_at_least_2_regions_raises_value_error(self):
         grid = Grid([
@@ -31,7 +28,7 @@ class KemaruSolverTests(TestCase):
             [1, 1, 1, 1, 1, 1],
         ])
         with self.assertRaises(ValueError) as context:
-            KemaruSolver(grid, region_grid, self.get_solver_engine())
+            KemaruSolver(grid, region_grid)
         self.assertEqual(str(context.exception), "The grid must have at least 2 regions")
 
     def test_get_solution_4x4_easy(self):
@@ -53,7 +50,7 @@ class KemaruSolverTests(TestCase):
             [2, 6, 4, 2],
             [4, 1, 3, 1],
         ])
-        game_solver = KemaruSolver(grid, region_grid, self.get_solver_engine())
+        game_solver = KemaruSolver(grid, region_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -99,7 +96,7 @@ class KemaruSolverTests(TestCase):
             [1, 3, 1, 3, 4, 2, 4, 3, 1,],
             [2, 5, 2, 5, 1, 3, 1, 5, 2,],
         ])
-        game_solver = KemaruSolver(grid, region_grid, self.get_solver_engine())
+        game_solver = KemaruSolver(grid, region_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()

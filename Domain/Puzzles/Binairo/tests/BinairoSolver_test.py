@@ -1,18 +1,13 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 
 _ = -1
 
 
 class BinairoSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
-
     def test_solution_grid_too_small(self):
         grid = Grid([
             [_, _, _, _, _],
@@ -23,7 +18,7 @@ class BinairoSolverTests(TestCase):
         ])
 
         with self.assertRaises(ValueError) as context:
-            BinairoSolver(grid, self.get_solver_engine())
+            BinairoSolver(grid)
 
         self.assertEqual("Binairo grid must be at least 6x6", str(context.exception))
 
@@ -37,7 +32,7 @@ class BinairoSolverTests(TestCase):
             [_, _, _, _, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            BinairoSolver(grid, self.get_solver_engine())
+            BinairoSolver(grid)
 
         self.assertEqual("Binairo grid must have an even number of rows/columns", str(context.exception))
 
@@ -52,7 +47,7 @@ class BinairoSolverTests(TestCase):
             [_, _, _, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            BinairoSolver(grid, self.get_solver_engine())
+            BinairoSolver(grid)
 
         self.assertEqual("Binairo grid must have an even number of rows/columns", str(context.exception))
 
@@ -73,7 +68,7 @@ class BinairoSolverTests(TestCase):
             [0, 1, 0, 1, 1, 0],
             [1, 0, 0, 1, 0, 1],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -97,7 +92,7 @@ class BinairoSolverTests(TestCase):
             [0, 1, 0, 1, 1, 0],
             [1, 0, 0, 1, 0, 1],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -113,7 +108,7 @@ class BinairoSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertTrue(solution.is_empty())
@@ -127,7 +122,7 @@ class BinairoSolverTests(TestCase):
             [0, 0, _, _, _, _],
             [1, 1, _, _, _, _],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertTrue(solution.is_empty())
@@ -149,7 +144,7 @@ class BinairoSolverTests(TestCase):
             [1, 0, 0, 1, 0, 1],
             [0, 1, 0, 1, 1, 0],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -165,7 +160,7 @@ class BinairoSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
         solution = game_solver.get_solution()
         self.assertTrue(solution.is_empty())
 
@@ -178,7 +173,7 @@ class BinairoSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
         solution = game_solver.get_solution()
         self.assertTrue(solution.is_empty())
 
@@ -199,7 +194,7 @@ class BinairoSolverTests(TestCase):
             [1, 1, 0, 0, 1, 0],
             [1, 0, 1, 0, 1, 0],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -226,7 +221,7 @@ class BinairoSolverTests(TestCase):
             [1, 0, 1, 0, 0, 1, 0, 1],
             [0, 1, 0, 0, 1, 1, 0, 1],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -257,7 +252,7 @@ class BinairoSolverTests(TestCase):
             [0, 0, 1, 1, 0, 1, 0, 1, 0, 1],
             [0, 1, 0, 1, 1, 0, 1, 0, 0, 1],
         ])
-        game_solver = BinairoSolver(grid, self.get_solver_engine())
+        game_solver = BinairoSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()

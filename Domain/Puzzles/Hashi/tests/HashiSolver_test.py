@@ -6,19 +6,16 @@ from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class HashiSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_wrong_bridges(self):
         grid = Grid([
             [1, 2]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(IslandGrid.empty(), solution)
@@ -28,7 +25,7 @@ class HashiSolverTests(TestCase):
             [2, 2],
             [2, 2]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_repr = (
             ' ┌──┐ \n'
@@ -42,7 +39,7 @@ class HashiSolverTests(TestCase):
             [2, 2],
             ['_', '_']
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_repr = (
             ' ┌──┐ \n'
@@ -57,7 +54,7 @@ class HashiSolverTests(TestCase):
             ['_', '_'],
             [2, 2]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_repr = (
             ' ┌──┐ \n'
@@ -76,7 +73,7 @@ class HashiSolverTests(TestCase):
             ['_', '_', 1, '_'],
             [2, '_', '_', 2]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertNotEqual(IslandGrid.empty(), solution)
@@ -138,7 +135,7 @@ class HashiSolverTests(TestCase):
             [3, '_', 3],
             [3, 2, '_']
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertNotEqual(IslandGrid.empty(), solution)
@@ -178,7 +175,7 @@ class HashiSolverTests(TestCase):
             [1, 2],
             [1, 2]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertNotEqual(IslandGrid.empty(), solution)
@@ -218,7 +215,7 @@ class HashiSolverTests(TestCase):
             [2, '_', '_', '_', '_', 4, '_', '_', 2, '_'],
             ['_', 2, '_', '_', '_', '_', '_', '_', '_', 3]
         ])
-        game_solver = HashiSolver(grid, self.get_solver_engine())
+        game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertNotEqual(IslandGrid.empty(), solution)

@@ -1,7 +1,5 @@
-﻿from GridProviders.GridProvider import GridProvider
-from Puzzles.GameSolver import GameSolver
-from SolverEngine.SolverEngine import SolverEngine
-from Domain.Board.Grid import Grid
+﻿from Domain.Board.Grid import Grid
+from GridProviders.GridProvider import GridProvider
 
 
 class StringGridProvider(GridProvider):

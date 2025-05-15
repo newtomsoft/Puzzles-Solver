@@ -3,13 +3,9 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class NurikabeSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
 
     def test_grid_must_be_at_least_5x5_raises_value_error_column(self):
         grid = Grid([
@@ -20,7 +16,7 @@ class NurikabeSolverTests(TestCase):
             [1, 3, 3, 4],
         ])
         with self.assertRaises(ValueError) as context:
-            NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+            NurikabeSolver(grid)
         self.assertEqual(str(context.exception), "The grid must be at least 5x5")
 
     def test_grid_must_be_at_least_5x5_raises_value_error_row(self):
@@ -31,7 +27,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 3, 4, 4],
         ])
         with self.assertRaises(ValueError) as context:
-            NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+            NurikabeSolver(grid)
         self.assertEqual(str(context.exception), "The grid must be at least 5x5")
 
     def test_get_solution_5x5_only_numbers_1(self):
@@ -49,7 +45,7 @@ class NurikabeSolverTests(TestCase):
             [0, 1, 0, 1, 1],
             [1, 1, 1, 1, 0]
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -63,7 +59,7 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 1, 0, 1],
             [0, 1, 0, 0, 0],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -82,7 +78,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 1, 0, 1],
             [1, 0, 1, 1, 1]
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -103,7 +99,7 @@ class NurikabeSolverTests(TestCase):
             [0, 1, 0, 1, 0],
             [0, 1, 1, 1, 0]
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -124,7 +120,7 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 1, 1, 1],
             [1, 0, 1, 0, 0],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -145,7 +141,7 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 0, 0, 1],
             [1, 1, 1, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -166,7 +162,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 1, 0, 1],
             [1, 0, 1, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -187,7 +183,7 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 1, 0, 1],
             [1, 1, 1, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -208,7 +204,7 @@ class NurikabeSolverTests(TestCase):
             [0, 1, 0, 0, 1],
             [1, 1, 1, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -229,7 +225,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 0, 0, 1],
             [0, 1, 1, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -250,7 +246,7 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 1, 1, 0],
             [0, 1, 1, 0, 0],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -271,7 +267,7 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 0, 1, 0],
             [1, 1, 1, 1, 1]
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -296,7 +292,7 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 0, 1, 0, 1, 1],
             [1, 1, 0, 1, 0, 0, 0],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -331,7 +327,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
             [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -365,7 +361,7 @@ class NurikabeSolverTests(TestCase):
             [1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
             [0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
         ])
-        game_solver = NurikabeSolver(grid, NurikabeSolverTests.get_solver_engine())
+        game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()

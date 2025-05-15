@@ -1,19 +1,18 @@
 ﻿import collections
 from typing import Iterable, Set
 
-from z3 import And
+from z3 import Solver, Not, And, unsat, Or, Int
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Lits.LitsGridBuilder import LitsGridBuilder
 from Domain.Puzzles.Lits.LitsType import LitsType
 
 
 class LitsSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self._regions = self._grid.get_regions()
         if any(len(region) < 4 for region in self._regions.values()):
@@ -22,18 +21,19 @@ class LitsSolver(GameSolver):
         self.columns_number = self._grid.columns_number
         self._grid_z3: Grid | None = None
         self.previous_solution: Grid | None = None
-        self._solver = solver_engine
+        self._solver = Solver()
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        self.previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        self.previous_solution = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self.previous_solution
 
     def get_other_solution(self):
-        exclusion_constraint = self._solver.Not(self._solver.And([self._grid_z3[Position(r, c)] == self.previous_solution[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number)]))
+        exclusion_constraint = Not(And([self._grid_z3[Position(r, c)] == self.previous_solution[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 
@@ -51,7 +51,7 @@ class LitsSolver(GameSolver):
 
     def _add_count_in_regions_constraints(self):
         for region in self._regions.values():
-            self._solver.add(self._solver.sum([self._grid_z3[position] != 0 for position in region]) == 4)
+            self._solver.add(sum([self._grid_z3[position] != 0 for position in region]) == 4)
 
     def _add_regions_constraints(self):
         for region in self._regions.values():
@@ -69,7 +69,7 @@ class LitsSolver(GameSolver):
         constraints_t = self._get_constraint_for_lits_type(region_grid, offset_position, LitsType.T)
         constraints_s = self._get_constraint_for_lits_type(region_grid, offset_position, LitsType.S)
 
-        constraint = self._solver.Or(*constraints_l, *constraints_i, *constraints_t, *constraints_s)
+        constraint = Or(*constraints_l, *constraints_i, *constraints_t, *constraints_s)
         self._solver.add(constraint)
 
     def _get_constraint_for_lits_type(self, region_grid: Grid, offset_position: Position, lits_type: LitsType):
@@ -116,7 +116,7 @@ class LitsSolver(GameSolver):
     def _add_no_square_constraints(self):
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
-                self._solver.add(self._solver.Not(self._solver.And(self._grid_z3[r][c] != 0, self._grid_z3[r + 1][c] != 0, self._grid_z3[r][c + 1] != 0, self._grid_z3[r + 1][c + 1] != 0)))
+                self._solver.add(Not(And(self._grid_z3[r][c] != 0, self._grid_z3[r + 1][c] != 0, self._grid_z3[r][c + 1] != 0, self._grid_z3[r + 1][c + 1] != 0)))
 
     def _add_touching_constraints(self):
         adjacent_regions_positions_pairs = self._adjacent_regions_positions_pairs()
@@ -124,13 +124,13 @@ class LitsSolver(GameSolver):
         used_pairs = set()
         for region_id, positions_pairs in adjacent_regions_positions_pairs.items():
             region_positions = [positions_pair[0] for positions_pair in positions_pairs]
-            self._solver.add(self._solver.sum([self._grid_z3[position] != 0 for position in region_positions]) >= 1)
+            self._solver.add(sum([self._grid_z3[position] != 0 for position in region_positions]) >= 1)
             for pair in positions_pairs:
                 if pair in used_pairs:
                     continue
                 used_pairs.add(pair)
                 pos0, pos1 = pair
-                self._solver.add(self._solver.Or(self._grid_z3[pos0] != self._grid_z3[pos1], self._grid_z3[pos0] == 0, self._grid_z3[pos1] == 0))
+                self._solver.add(Or(self._grid_z3[pos0] != self._grid_z3[pos1], self._grid_z3[pos0] == 0, self._grid_z3[pos1] == 0))
 
     def _adjacent_regions_positions_pairs(self) -> dict[int, Set[tuple[Position, Position]]]:
         adjacents_pairs_dict = collections.defaultdict(set)

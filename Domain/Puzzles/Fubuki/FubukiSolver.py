@@ -1,15 +1,12 @@
-﻿import math
-from abc import abstractmethod
+﻿from z3 import Solver, Not, And, unsat, Int, Distinct
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.utils import is_perfect_square
 
 
 class FubukiSolver(GameSolver):
-    def __init__(self, grid: Grid, row_sums:list[int], column_sums:list[int], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, row_sums:list[int], column_sums:list[int]):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -24,22 +21,23 @@ class FubukiSolver(GameSolver):
         if not self._verify_initial_numbers_between_1_and_9():
             raise ValueError("initial numbers must be between 1 and 9")
         self._grid_z3 = None
-        self._solver = solver_engine
+        self._solver = Solver()
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> (Grid | None, int):
-        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        self._previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        self._previous_solution = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):
         constraints = []
         for position, value in self._previous_solution:
             constraints.append(self._grid_z3[position] == value)
-        self._solver.add(self._solver.Not(self._solver.And(constraints)))
+        self._solver.add(Not(And(constraints)))
         return self.get_solution()
 
     def _add_constraints(self):
@@ -56,13 +54,13 @@ class FubukiSolver(GameSolver):
                 self._solver.add(self._grid_z3[position] <= 9)
 
     def _add_distinct_constraints(self):
-        self._solver.add(self._solver.distinct([grid_z3_value for _, grid_z3_value in self._grid_z3]))
+        self._solver.add(Distinct([grid_z3_value for _, grid_z3_value in self._grid_z3]))
 
     def _add_sums_constraints(self):
         for r in range(self.rows_number):
-            self._solver.add(self._solver.sum([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]) == self.row_sums[r])
+            self._solver.add(sum([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]) == self.row_sums[r])
         for c in range(self.columns_number):
-            self._solver.add(self._solver.sum([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]) == self.column_sums[c])
+            self._solver.add(sum([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]) == self.column_sums[c])
 
     def _verify_initial_numbers_distinct(self) -> bool:
         initial_numbers = [value for position, value in self._grid if value != -1]

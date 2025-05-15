@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class No4InARowSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_too_small(self):
         grid = Grid([
@@ -21,7 +18,7 @@ class No4InARowSolverTests(TestCase):
         ])
 
         with self.assertRaises(ValueError) as context:
-            No4InARowSolver(grid, self.get_solver_engine())
+            No4InARowSolver(grid)
 
         self.assertEqual("No 4 in a Row grid must be at least 4x4", str(context.exception))
 
@@ -42,7 +39,7 @@ class No4InARowSolverTests(TestCase):
             [1, 1, 1, 0, 0, 1],
             [0, 0, 0, 1, 1, 0],
         ])
-        game_solver = No4InARowSolver(grid, self.get_solver_engine())
+        game_solver = No4InARowSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -66,7 +63,7 @@ class No4InARowSolverTests(TestCase):
             [1, 1, 1, 0, 0, 1],
             [0, 0, 0, 1, 1, 0],
         ])
-        game_solver = No4InARowSolver(grid, self.get_solver_engine())
+        game_solver = No4InARowSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -90,7 +87,7 @@ class No4InARowSolverTests(TestCase):
             [1, 1, 1, 0, 0, 1],
             [0, 0, 0, 1, 1, 0],
         ])
-        game_solver = No4InARowSolver(grid, self.get_solver_engine())
+        game_solver = No4InARowSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -114,7 +111,7 @@ class No4InARowSolverTests(TestCase):
             [1, 1, 1, 0, 0, 1],
             [0, 0, 0, 1, 1, 0],
         ])
-        game_solver = No4InARowSolver(grid, self.get_solver_engine())
+        game_solver = No4InARowSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)

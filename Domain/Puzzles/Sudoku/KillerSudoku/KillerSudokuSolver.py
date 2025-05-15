@@ -2,14 +2,13 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 
 
 class KillerSudokuSolver(SudokuBaseSolver, GameSolver):
-    def __init__(self, grid: Grid, cages: Dict[int, Tuple[List[Position], int]], solver_engine: SolverEngine):
-        super().__init__(grid, solver_engine)
+    def __init__(self, grid: Grid, cages: Dict[int, Tuple[List[Position], int]]):
+        super().__init__(grid)
         self.cages = cages
         if not self._are_cages_cover_grid():
             raise ValueError("The cages must cover the whole grid")
@@ -23,7 +22,7 @@ class KillerSudokuSolver(SudokuBaseSolver, GameSolver):
 
     def _add_distinct_in_cages_constraints(self):
         for cage, cage_sum in self.cages.values():
-            constraint = self._solver.sum([self._grid_z3[position] for position in cage]) == cage_sum
+            constraint = sum([self._grid_z3[position] for position in cage]) == cage_sum
             self._solver.add(constraint)
 
     def _are_initial_numbers_different_in_cage(self):

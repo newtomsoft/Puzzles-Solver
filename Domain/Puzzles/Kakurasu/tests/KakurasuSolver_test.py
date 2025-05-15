@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class KakurasuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_side_not_compliant(self):
         numbers_by_side_top = {
@@ -18,7 +15,7 @@ class KakurasuSolverTests(TestCase):
         }
 
         with self.assertRaises(ValueError) as context:
-            KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+            KakurasuSolver(numbers_by_side_top)
         self.assertEqual("Kakurasu grid must at least 4x4", str(context.exception))
 
     def test_solution_top_not_compliant(self):
@@ -27,7 +24,7 @@ class KakurasuSolverTests(TestCase):
             'top': [2, 7, 3],
         }
         with self.assertRaises(ValueError) as context:
-            KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+            KakurasuSolver(numbers_by_side_top)
         self.assertEqual("Kakurasu grid must at least 4x4", str(context.exception))
 
     def test_solution_basic_1(self):
@@ -41,7 +38,7 @@ class KakurasuSolverTests(TestCase):
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -56,7 +53,7 @@ class KakurasuSolverTests(TestCase):
             [0, 0, 1, 0],
             [0, 1, 0, 0],
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -72,7 +69,7 @@ class KakurasuSolverTests(TestCase):
             [0, 1, 0, 0, 0],
             [0, 0, 0, 0, 1],
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -89,7 +86,7 @@ class KakurasuSolverTests(TestCase):
             [1, 0, 0, 0, 1, 0],
             [1, 0, 0, 0, 0, 0]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -107,7 +104,7 @@ class KakurasuSolverTests(TestCase):
             [1, 0, 1, 1, 1, 1, 0],
             [1, 1, 0, 1, 0, 1, 1]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -126,7 +123,7 @@ class KakurasuSolverTests(TestCase):
             [0, 1, 1, 1, 0, 1, 1, 1],
             [1, 1, 1, 0, 1, 1, 0, 1],
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -146,7 +143,7 @@ class KakurasuSolverTests(TestCase):
             [0, 0, 0, 1, 1, 1, 0, 0, 0],
             [0, 0, 0, 0, 0, 1, 0, 0, 1]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -167,7 +164,7 @@ class KakurasuSolverTests(TestCase):
             [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
             [1, 1, 0, 0, 1, 1, 1, 1, 0, 1]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -189,7 +186,7 @@ class KakurasuSolverTests(TestCase):
             [1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0],
             [1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -212,7 +209,7 @@ class KakurasuSolverTests(TestCase):
             [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1]
         ])
-        game_solver = KakurasuSolver(numbers_by_side_top, self.get_solver_engine())
+        game_solver = KakurasuSolver(numbers_by_side_top)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

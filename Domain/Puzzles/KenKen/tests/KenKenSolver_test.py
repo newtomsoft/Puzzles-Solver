@@ -4,13 +4,10 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class KenKenSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_square(self):
         regions_operators_results = [
@@ -18,7 +15,7 @@ class KenKenSolverTests(TestCase):
             ([Position(1, 0), Position(1, 1), Position(1, 2)], 'x', 4),
         ]
         with self.assertRaises(ValueError) as context:
-            KenKenSolver(regions_operators_results, self.get_solver_engine())
+            KenKenSolver(regions_operators_results)
 
         self.assertEqual("KenKen grid must be square", str(context.exception))
 
@@ -39,7 +36,7 @@ class KenKenSolverTests(TestCase):
             [3, 2, 1, 4],
             [2, 1, 4, 3],
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -59,7 +56,7 @@ class KenKenSolverTests(TestCase):
             [1, 4, 3, 2],
             [2, 3, 1, 4],
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -97,7 +94,7 @@ class KenKenSolverTests(TestCase):
             [4, 2, 3, 5, 7, 1, 6],
             [5, 7, 2, 4, 6, 3, 1]
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -127,7 +124,7 @@ class KenKenSolverTests(TestCase):
             [3, 1, 5, 2, 4, 6],
             [2, 4, 6, 5, 3, 1]
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -183,7 +180,7 @@ class KenKenSolverTests(TestCase):
             [1, 5, 7, 6, 4, 9, 3, 2, 8],
             [4, 1, 8, 2, 6, 3, 9, 5, 7],
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -224,7 +221,7 @@ class KenKenSolverTests(TestCase):
             [7, 6, 3, 2, 9, 8, 5, 4, 1],
             [2, 9, 4, 8, 1, 6, 3, 5, 7],
         ])
-        kenken_game = KenKenSolver(regions_operators_results, self.get_solver_engine())
+        kenken_game = KenKenSolver(regions_operators_results)
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)

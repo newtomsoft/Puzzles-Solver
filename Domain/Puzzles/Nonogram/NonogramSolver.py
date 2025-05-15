@@ -1,5 +1,5 @@
 ﻿from bitarray import bitarray
-from z3 import Solver, sat, Or, BitVec, Extract
+from z3 import BitVec, Extract, Or, Solver, sat
 
 from Domain.Board.Grid import Grid
 
@@ -19,12 +19,12 @@ class NonogramSolver:
         if any([len(numbers) == 0 for numbers in self._numbers_top]):
             raise ValueError("Missing number for column")
         self._solver = None
-        self._rows_z3: list[BitVec] = []
-        self._columns_z3: list[BitVec] = []
+        self._rows_z3: list = []
+        self._columns_z3: list = []
 
     def get_solution(self) -> Grid:
-        self._rows_z3: list[BitVec] = [BitVec(f"row_{r}", self.columns_number) for r in range(self.rows_number)]
-        self._columns_z3: list[BitVec] = [BitVec(f"column_{c}", self.rows_number) for c in range(self.columns_number)]
+        self._rows_z3: list = [BitVec(f"row_{r}", self.columns_number) for r in range(self.rows_number)]
+        self._columns_z3: list = [BitVec(f"column_{c}", self.rows_number) for c in range(self.columns_number)]
         self._solver = Solver()
         self._add_constraints()
         if self._solver.check() != sat:

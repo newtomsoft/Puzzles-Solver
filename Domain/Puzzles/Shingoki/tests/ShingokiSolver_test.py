@@ -3,22 +3,19 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 ____ = ' '
 
 
 class ShingokiSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_black2_not_loop(self):
         grid = Grid([
             ['b2', ____],
             [____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -27,7 +24,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'w2', ____],
             [____, 'w2', ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
@@ -42,7 +39,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'w3', ____],
             [____, 'w3', ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
@@ -58,7 +55,7 @@ class ShingokiSolverTests(TestCase):
             ['w2', 'w2'],
             [____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐ \n'
@@ -76,7 +73,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'w3'],
             [____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐ \n'
@@ -94,7 +91,7 @@ class ShingokiSolverTests(TestCase):
             ['w2', ____, ____],
             [____, 'w2', ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
@@ -112,7 +109,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, ____],
             [____, 'w2', ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
@@ -131,7 +128,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'w2', ____],
             [____, 'w2', ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
@@ -149,7 +146,7 @@ class ShingokiSolverTests(TestCase):
             ['b2', ____, ____],
             [____, ____, 'b4'],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌──┐ \n'
@@ -167,7 +164,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'b3', ____, ____],
             [____, ____, ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌─────┐ \n'
@@ -185,7 +182,7 @@ class ShingokiSolverTests(TestCase):
             ['b2', ____, ____],
             [____, 'b2', ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
@@ -203,7 +200,7 @@ class ShingokiSolverTests(TestCase):
             ['b3', ____, 'b3', ____],
             [____, 'b3', ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐    \n'
@@ -221,7 +218,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'b2'],
             ['b4', ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐    \n'
@@ -239,7 +236,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, ____],
             [____, ____, ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐    \n'
@@ -257,7 +254,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'b2'],
             [____, 'b2', ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
@@ -274,7 +271,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'b2'],
             [____, ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
@@ -294,7 +291,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, 'b6', ____, 'b2'],
             [____, 'w4', ____, ____, ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌──┐  ┌──┐    \n'
@@ -317,7 +314,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'b2', ____, ____, ____, ____],
             [____, 'w2', ____, 'b5', ____, ____],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──────────────┐ \n'
@@ -340,7 +337,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'b2', ____, ____, ____, ____],
             [____, 'w2', ____, 'b4', ____, 'b3'],
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐  ┌────────┐ \n'
@@ -365,7 +362,7 @@ class ShingokiSolverTests(TestCase):
             ['b4', 'b2', ____, ____, ____, 'b3', ____, ____],
             [____, ____, 'b3', ____, ____, 'b3', ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌─────────────────┐ \n'
@@ -392,7 +389,7 @@ class ShingokiSolverTests(TestCase):
             ['w6', 'b2', ____, ____, ____, ____, ____, 'w3'],
             [____, ____, ____, ____, ____, ____, ____, 'b4']
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌───────────┐  ┌──┐ \n'
@@ -422,7 +419,7 @@ class ShingokiSolverTests(TestCase):
             [____, 'b2', ____, ____, ____, ____, ____, 'w2', ____, ____, 'b2'],
             [____, ____, ____, 'w4', ____, 'b5', ____, ____, ____, 'b5', ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐     ┌──┐     ┌──┐  ┌─────┐ \n'
@@ -460,7 +457,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'b2', ____, 'b3', ____, 'b2', ____, ____, ____, ____, 'b3', 'w2', ____, ____, ____],
             [____, ____, ____, ____, ____, 'w6', ____, 'b3', ____, ____, ____, ____, ____, ____, ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐  ┌──┐  ┌──┐     ┌──┐  ┌──┐  ┌─────┐  ┌──┐ \n'
@@ -509,7 +506,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, ____, ____, ____, ____, ____, 'b2', 'b2', ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b3', ____],
             [____, ____, ____, 'b4', 'b2', ____, ____, 'b2', ____, ____, ____, ____, 'b5', ____, ____, ____, ____, ____, 'w4', ____, 'b5']
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐  ┌──┐  ┌─────┐     ┌─────────────────┐  ┌──────────────┐ \n'
@@ -568,7 +565,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, ____, 'w5', ____, ____, ____, ____, ____, ____, ____, ____, 'w2', ____, ____, 'w2', ____, ____, ____, 'b5', ____, ____, ____, ____, ____],
             [____, 'w3', ____, ____, ____, ____, ____, ____, 'w6', ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b10']
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌─────┐  ┌──┐  ┌────────────────────────────────┐  ┌────────┐  ┌──┐  ┌──┐ \n'
@@ -637,7 +634,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, ____, ____, ____, ____, ____, ____, 'w4', ____, ____, ____, ____, 'b3', ____, ____, ____, ____, ____, 'w4', ____, ____, ____, ____, 'b5', ____, ____, ____, 'b3', ____, ____],
             [____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b16', ____, ____, ____, ____, ____, 'w7', ____, ____, ____, ____, ____, ____, ____, ____, ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐  ┌──┐     ┌──┐     ┌──┐  ┌────────┐     ┌──┐  ┌─────┐  ┌─────┐  ┌──┐     ┌──┐          \n'
@@ -716,7 +713,7 @@ class ShingokiSolverTests(TestCase):
             [____, ____, 'b3', ____, 'w3', ____, ____, 'w3', ____, ____, 'w3', ____, ____, 'b5', ____, ____, ____, ____, ____, ____, 'b3', ____, ____, ____, 'b4', ____, 'b3', 'b2', ____, ____, 'w2', ____, ____, ____, ____, ____],
             [____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'w9', ____, ____, ____, ____, ____, 'b2', ____, ____, 'b2', ____, ____, ____, 'b4', ____, ____, ____, ____, ____, ____, ____, 'b3', ____, 'b2', 'b3']
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌──────────────┐  ┌─────┐  ┌───────────────────────┐  ┌──┐     ┌──────────────┐        ┌──┐  ┌─────┐    \n'
@@ -846,7 +843,7 @@ class ShingokiSolverTests(TestCase):
             ['b5', 'w3', ____, 'b4', ____, ____, ____, ____, ____, ____, ____, 'w2', ____, ____, ____, 'w2', 'b3', ____, ____, ____, 'b4', ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b3', ____, ____, 'w6',
              ____, ____, ____, ____, ____]
         ])
-        game_solver = ShingokiSolver(grid, self.get_solver_engine())
+        game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '    ┌────────┐  ┌───────────┐        ┌──┐  ┌─────┐     ┌────────┐  ┌──┐  ┌──┐        ┌──┐           ┌──┐  ┌──┐     ┌──┐    \n'

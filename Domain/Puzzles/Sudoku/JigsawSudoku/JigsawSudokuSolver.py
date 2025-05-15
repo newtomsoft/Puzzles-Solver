@@ -1,15 +1,16 @@
 ﻿from typing import List
 
+from z3 import Distinct
+
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 
 
 class JigsawSudokuSolver(SudokuBaseSolver, GameSolver):
-    def __init__(self, grid: Grid, regions: List[List[Position]], solver_engine: SolverEngine):
-        super().__init__(grid, solver_engine)
+    def __init__(self, grid: Grid, regions: List[List[Position]]):
+        super().__init__(grid)
         self._regions = regions
         if len(self._regions) != self.rows_number:
             raise ValueError("The grid must have the same number of regions as rows/column")
@@ -23,7 +24,7 @@ class JigsawSudokuSolver(SudokuBaseSolver, GameSolver):
 
     def _add_distinct_in_jigsaw_regions_constraints(self):
         for region in self._regions:
-            constraint = self._solver.distinct([self._grid_z3[position] for position in region])
+            constraint = Distinct([self._grid_z3[position] for position in region])
             self._solver.add(constraint)
 
     def _are_regions_cells_count_compliant(self):

@@ -2,20 +2,17 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Map.MapSolver import MapSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class MapSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_white_0(self):
         grid = Grid([
             []
         ])
 
-        game_solver = MapSolver(grid, self.get_solver_engine())
+        game_solver = MapSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (

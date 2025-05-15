@@ -1,12 +1,13 @@
-﻿from Domain.Board.Direction import Direction
+﻿from z3 import Solver, Not, And, unsat, Or, Implies, Int, If
+
+from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class StitchesSolver(GameSolver):
-    def __init__(self, grid: Grid, dots_by_column_row: dict[str, list[int]], regions_connections_count: int, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, dots_by_column_row: dict[str, list[int]], regions_connections_count: int):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -24,22 +25,23 @@ class StitchesSolver(GameSolver):
         self._dots_by_row = dots_by_column_row['row']
         if len(self._dots_by_column) != self.columns_number or len(self._dots_by_row) != self.rows_number:
             raise ValueError("The dots count must have the same size as the columns")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._matrix_z3 = None
         self._matrix_connexion_z3 = None
         self._previous_solution_grid = None
 
     def _init_solver(self):
-        self._matrix_connexion_z3 = [[self._solver.int(f"connexion_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._matrix_connexion_z3 = [[Int(f"connexion_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._grid_connexion_z3 = Grid(self._matrix_connexion_z3)
         self._add_constraints()
 
     def get_solution(self) -> Grid | None:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        grid = Grid([[self._solver.eval(self._matrix_connexion_z3[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        grid = Grid([[model.eval(self._matrix_connexion_z3[i][j]).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         self._previous_solution_grid = grid
         return grid
 
@@ -49,7 +51,7 @@ class StitchesSolver(GameSolver):
         return solution
 
     def _exclude_solution(self, solution_grid: Grid):
-        exclude_constraint = self._solver.Not(self._solver.And([self._matrix_connexion_z3[r][c] == solution_grid.value(r, c) for r in range(self.rows_number) for c in range(self.columns_number) if solution_grid.value(r, c)]))
+        exclude_constraint = Not(And([self._matrix_connexion_z3[r][c] == solution_grid.value(r, c) for r in range(self.rows_number) for c in range(self.columns_number) if solution_grid.value(r, c)]))
         self._solver.add(exclude_constraint)
 
     def _add_constraints(self):
@@ -76,21 +78,21 @@ class StitchesSolver(GameSolver):
                 all_regions_possible_dot_positions.update(positions0[0] for positions0 in positions)
             if len(all_regions_possible_dot_positions) == 0:
                 continue
-            constraint_dots_count_for_this_region = self._solver.sum([self._solver.If(self._matrix_connexion_z3[r][c] > 0, 1, 0) for r, c in all_regions_possible_dot_positions]) == len(current_region_with_others_regions) * self.regions_connections
+            constraint_dots_count_for_this_region = sum([If(self._matrix_connexion_z3[r][c] > 0, 1, 0) for r, c in all_regions_possible_dot_positions]) == len(current_region_with_others_regions) * self.regions_connections
             self._solver.add(constraint_dots_count_for_this_region)
 
     def _add_constraint_dots_between_regions_at(self, positions):
-        constraint_connection_region0_to_region1 = self._solver.sum([self._solver.If(self._matrix_connexion_z3[r0][c0] == Position(r0, c0).direction_to(Position(r1, c1)).value, 1, 0) for (r0, c0), (r1, c1) in positions]) == self.regions_connections
+        constraint_connection_region0_to_region1 = sum([If(self._matrix_connexion_z3[r0][c0] == Position(r0, c0).direction_to(Position(r1, c1)).value, 1, 0) for (r0, c0), (r1, c1) in positions]) == self.regions_connections
         self._solver.add(constraint_connection_region0_to_region1)
-        constraint_connection_number_region1_to_region0 = self._solver.sum([self._solver.If(self._matrix_connexion_z3[r1][c1] == Position(r0, c0).direction_from(Position(r1, c1)).value, 1, 0)for (r0, c0), (r1, c1) in positions]) == self.regions_connections
+        constraint_connection_number_region1_to_region0 = sum([If(self._matrix_connexion_z3[r1][c1] == Position(r0, c0).direction_from(Position(r1, c1)).value, 1, 0)for (r0, c0), (r1, c1) in positions]) == self.regions_connections
         self._solver.add(constraint_connection_number_region1_to_region0)
 
     def _add_constraint_dots_in_rows_and_columns(self):
         constraints = []
         for r, row in enumerate(self._matrix_connexion_z3):
-            constraints.append(self._solver.sum([self._solver.If(cell > 0, 1, 0) for cell in row]) == self._dots_by_row[r])
+            constraints.append(sum([If(cell > 0, 1, 0) for cell in row]) == self._dots_by_row[r])
         for i, column in enumerate(zip(*self._matrix_connexion_z3)):
-            constraints.append(self._solver.sum([self._solver.If(cell > 0, 1, 0) for cell in column]) == self._dots_by_column[i])
+            constraints.append(sum([If(cell > 0, 1, 0) for cell in column]) == self._dots_by_column[i])
         self._solver.add(constraints)
 
     def _add_constraint_2_dots_crossing_2_regions(self):
@@ -119,6 +121,6 @@ class StitchesSolver(GameSolver):
         for other_region_dot_position in other_region_dot_positions:
             direction = position.direction_to(other_region_dot_position)
             or_constraints.append(self._grid_connexion_z3[position] == direction.value)
-            constraint_implies = self._solver.Implies(self._grid_connexion_z3[position] == direction.value, self._grid_connexion_z3[other_region_dot_position] == direction.opposite.value)
+            constraint_implies = Implies(self._grid_connexion_z3[position] == direction.value, self._grid_connexion_z3[other_region_dot_position] == direction.opposite.value)
             self._solver.add(constraint_implies)
-        self._solver.add(self._solver.Or(or_constraints))
+        self._solver.add(Or(or_constraints))

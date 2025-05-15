@@ -6,7 +6,6 @@ from playwright.sync_api import BrowserContext, Page
 from Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Domain.Board.RegionsGrid import RegionsGrid
 
 
 class VingtMinutesKemaruGridProvider(GridProvider, PlaywrightGridProvider):

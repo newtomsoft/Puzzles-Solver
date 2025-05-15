@@ -40,6 +40,7 @@ class LitsGridBuilder:
             return LitsGridBuilder.all_t()
         if lits_type == LitsType.S:
             return LitsGridBuilder.all_s()
+        raise ValueError(f"Unknown lits type: {lits_type}")
 
     @staticmethod
     def all_l():

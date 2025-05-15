@@ -2,15 +2,12 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = 0
 
 
 class SnakeSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_only_cells_sum_constraint(self):
         grid = Grid([
@@ -21,7 +18,7 @@ class SnakeSolverTests(TestCase):
         row_numbers = [1, 1, 3]
         column_numbers = [3, 1, 1]
 
-        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, _, _],
@@ -45,7 +42,7 @@ class SnakeSolverTests(TestCase):
         row_numbers = [5, 1, 1, 1, 4, 3]
         column_numbers = [5, 2, 2, 3, 2, 1]
 
-        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, _],
@@ -72,7 +69,7 @@ class SnakeSolverTests(TestCase):
         row_numbers = [4, 2, 3, 3, 1, 1]
         column_numbers = [3, 1, 4, 1, 2, 3]
 
-        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [_, _, 1, 1, 1, 1],
@@ -99,7 +96,7 @@ class SnakeSolverTests(TestCase):
         row_numbers = [2, 2, 2, 3, -1, 3]
         column_numbers = [4, -1, 2, 1, -1, 4]
 
-        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [_, _, _, _, 1, 1],
@@ -126,7 +123,7 @@ class SnakeSolverTests(TestCase):
         row_numbers = [-1, 2, -1, -1, 3, -1]
         column_numbers = [3, -1, -1, -1, 4, 3]
 
-        game_solver = SnakeSolver(grid, row_numbers, column_numbers, self.get_solver_engine())
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [_, _, _, _, 1, _],

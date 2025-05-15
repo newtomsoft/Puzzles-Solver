@@ -1,20 +1,21 @@
 from typing import Dict
 
+from z3 import Solver, Not, And, Implies, Int, sat
+
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class HashiSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
-        self._solver = solver_engine
+        self._solver = Solver()
         self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
         self._previous_solution: IslandGrid | None = None
 
@@ -23,12 +24,12 @@ class HashiSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: self._solver.int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
 
         solution, _ = self.get_grid_when_shape_is_loop()
@@ -37,11 +38,12 @@ class HashiSolver(GameSolver):
 
     def get_grid_when_shape_is_loop(self):
         proposition_count = 0
-        while self._solver.has_solution():
+        while self._solver.check() == sat:
+            model = self._solver.model()
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
-                    bridges_number = self._solver.eval(bridges)
+                    bridges_number = model.eval(bridges).as_long()
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
 
@@ -54,7 +56,7 @@ class HashiSolver(GameSolver):
             for island in self._previous_solution.islands.values():
                 for direction, (_, value) in island.direction_position_bridges.items():
                     wrong_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-            self._solver.add(self._solver.Not(self._solver.And(wrong_solution_constraints)))
+            self._solver.add(Not(And(wrong_solution_constraints)))
             self.init_island_grid()
 
         return Grid.empty(), proposition_count
@@ -64,7 +66,7 @@ class HashiSolver(GameSolver):
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
+        self._solver.add(Not(And(previous_solution_constraints)))
 
         self.init_island_grid()
         return self.get_solution()
@@ -76,7 +78,7 @@ class HashiSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, direction_bridges in self._island_bridges_z3.items():
-            self._solver.add(self._solver.sum(list(direction_bridges.values())) == self._island_grid[position].bridges_count)
+            self._solver.add(sum(list(direction_bridges.values())) == self._island_grid[position].bridges_count)
             for bridges in direction_bridges.values():
                 self._solver.add(bridges >= 0)
                 self._solver.add(bridges <= 2)
@@ -98,5 +100,5 @@ class HashiSolver(GameSolver):
             first_item, second_item = list(possible_crossing_bridge.items())[:2]
             first_position, first_direction = first_item
             second_position, second_direction = second_item
-            self._solver.add(self._solver.Implies(self._island_bridges_z3[first_position][first_direction] > 0, self._island_bridges_z3[second_position][second_direction] == 0))
-            self._solver.add(self._solver.Implies(self._island_bridges_z3[second_position][second_direction] > 0, self._island_bridges_z3[first_position][first_direction] == 0))
+            self._solver.add(Implies(self._island_bridges_z3[first_position][first_direction] > 0, self._island_bridges_z3[second_position][second_direction] == 0))
+            self._solver.add(Implies(self._island_bridges_z3[second_position][second_direction] > 0, self._island_bridges_z3[first_position][first_direction] == 0))

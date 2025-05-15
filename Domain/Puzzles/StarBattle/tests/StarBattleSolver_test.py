@@ -2,14 +2,11 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
 
 
 class StarBattleSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_not_a_square(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class StarBattleSolverTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            StarBattleSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1)
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_4(self):
@@ -27,7 +24,7 @@ class StarBattleSolverTests(TestCase):
             [0, 0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            StarBattleSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1)
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_color_less_than_columns_number(self):
@@ -38,7 +35,7 @@ class StarBattleSolverTests(TestCase):
             [0, 1, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            StarBattleSolver(grid, 1, self.get_solver_engine())
+            StarBattleSolver(grid, 1)
         self.assertEqual("The grid must have the same number of regions as rows/column", str(context.exception))
 
     def test_solution_1(self):
@@ -48,7 +45,7 @@ class StarBattleSolverTests(TestCase):
             [0, 0, 0, 0],
             [0, 0, 0, 0],
         ])
-        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertIsNone(solution)
 
@@ -65,7 +62,7 @@ class StarBattleSolverTests(TestCase):
             [0, 0, 0, 1],
             [0, 1, 0, 0],
         ])
-        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -92,7 +89,7 @@ class StarBattleSolverTests(TestCase):
             [0, 0, 0, 0, 0, 1, 0, 0, 0],
             [1, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -119,7 +116,7 @@ class StarBattleSolverTests(TestCase):
             [0, 1, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 1]
         ])
-        game_solver = StarBattleSolver(grid, 1, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -137,7 +134,7 @@ class StarBattleSolverTests(TestCase):
         ])
         stars_count_by_region_column_row = 0
         with self.assertRaises(ValueError) as context:
-            StarBattleSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
+            StarBattleSolver(grid, stars_count_by_region_column_row)
         self.assertEqual("The stars count by region/column/row must be at least 1", str(context.exception))
 
     def test_solution_when_stars_count_equal_2(self):
@@ -166,7 +163,7 @@ class StarBattleSolverTests(TestCase):
             [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
         ])
         stars_count_by_region_column_row = 2
-        game_solver = StarBattleSolver(grid, stars_count_by_region_column_row, self.get_solver_engine())
+        game_solver = StarBattleSolver(grid, stars_count_by_region_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 

@@ -4,13 +4,10 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class KillerSudokuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_cages_cover_grid(self):
         grid = Grid([
@@ -30,7 +27,7 @@ class KillerSudokuSolverTests(TestCase):
         }
 
         with self.assertRaises(ValueError) as context:
-            KillerSudokuSolver(grid, cages, self.get_solver_engine())
+            KillerSudokuSolver(grid, cages)
 
         self.assertEqual("The cages must cover the whole grid", str(context.exception))
 
@@ -52,7 +49,7 @@ class KillerSudokuSolverTests(TestCase):
         }
 
         with self.assertRaises(ValueError) as context:
-            KillerSudokuSolver(grid, cages, self.get_solver_engine())
+            KillerSudokuSolver(grid, cages)
 
         self.assertEqual("Initial numbers must be different in cages", str(context.exception))
 
@@ -79,7 +76,7 @@ class KillerSudokuSolverTests(TestCase):
             [2, 4, 1, 3],
             [1, 3, 2, 4],
         ])
-        game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
+        game = KillerSudokuSolver(grid, cages)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -121,7 +118,7 @@ class KillerSudokuSolverTests(TestCase):
             [2, 5, 6, 3, 4, 1],
             [3, 1, 4, 5, 6, 2],
         ])
-        game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
+        game = KillerSudokuSolver(grid, cages)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -187,7 +184,7 @@ class KillerSudokuSolverTests(TestCase):
             [2, 5, 8, 3, 1, 6, 9, 4, 7],
             [7, 9, 4, 5, 2, 8, 6, 1, 3],
         ])
-        game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
+        game = KillerSudokuSolver(grid, cages)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -253,7 +250,7 @@ class KillerSudokuSolverTests(TestCase):
             [2, 5, 7, 4, 8, 9, 3, 1, 6],
             [6, 3, 4, 2, 7, 1, 8, 5, 9],
         ])
-        game = KillerSudokuSolver(grid, cages, self.get_solver_engine())
+        game = KillerSudokuSolver(grid, cages)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()

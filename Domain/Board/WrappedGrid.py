@@ -175,7 +175,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
     def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def find_all_positions_in(self, grid: 'Board', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> Set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
@@ -184,7 +184,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
                     positions.add(position)
         return positions
 
-    def _is_in_grid_at_position(self, grid: 'Board', position: Position, value_to_ignore):
+    def _is_in_grid_at_position(self, grid: 'Grid', position: Position, value_to_ignore):
         for current_position, value in [(self_position + position, value) for self_position, value in self if value is not value_to_ignore]:
             if current_position.r >= grid.rows_number or current_position.c >= grid.columns_number:
                 return False
@@ -193,7 +193,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Board', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

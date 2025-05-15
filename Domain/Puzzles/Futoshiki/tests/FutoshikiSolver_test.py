@@ -4,15 +4,12 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class FutoshikiSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_grid_must_be_square_raises_value_error(self):
         grid = Grid([
@@ -25,7 +22,7 @@ class FutoshikiSolverTests(TestCase):
         ])
         higher_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
-            FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+            FutoshikiSolver(grid, higher_positions)
         self.assertEqual(str(context.exception), "The grid must be square")
 
     def test_solution_grid_too_small(self):
@@ -36,7 +33,7 @@ class FutoshikiSolverTests(TestCase):
         ])
         higher_positions = [(Position(0, 0), Position(0, 1))]
         with self.assertRaises(ValueError) as context:
-            FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+            FutoshikiSolver(grid, higher_positions)
         self.assertEqual("The grid must be at least 4x4", str(context.exception))
 
     def test_solution_4x4(self):
@@ -53,7 +50,7 @@ class FutoshikiSolverTests(TestCase):
             [3, 2, 4, 1],
             [1, 4, 2, 3],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -79,7 +76,7 @@ class FutoshikiSolverTests(TestCase):
             [3, 5, 2, 1, 4],
             [1, 3, 5, 4, 2],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -112,7 +109,7 @@ class FutoshikiSolverTests(TestCase):
             [3, 5, 7, 1, 6, 4, 2],
             [6, 2, 3, 5, 1, 7, 4],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -150,7 +147,7 @@ class FutoshikiSolverTests(TestCase):
             [8, 2, 1, 3, 5, 7, 4, 6, 9],
             [3, 4, 6, 9, 7, 2, 1, 5, 8],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -200,7 +197,7 @@ class FutoshikiSolverTests(TestCase):
             [4, 5, 3, 6, 7, 2, 8, 11, 1, 10, 9],
             [6, 9, 2, 5, 11, 8, 1, 4, 10, 3, 7],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -261,7 +258,7 @@ class FutoshikiSolverTests(TestCase):
         expected_grid = Grid([
             [0]
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -333,7 +330,7 @@ class FutoshikiSolverTests(TestCase):
             [10, 11, 4, 8, 12, 9, 1, 3, 6, 7, 13, 2, 5],
             [6, 8, 1, 10, 7, 11, 12, 5, 3, 4, 2, 13, 9],
         ])
-        game_solver = FutoshikiSolver(grid, higher_positions, self.get_solver_engine())
+        game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()

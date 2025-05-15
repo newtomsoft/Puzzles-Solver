@@ -1,26 +1,26 @@
-﻿from z3 import Distinct
+﻿from z3 import Solver, And, unsat, Int, Distinct
 
 from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KakuroSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number < 3:
             raise ValueError("The grid must be at least 3x3")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3 = None
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = [[self._solver.int(f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_z3 = [[Int(f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        grid = Grid([[self._solver.eval(self._grid_z3[r][c]) if self._grid_z3[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
+        model = self._solver.model()
+        grid = Grid([[model.eval(self._grid_z3[r][c]).as_long() if self._grid_z3[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
         return grid
 
     def get_other_solution(self) -> Grid:
@@ -55,17 +55,17 @@ class KakuroSolver(GameSolver):
                     continue
                 if sums[c] is not None and c_min < c - 1:
                     selected_z3 = [self._grid_z3[r][i] for i in range(c_min, c) if self._grid_z3[r][i] is not None]
-                    constraints.append(self._solver.sum(selected_z3) == current_sum)
+                    constraints.append(sum(selected_z3) == current_sum)
                     constraints.append(Distinct(selected_z3))
                     current_sum = sums[c]
                     c_min = c + 1
                     continue
                 if c == self.columns_number - 1:
                     selected_z3 = [self._grid_z3[r][i] for i in range(c_min, c + 1) if self._grid_z3[r][i] is not None]
-                    constraints.append(self._solver.sum(selected_z3) == current_sum)
+                    constraints.append(sum(selected_z3) == current_sum)
                     if len(selected_z3) > 1:
                         constraints.append(Distinct(selected_z3))
-        self._solver.add(self._solver.And(constraints))
+        self._solver.add(And(constraints))
 
     def _add_constraint_columns(self):
         constraints = []
@@ -84,7 +84,7 @@ class KakuroSolver(GameSolver):
                     continue
                 if sums[r] is not None and r_min < r - 1:
                     selected_z3 = [self._grid_z3[i][c] for i in range(r_min, r) if self._grid_z3[i][c] is not None]
-                    constraints.append(self._solver.sum(selected_z3) == current_sum)
+                    constraints.append(sum(selected_z3) == current_sum)
                     if len(selected_z3) > 1:
                         constraints.append(Distinct(selected_z3))
                     current_sum = sums[r]
@@ -92,7 +92,7 @@ class KakuroSolver(GameSolver):
                     continue
                 if r == self.rows_number - 1:
                     selected_z3 = [self._grid_z3[i][c] for i in range(r_min, r + 1) if self._grid_z3[i][c] is not None]
-                    constraints.append(self._solver.sum(selected_z3) == current_sum)
+                    constraints.append(sum(selected_z3) == current_sum)
                     if len(selected_z3) > 1:
                         constraints.append(Distinct(selected_z3))
-        self._solver.add(self._solver.And(constraints))
+        self._solver.add(And(constraints))

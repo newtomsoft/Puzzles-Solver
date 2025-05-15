@@ -4,13 +4,10 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class JigsawSudokuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_regions_numbers(self):
         grid = Grid([
@@ -27,7 +24,7 @@ class JigsawSudokuSolverTests(TestCase):
             [Position(2, 0), Position(3, 0), Position(4, 0), Position(4, 1), Position(4, 2)],
         ]
         with self.assertRaises(ValueError) as context:
-            JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+            JigsawSudokuSolver(grid, regions)
 
         self.assertEqual("The grid must have the same number of regions as rows/column", str(context.exception))
 
@@ -48,7 +45,7 @@ class JigsawSudokuSolverTests(TestCase):
         ]
 
         with self.assertRaises(ValueError) as context:
-            JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+            JigsawSudokuSolver(grid, regions)
 
         self.assertEqual("The regions must have the same number of cells", str(context.exception))
 
@@ -69,7 +66,7 @@ class JigsawSudokuSolverTests(TestCase):
         ]
 
         with self.assertRaises(ValueError) as context:
-            JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+            JigsawSudokuSolver(grid, regions)
 
         self.assertEqual("Initial numbers must be different in regions", str(context.exception))
 
@@ -96,7 +93,7 @@ class JigsawSudokuSolverTests(TestCase):
             [3, 2, 4, 5, 1],
             [5, 1, 2, 4, 3],
         ])
-        game = JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+        game = JigsawSudokuSolver(grid, regions)
 
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -124,7 +121,7 @@ class JigsawSudokuSolverTests(TestCase):
             [1, 4, 2, 3, 5],
             [3, 2, 1, 5, 4],
         ])
-        game = JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+        game = JigsawSudokuSolver(grid, regions)
 
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -157,7 +154,7 @@ class JigsawSudokuSolverTests(TestCase):
             [2, 5, 6, 1, 7, 4, 3],
             [3, 7, 4, 5, 1, 2, 6],
         ])
-        game = JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+        game = JigsawSudokuSolver(grid, regions)
 
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -196,7 +193,7 @@ class JigsawSudokuSolverTests(TestCase):
             [8, 1, 7, 9, 2, 4, 6, 3, 5],
             [5, 4, 9, 3, 8, 7, 2, 1, 6],
         ])
-        game = JigsawSudokuSolver(grid, regions, self.get_solver_engine())
+        game = JigsawSudokuSolver(grid, regions)
 
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)

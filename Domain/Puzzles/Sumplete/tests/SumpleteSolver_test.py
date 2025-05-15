@@ -2,14 +2,11 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 
 
 class SumpleteSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_square(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class SumpleteSolverTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            SumpleteSolver(grid, self.get_solver_engine())
+            SumpleteSolver(grid)
         self.assertEqual("Sumplete grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_2(self):
@@ -26,7 +23,7 @@ class SumpleteSolverTests(TestCase):
             [0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            SumpleteSolver(grid, self.get_solver_engine())
+            SumpleteSolver(grid)
         self.assertEqual("Sumplete grid (without sums) must be at least 2x2", str(context.exception))
 
     def test_solution_3x3_without_solution(self):
@@ -35,7 +32,7 @@ class SumpleteSolverTests(TestCase):
             [3, 4, 6],
             [7, 8, 0],
         ])
-        game_solver = SumpleteSolver(grid, self.get_solver_engine())
+        game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertIsNone(solution)
 
@@ -49,7 +46,7 @@ class SumpleteSolverTests(TestCase):
             [True, True],
             [True, True]
         ])
-        game_solver = SumpleteSolver(grid, self.get_solver_engine())
+        game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -63,7 +60,7 @@ class SumpleteSolverTests(TestCase):
             [True, False],
             [True, True]
         ])
-        game_solver = SumpleteSolver(grid, self.get_solver_engine())
+        game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -87,7 +84,7 @@ class SumpleteSolverTests(TestCase):
             [False, False, True, True, False, False, False],
             [True, False, False, True, False, False, True],
         ])
-        game_solver = SumpleteSolver(grid, self.get_solver_engine())
+        game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -115,7 +112,7 @@ class SumpleteSolverTests(TestCase):
             [True, False, False, False, True, False, False, True, False],
             [True, False, True, True, True, False, False, True, False]
         ])
-        game_solver = SumpleteSolver(grid, self.get_solver_engine())
+        game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 

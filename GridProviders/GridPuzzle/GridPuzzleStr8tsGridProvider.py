@@ -1,6 +1,4 @@
-import base64
 import math
-import re
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext

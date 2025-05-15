@@ -1,11 +1,12 @@
-﻿from Domain.Board.Grid import Grid
+﻿from z3 import Solver, Not, And, unsat, Int, Distinct
+
+from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class FutoshikiSolver(GameSolver):
-    def __init__(self, grid: Grid, higher_positions: list[tuple[Position, Position]], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, higher_positions: list[tuple[Position, Position]]):
         self._grid = grid
         self._higher_positions = higher_positions
         self.rows_number = self._grid.rows_number
@@ -14,26 +15,27 @@ class FutoshikiSolver(GameSolver):
             raise ValueError("The grid must be square")
         if self.rows_number < 4:
             raise ValueError("The grid must be at least 4x4")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution_grid: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[self._solver.int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        grid = Grid([[self._solver.eval(self._number(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
+        model = self._solver.model()
+        grid = Grid([[model.eval(self._number(Position(r, c))).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._previous_solution_grid = grid
         return grid
 
     def get_other_solution(self):
-        exclusion_constraint = self._solver.Not(
-            self._solver.And([self._number(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
+        exclusion_constraint = Not(
+            And([self._number(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 
@@ -57,11 +59,11 @@ class FutoshikiSolver(GameSolver):
 
     def _add_distinct_constraints(self):
         for index, row in enumerate(self._grid_z3.matrix):
-            self._solver.add(self._solver.distinct(row))
+            self._solver.add(Distinct(row))
 
         for index, column_tuple in enumerate(zip(*self._grid_z3.matrix)):
             column = list(column_tuple)
-            self._solver.add(self._solver.distinct(column))
+            self._solver.add(Distinct(column))
 
     def _add_higher_constraints(self):
         for first_position, second_position in self._higher_positions:

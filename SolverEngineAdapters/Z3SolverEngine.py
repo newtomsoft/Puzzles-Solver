@@ -1,9 +1,8 @@
 ﻿import z3
 
-from Domain.Ports.SolverEngine import SolverEngine
 
 
-class Z3SolverEngine(SolverEngine):
+class Z3SolverEngine():
     def push(self):
         self.solver.push()
 
@@ -54,7 +53,7 @@ class Z3SolverEngine(SolverEngine):
 
     def has_solution(self):
         check = self.solver.check()
-        return False if check == z3.unsat else check
+        return check if check == z3.sat else False
 
     def model(self):
         return self.solver.model()

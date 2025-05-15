@@ -1,34 +1,36 @@
-﻿from Domain.Board.Grid import Grid
+﻿from z3 import Solver, Not, And, unsat, Or, Implies, Int, Sum
+
+from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class VectorsSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._black_positions_with_region_number: dict[Position, int] = {}
 
     def get_solution(self) -> (Grid, int):
-        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
+        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution])))
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        return Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        return Grid([[(model.eval(self._grid_z3.value(i, j))).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def _add_constraints(self):
         self._add_initial_constraints()
@@ -56,20 +58,20 @@ class VectorsSolver(GameSolver):
                     positions_possible_region_values[position] = []
                 positions_possible_region_values[position].append(self._grid_z3[position] == region_number)
         for position, possible_region_values in positions_possible_region_values.items():
-            self._solver.add(self._solver.Or(possible_region_values))
+            self._solver.add(Or(possible_region_values))
 
     def _add_regions_size_constraints(self):
         for position, region_number in self._black_positions_with_region_number.items():
             count_for_this_region = self._grid[position] + 1
-            self._solver.add(sum([self._solver.sum(value == region_number) for _, value in self._grid_z3]) == count_for_this_region)
+            self._solver.add(sum([Sum(value == region_number) for _, value in self._grid_z3]) == count_for_this_region)
 
     def _add_regions_in_1_block_constraints(self):
         for position, region_number in self._black_positions_with_region_number.items():
             for up_position in self._grid.all_positions_up(position)[-1:0:-1]:
-                self._solver.add(self._solver.Implies(self._grid_z3[up_position] == region_number, self._grid_z3[up_position.down] == region_number))
+                self._solver.add(Implies(self._grid_z3[up_position] == region_number, self._grid_z3[up_position.down] == region_number))
             for down_position in self._grid.all_positions_down(position)[-1:0:-1]:
-                self._solver.add(self._solver.Implies(self._grid_z3[down_position] == region_number, self._grid_z3[down_position.up] == region_number))
+                self._solver.add(Implies(self._grid_z3[down_position] == region_number, self._grid_z3[down_position.up] == region_number))
             for left_position in self._grid.all_positions_left(position)[-1:0:-1]:
-                self._solver.add(self._solver.Implies(self._grid_z3[left_position] == region_number, self._grid_z3[left_position.right] == region_number))
+                self._solver.add(Implies(self._grid_z3[left_position] == region_number, self._grid_z3[left_position.right] == region_number))
             for right_position in self._grid.all_positions_right(position)[-1:0:-1]:
-                self._solver.add(self._solver.Implies(self._grid_z3[right_position] == region_number, self._grid_z3[right_position.left] == region_number))
+                self._solver.add(Implies(self._grid_z3[right_position] == region_number, self._grid_z3[right_position.left] == region_number))

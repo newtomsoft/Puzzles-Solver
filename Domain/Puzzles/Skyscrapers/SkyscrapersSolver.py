@@ -1,15 +1,15 @@
-﻿from z3 import Distinct, ArithRef
+﻿from z3 import ArithRef
+from z3 import Solver, Not, And, unsat, Or, Int, Distinct
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class SkyscrapersSolver(GameSolver):
     _no_value = 0
 
-    def __init__(self, grid: Grid, visible_skyscrapers: dict[str, list[int]], solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, visible_skyscrapers: dict[str, list[int]]):
         self._grid: Grid = grid
         self.visible_skyscrapers: dict[str, list[int]] = visible_skyscrapers
         self.rows_number = self._grid.rows_number
@@ -27,26 +27,26 @@ class SkyscrapersSolver(GameSolver):
             raise ValueError("The 'by_north' viewable skyscrapers list must have the same length as the columns number")
         if len(self.visible_skyscrapers['by_south']) != self.rows_number:
             raise ValueError("The 'by_south' viewable skyscrapers list must have the same length as the columns number")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution_grid = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[self._solver.int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[model.eval(self._level_at(Position(r, c)))() for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[model.eval(self._level_at(Position(r, c))).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._previous_solution_grid = grid
         return grid
 
     def get_other_solution(self):
-        exclusion_constraint = self._solver.Not(self._solver.And([self._level_at(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
+        exclusion_constraint = Not(And([self._level_at(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
         self._solver.add(exclusion_constraint)
         return self.get_solution()
 
@@ -101,10 +101,10 @@ class SkyscrapersSolver(GameSolver):
             return False
 
         sub_line = line[1:]
-        line1_sup_line0_constraint = self._solver.And(line[1] > height_base, self._visible_skyscrapers_constraint(visible_skyscrapers - 1, sub_line, line[1]))
-        line1_inf_line0_constraint = self._solver.And(line[1] < height_base, self._visible_skyscrapers_constraint(visible_skyscrapers, sub_line, height_base))
+        line1_sup_line0_constraint = And(line[1] > height_base, self._visible_skyscrapers_constraint(visible_skyscrapers - 1, sub_line, line[1]))
+        line1_inf_line0_constraint = And(line[1] < height_base, self._visible_skyscrapers_constraint(visible_skyscrapers, sub_line, height_base))
 
-        return self._solver.Or(line1_sup_line0_constraint, line1_inf_line0_constraint)
+        return Or(line1_sup_line0_constraint, line1_inf_line0_constraint)
 
     @staticmethod
     def _reversed(line: list) -> list:
@@ -112,5 +112,5 @@ class SkyscrapersSolver(GameSolver):
 
     def _one_visible_skyscraper_constraint(self, line, highest_skyscraper_levels):
         index0_constraint = line[0] == highest_skyscraper_levels
-        others_indexes_constraint = self._solver.And([line[i] < line[0] for i in range(1, len(line))])
-        return self._solver.And(index0_constraint, others_indexes_constraint)
+        others_indexes_constraint = And([line[i] < line[0] for i in range(1, len(line))])
+        return And(index0_constraint, others_indexes_constraint)

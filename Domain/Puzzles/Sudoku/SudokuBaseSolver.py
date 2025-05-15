@@ -1,15 +1,16 @@
 ﻿import math
 from abc import abstractmethod
 
+from z3 import Solver, Not, And, unsat, Int, Distinct
+
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.utils import is_perfect_square
 
 
 class SudokuBaseSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -22,7 +23,7 @@ class SudokuBaseSolver(GameSolver):
         if not self._are_initial_numbers_between_1_and_nxn():
             raise ValueError("initial numbers must be between 1 and n x n")
         self._grid_z3 = None
-        self._solver = solver_engine
+        self._solver = Solver()
         self._previous_solution: Grid | None = None
 
     def _init_sub_squares(self):
@@ -39,19 +40,20 @@ class SudokuBaseSolver(GameSolver):
             raise ValueError("initial numbers must be different in sub squares")
 
     def get_solution(self) -> (Grid | None, int):
-        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
         self._add_specific_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-        self._previous_solution = Grid([[self._solver.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        self._previous_solution = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):
         constraints = []
         for position, value in self._previous_solution:
             constraints.append(self._grid_z3[position] == value)
-        self._solver.add(self._solver.Not(self._solver.And(constraints)))
+        self._solver.add(Not(And(constraints)))
         return self.get_solution()
 
     def _add_constraints(self):
@@ -72,16 +74,16 @@ class SudokuBaseSolver(GameSolver):
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
-            self._solver.add(self._solver.distinct([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]))
+            self._solver.add(Distinct([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]))
         for c in range(self.columns_number):
-            self._solver.add(self._solver.distinct([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]))
+            self._solver.add(Distinct([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]))
 
     def _add_distinct_in_sub_squares_constraints(self):
         for sub_square_row in range(0, self.rows_number, self._sub_square_row_number):
             for sub_square_column in range(0, self.columns_number, self._sub_square_column_number):
                 for r in range(self._sub_square_row_number):
                     for c in range(self._sub_square_column_number):
-                        constraint = self._solver.distinct(
+                        constraint = Distinct(
                             [self._grid_z3.value(sub_square_row + r, sub_square_column + c) for c in range(self._sub_square_column_number) for r in range(self._sub_square_row_number)]
                         )
                         self._solver.add(constraint)

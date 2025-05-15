@@ -5,20 +5,17 @@ from parameterized import parameterized
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Lits.LitsType import LitsType
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class LitsSolverTest(unittest.TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_get_solution_region_too_small(self):
         grid = Grid([
             [1, 1, 1]
         ])
         with self.assertRaises(ValueError) as context:
-            LitsSolver(grid, self.get_solver_engine())
+            LitsSolver(grid)
 
         self.assertEqual("The grid must have at least 4 cells per region", str(context.exception))
 
@@ -219,7 +216,7 @@ class LitsSolverTest(unittest.TestCase):
          LitsType.S.value),
     ])
     def test_get_solution_region(self, name, input_grid, expected_solution_region, expected_lits_value):
-        solution = LitsSolver(input_grid, self.get_solver_engine()).get_solution()
+        solution = LitsSolver(input_grid).get_solution()
         self.assertNotEqual(Grid.empty(), solution)
         tested_region_positions = input_grid.get_regions().get(1)
         solution_region1 = frozenset([position for position in solution.get_regions().get(expected_lits_value) if position in tested_region_positions])
@@ -230,7 +227,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, 1, 1, 1, 1],
             [1, 2, 2, 2, 2],
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -240,7 +237,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, 1, 2],
             [2, 2, 2],
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -261,7 +258,7 @@ class LitsSolverTest(unittest.TestCase):
             [2, 0, 0, 0, 3, 0],
             [2, 0, 2, 2, 2, 2],
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()
@@ -284,7 +281,7 @@ class LitsSolverTest(unittest.TestCase):
             [2, 2, 2, 2, 0, 1],
             [0, 0, 0, 1, 1, 1],
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()
@@ -311,7 +308,7 @@ class LitsSolverTest(unittest.TestCase):
             [0, 0, 0, 0, 1, 1, 0, 1],
             [0, 2, 2, 2, 2, 0, 1, 1]
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()
@@ -342,7 +339,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, 0, 0, 1, 0, 0, 4, 0, 0, 1],
             [1, 0, 0, 1, 0, 0, 0, 1, 1, 1]
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()
@@ -383,7 +380,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 4, 0, 1, 0, 1],
             [1, 1, 1, 0, 0, 0, 2, 2, 2, 2, 1, 1, 1, 0, 1]
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()
@@ -434,7 +431,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, 0, 0, 4, 4, 1, 0, 1, 0, 0, 3, 3, 1, 1, 1, 3, 3, 3, 2, 0],
             [1, 1, 4, 4, 0, 0, 0, 1, 1, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        lits_solver = LitsSolver(input_grid, self.get_solver_engine())
+        lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = lits_solver.get_other_solution()

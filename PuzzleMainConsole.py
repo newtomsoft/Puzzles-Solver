@@ -144,9 +144,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
-
-SOLVER_ENGINE = Z3SolverEngine()
 
 
 class PuzzleMainConsole:
@@ -233,9 +230,9 @@ class PuzzleMainConsole:
         if type(data_game) is tuple:
             grid = data_game[0]
             extra_data = data_game[1:]
-            game_solver = puzzle_game(grid, *extra_data, SOLVER_ENGINE)
+            game_solver = puzzle_game(grid, *extra_data)
         else:
-            game_solver = puzzle_game(data_game, SOLVER_ENGINE)
+            game_solver = puzzle_game(data_game)
 
         start_time = time.time()
         solution = game_solver.get_solution()

@@ -3,16 +3,13 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 x = 0
 
 
 class CreekSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_basic_grid(self):
         grid = Grid([
@@ -20,7 +17,7 @@ class CreekSolverTests(TestCase):
             [1, 1, 0],
             [0, 0, 0]
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 0],
@@ -39,7 +36,7 @@ class CreekSolverTests(TestCase):
             [1, _, 1, _, 0],
             [0, 0, 1, 1, 0]
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [x, x, x, x],
@@ -60,7 +57,7 @@ class CreekSolverTests(TestCase):
             [_, 2, _, 1, _],
             [0, _, _, _, _]
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, x, 1, 1],
@@ -82,7 +79,7 @@ class CreekSolverTests(TestCase):
             [_, 1, _, _, 2, _],
             [_, _, _, _, _, _],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [x, 1, 1, x, x],
@@ -106,7 +103,7 @@ class CreekSolverTests(TestCase):
             [0, 1, _, _, _, 0, _],
             [0, _, _, 2, 1, _, 0],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, x, x, 1, 1, 1, ],
@@ -132,7 +129,7 @@ class CreekSolverTests(TestCase):
             [1, _, 1, _, 1, 1, _, 1],
             [0, 0, _, 0, _, 0, 0, 0],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [x, 1, 1, 1, 1, 1, x],
@@ -159,7 +156,7 @@ class CreekSolverTests(TestCase):
             [1, _, _, _, 1, _, _, _],
             [0, _, 1, _, 0, 0, _, 1],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 1, x],
@@ -186,7 +183,7 @@ class CreekSolverTests(TestCase):
             [_, _, _, 3, _, _, _, _],
             [_, _, 0, _, _, 2, _, _],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [x, x, x, x, 1, 1, x],
@@ -221,7 +218,7 @@ class CreekSolverTests(TestCase):
             [_, _, _, _, 2, _, _, _, _, _, _, _, 1, _, _, 1],
             [0, _, 2, 2, _, 2, _, _, _, _, 2, _, 0, _, _, _],
         ])
-        game_solver = CreekSolver(grid, self.get_solver_engine())
+        game_solver = CreekSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, x, 1, x, 1, x, 1, x, x, x, 1, 1],

@@ -9,14 +9,11 @@ from Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from NumberChain.NumberChainSolver import NumberChainSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
 
 
 class NumberChainGenerator:
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def __init__(self, row_number: int, column_number: int, path_cells_number: int):
         self.grid_path = None
@@ -166,7 +163,7 @@ class NumberChainGenerator:
             self.grid.set_value(position, random.choice(self.values_to_fill))
 
     def _is_single_solution(self):
-        game_solver = NumberChainSolver(self.grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(self.grid)
         _ = game_solver.get_solution()
         other_solution = game_solver.get_other_solution()
         return other_solution == Grid.empty()

@@ -2,15 +2,12 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class NumberLinkSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_basic_grid(self):
         grid = Grid([
@@ -18,7 +15,7 @@ class NumberLinkSolverTests(TestCase):
             [_, 3, 2],
             [1, _, 3]
         ])
-        game_solver = NumberLinkSolver(grid, self.get_solver_engine())
+        game_solver = NumberLinkSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 2],
@@ -37,7 +34,7 @@ class NumberLinkSolverTests(TestCase):
             [_, 2, _, 5, _],
             [_, 1, 3, 4, _],
         ])
-        game_solver = NumberLinkSolver(grid, self.get_solver_engine())
+        game_solver = NumberLinkSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 2, 5, 5],
@@ -62,7 +59,7 @@ class NumberLinkSolverTests(TestCase):
             [_, _, 3, _, _, 6, _, _, _],
             [_, _, _, _, _, _, _, _, _],
         ])
-        game_solver = NumberLinkSolver(grid, self.get_solver_engine())
+        game_solver = NumberLinkSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [4, 4, 4, 4, 4, 4, 4, 4, 4],
@@ -97,7 +94,7 @@ class NumberLinkSolverTests(TestCase):
             [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
             [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
         ])
-        game_solver = NumberLinkSolver(grid, self.get_solver_engine())
+        game_solver = NumberLinkSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [6, 6, 6, 6, 6, 6, 6, 6, 3, 4, 9, 6, 6, 6, 6],

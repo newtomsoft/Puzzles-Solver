@@ -1,13 +1,12 @@
-﻿from z3 import Bool
+﻿from z3 import Solver, Bool, Not, And, unsat, Or, Implies, is_true
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class NorinoriSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -18,16 +17,16 @@ class NorinoriSolver(GameSolver):
         self._regions = self._grid.get_regions()
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid = Grid.empty()
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[self._solver.is_true(model.eval(self.domino_part(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[is_true(model.eval(self.domino_part(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def get_other_solution(self) -> Grid:
@@ -42,7 +41,7 @@ class NorinoriSolver(GameSolver):
 
     def _add_constraint_exactly_2_by_region(self):
         for region in self._regions.values():
-            self._solver.add(self._solver.sum([self.domino_part(position) for position in region]) == 2)
+            self._solver.add(sum([self.domino_part(position) for position in region]) == 2)
 
     def _add_constraint_2_by_2_without_adjacent(self):
         for position, _ in self._grid_z3:
@@ -53,6 +52,6 @@ class NorinoriSolver(GameSolver):
                 free_positions.remove(possible_domino_position)
                 first_possible_others_free = [self.domino_part(possible_domino_position)]
                 for free_position in free_positions:
-                    first_possible_others_free.append(self._solver.Not(self.domino_part(free_position)))
-                one_is_domino_part_others_is_free.append(self._solver.And(first_possible_others_free))
-            self._solver.add(self._solver.Implies(self.domino_part(position), self._solver.Or(one_is_domino_part_others_is_free)))
+                    first_possible_others_free.append(Not(self.domino_part(free_position)))
+                one_is_domino_part_others_is_free.append(And(first_possible_others_free))
+            self._solver.add(Implies(self.domino_part(position), Or(one_is_domino_part_others_is_free)))

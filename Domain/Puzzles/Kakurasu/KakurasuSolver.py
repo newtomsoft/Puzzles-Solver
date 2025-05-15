@@ -1,25 +1,24 @@
-﻿from z3 import Bool
+﻿from z3 import Solver, Bool, unsat
 
 from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KakurasuSolver(GameSolver):
-    def __init__(self, numbers_by_top_left: dict[str, list[int]], solver_engine: SolverEngine):
+    def __init__(self, numbers_by_top_left: dict[str, list[int]]):
         self._numbers_side = numbers_by_top_left['side']
         self._numbers_top = numbers_by_top_left['top']
         self.rows_number = len(self._numbers_side)
         self.columns_number = len(self._numbers_top)
         if self.rows_number < 4 or self.columns_number < 4:
             raise ValueError("Kakurasu grid must at least 4x4")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: list[list[Bool]] = [[]]
 
     def get_solution(self) -> Grid:
         self._grid_z3: list[list[Bool]] = [[Bool(f"matrix_{r}{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
 
         return self._compute_solution()
@@ -39,8 +38,8 @@ class KakurasuSolver(GameSolver):
             self._solver.add(self._add_constraint_sum_column(column_index, self._numbers_top[column_index]))
 
     def _add_constraint_sum_row(self, index: int, number: int):
-        constraint = self._solver.sum([self._grid_z3[index][i_column] * (i_column + 1) for i_column in range(self.columns_number)]) == number
+        constraint = sum([self._grid_z3[index][i_column] * (i_column + 1) for i_column in range(self.columns_number)]) == number
         return constraint
 
     def _add_constraint_sum_column(self, index: int, number: int):
-        return self._solver.sum([self._grid_z3[i_row][index] * (i_row + 1) for i_row in range(self.rows_number)]) == number
+        return sum([self._grid_z3[i_row][index] * (i_row + 1) for i_row in range(self.rows_number)]) == number
