@@ -13,3 +13,5 @@ setuptools~=79.0.0
 utils~=1.0.2
 z3-solver~=4.14.1.0
 tqdm~=4.67.1
+ortools~=9.12.4544
+flask-cors~=5.0.1
