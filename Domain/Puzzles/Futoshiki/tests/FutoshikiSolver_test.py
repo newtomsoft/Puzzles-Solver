@@ -10,7 +10,6 @@ _ = -1
 
 class FutoshikiSolverTests(TestCase):
 
-
     def test_grid_must_be_square_raises_value_error(self):
         grid = Grid([
             [_, _, _, _, _, _, _],
@@ -203,7 +202,6 @@ class FutoshikiSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("This grid is too slow or/and have no solution")
     def test_solution_13x13(self):
         grid = Grid([
             [_, _, 4, _, _, _, _, _, 5, _, _, _, _, 2, _],
@@ -256,7 +254,21 @@ class FutoshikiSolverTests(TestCase):
             (Position(14, 3), Position(13, 3)), Position((14, 8), Position(14, 7)), Position((14, 9), Position(14, 8)), Position((14, 11), Position(14, 12))
         ]
         expected_grid = Grid([
-            [0]
+            [9, 14, 4, 12, 8, 1, 7, 3, 5, 15, 11, 6, 13, 2, 10],
+            [11, 10, 15, 13, 5, 6, 2, 14, 7, 12, 4, 1, 3, 9, 8],
+            [8, 6, 10, 5, 3, 12, 4, 1, 11, 13, 9, 2, 15, 14, 7],
+            [2, 12, 7, 9, 13, 5, 1, 4, 14, 10, 8, 15, 11, 6, 3],
+            [14, 15, 2, 3, 12, 13, 6, 11, 1, 8, 7, 10, 4, 5, 9],
+            [10, 2, 11, 1, 15, 7, 3, 12, 13, 5, 14, 9, 8, 4, 6],
+            [1, 9, 8, 6, 7, 10, 11, 15, 3, 4, 12, 5, 14, 13, 2],
+            [13, 7, 12, 2, 10, 14, 15, 9, 6, 3, 1, 8, 5, 11, 4],
+            [15, 4, 6, 8, 9, 2, 5, 13, 10, 1, 3, 11, 7, 12, 14],
+            [6, 5, 3, 14, 2, 8, 12, 7, 9, 11, 13, 4, 10, 15, 1],
+            [3, 8, 5, 15, 6, 11, 14, 2, 4, 7, 10, 13, 9, 1, 12],
+            [4, 11, 13, 7, 1, 9, 10, 8, 12, 6, 15, 14, 2, 3, 5],
+            [5, 3, 9, 4, 11, 15, 8, 10, 2, 14, 6, 12, 1, 7, 13],
+            [7, 13, 1, 10, 14, 4, 9, 6, 15, 2, 5, 3, 12, 8, 11],
+            [12, 1, 14, 11, 4, 3, 13, 5, 8, 9, 2, 7, 6, 10, 15]
         ])
         game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
@@ -264,7 +276,6 @@ class FutoshikiSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("This grid is too slow or/and have no solution")
     def test_solution_13x13_2(self):
         grid = Grid([
             [_, _, _, _, _, _, _, _, _, _, _, _, _],
@@ -329,6 +340,73 @@ class FutoshikiSolverTests(TestCase):
             [4, 7, 2, 6, 13, 12, 8, 11, 9, 10, 1, 5, 3],
             [10, 11, 4, 8, 12, 9, 1, 3, 6, 7, 13, 2, 5],
             [6, 8, 1, 10, 7, 11, 12, 5, 3, 4, 2, 13, 9],
+        ])
+        game_solver = FutoshikiSolver(grid, higher_positions)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_15x15(self):
+        grid = Grid([
+            [12, _, 8, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, 13, _, _, 3, _, _, _, 5, _, 7, _, 10],
+            [_, _, _, _, _, _, _, _, _, _, _, 8, _, _, _],
+            [_, 10, _, 12, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, 10, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, 12, 13, _, _, _, 9, _, _, _, _, _],
+            [_, _, _, 6, _, 9, _, _, _, 2, _, 13, 8, _, _],
+            [_, _, _, _, _, 4, 6, _, _, 10, _, 3, _, _, _],
+            [_, 7, 10, _, _, 12, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, 6, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, 3, _, _, _, _, 15, 8, _, _, _, _],
+            [3, _, _, 9, _, _, _, _, _, _, 6, _, _, 13, _],
+            [_, _, _, _, _, _, _, _, 10, _, 2, _, _, _, 4]
+        ])
+        higher_positions = [
+            (Position(0, 3), Position(0, 2)), (Position(0, 6), Position(1, 6)), (Position(0, 10), Position(0, 9)), (Position(0, 10), Position(1, 10)), (Position(0, 11), Position(0, 10)),
+            (Position(0, 11), Position(0, 12)), (Position(0, 12), Position(0, 13)), (Position(1, 1), Position(0, 1)), (Position(1, 2), Position(1, 3)), (Position(1, 3), Position(0, 3)),
+            (Position(1, 4), Position(0, 4)), (Position(1, 7), Position(0, 7)), (Position(1, 8), Position(1, 7)), (Position(1, 10), Position(1, 9)), (Position(1, 11), Position(1, 12)),
+            (Position(2, 0), Position(1, 0)), (Position(2, 1), Position(2, 2)), (Position(2, 2), Position(3, 2)), (Position(2, 4), Position(1, 4)), (Position(2, 5), Position(2, 4)),
+            (Position(2, 5), Position(2, 6)), (Position(2, 6), Position(1, 6)), (Position(2, 8), Position(3, 8)), (Position(2, 9), Position(2, 8)), (Position(2, 10), Position(3, 10)),
+            (Position(2, 12), Position(3, 12)), (Position(2, 14), Position(1, 14)), (Position(3, 0), Position(3, 1)), (Position(3, 5), Position(3, 6)), (Position(3, 7), Position(3, 8)),
+            (Position(3, 14), Position(4, 14)), (Position(4, 0), Position(4, 1)), (Position(4, 1), Position(3, 1)), (Position(4, 2), Position(3, 2)), (Position(4, 6), Position(5, 6)),
+            (Position(4, 7), Position(5, 7)), (Position(4, 9), Position(4, 8)), (Position(4, 10), Position(4, 9)), (Position(4, 11), Position(3, 11)), (Position(4, 12), Position(4, 13)),
+            (Position(4, 13), Position(5, 13)), (Position(4, 14), Position(4, 13)), (Position(5, 1), Position(5, 0)), (Position(5, 2), Position(5, 3)), (Position(5, 6), Position(6, 6)),
+            (Position(5, 10), Position(5, 9)), (Position(5, 11), Position(4, 11)), (Position(5, 12), Position(4, 12)), (Position(5, 14), Position(4, 14)), (Position(6, 0), Position(5, 0)),
+            (Position(6, 1), Position(6, 0)), (Position(6, 4), Position(5, 4)), (Position(6, 7), Position(6, 6)), (Position(6, 8), Position(6, 7)), (Position(6, 10), Position(6, 11)),
+            (Position(6, 10), Position(7, 10)), (Position(6, 13), Position(5, 13)), (Position(7, 2), Position(8, 2)), (Position(7, 8), Position(7, 7)), (Position(7, 8), Position(8, 8)),
+            (Position(7, 9), Position(7, 8)), (Position(7, 10), Position(7, 9)), (Position(7, 12), Position(6, 12)), (Position(7, 14), Position(8, 14)), (Position(8, 0), Position(7, 0)),
+            (Position(8, 1), Position(7, 1)), (Position(8, 3), Position(7, 3)), (Position(8, 6), Position(7, 6)), (Position(8, 7), Position(8, 6)), (Position(8, 8), Position(9, 8)),
+            (Position(8, 10), Position(8, 9)), (Position(8, 11), Position(9, 11)), (Position(8, 12), Position(8, 11)), (Position(8, 13), Position(7, 13)), (Position(8, 14), Position(9, 14)),
+            (Position(9, 1), Position(10, 1)), (Position(9, 2), Position(8, 2)), (Position(9, 3), Position(8, 3)), (Position(9, 4), Position(9, 3)), (Position(9, 5), Position(10, 5)),
+            (Position(9, 6), Position(9, 5)), (Position(9, 7), Position(9, 6)), (Position(9, 8), Position(9, 9)), (Position(9, 10), Position(10, 10)), (Position(10, 0), Position(11, 0)),
+            (Position(10, 2), Position(10, 3)), (Position(10, 2), Position(9, 2)), (Position(10, 3), Position(9, 3)), (Position(10, 4), Position(10, 3)), (Position(10, 10), Position(10, 11)),
+            (Position(10, 11), Position(9, 11)), (Position(10, 13), Position(9, 13)), (Position(11, 2), Position(10, 2)), (Position(11, 3), Position(10, 3)), (Position(11, 5), Position(10, 5)),
+            (Position(11, 6), Position(12, 6)), (Position(11, 8), Position(10, 8)), (Position(11, 10), Position(10, 10)), (Position(11, 11), Position(11, 12)), (Position(11, 11), Position(10, 11)),
+            (Position(11, 12), Position(11, 13)), (Position(12, 3), Position(12, 2)), (Position(12, 5), Position(13, 5)), (Position(12, 8), Position(11, 8)), (Position(12, 14), Position(12, 13)),
+            (Position(13, 0), Position(14, 0)), (Position(13, 2), Position(14, 2)), (Position(13, 6), Position(12, 6)), (Position(13, 7), Position(13, 6)), (Position(13, 8), Position(13, 9)),
+            (Position(13, 10), Position(13, 9)), (Position(13, 11), Position(13, 12)), (Position(13, 12), Position(12, 12)), (Position(13, 13), Position(13, 14)), (Position(13, 14), Position(12, 14)),
+            (Position(14, 3), Position(13, 3)), (Position(14, 4), Position(14, 3)), (Position(14, 5), Position(14, 4)), (Position(14, 6), Position(14, 5)), (Position(14, 8), Position(13, 8)),
+            (Position(14, 9), Position(14, 8)), (Position(14, 11), Position(14, 12))]
+        expected_grid = Grid([
+            [12, 1, 8, 10, 6, 3, 14, 4, 2, 7, 11, 15, 13, 9, 5],
+            [2, 9, 15, 13, 8, 1, 3, 6, 14, 4, 5, 12, 7, 11, 10],
+            [5, 15, 7, 4, 9, 11, 10, 1, 12, 13, 3, 8, 6, 2, 14],
+            [13, 10, 6, 12, 4, 15, 5, 11, 7, 8, 1, 2, 3, 14, 9],
+            [15, 13, 9, 3, 10, 2, 12, 14, 1, 6, 7, 4, 11, 5, 8],
+            [6, 8, 2, 1, 12, 13, 7, 3, 15, 9, 10, 5, 14, 4, 11],
+            [7, 12, 1, 6, 14, 9, 4, 5, 11, 2, 15, 13, 8, 10, 3],
+            [11, 5, 13, 2, 7, 4, 6, 8, 9, 10, 14, 3, 12, 1, 15],
+            [14, 7, 10, 5, 2, 12, 8, 9, 6, 1, 4, 11, 15, 3, 13],
+            [4, 14, 11, 7, 15, 8, 9, 10, 5, 3, 13, 6, 1, 12, 2],
+            [10, 4, 12, 8, 11, 5, 1, 13, 3, 14, 9, 7, 2, 15, 6],
+            [8, 3, 14, 15, 5, 6, 13, 2, 4, 11, 12, 10, 9, 7, 1],
+            [9, 11, 5, 14, 3, 10, 2, 12, 13, 15, 8, 1, 4, 6, 7],
+            [3, 2, 4, 9, 1, 7, 11, 15, 8, 5, 6, 14, 10, 13, 12],
+            [1, 6, 3, 11, 13, 14, 15, 7, 10, 12, 2, 9, 5, 8, 4]
         ])
         game_solver = FutoshikiSolver(grid, higher_positions)
         solution = game_solver.get_solution()
