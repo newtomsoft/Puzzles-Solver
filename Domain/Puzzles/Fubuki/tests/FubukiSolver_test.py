@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Fubuki.FubukiSolver import FubukiSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class FubukiSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_square(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class FubukiSolverTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            FubukiSolver(grid, [], [], self.get_solver_engine())
+            FubukiSolver(grid, [], [])
 
         self.assertEqual("Fubuki grid must be a 3x3 square", str(context.exception))
 
@@ -30,7 +27,7 @@ class FubukiSolverTests(TestCase):
             [_, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            FubukiSolver(grid, [], [], self.get_solver_engine())
+            FubukiSolver(grid, [], [])
 
         self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
@@ -41,7 +38,7 @@ class FubukiSolverTests(TestCase):
             [_, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            FubukiSolver(grid, [], [], self.get_solver_engine())
+            FubukiSolver(grid, [], [])
 
         self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
@@ -52,7 +49,7 @@ class FubukiSolverTests(TestCase):
             [_, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            FubukiSolver(grid, [], [], self.get_solver_engine())
+            FubukiSolver(grid, [], [])
 
         self.assertEqual("initial numbers must be between 1 and 9", str(context.exception))
 
@@ -63,7 +60,7 @@ class FubukiSolverTests(TestCase):
             [_, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            FubukiSolver(grid, [], [], self.get_solver_engine())
+            FubukiSolver(grid, [], [])
 
         self.assertEqual("initial numbers must be between 1 and 9", str(context.exception))
 
@@ -80,7 +77,7 @@ class FubukiSolverTests(TestCase):
             [7, 9, 4],
             [5, 1, 3],
         ])
-        game = FubukiSolver(grid, row_sums, column_sums, self.get_solver_engine())
+        game = FubukiSolver(grid, row_sums, column_sums)
 
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -101,7 +98,7 @@ class FubukiSolverTests(TestCase):
             [4, 5, 2],
             [7, 9, 1],
         ])
-        game = FubukiSolver(grid, row_sums, column_sums, self.get_solver_engine())
+        game = FubukiSolver(grid, row_sums, column_sums)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()
@@ -121,7 +118,7 @@ class FubukiSolverTests(TestCase):
             [6, 3, 1],
             [9, 5, 2],
         ])
-        game = FubukiSolver(grid, row_sums, column_sums, self.get_solver_engine())
+        game = FubukiSolver(grid, row_sums, column_sums)
         solution = game.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game.get_other_solution()

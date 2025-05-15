@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = ''
 
 
 class YinYangSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_square_constraint(self):
         grid = Grid([
@@ -30,7 +27,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0],
             [1, 0, 0, 0, 0, 0],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -53,7 +50,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0],
             [1, 0, 0, 0, 0, 0],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -76,7 +73,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0],
             [1, 0, 0, 0, 0, 0],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -99,7 +96,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 0, 0, 1, 0],
             [1, 1, 1, 0, 0, 0]
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -122,7 +119,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 0, 1],
             [1, 1, 1, 1, 1, 1],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -153,7 +150,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0, 1, 1, 1, 0],
             [1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -194,7 +191,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -235,7 +232,7 @@ class YinYangSolverTests(TestCase):
             [0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -286,7 +283,7 @@ class YinYangSolverTests(TestCase):
             [1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -337,7 +334,7 @@ class YinYangSolverTests(TestCase):
             [0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -399,7 +396,7 @@ class YinYangSolverTests(TestCase):
             [0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -471,7 +468,7 @@ class YinYangSolverTests(TestCase):
             [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ])
-        game_solver = YinYangSolver(grid, self.get_solver_engine())
+        game_solver = YinYangSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()

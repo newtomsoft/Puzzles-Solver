@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class MinesweeperMosaicSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_not_exist_2_black_adjacent(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class MinesweeperMosaicSolverTests(TestCase):
             [0, 0, 0],
             [0, 0, 0]
         ])
-        game_solver = MinesweeperMosaicSolver(grid, self.get_solver_engine())
+        game_solver = MinesweeperMosaicSolver(grid)
         solution = game_solver.get_solution()
         self.assertIsNone(solution)
 
@@ -27,7 +24,7 @@ class MinesweeperMosaicSolverTests(TestCase):
             [0, 1, 1],
             [0, 1, 1]
         ])
-        game_solver = MinesweeperMosaicSolver(grid, self.get_solver_engine())
+        game_solver = MinesweeperMosaicSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [True, True, True],
@@ -44,7 +41,7 @@ class MinesweeperMosaicSolverTests(TestCase):
             [-1, 3, 2, -1, -1],
             [3, -1, 1, 1, -1]
         ])
-        game_solver = MinesweeperMosaicSolver(grid, self.get_solver_engine())
+        game_solver = MinesweeperMosaicSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [False, False, False, True, True],

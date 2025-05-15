@@ -1,13 +1,12 @@
-﻿from z3 import Int
+﻿from z3 import Solver, And, unsat, Or, Implies, Int
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class DominosaSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -21,7 +20,7 @@ class DominosaSolver(GameSolver):
         self.len_range_number_on_domino = self.rows_number
         if self.max_number_on_domino - self.min_number_on_domino + 1 != self.len_range_number_on_domino:
             raise ValueError(f"Values on dominoes must be between x and x + {self.len_range_number_on_domino - 1}")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._dominoes_positions_z3 = {
             (value0, value1): [(Int(f"{value0}_{value1}_r0"), Int(f"{value0}_{value1}_c0")), (Int(f"{value0}_{value1}r1"), Int(f"{value0}_{value1}c1"))]
             for value0 in range(self.min_number_on_domino, self.max_number_on_domino + 1)
@@ -31,10 +30,11 @@ class DominosaSolver(GameSolver):
 
     def get_solution(self):
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
+        model = self._solver.model()
         dominoes_positions = {
-            (value0, value1): [Position(self._solver.eval(r), self._solver.eval(c)) for r, c in positions_z3]
+            (value0, value1): [Position(model.eval(r).as_long(), model.eval(c).as_long()) for r, c in positions_z3]
             for (value0, value1), positions_z3 in self._dominoes_positions_z3.items()
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
@@ -75,7 +75,7 @@ class DominosaSolver(GameSolver):
             r1z3, c1z3 = rc1_z3
 
             for (possible_r0, possible_c0), (possible_r1, possible_c1) in possible_positions:
-                constraint_positions_domino = self._solver.And(r0z3 == possible_r0, c0z3 == possible_c0, r1z3 == possible_r1, c1z3 == possible_c1)
+                constraint_positions_domino = And(r0z3 == possible_r0, c0z3 == possible_c0, r1z3 == possible_r1, c1z3 == possible_c1)
                 constraints_positions_domino.append(constraint_positions_domino)
 
                 others_dominoes_compliant_positions = {
@@ -86,13 +86,13 @@ class DominosaSolver(GameSolver):
 
                 for key, positions in others_dominoes_compliant_positions.items():
                     constraints_compliant_positions_domino = [
-                        self._solver.And(dominoes_positions_z3[key][0][0] == position[0][0], dominoes_positions_z3[key][0][1] == position[0][1],
+                        And(dominoes_positions_z3[key][0][0] == position[0][0], dominoes_positions_z3[key][0][1] == position[0][1],
                             dominoes_positions_z3[key][1][0] == position[1][0], dominoes_positions_z3[key][1][1] == position[1][1])
                         for position in positions
                     ]
-                    constraints_implies.append(self._solver.Implies(constraint_positions_domino, self._solver.Or(constraints_compliant_positions_domino)))
+                    constraints_implies.append(Implies(constraint_positions_domino, Or(constraints_compliant_positions_domino)))
 
-            constraints_positions_dominos.append(self._solver.Or(constraints_positions_domino))
+            constraints_positions_dominos.append(Or(constraints_positions_domino))
 
         self._solver.add(constraints_implies)
         self._solver.add(constraints_positions_dominos)

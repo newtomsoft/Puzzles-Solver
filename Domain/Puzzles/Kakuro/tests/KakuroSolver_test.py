@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class KakuroSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_size_less_than_3(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class KakuroSolverTests(TestCase):
             [0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            KakuroSolver(grid, self.get_solver_engine())
+            KakuroSolver(grid)
 
         self.assertEqual("The grid must be at least 3x3", str(context.exception))
 
@@ -27,7 +24,7 @@ class KakuroSolverTests(TestCase):
             [[19, 0], 0, 0],
             [[19, 0], 0, 0],
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -38,7 +35,7 @@ class KakuroSolverTests(TestCase):
             [[3, 0], 0, 0],
             [[4, 0], 0, 0],
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -54,7 +51,7 @@ class KakuroSolverTests(TestCase):
             [0, 1, 2],
             [0, 3, 4],
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -76,7 +73,7 @@ class KakuroSolverTests(TestCase):
             [0, 1, 2, 0, 4, 3],
             [0, 3, 4, 0, 2, 1],
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -98,7 +95,7 @@ class KakuroSolverTests(TestCase):
             [0, 1, 2, 0, 0, 4, 3],
             [0, 3, 4, 0, 0, 2, 1],
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -128,7 +125,7 @@ class KakuroSolverTests(TestCase):
             [0, 2, 4, 1, 0, 5, 1, 2, 0, 3, 1, 2],
             [0, 1, 2, 0, 0, 1, 2, 4, 0, 1, 2, 0]
         ])
-        game_solver = KakuroSolver(grid, self.get_solver_engine())
+        game_solver = KakuroSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)

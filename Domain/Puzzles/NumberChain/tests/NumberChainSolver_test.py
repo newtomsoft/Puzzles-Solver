@@ -2,15 +2,12 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = 0
 
 
 class NumberChainSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_basic(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class NumberChainSolverTests(TestCase):
             [5, 6, 7],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶──┐  · \n'
@@ -37,7 +34,7 @@ class NumberChainSolverTests(TestCase):
             [2, 5, 7],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶──┐  · \n'
@@ -57,7 +54,7 @@ class NumberChainSolverTests(TestCase):
             [7, 1, 5, 11]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ┌─────┐ \n'
@@ -79,7 +76,7 @@ class NumberChainSolverTests(TestCase):
             [10, 2, 14, 5, 15],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶───────────┐ \n'
@@ -102,7 +99,7 @@ class NumberChainSolverTests(TestCase):
             [5, 4, 1, 3, 15],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ·  ·  ┌──┐ \n'
@@ -126,7 +123,7 @@ class NumberChainSolverTests(TestCase):
             [3, 7, 10, 13, 12, 17]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶────────┐  ·  · \n'
@@ -151,7 +148,7 @@ class NumberChainSolverTests(TestCase):
             [15, 4, 15, 14, 5, 17]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
 
         expected_solution = (
@@ -179,7 +176,7 @@ class NumberChainSolverTests(TestCase):
             [15, 6, 16, 9, 2, 20, 21]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶────────┐  ·  ·  · \n'
@@ -207,7 +204,7 @@ class NumberChainSolverTests(TestCase):
             [26, 2, 18, 2, 4, 24, 20, 27]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ·  ·  ·  ·  ·  ·  · \n'
@@ -236,7 +233,7 @@ class NumberChainSolverTests(TestCase):
             [16, 8, 16, 22, 2, 19, 3, 27]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶─────┐  ·  ·  ·  ·  · \n'
@@ -266,7 +263,7 @@ class NumberChainSolverTests(TestCase):
             [23, 13, 11, 26, 24, 26, 17, 30, 31]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
 
         expected_solution = (
@@ -300,7 +297,7 @@ class NumberChainSolverTests(TestCase):
             [20, 2, 28, 8, 14, 24, 25, 8, 25, 33]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
 
         expected_solution = (
@@ -335,7 +332,7 @@ class NumberChainSolverTests(TestCase):
             [31, 32, 16, 5, 29, 4, 26, 13, 19, 33]
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ┌─────┐  ·  ·  ·  ·  ·  · \n'
@@ -369,7 +366,7 @@ class NumberChainSolverTests(TestCase):
             [5, 40, 9, 25, 17, 32, 13, 3, 40, 28, 23, 41],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶─────┐  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
@@ -406,7 +403,7 @@ class NumberChainSolverTests(TestCase):
             [39, 30, 17, 17, 16, 35, 15, 7, 14, 38, 32, 36, 43],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'
@@ -444,7 +441,7 @@ class NumberChainSolverTests(TestCase):
             [8, 17, 21, 7, 34, 33, 40, 23, 5, 31, 32, 2, 43],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶───────────┐  ·  ·  ·  ·  ·  ·  ·  · \n'
@@ -484,7 +481,7 @@ class NumberChainSolverTests(TestCase):
             [41, 20, 41, 17, 8, 6, 43, 20, 36, 50, 2, 26, 31, 16, 51],
         ])
 
-        game_solver = NumberChainSolver(grid, self.get_solver_engine())
+        game_solver = NumberChainSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶───────────┐  ·  ·  ·  ·  ·  ·  ·  ·  ·  · \n'

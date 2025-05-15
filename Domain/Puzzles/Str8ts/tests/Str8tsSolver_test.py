@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = 0
 x = True
@@ -10,9 +9,7 @@ o = False
 
 
 class Str8tsSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_not_square(self):
         numbers_grid = Grid([
@@ -24,7 +21,7 @@ class Str8tsSolverTests(TestCase):
             [x, o, o],
         ])
         with self.assertRaises(ValueError) as context:
-            Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+            Str8tsSolver(numbers_grid, blacks_grid)
         self.assertEqual("Str8ts has to be a square", str(context.exception))
 
     def test_initial_constraints(self):
@@ -39,7 +36,7 @@ class Str8tsSolverTests(TestCase):
             [o, x, o],
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [2, 1, _],
@@ -62,7 +59,7 @@ class Str8tsSolverTests(TestCase):
             [o, o, o],
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 3],
@@ -85,7 +82,7 @@ class Str8tsSolverTests(TestCase):
             [o, o, o],
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [1, _, 2],
@@ -108,7 +105,7 @@ class Str8tsSolverTests(TestCase):
             [o, x, o],
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [2, 1, _],
@@ -135,7 +132,7 @@ class Str8tsSolverTests(TestCase):
             [x, x, o, o, x],
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [0, 3, 4, 0, 0],
@@ -173,7 +170,7 @@ class Str8tsSolverTests(TestCase):
             [x, o, o, o, o, o, x, o, o]
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [0, 4, 1, 5, 8, 7, 6, 2, 3],
@@ -215,7 +212,7 @@ class Str8tsSolverTests(TestCase):
             [x, o, o, x, x, o, o, o, x]
         ])
 
-        game_solver = Str8tsSolver(numbers_grid, blacks_grid, self.get_solver_engine())
+        game_solver = Str8tsSolver(numbers_grid, blacks_grid)
         solution, __ = game_solver.get_solution()
         expected_solution = Grid([
             [0, 6, 8, 7, 0, 0, 4, 5, 0],

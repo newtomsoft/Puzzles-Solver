@@ -1,28 +1,29 @@
-﻿from Domain.Board.Grid import Grid
+﻿from z3 import Solver, Bool, Not, And, Or, Implies, is_true, sat
+
+from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
 
 class HeyawakeSolver(GameSolver):
-    def __init__(self, grid: Grid, region_grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, region_grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self.regions = region_grid.get_regions()
         if len(self.regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
 
         solution, _ = self._ensure_all_white_connected()
@@ -31,10 +32,10 @@ class HeyawakeSolver(GameSolver):
 
     def _ensure_all_white_connected(self):
         proposition_count = 0
-        while self._solver.has_solution():
+        while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
-            current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])
+            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])
             white_shapes = current_grid.get_all_shapes()
             if len(white_shapes) == 1:
                 return current_grid, proposition_count
@@ -43,7 +44,7 @@ class HeyawakeSolver(GameSolver):
             white_shapes.remove(biggest_white_shapes)
             for white_shape in white_shapes:
                 around_white = ShapeGenerator.around_shape(white_shape)
-                around_white_are_not_all_black_constraint = self._solver.Not(self._solver.And([self._solver.Not(self._grid_z3[position]) for position in around_white if position in self._grid]))
+                around_white_are_not_all_black_constraint = Not(And([Not(self._grid_z3[position]) for position in around_white if position in self._grid]))
                 self._solver.add(around_white_are_not_all_black_constraint)
 
         return Grid.empty(), proposition_count
@@ -51,8 +52,8 @@ class HeyawakeSolver(GameSolver):
     def get_other_solution(self):
         previous_solution_constraints = []
         for position, _ in [(position, value) for (position, value) in self._previous_solution if not value]:
-            previous_solution_constraints.append(self._solver.Not(self._grid_z3[position]))
-        self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
+            previous_solution_constraints.append(Not(self._grid_z3[position]))
+        self._solver.add(Not(And(previous_solution_constraints)))
 
         return self.get_solution()
 
@@ -67,12 +68,12 @@ class HeyawakeSolver(GameSolver):
             black_cells_count = self._grid[black_cells_count_position]
             if not isinstance(black_cells_count, int) or black_cells_count < 0:
                 continue
-            self._solver.add(self._solver.sum([self._solver.Not(self._grid_z3[position]) for position in region]) == black_cells_count)
+            self._solver.add(sum([Not(self._grid_z3[position]) for position in region]) == black_cells_count)
 
     def _add_no_adjacent_black_cells_touching_constraints(self):
         for position, value in self._grid_z3:
             for neighbor_position in self._grid.neighbors_positions(position):
-                self._solver.add(self._solver.Implies(self._solver.Not(self._grid_z3[position]), self._grid_z3[neighbor_position]))
+                self._solver.add(Implies(Not(self._grid_z3[position]), self._grid_z3[neighbor_position]))
 
     def _add_white_segment_not_crossing_more_2_regions_constraints(self):
         for row in range(self._grid.rows_number):
@@ -97,6 +98,6 @@ class HeyawakeSolver(GameSolver):
         for index_region, key_region in enumerate(keys_regions[1:-1]):
             previous_key_region = keys_regions[index_region]
             next_key_region = keys_regions[index_region + 2]
-            constraint_all_white = self._solver.And([self._grid_z3[position] for position in regions[key_region]])
-            constraint_at_least_1_neighbor_black = self._solver.Or([self._solver.Not(self._grid_z3[position]) for position in [regions[previous_key_region][-1]] + [regions[next_key_region][0]]])
-            self._solver.add(self._solver.Implies(constraint_all_white, constraint_at_least_1_neighbor_black))
+            constraint_all_white = And([self._grid_z3[position] for position in regions[key_region]])
+            constraint_at_least_1_neighbor_black = Or([Not(self._grid_z3[position]) for position in [regions[previous_key_region][-1]] + [regions[next_key_region][0]]])
+            self._solver.add(Implies(constraint_all_white, constraint_at_least_1_neighbor_black))

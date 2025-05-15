@@ -2,14 +2,12 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
+from Domain.Puzzles.Suriza.SurizaSolverOrTools import SurizaSolverOrTools
 
 _ = ' '
 
 
 class SurizaSolverTests(TestCase):
-
-
     def test_solution_with_013_0(self):
         grid = Grid([
             [1, _],
@@ -17,7 +15,7 @@ class SurizaSolverTests(TestCase):
             [_, 3],
             [0, _],
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -38,7 +36,7 @@ class SurizaSolverTests(TestCase):
             [3, _],
             [1, _],
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -57,7 +55,7 @@ class SurizaSolverTests(TestCase):
             [2, 2],
             [2, 2]
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -77,7 +75,7 @@ class SurizaSolverTests(TestCase):
             [_, _, 0, _, _],
             [_, 3, 3, _, 3]
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -102,7 +100,7 @@ class SurizaSolverTests(TestCase):
             [2, _, 2, 1, 2, 2, _],
             [_, 3, 3, _, 3, 2, 3]
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -132,7 +130,7 @@ class SurizaSolverTests(TestCase):
             [1, _, _, _, _, _, _, _, 3, 2],
             [_, _, _, _, _, _, _, 2, _, _]
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -152,7 +150,6 @@ class SurizaSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip("This test is too slow (approx. 8 seconds)")
     def test_solution_16x16(self):
         grid = Grid([
             [_, _, 2, 3, _, 2, _, _, _, _, _, _, _, _, _],
@@ -171,7 +168,7 @@ class SurizaSolverTests(TestCase):
             [3, 2, 2, 2, _, _, 3, _, _, _, _, 3, _, _, 2],
             [_, _, _, _, 2, _, _, 3, _, 3, _, 2, 2, _, 3]
         ])
-        game_solver = SurizaSolver(grid)
+        game_solver = SurizaSolverOrTools(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (

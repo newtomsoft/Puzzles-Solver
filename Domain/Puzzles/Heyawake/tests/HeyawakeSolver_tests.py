@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class HeyawakeSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_black_count_by_region_1(self):
         grid = Grid([
@@ -25,7 +22,7 @@ class HeyawakeSolverTests(TestCase):
             [1, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()
@@ -45,7 +42,7 @@ class HeyawakeSolverTests(TestCase):
             [1, 1, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()
@@ -65,7 +62,7 @@ class HeyawakeSolverTests(TestCase):
             [1, 1, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()
@@ -85,7 +82,7 @@ class HeyawakeSolverTests(TestCase):
             [1, 1, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()
@@ -118,7 +115,7 @@ class HeyawakeSolverTests(TestCase):
             [0, 1, 1, 0, 1, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()
@@ -162,7 +159,7 @@ class HeyawakeSolverTests(TestCase):
             [1, 1, 1, 1, 0, 1, 1, 1, 0, 1],
         ])
 
-        heyawake_solver = HeyawakeSolver(grid, region_grid, self.get_solver_engine())
+        heyawake_solver = HeyawakeSolver(grid, region_grid)
         solution = heyawake_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = heyawake_solver.get_other_solution()

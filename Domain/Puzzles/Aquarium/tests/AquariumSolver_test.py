@@ -1,17 +1,14 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 
 _ = 0
 
 
 class AquariumSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_grid_must_be_square_raises_value_error(self):
         grid = Grid([
@@ -24,7 +21,7 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [5, 2, 3, 5, 5, 5, 3, 5, 4, 5, 4, 4]
         with self.assertRaises(ValueError) as context:
-            AquariumSolver(grid, numbers, self.get_solver_engine())
+            AquariumSolver(grid, numbers)
         self.assertEqual(str(context.exception), "The grid must be square")
 
     def test_grid_must_be_at_least_6x6_raises_value_error(self):
@@ -37,7 +34,7 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [5, 2, 3, 5, 5, 5, 3, 5, 4, 5]
         with self.assertRaises(ValueError) as context:
-            AquariumSolver(grid, numbers, self.get_solver_engine())
+            AquariumSolver(grid, numbers)
         self.assertEqual(str(context.exception), "The grid must be at least 6x6")
 
     def test_grid_must_have_at_least_2_regions_raises_value_error(self):
@@ -51,7 +48,7 @@ class AquariumSolverTests(TestCase):
         ])
         numbers = [5, 2, 3, 5, 5, 5, 3, 5, 4, 5, 4, 4]
         with self.assertRaises(ValueError) as context:
-            AquariumSolver(grid, numbers, self.get_solver_engine())
+            AquariumSolver(grid, numbers)
         self.assertEqual(str(context.exception), "The grid must have at least 2 regions")
 
     def test_get_solution_all_empty(self):
@@ -72,7 +69,7 @@ class AquariumSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
+        game_solver = AquariumSolver(grid, numbers)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -96,7 +93,7 @@ class AquariumSolverTests(TestCase):
             [_, _, _, _, _, _],
             [1, _, _, _, _, _],
         ])
-        game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
+        game_solver = AquariumSolver(grid, numbers)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -120,7 +117,7 @@ class AquariumSolverTests(TestCase):
             [1, _, _, 1, 1, 1],
             [_, _, 1, 1, 1, 1]
         ])
-        game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
+        game_solver = AquariumSolver(grid, numbers)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -152,7 +149,7 @@ class AquariumSolverTests(TestCase):
             [_, _, _, _, _, _, 1, 1, 1, _],
             [_, _, _, 1, 1, _, _, _, _, _]
         ])
-        game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
+        game_solver = AquariumSolver(grid, numbers)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -194,7 +191,7 @@ class AquariumSolverTests(TestCase):
             [1, 1, 1, _, _, _, _, _, _, _, _, _, _, _, _],
             [1, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1, 1, 1],
         ])
-        game_solver = AquariumSolver(grid, numbers, self.get_solver_engine())
+        game_solver = AquariumSolver(grid, numbers)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()

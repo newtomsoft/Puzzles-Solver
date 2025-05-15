@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class NonogramSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_30x25(self):
         numbers_by_top_left = {

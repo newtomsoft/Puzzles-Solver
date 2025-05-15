@@ -1,10 +1,11 @@
+from z3 import Bool, sat, Not, And
+
 from Domain.Board.Direction import Direction
 from Domain.Board.GridBase import GridBase
 from Domain.Board.Pipe import Pipe
 from Domain.Board.Position import Position
 from Domain.Board.WrappedGrid import WrappedGrid
 from Domain.Board.WrappedPipesGrid import WrappedPipesGrid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 
@@ -12,8 +13,8 @@ FALSE = False
 
 
 class PipesWrapSolver(PipesSolver):
-    def __init__(self, grid: GridBase[Pipe], solver_engine: SolverEngine):
-        super().__init__(grid, solver_engine)
+    def __init__(self, grid: GridBase[Pipe]):
+        super().__init__(grid)
         self._grid_z3: WrappedGrid | None = None
         self._previous_solution: WrappedGrid[Pipe] | None = None
 
@@ -21,10 +22,10 @@ class PipesWrapSolver(PipesSolver):
         self._grid_z3 = WrappedGrid([
             [
                 {
-                    Direction.up(): self._solver.bool(f"{r}_{c}_up"),
-                    Direction.left(): self._solver.bool(f"{r}_{c}_left"),
-                    Direction.down(): self._solver.bool(f"{r}_{c}_down"),
-                    Direction.right(): self._solver.bool(f"{r}_{c}_right"),
+                    Direction.up(): Bool(f"{r}_{c}_up"),
+                    Direction.left(): Bool(f"{r}_{c}_left"),
+                    Direction.down(): Bool(f"{r}_{c}_down"),
+                    Direction.right(): Bool(f"{r}_{c}_right"),
                 }
                 for c in range(self._columns_number)
             ]
@@ -35,7 +36,7 @@ class PipesWrapSolver(PipesSolver):
 
     def get_solution_when_all_pipes_connected(self):
         proposition_count = 0
-        while self._solver.has_solution():
+        while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
             current_grid = WrappedPipesGrid([[
@@ -63,7 +64,7 @@ class PipesWrapSolver(PipesSolver):
                 constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
                 constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
                 constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
-            self._solver.add(self._solver.Not(self._solver.And(constraints)))
+            self._solver.add(Not(And(constraints)))
 
         return WrappedGrid.empty(), proposition_count
 

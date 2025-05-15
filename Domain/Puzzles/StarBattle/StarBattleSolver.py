@@ -1,11 +1,12 @@
-﻿from Domain.Board.Grid import Grid
+﻿from z3 import Solver, Bool, Not, unsat, Implies, is_true
+
+from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class StarBattleSolver(GameSolver):
-    def __init__(self, grid: Grid, stars_count_by_region_column_row: int, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid, stars_count_by_region_column_row: int):
         self._grid = grid
         self._stars_count_by_region_column_row = stars_count_by_region_column_row
         self.rows_number = self._grid.rows_number
@@ -19,16 +20,16 @@ class StarBattleSolver(GameSolver):
             raise ValueError("The grid must have the same number of regions as rows/column")
         if self._stars_count_by_region_column_row < 1:
             raise ValueError("The stars count by region/column/row must be at least 1")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3 = None
 
     def get_solution(self) -> Grid | None:
-        self._grid_z3 = Grid([[self._solver.bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return None
         model = self._solver.model()
-        grid = Grid([[self._solver.is_true(model.eval(self.queen(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[is_true(model.eval(self.queen(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def get_other_solution(self) -> Grid:
@@ -45,33 +46,33 @@ class StarBattleSolver(GameSolver):
 
     def _add_constraint_queen_by_row(self):
         for r in range(self.rows_number):
-            self._solver.add(self._solver.sum([self.queen(Position(r, c)) for c in range(self.columns_number)]) == self._stars_count_by_region_column_row)
+            self._solver.add(sum([self.queen(Position(r, c)) for c in range(self.columns_number)]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_queen_by_column(self):
         for c in range(self.columns_number):
-            self._solver.add(self._solver.sum([self.queen(Position(r, c)) for r in range(self.rows_number)]) == self._stars_count_by_region_column_row)
+            self._solver.add(sum([self.queen(Position(r, c)) for r in range(self.rows_number)]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_queen_by_region(self):
         for region in self._regions.values():
-            self._solver.add(self._solver.sum([self.queen(position) for position in region]) == self._stars_count_by_region_column_row)
+            self._solver.add(sum([self.queen(position) for position in region]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_no_adjacent_queen(self):
         for position, _ in self._grid:
             r, c = position
             if r > 0:
-                self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.up))))
+                self._solver.add(Implies(self.queen(position), Not(self.queen(position.up))))
                 if c > 0:
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.left))))
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.up_left))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.left))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.up_left))))
                 if c < self.columns_number - 1:
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.right))))
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.up_right))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.right))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.up_right))))
 
             if r < self.rows_number - 1:
-                self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.down))))
+                self._solver.add(Implies(self.queen(position), Not(self.queen(position.down))))
                 if c > 0:
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.left))))
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.down_left))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.left))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.down_left))))
                 if c < self.columns_number - 1:
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.right))))
-                    self._solver.add(self._solver.Implies(self.queen(position), self._solver.Not(self.queen(position.down_right))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.right))))
+                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.down_right))))

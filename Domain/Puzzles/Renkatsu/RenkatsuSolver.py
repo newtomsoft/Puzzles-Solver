@@ -1,16 +1,17 @@
 ﻿from collections import defaultdict
 
+from z3 import Solver, Not, And, unsat, Or, Implies, Int, If, Distinct
+
 from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class RenkatsuSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._compute_numbers_occurs_in_regions()
@@ -36,7 +37,7 @@ class RenkatsuSolver(GameSolver):
             current_region_id += remaining_region_count
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[self._solver.int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         return self._compute_solution()
 
@@ -47,16 +48,16 @@ class RenkatsuSolver(GameSolver):
             same_value_in_this_region = []
             for i in range(1, len(current_region_positions)):
                 same_value_in_this_region.append(self._grid_z3[current_region_positions[0]] == self._grid_z3[current_region_positions[i]])
-            constraints.append(self._solver.And(same_value_in_this_region))
-        self._solver.add(self._solver.Not(self._solver.And(constraints)))
+            constraints.append(And(same_value_in_this_region))
+        self._solver.add(Not(And(constraints)))
 
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
-
-        non_ordered_solution = Grid([[(self._solver.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        model = self._solver.model()
+        non_ordered_solution = Grid([[(model.eval(self._grid_z3.value(i, j))).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
         solution = self._order_values_by_position(non_ordered_solution)
         self._previous_solution = solution
         return solution
@@ -68,39 +69,39 @@ class RenkatsuSolver(GameSolver):
 
     def _add_same_numbers_in_distincts_regions_constraints(self):
         for number in self._numbers_count.keys():
-            self._solver.add(self._solver.distinct([self._grid_z3[position] for position, value in self._grid if value == number]))
+            self._solver.add(Distinct([self._grid_z3[position] for position, value in self._grid if value == number]))
 
     def _add_regions_size_constraints(self):
         for region_id, region_size in self._region_size_by_id.items():
-            self._solver.add(self._solver.sum([cell_value == region_id for _, cell_value in self._grid_z3]) == region_size)
+            self._solver.add(sum([cell_value == region_id for _, cell_value in self._grid_z3]) == region_size)
 
     def _add_connected_cells_regions_constraints(self):
-        steps = [Grid([[self._solver.int(f'step{region_id}_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)]) for region_id in range(1, self._regions_count + 1)]
+        steps = [Grid([[Int(f'step{region_id}_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)]) for region_id in range(1, self._regions_count + 1)]
         for region_id, region_size in self._region_size_by_id.items():
             self._add_connected_cells_region_constraints(steps[region_id - 1], region_id)
 
     def _add_connected_cells_region_constraints(self, step: Grid, region_id: int):
-        self._solver.add([self._solver.If(self._grid_z3[position] == region_id, step[position] >= 1, step[position] == 0) for position, _ in self._grid])
+        self._solver.add([If(self._grid_z3[position] == region_id, step[position] >= 1, step[position] == 0) for position, _ in self._grid])
 
-        roots = [self._solver.And(self._grid_z3[position] == region_id, step[position] == 1) for position, _ in self._grid]
-        self._solver.add(self._solver.Or(roots))
+        roots = [And(self._grid_z3[position] == region_id, step[position] == 1) for position, _ in self._grid]
+        self._solver.add(Or(roots))
 
-        self._solver.add([self._solver.Not(self._solver.And(roots[i], roots[j])) for i in range(len(roots)) for j in range(i + 1, len(roots))])
+        self._solver.add([Not(And(roots[i], roots[j])) for i in range(len(roots)) for j in range(i + 1, len(roots))])
 
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 current_step = step[r][c]
                 adjacents = []
                 if r > 0:
-                    adjacents.append(self._solver.And(self._grid_z3[r - 1][c] == region_id, step[r - 1][c] == current_step - 1))
+                    adjacents.append(And(self._grid_z3[r - 1][c] == region_id, step[r - 1][c] == current_step - 1))
                 if r < self.rows_number - 1:
-                    adjacents.append(self._solver.And(self._grid_z3[r + 1][c] == region_id, step[r + 1][c] == current_step - 1))
+                    adjacents.append(And(self._grid_z3[r + 1][c] == region_id, step[r + 1][c] == current_step - 1))
                 if c > 0:
-                    adjacents.append(self._solver.And(self._grid_z3[r][c - 1] == region_id, step[r][c - 1] == current_step - 1))
+                    adjacents.append(And(self._grid_z3[r][c - 1] == region_id, step[r][c - 1] == current_step - 1))
                 if c < self.columns_number - 1:
-                    adjacents.append(self._solver.And(self._grid_z3[r][c + 1] == region_id, step[r][c + 1] == current_step - 1))
+                    adjacents.append(And(self._grid_z3[r][c + 1] == region_id, step[r][c + 1] == current_step - 1))
 
-                self._solver.add(self._solver.Implies(self._solver.And(self._grid_z3[r][c] == region_id, current_step > 1), self._solver.Or(adjacents)))
+                self._solver.add(Implies(And(self._grid_z3[r][c] == region_id, current_step > 1), Or(adjacents)))
 
     def _order_values_by_position(self, old_grid: Grid) -> Grid:
         new_value_by_old_value = {}

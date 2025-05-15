@@ -3,19 +3,16 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 
 
 class TentaiShowSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_cells_filled_by_circles(self):
         grid_size = (2, 2)
         circle_positions = {1: Position(0, 0), 2: Position(0, 1), 3: Position(1, 0), 4: Position(1, 1)}
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2],
@@ -29,7 +26,7 @@ class TentaiShowSolverTests(TestCase):
     def test_solution_cells_filled_by_circles_horizontally_straddled(self):
         grid_size = (2, 2)
         circle_positions = {1: Position(0, 0.5), 2: Position(1, 0.5)}
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1],
@@ -43,7 +40,7 @@ class TentaiShowSolverTests(TestCase):
     def test_solution_cells_filled_by_circles_vertically_straddled(self):
         grid_size = (2, 2)
         circle_positions = {1: Position(0.5, 0), 2: Position(0.5, 1)}
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2],
@@ -57,7 +54,7 @@ class TentaiShowSolverTests(TestCase):
     def test_solution_cells_filled_by_circles_vertically_and_horizontally_straddled(self):
         grid_size = (4, 4)
         circle_positions = {1: Position(0.5, 0.5), 2: Position(0.5, 2.5), 3: Position(2.5, 0.5), 4: Position(2.5, 2.5)}
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 2, 2],
@@ -83,7 +80,7 @@ class TentaiShowSolverTests(TestCase):
             8: Position(3, 0),
             9: Position(3, 1.5),
         }
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 3, 2, 2],
@@ -108,7 +105,7 @@ class TentaiShowSolverTests(TestCase):
             7: Position(3, 0.5),
             8: Position(3, 2.5)
         }
-        game_solver = TentaiShowSolver(grid_size, circle_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circle_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 2, 3],
@@ -124,7 +121,7 @@ class TentaiShowSolverTests(TestCase):
     def test_solution_symmetry_constraints(self):
         grid_size = (3, 2)
         circles_positions = {1: Position(1, 0), 2: Position(1, 1)}
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2],
@@ -142,7 +139,7 @@ class TentaiShowSolverTests(TestCase):
             1: Position(0, 2), 2: Position(0.5, 1), 3: Position(0.5, 4), 4: Position(1.5, 0), 5: Position(1.5, 3),
             6: Position(3, 1), 7: Position(3, 2), 8: Position(3.5, 4), 9: Position(4, 0.5)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [4, 2, 1, 5, 3],
@@ -161,7 +158,7 @@ class TentaiShowSolverTests(TestCase):
         circles_positions = {
             1: Position(0, 1.5), 2: Position(0, 3.5), 3: Position(1, 2), 4: Position(2, 0),
             5: Position(2.5, 2.5), 6: Position(3.5, 0.5), 7: Position(4, 3)}
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [3, 1, 1, 2, 2],
@@ -181,7 +178,7 @@ class TentaiShowSolverTests(TestCase):
             1: Position(0.5, 6), 2: Position(1, 0), 3: Position(1, 1), 4: Position(1, 2.5), 5: Position(2.5, 4), 6: Position(3, 5.5),
             7: Position(4, 0.5), 8: Position(4.5, 2), 9: Position(4.5, 5.5), 10: Position(6, 1.5), 11: Position(6, 5)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [2, 3, 4, 4, 5, 5, 1],
@@ -204,7 +201,7 @@ class TentaiShowSolverTests(TestCase):
             6: Position(2, 0), 7: Position(2, 1.5), 8: Position(3, 0.5), 9: Position(3, 4.5), 10: Position(4, 3),
             11: Position(4, 5), 12: Position(4.5, 1.5), 13: Position(5, 0), 14: Position(5, 4.5), 15: Position(6, 4)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 4, 2, 5, 5, 5],
@@ -228,7 +225,7 @@ class TentaiShowSolverTests(TestCase):
             15: Position(5, 2.5), 16: Position(5, 4), 17: Position(5, 8), 18: Position(6.5, 1), 19: Position(6.5, 4.5), 20: Position(7.5, 6.5), 21: Position(8, 0),
             22: Position(8.5, 8), 23: Position(8.5, 9), 24: Position(9, 1), 25: Position(9, 7)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 8, 2, 5, 3, 4, 4, 4, 4, 4],
@@ -255,7 +252,7 @@ class TentaiShowSolverTests(TestCase):
             13: Position(5, 8), 14: Position(6, 9), 15: Position(6.5, 0), 16: Position(6.5, 7.5), 17: Position(7.5, 1.5), 18: Position(7.5, 5.5),
             19: Position(8, 9), 20: Position(8.5, 3), 21: Position(8.5, 4), 22: Position(9, 0.5), 23: Position(9, 8)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [2, 2, 2, 2, 2, 2, 2, 2, 1, 1],
@@ -286,7 +283,7 @@ class TentaiShowSolverTests(TestCase):
             37: Position(10, 8.5), 38: Position(11, 12), 39: Position(11.5, 1.5), 40: Position(11.5, 10), 41: Position(11.5, 13.5), 42: Position(12.5, 7), 43: Position(12.5, 11.5),
             44: Position(13, 3.5), 45: Position(13, 13), 46: Position(14, 12.5)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 11, 5, 5, 5, 2, 2, 3, 3, 3, 9, 10, 4, 6],
@@ -318,7 +315,7 @@ class TentaiShowSolverTests(TestCase):
             37: Position(11, 14), 38: Position(11.5, 5.5), 39: Position(11.5, 8), 40: Position(11.5, 13), 41: Position(12, 2.5), 42: Position(12, 4), 43: Position(12.5, 10),
             44: Position(13, 0), 45: Position(13, 7), 46: Position(13, 9), 47: Position(13, 13.5), 48: Position(14, 7), 49: Position(14, 11.5)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 6, 4, 4, 2, 7, 5, 5, 5, 5, 3, 3, 8, 8],
@@ -357,7 +354,7 @@ class TentaiShowSolverTests(TestCase):
             79: Position(18.5, 2.0), 80: Position(18.5, 5.5), 81: Position(18.5, 8.0), 82: Position(18.5, 9.0), 83: Position(19.0, 0.5), 84: Position(19.0, 10.0), 85: Position(19.0, 14.0),
             86: Position(19.0, 18.0)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             []
@@ -381,7 +378,7 @@ class TentaiShowSolverTests(TestCase):
             72: Position(16.5, 9.5), 73: Position(17.5, 2.0), 74: Position(18.0, 4.0), 75: Position(18.0, 13.0), 76: Position(18.0, 17.5), 77: Position(18.5, 0.5), 78: Position(18.5, 6.0),
             79: Position(18.5, 8.5), 80: Position(19.0, 2.5), 81: Position(19.0, 10.0), 82: Position(19.0, 12.5), 83: Position(19.0, 16.0)
         }
-        game_solver = TentaiShowSolver(grid_size, circles_positions, self.get_solver_engine())
+        game_solver = TentaiShowSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             []

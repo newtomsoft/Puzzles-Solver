@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class ShikakuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_grid_must_be_at_least_5x5_raises_value_error(self):
         grid = Grid([
@@ -22,7 +19,7 @@ class ShikakuSolverTests(TestCase):
             [1, 3, 3, 4],
         ])
         with self.assertRaises(ValueError) as context:
-            ShikakuSolver(grid, self.get_solver_engine())
+            ShikakuSolver(grid)
 
         self.assertEqual(str(context.exception), "The grid must be at least 5x5")
 
@@ -35,7 +32,7 @@ class ShikakuSolverTests(TestCase):
             [_, _, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            ShikakuSolver(grid, self.get_solver_engine())
+            ShikakuSolver(grid)
 
         self.assertEqual(str(context.exception), "Sum of numbers must be equal to the number of cells")
 
@@ -54,7 +51,7 @@ class ShikakuSolverTests(TestCase):
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -74,7 +71,7 @@ class ShikakuSolverTests(TestCase):
             [0, 0, 0, 1, 1],
             [0, 0, 0, 1, 1],
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
@@ -94,7 +91,7 @@ class ShikakuSolverTests(TestCase):
             [1, 1, 1, 2, 2],
             [1, 1, 1, 2, 2]
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -113,7 +110,7 @@ class ShikakuSolverTests(TestCase):
             [4, 4, 5, 5, 6],
             [4, 4, 7, 7, 7]
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -136,7 +133,7 @@ class ShikakuSolverTests(TestCase):
             [9, 7, 7, 10, 10, 10, 4],
             [9, 7, 7, 11, 11, 12, 12]
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -165,7 +162,7 @@ class ShikakuSolverTests(TestCase):
             [15, 15, 15, 16, 16, 17, 17, 18, 19, 19],
             [20, 20, 21, 21, 21, 21, 22, 22, 22, 22]
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -204,7 +201,7 @@ class ShikakuSolverTests(TestCase):
             [13, 9, 9, 24, 22, 22, 22, 22, 22, 22, 22, 25, 25, 25, 19],
             [23, 23, 23, 24, 22, 22, 22, 22, 22, 22, 22, 25, 25, 25, 19]
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -273,7 +270,7 @@ class ShikakuSolverTests(TestCase):
             [98, 98, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 95, 95, 99, 99, 93, 93, 93, 93, 93, 96, 96, 96, 96, 96, 97],
             [98, 98, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 95, 95, 99, 99, 93, 93, 93, 93, 93, 100, 100, 101, 101, 101, 97],
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 
@@ -382,7 +379,7 @@ class ShikakuSolverTests(TestCase):
             [141, 133, 93, 93, 124, 124, 124, 142, 143, 144, 144, 144, 144, 144, 144, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 150],
             [141, 146, 146, 146, 124, 124, 124, 142, 143, 147, 147, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 148, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 149, 150],
         ])
-        game_solver = ShikakuSolver(grid, self.get_solver_engine())
+        game_solver = ShikakuSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

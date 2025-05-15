@@ -2,15 +2,12 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = 0
 
 
 class RenkatsuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_2_regions(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class RenkatsuSolverTests(TestCase):
             [3, 5, 4],
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1],
@@ -37,7 +34,7 @@ class RenkatsuSolverTests(TestCase):
             [4, 1, 2],
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 2],
@@ -57,7 +54,7 @@ class RenkatsuSolverTests(TestCase):
             [1, 4, 2, 2]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 2],
@@ -76,7 +73,7 @@ class RenkatsuSolverTests(TestCase):
             [5, 2, 1, 6, 3]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 2, 2, 2],
@@ -98,7 +95,7 @@ class RenkatsuSolverTests(TestCase):
             [2, 1, 1, 3, 3, 1]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 2, 2, 2],
@@ -121,7 +118,7 @@ class RenkatsuSolverTests(TestCase):
             [1, 2, 2, 4, 1, 2]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 2, 2, 3, 3, 4],
@@ -146,7 +143,7 @@ class RenkatsuSolverTests(TestCase):
             [1, 2, 4, 1, 5, 5, 2]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 2, 3],
@@ -173,7 +170,7 @@ class RenkatsuSolverTests(TestCase):
             [7, 4, 5, 3, 5, 4, 1, 2]
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 2, 2, 2, 3, 4],
@@ -194,7 +191,7 @@ class RenkatsuSolverTests(TestCase):
             [3, 2, 1],
         ])
 
-        game_solver = RenkatsuSolver(grid, self.get_solver_engine())
+        game_solver = RenkatsuSolver(grid)
         solution0 = game_solver.get_solution()
         solution1 = game_solver.get_other_solution()
         solution2 = game_solver.get_other_solution()

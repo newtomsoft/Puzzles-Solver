@@ -4,13 +4,10 @@ from unittest import TestCase
 from Domain.Board.Pipe import Pipe, PipeString
 from Domain.Board.WrappedGrid import WrappedGrid
 from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class PipesWrapSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_grid1x3(self):
         matrix: list[list[PipeString]] = [
@@ -21,7 +18,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶─────╴ '
         )
 
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -41,7 +38,7 @@ class PipesWrapSolverTests(TestCase):
             ' └──┴──┬──┤ \n'
             ' ╶─────┤  ╵ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -63,7 +60,7 @@ class PipesWrapSolverTests(TestCase):
             '─╴  ╵  ├──┤  ├─\n'
             ' ┌──╴  ╵  ├──┤ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -89,7 +86,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶──┐  ├──┴──┴──┴──┤ \n'
             ' ╶──┴──┴────────╴  ╵ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -117,7 +114,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶─────┘  ╶──┴──╴  ╵ '
         )
 
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -149,7 +146,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶──┤  ╷  │  │  ╵  ┌──┴──┐  ╵ \n'
             ' ╶──┘  └──┘  └──╴  ╵  ╶──┴──╴ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -191,7 +188,7 @@ class PipesWrapSolverTests(TestCase):
             ' ┌──┘  │  ├──╴  ┌──┤  └──╴  ╷  ╶──┴──┤  ┌──┘ \n'
             ' ╵  ╶──┘  └──╴  ╵  └────────┴──╴  ╶──┴──┴──╴ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -243,7 +240,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶──┬──┘  ├──┐  ├──┐  ╷  ├──┬──┬──┬──╴  ├──╴  │  ├─────┐  ╵ \n'
             ' ╶──┘  ╶──┘  ╵  ╵  ╵  └──┘  ╵  ╵  └──╴  └──╴  ╵  └──╴  └──╴ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -305,7 +302,7 @@ class PipesWrapSolverTests(TestCase):
             ' │  │  ╶──┤  ╵  ╶──┬──┬─────┐  ╵  ├──╴  ╵  ╵  ╷  │  ╵  ╵  │  ┌──┴─────╴  ╷ \n'
             ' ╵  ╵  ╶──┴──╴  ╶──┘  ╵  ╶──┴─────┴─────╴  ╶──┴──┴────────┴──┴───────────┘ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()
@@ -377,7 +374,7 @@ class PipesWrapSolverTests(TestCase):
             ' ╶─────┤  ╷  ╵  └──┤  ┌──┤  ╵  ╶──┐  ╵  ╷  ┌──┤  ├──╴  │  │  │  │  ╶──┴──┐  ╶──┘  ╶──┤  ╵ \n'
             ' ╶─────┴──┘  ╶─────┘  ╵  └──╴  ╶──┴─────┴──┘  ╵  └──╴  ╵  ╵  ╵  └──╴  ╶──┴────────╴  └──╴ '
         )
-        solver = PipesWrapSolver(grid, self.get_solver_engine())
+        solver = PipesWrapSolver(grid)
         solution = solver.get_solution()
         self.assertEqual(expected_solution, str(solution))
         other_solution = solver.get_other_solution()

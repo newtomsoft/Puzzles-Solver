@@ -3,20 +3,17 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = 0
 
 
 class TapaSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_not_grid(self):
         grid = Grid([[1], ])
         with self.assertRaises(ValueError) as context:
-            TapaSolver(grid, self.get_solver_engine())
+            TapaSolver(grid)
 
         self.assertEqual("The grid must be at least 2x2", str(context.exception))
 
@@ -26,7 +23,7 @@ class TapaSolverTests(TestCase):
             [_, 1]
         ])
         with self.assertRaises(ValueError) as context:
-            TapaSolver(grid, self.get_solver_engine())
+            TapaSolver(grid)
 
         self.assertEqual("The grid must contain at least one list number", str(context.exception))
 
@@ -36,7 +33,7 @@ class TapaSolverTests(TestCase):
             [_, [1]]
         ])
         with self.assertRaises(ValueError) as context:
-            game_solver = TapaSolver(grid, self.get_solver_engine())
+            game_solver = TapaSolver(grid)
 
             game_solver.get_solution()
         self.assertEqual("Number must be positive and less than 9", str(context.exception))
@@ -47,7 +44,7 @@ class TapaSolverTests(TestCase):
             [_, [1]]
         ])
         with self.assertRaises(ValueError) as context:
-            game_solver = TapaSolver(grid, self.get_solver_engine())
+            game_solver = TapaSolver(grid)
 
             game_solver.get_solution()
         self.assertEqual("Number must be positive and less than 9", str(context.exception))
@@ -57,7 +54,7 @@ class TapaSolverTests(TestCase):
             [[1], [1]],
             [[1], [1]],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -67,7 +64,7 @@ class TapaSolverTests(TestCase):
             [[4], _],
             [_, _],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -78,7 +75,7 @@ class TapaSolverTests(TestCase):
             [_, _],
         ])
         expected_solution = Grid([[_, 1], [1, 1]])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -90,7 +87,7 @@ class TapaSolverTests(TestCase):
             [_, _, _],
         ])
         expected_solution = Grid([[1, 1, 1], [1, _, 1], [1, 1, 1]])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -101,7 +98,7 @@ class TapaSolverTests(TestCase):
             [[2], _],
         ])
         expected_solution = Grid([[_, 1], [_, 1]])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -114,7 +111,7 @@ class TapaSolverTests(TestCase):
             [[1], [2], [2], [1]],
 
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -124,7 +121,7 @@ class TapaSolverTests(TestCase):
             [[3, 1], _],
             [_, _],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -134,7 +131,7 @@ class TapaSolverTests(TestCase):
             [[2, 1], _],
             [_, _],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -146,7 +143,7 @@ class TapaSolverTests(TestCase):
             [_, _, _],
         ])
         expected_solution = Grid([[_, 1, 1], [1, _, 1], [1, 1, 1]])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -164,7 +161,7 @@ class TapaSolverTests(TestCase):
             [1, 1, 1, _],
             [_, _, _, _]
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -174,7 +171,7 @@ class TapaSolverTests(TestCase):
             [[2], _],
             [_, [2]],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -196,7 +193,7 @@ class TapaSolverTests(TestCase):
             [1, 1, _, _, 1, 1],
             [_, _, 1, 1, 1, _]
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -225,7 +222,7 @@ class TapaSolverTests(TestCase):
             [1, _, _, 1, _, _, _, 1, _, 1],
             [1, 1, _, 1, 1, 1, 1, _, 1, 1]
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -254,7 +251,7 @@ class TapaSolverTests(TestCase):
             [1, _, _, 1, _, 1, 1, _, _, 1],
             [1, 1, 1, 1, 1, _, 1, 1, 1, 1]
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -284,7 +281,7 @@ class TapaSolverTests(TestCase):
             [1, _, _, _, 1, 1, 1, 1, 1, _],
             [1, 1, 1, 1, _, _, _, _, 1, 1],
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -323,7 +320,7 @@ class TapaSolverTests(TestCase):
             [1, 1, 1, 1, _, _, _, 1, 1, 1, _, _, 1, _, 1],
             [_, _, _, _, 1, 1, 1, 1, _, 1, 1, _, 1, 1, 1]
         ])
-        game_solver = TapaSolver(grid, self.get_solver_engine())
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 

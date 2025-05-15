@@ -1,16 +1,13 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
 
 
 class BinairoPlusSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_6x6(self):
         grid = Grid([
@@ -43,7 +40,7 @@ class BinairoPlusSolverTests(TestCase):
             [1, 0, 0, 1, 1, 0],
             [1, 0, 1, 0, 0, 1]
         ])
-        game_solver = BinairoPlusSolver(grid, comparisons_positions, self.get_solver_engine())
+        game_solver = BinairoPlusSolver(grid, comparisons_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

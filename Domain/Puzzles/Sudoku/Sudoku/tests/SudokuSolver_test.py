@@ -3,15 +3,12 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 _ = -1
 
 
 class SudokuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_square(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class SudokuSolverTests(TestCase):
             [0, 2, 2],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("Sudoku grid must be square", str(context.exception))
 
@@ -32,7 +29,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _, 5],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("Sudoku subgrid must have size n x n or 3x2 or 4x3", str(context.exception))
 
@@ -44,7 +41,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
@@ -56,7 +53,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("Initial numbers must be different in rows and columns", str(context.exception))
 
@@ -68,7 +65,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("initial numbers must be different in sub squares", str(context.exception))
 
@@ -80,7 +77,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("initial numbers must be between 1 and n x n", str(context.exception))
 
@@ -92,7 +89,7 @@ class SudokuSolverTests(TestCase):
             [_, _, _, _],
         ])
         with self.assertRaises(ValueError) as context:
-            SudokuSolver(grid, self.get_solver_engine())
+            SudokuSolver(grid)
 
         self.assertEqual("initial numbers must be between 1 and n x n", str(context.exception))
 
@@ -109,7 +106,7 @@ class SudokuSolverTests(TestCase):
             [2, 1, 4, 3],
             [4, 3, 1, 2],
         ])
-        sudoku_game = SudokuSolver(grid, self.get_solver_engine())
+        sudoku_game = SudokuSolver(grid)
 
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -133,7 +130,7 @@ class SudokuSolverTests(TestCase):
             [1, 4, 6, 3, 2, 5],
             [5, 3, 2, 1, 4, 6]
         ])
-        sudoku_game = SudokuSolver(grid, self.get_solver_engine())
+        sudoku_game = SudokuSolver(grid)
 
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -163,7 +160,7 @@ class SudokuSolverTests(TestCase):
             [3, 4, 5, 9, 2, 1, 6, 8, 7],
             [2, 9, 6, 8, 4, 7, 3, 1, 5],
         ])
-        sudoku_game = SudokuSolver(grid, self.get_solver_engine())
+        sudoku_game = SudokuSolver(grid)
 
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -193,7 +190,7 @@ class SudokuSolverTests(TestCase):
             [3, 2, 7, 1, 6, 4, 5, 8, 9],
             [6, 4, 1, 5, 9, 8, 3, 7, 2]
         ])
-        sudoku_game = SudokuSolver(grid, self.get_solver_engine())
+        sudoku_game = SudokuSolver(grid)
 
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -223,7 +220,7 @@ class SudokuSolverTests(TestCase):
             [6, 5, 7, 4, 1, 9, 2, 8, 3],
             [8, 3, 1, 5, 7, 2, 4, 9, 6],
         ])
-        sudoku_game = SudokuSolver(grid, self.get_solver_engine())
+        sudoku_game = SudokuSolver(grid)
 
         solution = sudoku_game.get_solution()
         self.assertEqual(expected_solution, solution)

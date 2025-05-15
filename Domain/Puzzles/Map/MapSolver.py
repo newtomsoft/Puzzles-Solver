@@ -1,5 +1,6 @@
-﻿from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
+﻿from z3 import Solver, Not, And, unsat, Int
+
+from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 
 red = 1
@@ -9,16 +10,16 @@ brown = 4
 
 
 class MapSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self.neighbours = None
         self._region_z3: list = []
 
     def get_solution(self) -> Grid:
-        self._region_z3 = [self._solver.int(f"regions_{i}") for i in range(20)]
+        self._region_z3 = [Int(f"regions_{i}") for i in range(20)]
         self.neighbours = self._get_neighbours()
         self._add_constraints()
 
@@ -26,12 +27,12 @@ class MapSolver(GameSolver):
         return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        self._solver.add(self._solver.Not(self._solver.And([self._grid_z3[position] == value for position, value in self._previous_solution])))
+        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution])))
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return Grid.empty()
 
         model = self._solver.model()
@@ -85,4 +86,4 @@ class MapSolver(GameSolver):
     def _add_neighbours_constraints(self):
         for region, neighbours in self.neighbours.items():
             constraint = [region != neighbours[i] for i in range(len(neighbours))]
-            self._solver.add(self._solver.And(constraint))
+            self._solver.add(And(constraint))

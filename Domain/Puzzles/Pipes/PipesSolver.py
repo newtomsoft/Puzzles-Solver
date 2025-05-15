@@ -1,9 +1,10 @@
+from z3 import Solver, Bool, sat, Not, And, is_true, Or
+
 from Domain.Board.Direction import Direction
 from Domain.Board.GridBase import GridBase
 from Domain.Board.Pipe import Pipe
 from Domain.Board.PipesGrid import PipesGrid
 from Domain.Board.Position import Position
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 
@@ -11,11 +12,11 @@ FALSE = False  # for avoid PyCharm warning
 
 
 class PipesSolver(GameSolver):
-    def __init__(self, grid: GridBase[Pipe], solver_engine: SolverEngine):
+    def __init__(self, grid: GridBase[Pipe]):
         self._input_grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: GridBase | None = None
         self._previous_solution: GridBase[Pipe] | None = None
 
@@ -23,10 +24,10 @@ class PipesSolver(GameSolver):
         self._grid_z3 = GridBase([
             [
                 {
-                    Direction.up(): self._solver.bool(f"{r}_{c}_up"),
-                    Direction.left(): self._solver.bool(f"{r}_{c}_left"),
-                    Direction.down(): self._solver.bool(f"{r}_{c}_down"),
-                    Direction.right(): self._solver.bool(f"{r}_{c}_right"),
+                    Direction.up(): Bool(f"{r}_{c}_up"),
+                    Direction.left(): Bool(f"{r}_{c}_left"),
+                    Direction.down(): Bool(f"{r}_{c}_down"),
+                    Direction.right(): Bool(f"{r}_{c}_right"),
                 }
                 for c in range(self._columns_number)
             ]
@@ -36,7 +37,7 @@ class PipesSolver(GameSolver):
         self._add_constraints()
 
     def get_solution(self) -> GridBase:
-        if not self._solver.has_constraints():
+        if not self._solver.assertions():
             self._init_solver()
 
         solution, _ = self.get_solution_when_all_pipes_connected()
@@ -44,7 +45,7 @@ class PipesSolver(GameSolver):
 
     def get_solution_when_all_pipes_connected(self):
         proposition_count = 0
-        while self._solver.has_solution():
+        while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
             current_grid = PipesGrid([[
@@ -72,7 +73,7 @@ class PipesSolver(GameSolver):
                 constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
                 constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
                 constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
-            self._solver.add(self._solver.Not(self._solver.And(constraints)))
+            self._solver.add(Not(And(constraints)))
 
         return GridBase.empty(), proposition_count
 
@@ -85,7 +86,7 @@ class PipesSolver(GameSolver):
             previous_solution_constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
             previous_solution_constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
 
-        self._solver.add(self._solver.Not(self._solver.And(previous_solution_constraints)))
+        self._solver.add(Not(And(previous_solution_constraints)))
         return self.get_solution()
 
     def _add_constraints(self):
@@ -117,30 +118,30 @@ class PipesSolver(GameSolver):
             self._solver.add(self._grid_z3[position][Direction.right()] == FALSE)
 
     def _add_shape_l_constraint(self, pos: Position):
-        l0 = self._solver.And(self._grid_z3[pos][Direction.up()], self._grid_z3[pos][Direction.right()], self._grid_z3[pos][Direction.down()] == FALSE, self._grid_z3[pos][Direction.left()] == FALSE)
-        l1 = self._solver.And(self._grid_z3[pos][Direction.left()], self._grid_z3[pos][Direction.up()], self._grid_z3[pos][Direction.right()] == FALSE, self._grid_z3[pos][Direction.down()] == FALSE)
-        l2 = self._solver.And(self._grid_z3[pos][Direction.down()], self._grid_z3[pos][Direction.left()], self._grid_z3[pos][Direction.up()] == FALSE, self._grid_z3[pos][Direction.right()] == FALSE)
-        l3 = self._solver.And(self._grid_z3[pos][Direction.right()], self._grid_z3[pos][Direction.down()], self._grid_z3[pos][Direction.left()] == FALSE, self._grid_z3[pos][Direction.up()] == FALSE)
-        self._solver.add(self._solver.Or(l0, l1, l2, l3))
+        l0 = And(self._grid_z3[pos][Direction.up()], self._grid_z3[pos][Direction.right()], self._grid_z3[pos][Direction.down()] == FALSE, self._grid_z3[pos][Direction.left()] == FALSE)
+        l1 = And(self._grid_z3[pos][Direction.left()], self._grid_z3[pos][Direction.up()], self._grid_z3[pos][Direction.right()] == FALSE, self._grid_z3[pos][Direction.down()] == FALSE)
+        l2 = And(self._grid_z3[pos][Direction.down()], self._grid_z3[pos][Direction.left()], self._grid_z3[pos][Direction.up()] == FALSE, self._grid_z3[pos][Direction.right()] == FALSE)
+        l3 = And(self._grid_z3[pos][Direction.right()], self._grid_z3[pos][Direction.down()], self._grid_z3[pos][Direction.left()] == FALSE, self._grid_z3[pos][Direction.up()] == FALSE)
+        self._solver.add(Or(l0, l1, l2, l3))
 
     def add_shape_i_constraint(self, position):
-        i0 = self._solver.And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
-        i1 = self._solver.And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
-        self._solver.add(self._solver.Or(i0, i1))
+        i0 = And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
+        i1 = And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
+        self._solver.add(Or(i0, i1))
 
     def add_shape_t_constraint(self, position):
-        t0 = self._solver.And(self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()] == FALSE)
-        t1 = self._solver.And(self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()] == FALSE)
-        t2 = self._solver.And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.down()] == FALSE)
-        t3 = self._solver.And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.right()] == FALSE)
-        self._solver.add(self._solver.Or(t0, t1, t2, t3))
+        t0 = And(self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()] == FALSE)
+        t1 = And(self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.left()] == FALSE)
+        t2 = And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.down()] == FALSE)
+        t3 = And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.right()] == FALSE)
+        self._solver.add(Or(t0, t1, t2, t3))
 
     def add_shape_e_constraint(self, position):
-        e0 = self._solver.And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()] == FALSE, self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
-        e1 = self._solver.And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()] == FALSE, self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
-        e2 = self._solver.And(self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
-        e3 = self._solver.And(self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
-        self._solver.add(self._solver.Or(e0, e1, e2, e3))
+        e0 = And(self._grid_z3[position][Direction.up()], self._grid_z3[position][Direction.down()] == FALSE, self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
+        e1 = And(self._grid_z3[position][Direction.left()], self._grid_z3[position][Direction.right()] == FALSE, self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
+        e2 = And(self._grid_z3[position][Direction.down()], self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.right()] == FALSE)
+        e3 = And(self._grid_z3[position][Direction.right()], self._grid_z3[position][Direction.left()] == FALSE, self._grid_z3[position][Direction.up()] == FALSE, self._grid_z3[position][Direction.down()] == FALSE)
+        self._solver.add(Or(e0, e1, e2, e3))
 
     def _add_connected_constraints(self):
         for position, value in self._grid_z3:
@@ -159,12 +160,12 @@ class PipesSolver(GameSolver):
 
     def _create_pipe_from_model(self, model, position: Position):
         directions = []
-        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.up()])):
+        if is_true(model.eval(self._grid_z3[position][Direction.up()])):
             directions.append(Direction.up())
-        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.left()])):
+        if is_true(model.eval(self._grid_z3[position][Direction.left()])):
             directions.append(Direction.left())
-        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.down()])):
+        if is_true(model.eval(self._grid_z3[position][Direction.down()])):
             directions.append(Direction.down())
-        if self._solver.is_true(model.eval(self._grid_z3[position][Direction.right()])):
+        if is_true(model.eval(self._grid_z3[position][Direction.right()])):
             directions.append(Direction.right())
         return Pipe.from_connection(frozenset(directions))

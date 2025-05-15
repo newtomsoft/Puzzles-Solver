@@ -1,15 +1,12 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
+from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 
 
 class AkariSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_too_small_column(self):
         data_game = {
@@ -20,7 +17,7 @@ class AkariSolverTests(TestCase):
         }
 
         with self.assertRaises(ValueError) as context:
-            AkariSolver(data_game, self.get_solver_engine())
+            AkariSolver(data_game)
         self.assertEqual("Akari grid must be at least 7x7", str(context.exception))
 
     def test_solution_grid_too_small_row(self):
@@ -32,7 +29,7 @@ class AkariSolverTests(TestCase):
         }
 
         with self.assertRaises(ValueError) as context:
-            AkariSolver(data_game, self.get_solver_engine())
+            AkariSolver(data_game)
         self.assertEqual("Akari grid must be at least 7x7", str(context.exception))
 
     def test_solution_7x7(self):
@@ -51,7 +48,7 @@ class AkariSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0, 1],
             [0, 1, 0, 0, 0, 1, 0],
         ])
-        game_solver = AkariSolver(data_game, self.get_solver_engine())
+        game_solver = AkariSolver(data_game)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
 

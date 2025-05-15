@@ -2,16 +2,13 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 
 _ = ''
 
 
 class VectorsSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_basic_grid(self):
         grid = Grid([
@@ -19,7 +16,7 @@ class VectorsSolverTests(TestCase):
             [_, _, 1],
             [1, _, _]
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1],
@@ -41,7 +38,7 @@ class VectorsSolverTests(TestCase):
             [_, _, _, 5, _, _, _, _],
             [_, _, _, _, 6, _, _, _],
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 1, 2, 5],
@@ -69,7 +66,7 @@ class VectorsSolverTests(TestCase):
             [_, _, _, 9, _, _, _, 9, _],
             [_, 5, _, _, 4, _, _, _, _],
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 2, 4, 13, 5],
@@ -99,7 +96,7 @@ class VectorsSolverTests(TestCase):
             [0, _, _, _, _, 1, _, _, _, _],
             [_, _, _, _, _, _, 7, _, 5, _],
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 2, 2, 2, 2, 3, 8],
@@ -131,7 +128,7 @@ class VectorsSolverTests(TestCase):
             [_, 2, _, _, _, _, _, _, 5, _, 1],
             [_, _, _, _, 6, _, 4, _, _, _, _],
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 5],
@@ -168,7 +165,7 @@ class VectorsSolverTests(TestCase):
             [1, _, 11, _, _, _, _, _, _, _, _, _, _, _, _],
             [_, _, _, _, _, _, _, 8, _, _, _, _, _, _, 5],
         ])
-        game_solver = VectorsSolver(grid, self.get_solver_engine())
+        game_solver = VectorsSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [1, 1, 1, 2, 2, 3, 3, 3, 3, 4, 27, 19, 9, 5, 15],

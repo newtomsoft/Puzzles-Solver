@@ -2,14 +2,11 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 
 
 class ZipSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_basic_grid(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class ZipSolverTests(TestCase):
             [0, 5, 0],
             [2, 0, 3]
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╷  ┌──┐ \n'
@@ -38,7 +35,7 @@ class ZipSolverTests(TestCase):
             [5, 3, 0, 0, 2, 6],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌────────┐  ┌──┐ \n'
@@ -63,7 +60,7 @@ class ZipSolverTests(TestCase):
             [0, 0, 0, 0, 0, 3, 0],
             [4, 0, 0, 0, 0, 0, 5],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌─────────────────┐ \n'
@@ -97,7 +94,7 @@ class ZipSolverTests(TestCase):
                 frozenset([Position(5, 2), Position(5, 3)]),
             }
         )
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌─────┐  ┌─────┐ \n'
@@ -121,7 +118,7 @@ class ZipSolverTests(TestCase):
             [1, 0, 0, 4, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -159,7 +156,7 @@ class ZipSolverTests(TestCase):
                 frozenset([Position(4, 4), Position(4, 5)]),
             }
         )
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌─────┐  ┌─────┐ \n'
@@ -183,7 +180,7 @@ class ZipSolverTests(TestCase):
             [0, 0, 0, 0, 2, 0],
             [1, 0, 0, 0, 0, 8],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -207,7 +204,7 @@ class ZipSolverTests(TestCase):
             [3, 0, 7, 0, 5, 0],
             [0, 0, 1, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -247,7 +244,7 @@ class ZipSolverTests(TestCase):
             frozenset([Position(2, 1), Position(3, 1)]),
             frozenset([Position(2, 2), Position(3, 2)]),
         })
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──┐  ┌──┐  ┌──┐ \n'
@@ -271,7 +268,7 @@ class ZipSolverTests(TestCase):
             [3, 0, 0, 0, 0, 4],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -305,7 +302,7 @@ class ZipSolverTests(TestCase):
             frozenset([Position(3, 3), Position(3, 4)]),
             frozenset([Position(4, 3), Position(4, 4)]),
         })
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌────────┐  ┌──┐ \n'
@@ -329,7 +326,7 @@ class ZipSolverTests(TestCase):
             [3, 0, 0, 0, 0, 4],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -353,7 +350,7 @@ class ZipSolverTests(TestCase):
             [0, 0, 0, 0, 8, 0],
             [5, 0, 0, 0, 0, 0],
         ])
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌────────┐  ┌──┐ \n'
@@ -401,7 +398,7 @@ class ZipSolverTests(TestCase):
             frozenset({Position(2, 3), Position(2, 4)}),
             frozenset({Position(1, 3), Position(2, 3)})
         })
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ┌──────────────┐ \n'
@@ -452,7 +449,7 @@ class ZipSolverTests(TestCase):
             frozenset({Position(1, 5), Position(2, 5)}),
             frozenset({Position(2, 3), Position(2, 4)}),
         })
-        game_solver = ZipSolver(grid, self.get_solver_engine())
+        game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = (
             ' ╶──┐  ┌──────────→  \n'

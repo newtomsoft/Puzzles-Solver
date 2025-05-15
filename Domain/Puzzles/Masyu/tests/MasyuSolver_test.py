@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class MasyuSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_white_0(self):
         grid = Grid([
@@ -17,7 +14,7 @@ class MasyuSolverTests(TestCase):
             [' ', 'w', ' '],
         ])
 
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -35,7 +32,7 @@ class MasyuSolverTests(TestCase):
             [' ', 'w', ' '],
         ])
 
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -53,7 +50,7 @@ class MasyuSolverTests(TestCase):
             ['w', ' ', ' ', 'w'],
             [' ', ' ', 'w', ' '],
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -71,7 +68,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' '],
             [' ', ' ', 'b'],
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -89,7 +86,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', 'w', ' '],
             [' ', ' ', ' ', ' ']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -110,7 +107,7 @@ class MasyuSolverTests(TestCase):
             ['w', ' ', ' ', 'w', ' ', ' '],
             ['b', ' ', ' ', 'w', ' ', ' ']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -134,7 +131,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', ' ', ' ', ' '],
             ['b', ' ', ' ', ' ', 'w', ' ']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -160,7 +157,7 @@ class MasyuSolverTests(TestCase):
             ['b', 'w', ' ', ' ', 'w', 'w', ' ', ' '],
             [' ', ' ', ' ', ' ', 'w', ' ', 'w', 'b']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -188,7 +185,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
             [' ', 'w', ' ', 'w', ' ', ' ', ' ', 'b']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -218,7 +215,7 @@ class MasyuSolverTests(TestCase):
             ['w', ' ', ' ', ' ', 'b', 'w', 'w', ' ', ' ', ' '],
             ['b', 'w', 'b', 'b', ' ', ' ', ' ', ' ', 'w', ' ']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
 
         solution = game_solver.get_solution()
         expected_solution_string = (
@@ -250,7 +247,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', 'w', 'w', ' ', 'w', ' ', ' ', 'w'],
             [' ', ' ', ' ', 'b', ' ', 'w', ' ', ' ', 'w', 'b']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             '       ┌───────────┐  ┌─────┐ \n'
@@ -281,7 +278,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', 'w', ' ', 'w', ' ', 'w', ' ', ' '],
             [' ', ' ', 'b', ' ', ' ', ' ', 'w', ' ', 'w', ' ']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐     ┌─────┐  ┌────────┐ \n'
@@ -318,7 +315,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' ', ' ', 'b', 'w', 'b', ' ', ' ']
         ])
 
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐     ┌─────┐  ┌────────────────────┐    \n'
@@ -365,7 +362,7 @@ class MasyuSolverTests(TestCase):
             [' ', ' ', ' ', ' ', 'w', ' ', ' ', 'w', 'b', 'w', 'b', ' ', ' ', ' ', 'b', ' ', ' ', ' ', ' ', 'w'],
             [' ', ' ', 'w', ' ', 'w', ' ', ' ', 'b', 'w', ' ', 'w', ' ', ' ', ' ', ' ', 'b', ' ', ' ', 'w', 'b']
         ])
-        game_solver = MasyuSolver(grid, self.get_solver_engine())
+        game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌───────────┐     ┌────────┐  ┌──┐        ┌──────────────┐ \n'

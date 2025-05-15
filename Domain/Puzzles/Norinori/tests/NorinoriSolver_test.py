@@ -3,13 +3,10 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class NorinoriSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
+
 
     def test_solution_grid_not_a_square(self):
         grid = Grid([
@@ -20,7 +17,7 @@ class NorinoriSolverTests(TestCase):
             [0, 2, 2, 1, 1, 1],
         ])
         with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid, self.get_solver_engine())
+            NorinoriSolver(grid)
         self.assertEqual("The grid must be square", str(context.exception))
 
     def test_solution_grid_size_less_than_4(self):
@@ -32,7 +29,7 @@ class NorinoriSolverTests(TestCase):
             [0, 0, 0, 1, 1],
         ])
         with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid, self.get_solver_engine())
+            NorinoriSolver(grid)
         self.assertEqual("The grid must be at least 6x6", str(context.exception))
 
     def test_solution_color_less_than_columns_number(self):
@@ -45,7 +42,7 @@ class NorinoriSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0],
         ])
         with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid, self.get_solver_engine())
+            NorinoriSolver(grid)
         self.assertEqual("The grid must have at least 2 regions", str(context.exception))
 
     def test_solution_none_because_2_by_region(self):
@@ -57,7 +54,7 @@ class NorinoriSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = NorinoriSolver(grid, self.get_solver_engine())
+        game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -70,7 +67,7 @@ class NorinoriSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
         ])
-        game_solver = NorinoriSolver(grid, self.get_solver_engine())
+        game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -91,7 +88,7 @@ class NorinoriSolverTests(TestCase):
             [0, 0, 0, 1, 0, 0],
             [0, 1, 1, 0, 1, 1]
         ])
-        game_solver = NorinoriSolver(grid, self.get_solver_engine())
+        game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
@@ -120,7 +117,7 @@ class NorinoriSolverTests(TestCase):
             [1, 0, 0, 0, 0, 1, 0, 0, 1, 0],
             [1, 0, 1, 1, 0, 1, 0, 0, 1, 0]
         ])
-        game_solver = NorinoriSolver(grid, self.get_solver_engine())
+        game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
 

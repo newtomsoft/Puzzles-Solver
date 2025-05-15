@@ -3,21 +3,16 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 
 class MinesweeperSolverTests(TestCase):
-    @staticmethod
-    def get_solver_engine():
-        return Z3SolverEngine()
-
     def test_solution_basic_grid(self):
         grid = Grid([
             [-1, -1, -1],
             [-1, 1, 1],
             [-1, 1, -1]
         ])
-        game_solver = MinesweeperSolver(grid, self.get_solver_engine())
+        game_solver = MinesweeperSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [True, True, True],
@@ -41,7 +36,7 @@ class MinesweeperSolverTests(TestCase):
             [-1, -1, 3, -1, 3, -1, -1, 1, 2, 2],
             [-1, 0, -1, -1, -1, 1, 1, -1, -1, 1]
         ])
-        game_solver = MinesweeperSolver(grid, self.get_solver_engine())
+        game_solver = MinesweeperSolver(grid)
         solution = game_solver.get_solution()
         expected_solution = Grid([
             [False, True, True, False, True, False, True, True, True, False],

@@ -1,25 +1,24 @@
-﻿from z3 import Bool
+﻿from z3 import Solver, Bool, Not, And, unsat, is_true
 
 from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class MinesweeperMosaicSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3 = None
 
     def get_solution(self) -> (Grid | None, int):
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
-        if not self._solver.has_solution():
+        if self._solver.check() == unsat:
             return None
         model = self._solver.model()
-        grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def get_other_solution(self) -> Grid:
@@ -37,5 +36,5 @@ class MinesweeperMosaicSolver(GameSolver):
                     for dc in range(-1, 2):
                         if 0 <= r + dr < self.rows_number and 0 <= c + dc < self.columns_number:
                             cells_in_cell_zone.append(self._grid_z3.value(r + dr, c + dc))
-                constraints.append(self._solver.sum([self._solver.Not(cell) for cell in cells_in_cell_zone]) == self._grid.value(r, c))
-        self._solver.add(self._solver.And(constraints))
+                constraints.append(sum([Not(cell) for cell in cells_in_cell_zone]) == self._grid.value(r, c))
+        self._solver.add(And(constraints))

@@ -3,7 +3,6 @@ from flask_cors import CORS
 
 from BinairoPlusSolver import BinairoPlusSolver
 from Domain.Board.Grid import Grid
-from SolverEngineAdapters.Z3SolverEngine import Z3SolverEngine
 
 app = Flask(__name__)
 CORS(app, origins="https://www.puzzles-mobile.com")
@@ -22,7 +21,7 @@ def get_solution():
 
     grid = Grid(grid_data)
     comparison_operators = comparison_operators_data
-    game_solver = BinairoPlusSolver(grid, comparison_operators, Z3SolverEngine())
+    game_solver = BinairoPlusSolver(grid, comparison_operators)
     solution_grid = game_solver.get_solution()
     if not solution_grid:
         return jsonify({"message": "No solution found"}), 200

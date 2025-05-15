@@ -1,12 +1,13 @@
-﻿from Board.Position import Position
+﻿from z3 import Solver, Bool, Not, And, Or, is_true, sat
+
+from Board.Position import Position
 from Domain.Board.Grid import Grid
-from Domain.Ports.SolverEngine import SolverEngine
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
 
 class TapaSolver(GameSolver):
-    def __init__(self, grid: Grid, solver_engine: SolverEngine):
+    def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -14,11 +15,11 @@ class TapaSolver(GameSolver):
             raise ValueError("The grid must be at least 2x2")
         if not any(isinstance(cell, list) for row in self._grid.matrix for cell in row):
             raise ValueError("The grid must contain at least one list number")
-        self._solver = solver_engine
+        self._solver = Solver()
         self._grid_z3: Grid | None = None
 
     def get_solution(self) -> (Grid | None, int):
-        matrix_z3 = [[self._solver.bool(f"bool_{r}_{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
+        matrix_z3 = [[Bool(f"bool_{r}_{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
         #  True for black, False for white
         self._grid_z3 = Grid(matrix_z3)
 
@@ -35,14 +36,14 @@ class TapaSolver(GameSolver):
         raise NotImplemented("This method is not yet implemented")
 
     def _init_borders_white(self):
-        self._solver.add([self._solver.Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])
-        self._solver.add([self._solver.Not(self._grid_z3.value(r, self._grid_z3.columns_number - 1)) for r in range(self._grid_z3.rows_number)])
-        self._solver.add([self._solver.Not(self._grid_z3.value(0, c)) for c in range(self._grid_z3.columns_number)])
-        self._solver.add([self._solver.Not(self._grid_z3.value(self._grid_z3.rows_number - 1, c)) for c in range(self._grid_z3.columns_number)])
+        self._solver.add([Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])
+        self._solver.add([Not(self._grid_z3.value(r, self._grid_z3.columns_number - 1)) for r in range(self._grid_z3.rows_number)])
+        self._solver.add([Not(self._grid_z3.value(0, c)) for c in range(self._grid_z3.columns_number)])
+        self._solver.add([Not(self._grid_z3.value(self._grid_z3.rows_number - 1, c)) for c in range(self._grid_z3.columns_number)])
 
     def _no_black_on_numbers_cell(self):
         for position in [position for position, value in self._grid if value != 0]:
-            self._solver.add(self._solver.Not(self._grid_z3[position + Position(1, 1)]))
+            self._solver.add(Not(self._grid_z3[position + Position(1, 1)]))
 
     def _black_around_number(self):
         neighbours_adjacent_coordinates = [(-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1)]
@@ -61,25 +62,25 @@ class TapaSolver(GameSolver):
                 merged_combinations = TapaSolver._combine_list_with_gap(adjacent_combinations)
                 constraints = []
                 for combination in merged_combinations:
-                    constraints.append(self._solver.And([black_cells_around[i] if combination[i] else self._solver.Not(black_cells_around[i]) for i in range(len(combination))]))
-                self._solver.add(self._solver.Or(constraints))
+                    constraints.append(And([black_cells_around[i] if combination[i] else Not(black_cells_around[i]) for i in range(len(combination))]))
+                self._solver.add(Or(constraints))
 
     def _no_black_square(self):
         for c in range(1, self._grid_z3.columns_number - 1):
             for r in range(1, self._grid_z3.rows_number - 1):
-                self._solver.add(self._solver.Or(
-                    self._solver.Not(self._grid_z3.value(r, c)),
-                    self._solver.Not(self._grid_z3.value(r + 1, c)),
-                    self._solver.Not(self._grid_z3.value(r, c + 1)),
-                    self._solver.Not(self._grid_z3.value(r + 1, c + 1))
+                self._solver.add(Or(
+                    Not(self._grid_z3.value(r, c)),
+                    Not(self._grid_z3.value(r + 1, c)),
+                    Not(self._grid_z3.value(r, c + 1)),
+                    Not(self._grid_z3.value(r + 1, c + 1))
                 ))
 
     def _ensure_all_black_connected(self) -> (Grid, int):
         proposition_count = 0
-        while self._solver.has_solution():
+        while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
-            current_grid = Grid([[self._solver.is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in range(self._grid_z3.rows_number)])
+            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in range(self._grid_z3.rows_number)])
             black_shapes = current_grid.get_all_shapes()
             if len(black_shapes) == 1:
                 return TapaSolver.crop_grid(current_grid), proposition_count
@@ -87,10 +88,10 @@ class TapaSolver(GameSolver):
             biggest_shape = max(black_shapes, key=len)
             black_shapes.remove(biggest_shape)
             for black_shape in black_shapes:
-                shape_not_all_black = self._solver.Not(self._solver.And([self._grid_z3[position] for position in black_shape]))
+                shape_not_all_black = Not(And([self._grid_z3[position] for position in black_shape]))
                 around_shape = ShapeGenerator.around_shape(black_shape)
-                around_not_all_white = self._solver.Not(self._solver.And([self._solver.Not(self._grid_z3[position]) for position in around_shape if position in self._grid_z3]))
-                constraint = self._solver.Or(shape_not_all_black, around_not_all_white)
+                around_not_all_white = Not(And([Not(self._grid_z3[position]) for position in around_shape if position in self._grid_z3]))
+                constraint = Or(shape_not_all_black, around_not_all_white)
                 self._solver.add(constraint)
 
         return Grid.empty(), proposition_count
