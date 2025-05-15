@@ -152,7 +152,6 @@ class SurizaSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip("This test is too slow (approx. 8 seconds)")
     def test_solution_16x16(self):
         grid = Grid([
             [_, _, 2, 3, _, 2, _, _, _, _, _, _, _, _, _],
