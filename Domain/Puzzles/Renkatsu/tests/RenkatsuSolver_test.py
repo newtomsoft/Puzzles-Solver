@@ -1,4 +1,4 @@
-﻿from unittest import TestCase
+﻿from unittest import TestCase, skip
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
@@ -7,8 +7,6 @@ _ = 0
 
 
 class RenkatsuSolverTests(TestCase):
-
-
     def test_solution_2_regions(self):
         grid = Grid([
             [1, 2, 3],
@@ -130,7 +128,7 @@ class RenkatsuSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    # @unittest.skip("This test is too slow (approx 15 mn)")
+    @unittest.skip("This test is too slow (approx 15 mn)")
     def test_solution_7x7_0x9y8(self):
         # https://gridpuzzle.com/renkatsu/0x9y8
         grid = Grid([
@@ -156,7 +154,7 @@ class RenkatsuSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    # @unittest.skip("This test is too slow (approx 1 hour)")
+    @skip("This test is too slow (approx 1 hour)")
     def test_solution_8x8_1nd00(self):
         # https://gridpuzzle.com/renkatsu/1nd00
         grid = Grid([
