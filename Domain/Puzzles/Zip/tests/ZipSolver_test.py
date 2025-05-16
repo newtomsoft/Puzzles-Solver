@@ -6,8 +6,6 @@ from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 
 
 class ZipSolverTests(TestCase):
-
-
     def test_solution_basic_grid(self):
         grid = Grid([
             [1, 0, 4],
