@@ -1,5 +1,4 @@
-﻿from z3 import ArithRef
-from z3 import Solver, Not, And, unsat, Or, Int, Distinct
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -27,90 +26,108 @@ class SkyscrapersSolver(GameSolver):
             raise ValueError("The 'by_north' viewable skyscrapers list must have the same length as the columns number")
         if len(self.visible_skyscrapers['by_south']) != self.rows_number:
             raise ValueError("The 'by_south' viewable skyscrapers list must have the same length as the columns number")
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._grid_vars: Grid | None = None
         self._previous_solution_grid = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Int(f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.NewIntVar(1, self.columns_number, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if not self._model.Proto().constraints:
             self._init_solver()
-        if self._solver.check() == unsat:
+
+        status = self._solver.Solve(self._model)
+
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            grid = Grid([[self._solver.Value(self._level_at(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
+            self._previous_solution_grid = grid
+            return grid
+        else:
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid([[model.eval(self._level_at(Position(r, c))).as_long() for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._previous_solution_grid = grid
-        return grid
 
     def get_other_solution(self):
-        exclusion_constraint = Not(And([self._level_at(Position(r, c)) == self._previous_solution_grid[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number) if self._previous_solution_grid.value(r, c)]))
-        self._solver.add(exclusion_constraint)
+        if self._previous_solution_grid is None:
+            return Grid.empty()
+
+        previous_solution_bools = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                if self._previous_solution_grid.value(r, c) != self._no_value:
+                    is_same = self._model.NewBoolVar(f"is_same_{r}_{c}")
+                    self._model.Add(self._level_at(Position(r, c)) == self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_same)
+                    self._model.Add(self._level_at(Position(r, c)) != self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_same.Not())
+                    previous_solution_bools.append(is_same)
+
+        if previous_solution_bools:
+            all_same = self._model.NewBoolVar("all_same")
+            self._model.AddBoolAnd(previous_solution_bools).OnlyEnforceIf(all_same)
+            self._model.AddBoolOr([b.Not() for b in previous_solution_bools]).OnlyEnforceIf(all_same.Not())
+            self._model.Add(all_same == 0)
+
         return self.get_solution()
 
     def _level_at(self, position):
-        return self._grid_z3[position]
+        return self._grid_vars[position]
 
     def _add_constraints(self):
         self._add_initials_levels_constraint()
-        self._add_range_levels_constraint()
         self._add_distinct_level_constraint()
         self._add_visible_skyscrapers_constraint()
 
     def _add_initials_levels_constraint(self):
         for position, level_value in self._grid:
             if level_value != self._no_value:
-                self._solver.add(self._level_at(position) == level_value)
-
-    def _add_range_levels_constraint(self):
-        for position, level_value in self._grid:
-            self._solver.add(self._level_at(position) >= 1)
-            self._solver.add(self._level_at(position) <= self.columns_number)
+                self._model.Add(self._level_at(position) == level_value)
 
     def _add_distinct_level_constraint(self):
-        constraints = []
-        for row in self._grid_z3.matrix:
-            constraints.append(Distinct([row[j] for j in range(self.columns_number)]))
-        for column in zip(*self._grid_z3.matrix):
-            constraints.append(Distinct([column[j] for j in range(self.rows_number)]))
-        self._solver.add(constraints)
+        for r in range(self.rows_number):
+            row_vars = [self._level_at(Position(r, c)) for c in range(self.columns_number)]
+            self._model.AddAllDifferent(row_vars)
+
+        for c in range(self.columns_number):
+            col_vars = [self._level_at(Position(r, c)) for r in range(self.rows_number)]
+            self._model.AddAllDifferent(col_vars)
 
     def _add_visible_skyscrapers_constraint(self):
-        for index, row in enumerate(self._grid_z3.matrix):
-            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_west'][index], row))
-            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_east'][index], self._reversed(row)))
+        for index in range(self.rows_number):
+            row = [self._level_at(Position(index, c)) for c in range(self.columns_number)]
+            self._add_visible_count_constraint(self.visible_skyscrapers['by_west'][index], row)
+            self._add_visible_count_constraint(self.visible_skyscrapers['by_east'][index], self._reversed(row))
 
-        for index, column_tuple in enumerate(zip(*self._grid_z3.matrix)):
-            column = list(column_tuple)
-            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_north'][index], column))
-            self._solver.add(self._visible_skyscrapers_constraint(self.visible_skyscrapers['by_south'][index], self._reversed(column)))
+        for index in range(self.columns_number):
+            column = [self._level_at(Position(r, index)) for r in range(self.rows_number)]
+            self._add_visible_count_constraint(self.visible_skyscrapers['by_north'][index], column)
+            self._add_visible_count_constraint(self.visible_skyscrapers['by_south'][index], self._reversed(column))
 
-    def _visible_skyscrapers_constraint(self, visible_skyscrapers: int, line: list[ArithRef], height_base=None):
-        if visible_skyscrapers == 0:
-            return True
+    def _add_visible_count_constraint(self, visible_count: int, line: list):
+        if visible_count == 0:
+            return  # No constraint needed
 
-        if height_base is None:
-            height_base = line[0]
+        is_visible = []
+        for i in range(len(line)):
+            is_visible.append(self._model.NewBoolVar(f"is_visible_{i}"))
 
-        if visible_skyscrapers == 1:
-            return self._one_visible_skyscraper_constraint(line, height_base)
+        self._model.Add(is_visible[0] == 1)
 
-        if len(line) == 1:
-            return False
+        for i in range(1, len(line)):
+            is_taller = []
+            for j in range(i):
+                is_taller_than_j = self._model.NewBoolVar(f"is_taller_{i}_{j}")
+                self._model.Add(line[i] > line[j]).OnlyEnforceIf(is_taller_than_j)
+                self._model.Add(line[i] <= line[j]).OnlyEnforceIf(is_taller_than_j.Not())
+                is_taller.append(is_taller_than_j)
 
-        sub_line = line[1:]
-        line1_sup_line0_constraint = And(line[1] > height_base, self._visible_skyscrapers_constraint(visible_skyscrapers - 1, sub_line, line[1]))
-        line1_inf_line0_constraint = And(line[1] < height_base, self._visible_skyscrapers_constraint(visible_skyscrapers, sub_line, height_base))
+            all_taller = self._model.NewBoolVar(f"all_taller_{i}")
+            self._model.AddBoolAnd(is_taller).OnlyEnforceIf(all_taller)
+            self._model.AddBoolOr([b.Not() for b in is_taller]).OnlyEnforceIf(all_taller.Not())
 
-        return Or(line1_sup_line0_constraint, line1_inf_line0_constraint)
+            self._model.Add(is_visible[i] == all_taller)
+
+        self._model.Add(sum(is_visible) == visible_count)
 
     @staticmethod
     def _reversed(line: list) -> list:
         return line[::-1]
-
-    def _one_visible_skyscraper_constraint(self, line, highest_skyscraper_levels):
-        index0_constraint = line[0] == highest_skyscraper_levels
-        others_indexes_constraint = And([line[i] < line[0] for i in range(1, len(line))])
-        return And(index0_constraint, others_indexes_constraint)
