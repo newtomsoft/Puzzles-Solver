@@ -8,7 +8,6 @@ _ = 0
 
 class SnakeSolverTests(TestCase):
 
-
     def test_solution_only_cells_sum_constraint(self):
         grid = Grid([
             [1, _, _],
@@ -136,3 +135,40 @@ class SnakeSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_12x12_evil_dxe42(self):
+        # https://gridpuzzle.com/snake/dxe42
+        grid = Grid([
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, 1, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, 1, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _]
+        ])
+        row_numbers = [-1, 11, 2, 7, 4, 7, 4, -1, -1, 5, -1, -1]
+        column_numbers = [5, 2, -1, 2, -1, 3, -1, -1, -1, -1, -1, 10]
+
+        game_solver = SnakeSolver(grid, row_numbers, column_numbers)
+        solution = game_solver.get_solution()
+        expected_solution = Grid([
+            [_, _, _, _, _, 1, 1, 1, _, _, _, _],
+            [1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1, 1],
+            [1, _, _, _, _, _, _, _, _, _, _, 1],
+            [1, _, _, _, 1, 1, 1, 1, 1, _, _, 1],
+            [1, _, _, _, 1, _, _, _, 1, _, _, 1],
+            [1, 1, 1, _, 1, _, _, _, 1, _, 1, 1],
+            [_, _, 1, 1, 1, _, _, _, _, _, 1, _],
+            [_, _, _, _, _, _, 1, 1, 1, _, 1, 1],
+            [_, _, _, _, _, _, 1, _, _, _, _, 1],
+            [_, _, _, _, _, _, 1, 1, 1, 1, _, 1],
+            [_, _, _, _, _, _, _, _, _, 1, _, 1],
+            [_, _, _, _, _, _, _, _, _, 1, 1, 1],
+        ])
+        self.assertEqual(expected_solution, solution)
