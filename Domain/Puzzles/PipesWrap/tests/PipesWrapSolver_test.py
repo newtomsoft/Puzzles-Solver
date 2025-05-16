@@ -7,8 +7,6 @@ from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
 
 
 class PipesWrapSolverTests(TestCase):
-
-
     def test_grid1x3(self):
         matrix: list[list[PipeString]] = [
             ['E1', 'I1', 'E1']
