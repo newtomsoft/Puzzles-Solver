@@ -8,8 +8,6 @@ _ = -1
 
 
 class No4InARowSolverTests(TestCase):
-
-
     def test_solution_grid_too_small(self):
         grid = Grid([
             [_, _, _],
@@ -117,6 +115,7 @@ class No4InARowSolverTests(TestCase):
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
