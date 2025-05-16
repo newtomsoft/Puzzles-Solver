@@ -6,8 +6,6 @@ from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
 
 
 class HeyawakeSolverTests(TestCase):
-
-
     def test_black_count_by_region_1(self):
         grid = Grid([
             [1, 0],
