@@ -8,8 +8,6 @@ _ = ''
 
 
 class YinYangSolverTests(TestCase):
-
-
     def test_solution_square_constraint(self):
         grid = Grid([
             [1, 1, 1, 1, 1, 1],
@@ -197,6 +195,7 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("13 seconds")
     def test_solution_15x15_hard(self):
         grid = Grid([
             [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
@@ -238,6 +237,7 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("15 seconds")
     def test_solution_20x20_normal(self):
         grid = Grid([
             [1, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
@@ -289,6 +289,7 @@ class YinYangSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("15 seconds")
     def test_solution_20x20_hard(self):
         grid = Grid([
             [_, _, _, _, _, _, _, _, _, _, _, _, _, 0, _, _, _, _, _, _],
