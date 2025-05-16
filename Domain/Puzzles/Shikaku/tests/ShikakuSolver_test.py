@@ -8,8 +8,6 @@ _ = -1
 
 
 class ShikakuSolverTests(TestCase):
-
-
     def test_grid_must_be_at_least_5x5_raises_value_error(self):
         grid = Grid([
             [1, 1, 1, 2],
