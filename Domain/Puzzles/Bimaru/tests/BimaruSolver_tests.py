@@ -9,8 +9,6 @@ from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 
 
 class BimaruGameTests(TestCase):
-
-
     @staticmethod
     def _to_bool(grid: Grid):
         if grid.is_empty():
@@ -502,8 +500,6 @@ class BimaruGameTests(TestCase):
 
 
 class BimaruGameLongTests(TestCase):
-
-
     def test_solution_25x25_1(self):
         grid = Grid([
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
