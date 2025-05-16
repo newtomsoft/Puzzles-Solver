@@ -8,8 +8,6 @@ _ = 0
 
 
 class AquariumSolverTests(TestCase):
-
-
     def test_grid_must_be_square_raises_value_error(self):
         grid = Grid([
             [1, 1, 1, 2, 2, 2, 2],
