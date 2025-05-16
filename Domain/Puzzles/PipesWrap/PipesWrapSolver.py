@@ -1,4 +1,4 @@
-from z3 import Bool, sat, Not, And
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.GridBase import GridBase
@@ -9,23 +9,21 @@ from Domain.Board.WrappedPipesGrid import WrappedPipesGrid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 
-FALSE = False
-
 
 class PipesWrapSolver(PipesSolver):
     def __init__(self, grid: GridBase[Pipe]):
         super().__init__(grid)
-        self._grid_z3: WrappedGrid | None = None
+        self._grid_vars: WrappedGrid | None = None
         self._previous_solution: WrappedGrid[Pipe] | None = None
 
     def _init_solver(self):
-        self._grid_z3 = WrappedGrid([
+        self._grid_vars = WrappedGrid([
             [
                 {
-                    Direction.up(): Bool(f"{r}_{c}_up"),
-                    Direction.left(): Bool(f"{r}_{c}_left"),
-                    Direction.down(): Bool(f"{r}_{c}_down"),
-                    Direction.right(): Bool(f"{r}_{c}_right"),
+                    Direction.up(): self._model.NewBoolVar(f"{r}_{c}_up"),
+                    Direction.left(): self._model.NewBoolVar(f"{r}_{c}_left"),
+                    Direction.down(): self._model.NewBoolVar(f"{r}_{c}_down"),
+                    Direction.right(): self._model.NewBoolVar(f"{r}_{c}_right"),
                 }
                 for c in range(self._columns_number)
             ]
@@ -36,11 +34,12 @@ class PipesWrapSolver(PipesSolver):
 
     def get_solution_when_all_pipes_connected(self):
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
+        status = self._solver.Solve(self._model)
+
+        while status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
             current_grid = WrappedPipesGrid([[
-                self._create_pipe_from_model(model, Position(r, c))
+                self._create_pipe_from_model(Position(r, c))
                 for c in range(self._columns_number)]
                 for r in range(self._rows_number)])
 
@@ -57,14 +56,24 @@ class PipesWrapSolver(PipesSolver):
                 max_connected_positions = max(connected_positions, key=len)
                 connected_positions = [position for positions in connected_positions if positions != max_connected_positions for position in positions]
 
-            constraints = []
+            exclusion_literals = []
             for position in connected_positions:
                 connected_to = current_grid[position].get_connected_to()
-                constraints.append(self._grid_z3[position][Direction.up()] == (Direction.up() in connected_to))
-                constraints.append(self._grid_z3[position][Direction.down()] == (Direction.down() in connected_to))
-                constraints.append(self._grid_z3[position][Direction.left()] == (Direction.left() in connected_to))
-                constraints.append(self._grid_z3[position][Direction.right()] == (Direction.right() in connected_to))
-            self._solver.add(Not(And(constraints)))
+                for direction, is_connected in [
+                    (Direction.up(), Direction.up() in connected_to),
+                    (Direction.down(), Direction.down() in connected_to),
+                    (Direction.left(), Direction.left() in connected_to),
+                    (Direction.right(), Direction.right() in connected_to)
+                ]:
+                    temp_var = self._model.NewBoolVar(f"excl_{position}_{direction}")
+                    self._model.Add(self._grid_vars[position][direction] == is_connected).OnlyEnforceIf(temp_var)
+                    self._model.Add(self._grid_vars[position][direction] != is_connected).OnlyEnforceIf(temp_var.Not())
+                    exclusion_literals.append(temp_var)
+
+            if exclusion_literals:
+                self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
+
+            status = self._solver.Solve(self._model)
 
         return WrappedGrid.empty(), proposition_count
 
@@ -72,12 +81,12 @@ class PipesWrapSolver(PipesSolver):
         pass  # no edges constraints in PipesWrap
 
     def _add_connected_constraints(self):
-        for position, value in self._grid_z3:
-            position_up = self._grid_z3.neighbor_up(position)
-            position_down = self._grid_z3.neighbor_down(position)
-            position_left = self._grid_z3.neighbor_left(position)
-            position_right = self._grid_z3.neighbor_right(position)
-            self._solver.add(self._grid_z3[position][Direction.up()] == self._grid_z3[position_up][Direction.down()])
-            self._solver.add(self._grid_z3[position][Direction.down()] == self._grid_z3[position_down][Direction.up()])
-            self._solver.add(self._grid_z3[position][Direction.left()] == self._grid_z3[position_left][Direction.right()])
-            self._solver.add(self._grid_z3[position][Direction.right()] == self._grid_z3[position_right][Direction.left()])
+        for position, value in self._grid_vars:
+            position_up = self._grid_vars.neighbor_up(position)
+            position_down = self._grid_vars.neighbor_down(position)
+            position_left = self._grid_vars.neighbor_left(position)
+            position_right = self._grid_vars.neighbor_right(position)
+            self._model.Add(self._grid_vars[position][Direction.up()] == self._grid_vars[position_up][Direction.down()])
+            self._model.Add(self._grid_vars[position][Direction.down()] == self._grid_vars[position_down][Direction.up()])
+            self._model.Add(self._grid_vars[position][Direction.left()] == self._grid_vars[position_left][Direction.right()])
+            self._model.Add(self._grid_vars[position][Direction.right()] == self._grid_vars[position_right][Direction.left()])
