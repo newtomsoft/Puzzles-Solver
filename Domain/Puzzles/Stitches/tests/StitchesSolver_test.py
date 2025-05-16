@@ -7,8 +7,6 @@ from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
 
 
 class StitchesSolverTests(TestCase):
-
-
     def test_solution_grid_not_a_square(self):
         grid = Grid([
             [0, 1, 1, 1, 1, 1],
@@ -362,6 +360,49 @@ class StitchesSolverTests(TestCase):
         ])
         dots_by_column_row = {'column': [3, 1, 3, 3, 3, 4, 3], 'row': [3, 3, 3, 2, 3, 3, 3]}
         regions_connections = 2
+        game_solver = StitchesSolver(grid, dots_by_column_row, regions_connections)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertTrue(other_solution.is_empty())
+
+    def test_solution_15x15_3connections(self):
+        grid = Grid([
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [2, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 1, 1],
+            [2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 1, 1],
+            [2, 2, 2, 2, 2, 2, 4, 4, 2, 3, 3, 3, 3, 1, 1],
+            [4, 4, 4, 4, 4, 4, 4, 3, 2, 3, 5, 5, 3, 1, 1],
+            [4, 6, 6, 4, 4, 3, 3, 3, 3, 3, 5, 3, 3, 3, 1],
+            [4, 6, 6, 6, 6, 3, 3, 3, 3, 3, 5, 3, 3, 3, 3],
+            [4, 4, 4, 4, 6, 6, 6, 3, 6, 3, 5, 5, 5, 5, 5],
+            [4, 6, 6, 6, 6, 6, 6, 6, 6, 6, 5, 7, 5, 5, 7],
+            [4, 8, 6, 8, 6, 8, 5, 5, 5, 5, 5, 7, 7, 5, 7],
+            [4, 8, 6, 8, 6, 8, 5, 5, 5, 7, 5, 5, 7, 5, 7],
+            [4, 8, 8, 8, 8, 8, 5, 5, 7, 7, 7, 5, 7, 5, 7],
+            [8, 8, 8, 8, 8, 7, 7, 5, 5, 7, 7, 7, 7, 7, 7],
+            [8, 8, 8, 8, 8, 7, 7, 7, 5, 7, 7, 7, 7, 7, 7],
+            [8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
+        ])
+        dots_by_column_row = {'column': [5, 7, 4, 10, 4, 10, 10, 4, 7, 9, 8, 0, 6, 0, 0], 'row': [3, 6, 5, 7, 6, 7, 6, 6, 8, 8, 9, 6, 3, 2, 2]}
+        regions_connections = 3
+        expected_solution = Grid([
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0],
+            [0, 0, 2, 4, 0, 0, 3, 0, 0, 3, 3, 0, 1, 0, 0],
+            [2, 4, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 3, 0, 0],
+            [0, 1, 0, 1, 0, 2, 4, 1, 0, 3, 3, 0, 0, 0, 0],
+            [0, 3, 0, 3, 0, 1, 1, 3, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 2, 4, 0, 3, 3, 0, 3, 2, 4, 0, 0, 0, 0],
+            [0, 0, 0, 1, 0, 1, 1, 0, 0, 2, 4, 0, 1, 0, 0],
+            [0, 0, 0, 3, 0, 3, 3, 0, 2, 4, 0, 0, 3, 0, 0],
+            [2, 4, 0, 1, 0, 0, 0, 1, 1, 2, 4, 0, 1, 0, 0],
+            [2, 4, 0, 3, 0, 2, 4, 3, 3, 0, 0, 0, 3, 0, 0],
+            [2, 4, 1, 2, 4, 2, 4, 0, 0, 2, 4, 0, 0, 0, 0],
+            [2, 4, 3, 0, 0, 2, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 4, 0, 0, 3, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ])
         game_solver = StitchesSolver(grid, dots_by_column_row, regions_connections)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
