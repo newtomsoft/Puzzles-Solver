@@ -7,8 +7,6 @@ from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 
 
 class TentaiShowSolverTests(TestCase):
-
-
     def test_solution_cells_filled_by_circles(self):
         grid_size = (2, 2)
         circle_positions = {1: Position(0, 0), 2: Position(0, 1), 3: Position(1, 0), 4: Position(1, 1)}
@@ -271,8 +269,8 @@ class TentaiShowSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("This test is too slow")
-    def test_solution_15x15_normal(self):  # approximately 13 seconds and 14 propositions
+    @unittest.skip("This test is too slow (approximately 8 seconds)")
+    def test_solution_15x15_normal(self):
         grid_size = (15, 15)
         circles_positions = {
             1: Position(0, 0.5), 2: Position(0, 6.5), 3: Position(0, 9), 4: Position(0, 13), 5: Position(0.5, 4.5), 6: Position(0.5, 14), 7: Position(1, 7), 8: Position(1.5, 0),
@@ -304,7 +302,7 @@ class TentaiShowSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    def test_solution_15x15_hard(self):  # approximately 5 seconds and 13 propositions
+    def test_solution_15x15_hard(self):  # approximately 3 seconds
         grid_size = (15, 15)
         circles_positions = {
             1: Position(0, 0.5), 2: Position(0, 5), 3: Position(0, 11.5), 4: Position(0.5, 3.5), 5: Position(0.5, 9.5), 6: Position(1, 1), 7: Position(1, 5.5), 8: Position(1.5, 13.5),
