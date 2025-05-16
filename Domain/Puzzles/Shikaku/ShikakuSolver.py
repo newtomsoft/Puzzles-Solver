@@ -1,5 +1,4 @@
-﻿
-from z3 import Solver, And, unsat, Or, Int
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -15,9 +14,10 @@ class ShikakuSolver(GameSolver):
         numbers_sum = sum([cell for row in self._grid.matrix for cell in row if cell != -1])
         if numbers_sum != self.rows_number * self.columns_number:
             raise ValueError("Sum of numbers must be equal to the number of cells")
-        self._solver = Solver()
-        self._matrix_z3 = None
+        self._model = cp_model.CpModel()
+        self._matrix_vars = None
         self._position_number_by_rectangle_index = self._get_position_number_by_rectangle_index()
+        self._previous_solution: Grid | None = None
 
     def _get_position_number_by_rectangle_index(self) -> dict[int, tuple[tuple[int, int], int]]:
         rectangles = {}
@@ -26,16 +26,44 @@ class ShikakuSolver(GameSolver):
         return rectangles
 
     def get_solution(self) -> Grid:
-        self._matrix_z3 = [[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._matrix_vars = [[self._model.NewIntVar(0, len(self._position_number_by_rectangle_index) - 1, f"grid_{r}_{c}") 
+                             for c in range(self.columns_number)] 
+                             for r in range(self.rows_number)]
         self._add_constraints()
-        if self._solver.check() == unsat:
+
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid([[model.eval(self._matrix_z3[i][j]).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
+
+        grid = Grid([[solver.Value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        if self._previous_solution is None:
+            self._previous_solution = self.get_solution()
+            return self._previous_solution
+
+        if self._previous_solution.is_empty():
+            return Grid.empty()
+
+        literals = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                prev_val = self._previous_solution.value(r, c)
+                literals.append(self._matrix_vars[r][c] != prev_val)
+        self._model.AddBoolOr(literals)
+
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return Grid.empty()
+
+        self._previous_solution = Grid([[solver.Value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return self._previous_solution
 
     def _add_constraints(self):
         self._add_rectangles_constraints()
@@ -48,6 +76,7 @@ class ShikakuSolver(GameSolver):
             max_width, max_height, min_position, max_position = self.get_width_height_positions(cells_of_biggest_rectangle)
             all_rectangles_size = self._get_all_rectangles_size(cells_number)
             possibles_rectangles_size = [rectangles_size for rectangles_size in all_rectangles_size if rectangles_size[0] <= max_height and rectangles_size[1] <= max_width]
+
             for height, width in possibles_rectangles_size:
                 for r in range(min_position[0], max_position[0] + 1 - (height - 1)):
                     for c in range(min_position[1], max_position[1] + 1 - (width - 1)):
@@ -55,9 +84,15 @@ class ShikakuSolver(GameSolver):
                         rectangle_cells = {cell for cell in rectangle_cells if cell in cells_of_biggest_rectangle}
                         if position not in rectangle_cells or len(rectangle_cells) != width * height:
                             continue
-                        constraint = And([self._matrix_z3[r][c] == rectangle_index for r, c in rectangle_cells])
-                        current_rectangle_constraints.append(constraint)
-            self._solver.add(Or(current_rectangle_constraints))
+
+                        is_this_rectangle = self._model.NewBoolVar(f"is_rectangle_{rectangle_index}_{r}_{c}_{height}_{width}")
+
+                        for cell_r, cell_c in rectangle_cells:
+                            self._model.Add(self._matrix_vars[cell_r][cell_c] == rectangle_index).OnlyEnforceIf(is_this_rectangle)
+
+                        current_rectangle_constraints.append(is_this_rectangle)
+
+            self._model.AddBoolOr(current_rectangle_constraints)
 
     @staticmethod
     def _get_all_rectangles_size(cells_number) -> set[tuple[int, int]]:
