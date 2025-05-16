@@ -7,8 +7,6 @@ from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 
 
 class KenKenSolverTests(TestCase):
-
-
     def test_solution_grid_square(self):
         regions_operators_results = [
             ([Position(0, 0), Position(0, 1), Position(0, 2)], '+', 8),
