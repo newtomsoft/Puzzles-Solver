@@ -8,8 +8,6 @@ ____ = ' '
 
 
 class ShingokiSolverTests(TestCase):
-
-
     def test_black2_not_loop(self):
         grid = Grid([
             ['b2', ____],
