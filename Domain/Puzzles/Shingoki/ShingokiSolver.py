@@ -1,7 +1,6 @@
 from typing import Dict
 
-from z3 import ArithRef
-from z3 import Solver, Not, And, Or, Implies, Int, sat
+from z3 import ArithRef, Solver, Not, And, Or, Implies, Int, sat
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
