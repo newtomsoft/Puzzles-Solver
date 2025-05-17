@@ -8,8 +8,6 @@ from Domain.Puzzles.Lits.LitsType import LitsType
 
 
 class LitsSolverTest(unittest.TestCase):
-
-
     def test_get_solution_region_too_small(self):
         grid = Grid([
             [1, 1, 1]
