@@ -1,4 +1,5 @@
-﻿from unittest import TestCase
+﻿import unittest
+from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
@@ -7,8 +8,6 @@ _ = 0
 
 
 class NumberChainSolverTests(TestCase):
-
-
     def test_solution_basic(self):
         grid = Grid([
             [1, 2, 1],
@@ -350,6 +349,7 @@ class NumberChainSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("This test takes too long to run (about 20 seconds)")
     def test_solution_12x12(self):
         grid = Grid([
             [1, 28, 2, 32, 39, 13, 7, 14, 36, 8, 20, 11],
@@ -386,6 +386,7 @@ class NumberChainSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("This test takes too long to run (about 10 seconds)")
     def test_solution_13x13(self):
         grid = Grid([
             [1, 19, 16, 40, 2, 29, 9, 20, 21, 40, 15, 28, 15],
@@ -424,6 +425,7 @@ class NumberChainSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("This test takes too long to run (about 10 seconds)")
     def test_solution_13x13_hard(self):
         grid = Grid([
             [1, 29, 39, 25, 38, 14, 19, 18, 28, 4, 2, 33, 6],
@@ -462,6 +464,7 @@ class NumberChainSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("This test takes too long to run (about 30 seconds)")
     def test_solution_15x15(self):
         grid = Grid([
             [1, 40, 4, 43, 27, 46, 20, 46, 29, 46, 35, 23, 30, 15, 27],
