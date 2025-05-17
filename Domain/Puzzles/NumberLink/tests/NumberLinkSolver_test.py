@@ -7,8 +7,6 @@ _ = -1
 
 
 class NumberLinkSolverTests(TestCase):
-
-
     def test_solution_basic_grid(self):
         grid = Grid([
             [1, 2, _],
