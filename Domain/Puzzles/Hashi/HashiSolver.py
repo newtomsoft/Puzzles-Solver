@@ -1,6 +1,6 @@
 from typing import Dict
 
-from z3 import Solver, Not, And, Implies, Int, sat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -15,21 +15,22 @@ class HashiSolver(GameSolver):
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
-        self._solver = Solver()
-        self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._island_bridges: Dict[Position, Dict[Direction, any]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), self._input_grid[Position(r, c)]) if isinstance(self._input_grid[Position(r, c)], int) else None for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
+        self._island_bridges = {
+            island.position: {direction: self._model.NewIntVar(0, 2, f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if not self._model.Proto().constraints:
             self._init_solver()
 
         solution, _ = self.get_grid_when_shape_is_loop()
@@ -38,12 +39,15 @@ class HashiSolver(GameSolver):
 
     def get_grid_when_shape_is_loop(self):
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
+        status = self._solver.Solve(self._model)
+
+        while status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
-            for position, direction_bridges in self._island_bridges_z3.items():
-                for direction, bridges in direction_bridges.items():
-                    bridges_number = model.eval(bridges).as_long()
+            self.init_island_grid()
+
+            for position, direction_bridges in self._island_bridges.items():
+                for direction, bridges_var in direction_bridges.items():
+                    bridges_number = self._solver.Value(bridges_var)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
 
@@ -52,21 +56,35 @@ class HashiSolver(GameSolver):
             if len(connected_positions) == 1:
                 return self._island_grid, proposition_count
 
-            wrong_solution_constraints = []
+            exclusion_literals = []
             for island in self._previous_solution.islands.values():
                 for direction, (_, value) in island.direction_position_bridges.items():
-                    wrong_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-            self._solver.add(Not(And(wrong_solution_constraints)))
-            self.init_island_grid()
+                    temp_var = self._model.NewBoolVar(f"excl_{island.position}_{direction}")
+                    self._model.Add(self._island_bridges[island.position][direction] == value).OnlyEnforceIf(temp_var)
+                    self._model.Add(self._island_bridges[island.position][direction] != value).OnlyEnforceIf(temp_var.Not())
+                    exclusion_literals.append(temp_var)
+
+            if exclusion_literals:
+                self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
+
+            status = self._solver.Solve(self._model)
 
         return Grid.empty(), proposition_count
 
     def get_other_solution(self):
-        previous_solution_constraints = []
+        if self._previous_solution is None:
+            return Grid.empty()
+
+        exclusion_literals = []
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
-                previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(Not(And(previous_solution_constraints)))
+                temp_var = self._model.NewBoolVar(f"prev_{island.position}_{direction}")
+                self._model.Add(self._island_bridges[island.position][direction] == value).OnlyEnforceIf(temp_var)
+                self._model.Add(self._island_bridges[island.position][direction] != value).OnlyEnforceIf(temp_var.Not())
+                exclusion_literals.append(temp_var)
+
+        if exclusion_literals:
+            self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
 
         self.init_island_grid()
         return self.get_solution()
@@ -77,28 +95,39 @@ class HashiSolver(GameSolver):
         self._add_no_crossing_bridges_constraints()
 
     def _add_initial_constraints(self):
-        for position, direction_bridges in self._island_bridges_z3.items():
-            self._solver.add(sum(list(direction_bridges.values())) == self._island_grid[position].bridges_count)
+        for position, direction_bridges in self._island_bridges.items():
+            bridge_vars = list(direction_bridges.values())
+            self._model.Add(sum(bridge_vars) == self._island_grid[position].bridges_count)
+
             for bridges in direction_bridges.values():
-                self._solver.add(bridges >= 0)
-                self._solver.add(bridges <= 2)
+                self._model.Add(bridges >= 0)
+                self._model.Add(bridges <= 2)
 
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is None:
-                    self._solver.add((self._island_bridges_z3[island.position][direction] == 0))
+                    self._model.Add(self._island_bridges[island.position][direction] == 0)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 opposite_direction = direction.opposite
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] == self._island_bridges_z3[island.direction_position_bridges[direction][0]][opposite_direction])
+                    self._model.Add(self._island_bridges[island.position][direction] == 
+                                   self._island_bridges[island.direction_position_bridges[direction][0]][opposite_direction])
 
     def _add_no_crossing_bridges_constraints(self):
         for possible_crossing_bridge in self._island_grid.possible_crossover_bridge:
             first_item, second_item = list(possible_crossing_bridge.items())[:2]
             first_position, first_direction = first_item
             second_position, second_direction = second_item
-            self._solver.add(Implies(self._island_bridges_z3[first_position][first_direction] > 0, self._island_bridges_z3[second_position][second_direction] == 0))
-            self._solver.add(Implies(self._island_bridges_z3[second_position][second_direction] > 0, self._island_bridges_z3[first_position][first_direction] == 0))
+
+            first_has_bridge = self._model.NewBoolVar(f"first_{first_position}_{first_direction}")
+            self._model.Add(self._island_bridges[first_position][first_direction] > 0).OnlyEnforceIf(first_has_bridge)
+            self._model.Add(self._island_bridges[first_position][first_direction] == 0).OnlyEnforceIf(first_has_bridge.Not())
+            self._model.Add(self._island_bridges[second_position][second_direction] == 0).OnlyEnforceIf(first_has_bridge)
+
+            second_has_bridge = self._model.NewBoolVar(f"second_{second_position}_{second_direction}")
+            self._model.Add(self._island_bridges[second_position][second_direction] > 0).OnlyEnforceIf(second_has_bridge)
+            self._model.Add(self._island_bridges[second_position][second_direction] == 0).OnlyEnforceIf(second_has_bridge.Not())
+            self._model.Add(self._island_bridges[first_position][first_direction] == 0).OnlyEnforceIf(second_has_bridge)
