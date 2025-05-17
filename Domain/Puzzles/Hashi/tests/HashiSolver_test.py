@@ -7,10 +7,10 @@ from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 
+_ = '_'
+
 
 class HashiSolverTests(TestCase):
-
-
     def test_wrong_bridges(self):
         grid = Grid([
             [1, 2]
@@ -37,7 +37,7 @@ class HashiSolverTests(TestCase):
         grid = Grid([
             [2, 2],
             [2, 2],
-            ['_', '_']
+            [_, _]
         ])
         game_solver = HashiSolver(grid)
         solution = game_solver.get_solution()
@@ -51,7 +51,7 @@ class HashiSolverTests(TestCase):
     def test_3x2_rectangle(self):
         grid = Grid([
             [2, 2],
-            ['_', '_'],
+            [_, _],
             [2, 2]
         ])
         game_solver = HashiSolver(grid)
@@ -66,12 +66,12 @@ class HashiSolverTests(TestCase):
 
     def test_solution_without_crossover(self):
         grid = Grid([
-            [1, 4, '_', 3],
-            ['_', '_', 2, '_'],
-            [1, '_', 4, 4],
-            ['_', 2, '_', '_'],
-            ['_', '_', 1, '_'],
-            [2, '_', '_', 2]
+            [1, 4, _, 3],
+            [_, _, 2, _],
+            [1, _, 4, 4],
+            [_, 2, _, _],
+            [_, _, 1, _],
+            [2, _, _, 2]
         ])
         game_solver = HashiSolver(grid)
 
@@ -131,9 +131,9 @@ class HashiSolverTests(TestCase):
 
     def test_solution_with_possible_crossover(self):
         grid = Grid([
-            ['_', 1, 2],
-            [3, '_', 3],
-            [3, 2, '_']
+            [_, 1, 2],
+            [3, _, 3],
+            [3, 2, _]
         ])
         game_solver = HashiSolver(grid)
 
@@ -204,16 +204,16 @@ class HashiSolverTests(TestCase):
 
     def test_solution_with_possible_isolated_islands_10x10(self):
         grid = Grid([
-            [3, '_', 4, '_', '_', 3, '_', '_', '_', 3],
-            ['_', '_', '_', '_', 2, '_', 1, '_', 2, '_'],
-            ['_', '_', '_', '_', '_', '_', '_', '_', '_', '_'],
-            ['_', '_', 3, '_', '_', '_', '_', '_', '_', 3],
-            [3, '_', '_', '_', '_', '_', 1, '_', 3, '_'],
-            ['_', '_', '_', '_', '_', '_', '_', '_', '_', '_'],
-            [2, '_', '_', '_', '_', '_', '_', '_', '_', 2],
-            ['_', '_', 4, '_', 4, '_', '_', '_', '_', '_'],
-            [2, '_', '_', '_', '_', 4, '_', '_', 2, '_'],
-            ['_', 2, '_', '_', '_', '_', '_', '_', '_', 3]
+            [3, _, 4, _, _, 3, _, _, _, 3],
+            [_, _, _, _, 2, _, 1, _, 2, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, 3, _, _, _, _, _, _, 3],
+            [3, _, _, _, _, _, 1, _, 3, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [2, _, _, _, _, _, _, _, _, 2],
+            [_, _, 4, _, 4, _, _, _, _, _],
+            [2, _, _, _, _, 4, _, _, 2, _],
+            [_, 2, _, _, _, _, _, _, _, 3]
         ])
         game_solver = HashiSolver(grid)
 
