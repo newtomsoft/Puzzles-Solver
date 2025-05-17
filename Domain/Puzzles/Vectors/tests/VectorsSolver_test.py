@@ -8,8 +8,6 @@ _ = ''
 
 
 class VectorsSolverTests(TestCase):
-
-
     def test_solution_basic_grid(self):
         grid = Grid([
             [_, 4, _],
