@@ -58,5 +58,4 @@ class StarBattleSolver(GameSolver):
 
     def _add_constraint_no_adjacent_queen(self):
         for position, _ in self._grid:
-            not_neighbors_queen = And([Not(self.queen(position)) for position in self._grid.neighbors_positions(position, "diagonal")])
-            self._solver.add(Implies(self.queen(position), not_neighbors_queen))
+            self._solver.add(Implies(self.queen(position), And([Not(self.queen(position)) for position in self._grid.neighbors_positions(position, "diagonal")])))
