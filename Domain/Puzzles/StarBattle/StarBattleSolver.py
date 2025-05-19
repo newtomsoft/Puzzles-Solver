@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, Not, unsat, Implies, is_true
+﻿from z3 import Solver, Bool, Not, unsat, Implies, is_true, And
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -58,21 +58,5 @@ class StarBattleSolver(GameSolver):
 
     def _add_constraint_no_adjacent_queen(self):
         for position, _ in self._grid:
-            r, c = position
-            if r > 0:
-                self._solver.add(Implies(self.queen(position), Not(self.queen(position.up))))
-                if c > 0:
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.left))))
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.up_left))))
-                if c < self.columns_number - 1:
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.right))))
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.up_right))))
-
-            if r < self.rows_number - 1:
-                self._solver.add(Implies(self.queen(position), Not(self.queen(position.down))))
-                if c > 0:
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.left))))
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.down_left))))
-                if c < self.columns_number - 1:
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.right))))
-                    self._solver.add(Implies(self.queen(position), Not(self.queen(position.down_right))))
+            not_neighbors_queen = And([Not(self.queen(position)) for position in self._grid.neighbors_positions(position, "diagonal")])
+            self._solver.add(Implies(self.queen(position), not_neighbors_queen))
