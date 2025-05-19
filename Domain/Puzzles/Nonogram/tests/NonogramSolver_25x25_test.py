@@ -6,8 +6,6 @@ from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 
 
 class NonogramSolverTests(TestCase):
-
-
     def test_solution_25x25(self):
         numbers_by_top_left = {
             'top': [[4, 2, 4], [3, 8, 1], [3, 3, 1, 2], [4, 4, 2], [4, 2], [5, 2, 2], [1, 1, 1, 5, 2, 1], [1, 1, 7, 1, 2, 2], [3, 7, 3, 3], [2, 9, 5, 2], [2, 8, 3, 2], [4, 6, 1, 2], [2, 1, 9, 4], [1, 3, 3, 4], [8, 5], [7], [9, 2], [1, 1, 2, 8], [6, 7, 3], [4, 5, 1, 3],
