@@ -5,17 +5,17 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 
+_ = -1
+
 
 class JigsawSudokuSolverTests(TestCase):
-
-
     def test_solution_regions_numbers(self):
         grid = Grid([
-            [2, -1, -1, -1, -1],
-            [-1, -1, 3, -1, 5],
-            [-1, -1, -1, -1, -1],
-            [3, -1, 4, -1, -1],
-            [-1, -1, -1, -1, 3],
+            [2, _, _, _, _],
+            [_, _, 3, _, 5],
+            [_, _, _, _, _],
+            [3, _, 4, _, _],
+            [_, _, _, _, 3],
         ])
         regions = [
             [Position(0, 0), Position(0, 1), Position(1, 0), Position(1, 1), Position(2, 1)],
@@ -30,11 +30,11 @@ class JigsawSudokuSolverTests(TestCase):
 
     def test_solution_regions_cell_count_compliant(self):
         grid = Grid([
-            [2, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
+            [2, _, _, _, _],
+            [_, _, _, _, _],
+            [_, _, _, _, _],
+            [_, _, _, _, _],
+            [_, _, _, _, _],
         ])
         regions = [
             [Position(0, 0), Position(0, 1), Position(1, 0), Position(1, 1), Position(2, 1)],
@@ -51,11 +51,11 @@ class JigsawSudokuSolverTests(TestCase):
 
     def test_solution_initial_number_different_in_regions(self):
         grid = Grid([
-            [2, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [-1, 2, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1],
+            [2, _, _, _, _],
+            [_, _, _, _, _],
+            [_, 2, _, _, _],
+            [_, _, _, _, _],
+            [_, _, _, _, _],
         ])
         regions = [
             [Position(0, 0), Position(0, 1), Position(1, 0), Position(1, 1), Position(2, 1)],
@@ -72,11 +72,11 @@ class JigsawSudokuSolverTests(TestCase):
 
     def test_solution_5x5_easy(self):
         grid = Grid([
-            [2, -1, -1, -1, -1],
-            [-1, -1, 3, -1, 5],
-            [-1, -1, -1, -1, -1],
-            [3, -1, 4, -1, -1],
-            [-1, -1, -1, -1, 3],
+            [2, _, _, _, _],
+            [_, _, 3, _, 5],
+            [_, _, _, _, _],
+            [3, _, 4, _, _],
+            [_, _, _, _, 3],
         ])
         regions = [
             [Position(0, 0), Position(0, 1), Position(1, 0), Position(1, 1), Position(2, 1)],
@@ -100,11 +100,11 @@ class JigsawSudokuSolverTests(TestCase):
 
     def test_solution_5x5_hard(self):
         grid = Grid([
-            [4, -1, 5, -1, -1],
-            [-1, -1, -1, -1, 3],
-            [-1, -1, -1, -1, -1],
-            [1, -1, -1, -1, -1],
-            [-1, -1, 1, -1, 4],
+            [4, _, 5, _, _],
+            [_, _, _, _, 3],
+            [_, _, _, _, _],
+            [1, _, _, _, _],
+            [_, _, 1, _, 4],
         ])
         regions = [
             [Position(0, 0), Position(0, 1), Position(0, 2), Position(0, 3), Position(1, 3)],
@@ -161,15 +161,15 @@ class JigsawSudokuSolverTests(TestCase):
 
     def test_solution_9x9_hard(self):
         grid = Grid([
-            [9, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, 8],
-            [-1, -1, -1, 7, -1, -1, 9, 2, -1],
-            [-1, 7, -1, -1, 1, 6, 8, -1, -1],
-            [3, -1, -1, -1, 7, -1, -1, -1, 1],
-            [-1, -1, 4, 1, 3, -1, -1, 7, -1],
-            [-1, 2, 5, -1, -1, 3, -1, -1, -1],
-            [8, -1, -1, -1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1, -1, -1, 6]
+            [9, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, 8],
+            [_, _, _, 7, _, _, 9, 2, _],
+            [_, 7, _, _, 1, 6, 8, _, _],
+            [3, _, _, _, 7, _, _, _, 1],
+            [_, _, 4, 1, 3, _, _, 7, _],
+            [_, 2, 5, _, _, 3, _, _, _],
+            [8, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, 6]
         ])
         regions = [
             [Position(0, 1), Position(1, 2), Position(0, 0), Position(1, 1), Position(0, 3), Position(2, 3), Position(0, 2), Position(3, 3), Position(1, 3)],

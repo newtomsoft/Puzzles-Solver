@@ -22,8 +22,7 @@ class KillerSudokuSolver(SudokuBaseSolver, GameSolver):
 
     def _add_distinct_in_cages_constraints(self):
         for cage, cage_sum in self.cages.values():
-            constraint = sum([self._grid_z3[position] for position in cage]) == cage_sum
-            self._solver.add(constraint)
+            self._model.Add(sum([self._grid_vars[position] for position in cage]) == cage_sum)
 
     def _are_initial_numbers_different_in_cage(self):
         for cage in [v[0] for v in self.cages.values()]:
