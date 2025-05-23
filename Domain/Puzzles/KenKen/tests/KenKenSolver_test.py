@@ -17,6 +17,23 @@ class KenKenSolverTests(TestCase):
 
         self.assertEqual("KenKen grid must be square", str(context.exception))
 
+    def test_solution_3x3_add_sub_only(self):
+        regions_operators_results = [
+            ([Position(0, 0), Position(1, 0), Position(1, 1)], '+', 6),
+            ([Position(0, 1), Position(0, 2), Position(1, 2), Position(2, 2)], '+', 7),
+            ([Position(2, 1), Position(2, 2)], '-', 1),
+        ]
+        kenken_game = KenKenSolver(regions_operators_results)
+        solution = kenken_game.get_solution()
+        expected_solution = Grid([
+            [2, 1, 3],
+            [1, 3, 2],
+            [3, 2, 1],
+        ])
+        self.assertEqual(expected_solution, solution)
+        other_solution = kenken_game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
     def test_solution_4x4(self):
         regions_operators_results = [
             ([Position(0, 0), Position(1, 0)], 'x', 4),
@@ -38,6 +55,8 @@ class KenKenSolverTests(TestCase):
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = kenken_game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_4x4_hard(self):
         regions_operators_results = [
@@ -58,6 +77,8 @@ class KenKenSolverTests(TestCase):
 
         solution = kenken_game.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = kenken_game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_7x7_hard(self):
         regions_operators_results = [
