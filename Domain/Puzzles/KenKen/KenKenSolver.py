@@ -20,7 +20,11 @@ class KenKenSolver(GameSolver):
 
     def get_solution(self) -> (Grid | None, int):
         self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
-        if self._add_constraints() is False:
+        self._add_constraints()
+        return self._compute_solution()
+
+    def _compute_solution(self) -> Grid:
+        if self._solver.check() == unsat:
             return Grid.empty()
         model = self._solver.model()
         self._previous_solution = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
@@ -31,20 +35,15 @@ class KenKenSolver(GameSolver):
         for position, value in self._previous_solution:
             constraints.append(self._grid_z3[position] == value)
         self._solver.add(Not(And(constraints)))
-        return self.get_solution()
+        return self._compute_solution()
 
     def _add_constraints(self):
         self._initials_constraints()
         self._add_distinct_in_rows_and_columns_constraints()
         self._add_operations_add_constraints()
         self._add_operations_sub_constraints()
-        if self._solver.check() == unsat:
-            return False
         self._add_operations_mul_constraints()
         self._add_operations_div_constraints()
-        if self._solver.check() == unsat:
-            return False
-        return True
 
     def _initials_constraints(self):
         for position, value in self._grid_z3:
