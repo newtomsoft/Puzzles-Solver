@@ -79,9 +79,8 @@ class SudokuBaseSolver(GameSolver):
         pass
 
     def _initials_constraints(self):
-        for position, value in self._grid:
-            if value != -1:
-                self._model.Add(self._grid_vars[position] == value)
+        for position, value in [(position, value) for position, value in self._grid if value != -1]:
+            self._model.Add(self._grid_vars[position] == value)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
