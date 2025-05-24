@@ -54,6 +54,7 @@ from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.GridPuzzle.GridPuzzleCreekGridPlayer import GridPuzzleCreekGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowGridPlayer import GridPuzzleNo4InARowGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainGridPlayer import GridPuzzleNumberChainGridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiGridPlayer import GridPuzzleShingokiGridPlayer
@@ -171,7 +172,7 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruGridPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoGridPlayer),  # same player as binairo
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoGridPlayer),
-            r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, None),
+            r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekGridPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaGridPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiGridPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiGridPlayer),
