@@ -6,7 +6,7 @@ from typing import Protocol
 
 from moviepy import VideoFileClip
 from playwright.async_api import BrowserContext, Mouse
-from playwright.sync_api import ElementHandle
+from playwright.sync_api import ElementHandle, Page
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -95,13 +95,23 @@ class PlaywrightGridPlayer(ABC):
         cls.mouse_up(mouse)
 
     @classmethod
-    def get_data_video(cls, frame, page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
+    def get_data_video(cls, frame, page: Page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) + x_offset
         y1 = int(bounding_box['y']) + y_offset
         x2 = int(bounding_box['width']) + x1 + width_offset
         y2 = int(bounding_box['height']) + y1 + height_offset
+        rectangle = Rectangle(Point(x1, y1), Point(x2, y2))
+        return page.video, rectangle
+
+    @classmethod
+    def get_data_video_viewport(cls, page: Page) -> (VideoFile, Rectangle):
+        viewport_size = page.viewport_size
+        x1 = 0
+        y1 = 0
+        x2 = viewport_size['width']
+        y2 = viewport_size['height']
         rectangle = Rectangle(Point(x1, y1), Point(x2, y2))
         return page.video, rectangle
 

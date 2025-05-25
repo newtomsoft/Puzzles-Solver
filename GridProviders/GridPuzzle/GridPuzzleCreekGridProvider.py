@@ -5,20 +5,19 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
+from GridProviders.GridPuzzle.GridPuzzleGridProvider import GridPuzzleGridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class GridPuzzleCreekGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class GridPuzzleCreekGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.pages[0]
-        page.goto(url)
-        html_page = page.content()
+        html_page = self.get_html(browser, url)
         soup = BeautifulSoup(html_page, 'html.parser')
         matrix_cells = soup.find_all('div', class_='g_cell')
+
         cells_count = len(matrix_cells)
         row_count = int(math.sqrt(cells_count))
         column_count = row_count
