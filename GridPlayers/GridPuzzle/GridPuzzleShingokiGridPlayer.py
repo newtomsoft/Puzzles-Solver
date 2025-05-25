@@ -11,17 +11,8 @@ from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution: IslandGrid, browser: BrowserContext):
-        page = browser.pages[0]
-        rows_number = solution.rows_number
-        columns_number = solution.columns_number
-        bounded_box = page.locator("canvas").bounding_box()
-        x0 = bounded_box['x']
-        y0 = bounded_box['y']
-        width = bounded_box['width']
-        height = bounded_box['height']
-        cell_width = width / columns_number
-        cell_height = height / rows_number
-        video, rectangle = cls.get_data_video(page, page, '#puzzle_container', -20, -20, 40, 40)
+        cell_height, cell_width, page, x0, y0 = cls._get_canvas_data(browser, solution)
+        video, rectangle = cls._get_data_video_viewport(page)
 
         for island in solution.islands.values():
             if Direction.right() in island.direction_position_bridges:
@@ -37,4 +28,4 @@ class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
         sleep(3)
 
         browser.close()
-        cls.process_video(video, "shingoki", rectangle)
+        cls._process_video(video, "shingoki", rectangle)

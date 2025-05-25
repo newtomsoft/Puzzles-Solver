@@ -14,11 +14,11 @@ class ZipGridPlayer(PlaywrightGridPlayer):
         game_board = frame.wait_for_selector('.game-board')
         cells_divs = game_board.query_selector_all('div.trail-cell')
 
-        video, rectangle = cls.get_data_video(frame, page, '.grid-board-wrapper', -12, -23, 22, 28)
+        video, rectangle = cls._get_data_video(frame, page, '.grid-board-wrapper', -12, -23, 22, 28)
 
         for position in solution.path:
             cls.mouse_click(page.mouse, solution, position, cells_divs)
 
         sleep(5)
         browser.close()
-        cls.process_video(video, "zip", rectangle, 1.5)
+        cls._process_video(video, "zip", rectangle, 1.5)

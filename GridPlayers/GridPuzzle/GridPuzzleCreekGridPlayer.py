@@ -11,7 +11,7 @@ class GridPuzzleCreekGridPlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, grid_solution: Grid, browser: BrowserContext):
         page = browser.pages[0]
-        video, rectangle = cls.get_data_video_viewport(page)
+        video, rectangle = cls._get_data_video_viewport(page)
 
         cells = page.query_selector_all("div.g_cell")
         for position, solution_value in [(position, solution_value) for position, solution_value in grid_solution if solution_value]:
@@ -20,4 +20,4 @@ class GridPuzzleCreekGridPlayer(GridPlayer, PlaywrightGridPlayer):
 
         sleep(2)
         browser.close()
-        cls.process_video(video, "creek", rectangle, 1)
+        cls._process_video(video, "creek", rectangle, 0)

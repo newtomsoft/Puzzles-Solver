@@ -95,7 +95,21 @@ class PlaywrightGridPlayer(ABC):
         cls.mouse_up(mouse)
 
     @classmethod
-    def get_data_video(cls, frame, page: Page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
+    def _get_canvas_data(cls, browser, solution):
+        page = browser.pages[0]
+        rows_number = solution.rows_number
+        columns_number = solution.columns_number
+        bounded_box = page.locator("canvas").bounding_box()
+        x0 = bounded_box['x']
+        y0 = bounded_box['y']
+        width = bounded_box['width']
+        height = bounded_box['height']
+        cell_width = width / columns_number
+        cell_height = height / rows_number
+        return cell_height, cell_width, page, x0, y0
+
+    @classmethod
+    def _get_data_video(cls, frame, page: Page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) + x_offset
@@ -106,7 +120,7 @@ class PlaywrightGridPlayer(ABC):
         return page.video, rectangle
 
     @classmethod
-    def get_data_video_viewport(cls, page: Page) -> (VideoFile, Rectangle):
+    def _get_data_video_viewport(cls, page: Page) -> (VideoFile, Rectangle):
         viewport_size = page.viewport_size
         x1 = 0
         y1 = 0
@@ -116,13 +130,13 @@ class PlaywrightGridPlayer(ABC):
         return page.video, rectangle
 
     @classmethod
-    def process_video(cls, video_file: VideoFile, name: str, rect: Rectangle, start_time: float = 0) -> str:
+    def _process_video(cls, video_file: VideoFile, name: str, rect: Rectangle, start_time: float = 0) -> str:
         video_path = video_file.path()
-        cls.crop_video(video_path, name, rect, start_time)
+        cls._crop_video(video_path, name, rect, start_time)
         return video_path
 
     @classmethod
-    def crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: float):
+    def _crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: float):
         video_name = os.path.basename(input_video_path)
         video_path = os.path.dirname(input_video_path)
         video_name_without_extension, video_name_extension = os.path.splitext(video_name)
@@ -132,7 +146,15 @@ class PlaywrightGridPlayer(ABC):
         date_time_format = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         new_video_name = f'{name}_{date_time_format}{video_name_extension}'
         output_path = os.path.join(video_path, new_video_name)
-        cropped_clip.write_videofile(output_path)
+        cropped_clip.write_videofile(
+            output_path,
+            codec='libvpx-vp9',
+            fps=30,
+            bitrate=None,
+            preset='medium',
+            threads=8,
+            ffmpeg_params=['-crf', '36', '-b:v', '0']
+        )
         clip.close()
         cropped_clip.close()
         os.remove(input_video_path)
