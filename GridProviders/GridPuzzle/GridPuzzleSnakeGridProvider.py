@@ -12,10 +12,8 @@ class GridPuzzleSnakeGridProvider(GridProvider, PlaywrightGridProvider, GridPuzz
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.pages[0]
-        page.goto(url)
-        html_page = page.content()
-        row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
+        html_page = self.get_html(browser, url)
+        soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         for i, cell in enumerate(matrix_cells):
             if 'body_bg' in cell.get('class'):
                 row = i // column_count

@@ -12,7 +12,7 @@ class GridPuzzleStr8tsGridProvider(GridProvider, PlaywrightGridProvider, GridPuz
 
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
-        row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
+        _, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         black_matrix = [[False for _ in range(column_count)] for _ in range(row_count)]
         for i, cell in enumerate(matrix_cells):
             row = i // column_count
