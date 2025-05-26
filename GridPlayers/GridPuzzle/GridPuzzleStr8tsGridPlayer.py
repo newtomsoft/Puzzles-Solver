@@ -22,4 +22,4 @@ class GridPuzzleStr8tsGridPlayer(GridPlayer, PlaywrightGridPlayer):
 
         sleep(3)
         browser.close()
-        cls._process_video(video, "snake", rectangle, 0)
+        cls._process_video(video, "str8ts", rectangle, 0)

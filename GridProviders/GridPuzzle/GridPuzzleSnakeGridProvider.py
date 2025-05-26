@@ -12,7 +12,7 @@ class GridPuzzleSnakeGridProvider(GridProvider, PlaywrightGridProvider, GridPuzz
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_html(browser, url)
+        html_page = self.get_html(browser, url, '.col-lg-12.col-md-12.col-12')
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         for i, cell in enumerate(matrix_cells):
             if 'body_bg' in cell.get('class'):
