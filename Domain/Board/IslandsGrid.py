@@ -108,6 +108,26 @@ class IslandGrid(Grid[Island]):
 
         return visited_positions
 
+    def follow_path(self, position: Position | None = None, visited_positions=None) -> list[Position]:
+        if position is None:
+            position = next(island.position for island in self.islands.values() if island.bridges_count > 0)
+        if visited_positions is None:
+            visited_positions = []
+        if position in visited_positions:
+            return visited_positions
+        visited_positions.append(position)
+        position_bridges = self.islands[position].direction_position_bridges.values()
+        for position_bridge in position_bridges:
+            if position_bridge[1] == 0:
+                continue
+            current_position = position_bridge[0]
+            if current_position not in visited_positions:
+                new_visited_positions = self.follow_path(current_position, visited_positions)
+                if new_visited_positions != visited_positions:
+                    return new_visited_positions
+
+        return visited_positions
+
     def __repr__(self) -> str:
         if self.is_empty():
             return 'IslandGrid.empty()'
