@@ -1,16 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import (
-    Dict,
-    FrozenSet,
-    Generator,
-    Generic,
-    Iterable,
-    List,
-    Set,
-    Tuple,
-    TypeVar,
-)
+from typing import FrozenSet, Generator, Generic, TypeVar, Iterable
 
 from bitarray import bitarray
 
@@ -22,11 +12,11 @@ T = TypeVar('T')
 
 
 class GridBase(Generic[T]):
-    def __init__(self, matrix: List[List[T]]):
+    def __init__(self, matrix: list[list[T]]):
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
-        self._walls: Set[Set[Position, Position]] = set()
+        self._walls: set[FrozenSet[Position, Position]] = set()
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
@@ -45,7 +35,7 @@ class GridBase(Generic[T]):
     def __contains__(self, item: Position):
         return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
 
-    def __iter__(self) -> Generator[Tuple[Position, T], None, None]:
+    def __iter__(self) -> Generator[tuple[Position, T], None, None]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
@@ -108,7 +98,7 @@ class GridBase(Generic[T]):
     def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
         return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
 
-    def get_regions(self) -> Dict[int, FrozenSet[Position]]:
+    def get_regions(self) -> dict[int, FrozenSet[Position]]:
         regions = defaultdict(set)
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -127,7 +117,7 @@ class GridBase(Generic[T]):
     def are_all_cells_connected(self, mode='orthogonal') -> bool:
         return all([self.are_cells_connected(region_key, mode) for region_key in self.get_regions().keys()])
 
-    def get_all_shapes(self, value=True, mode='orthogonal') -> Set[FrozenSet[Position]]:
+    def get_all_shapes(self, value=True, mode='orthogonal') -> set[FrozenSet[Position]]:
         excluded = []
         shapes = set()
         while True:
@@ -142,7 +132,7 @@ class GridBase(Generic[T]):
             excluded.append(position)
         return shapes
 
-    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> Tuple[bool, set[Position]]:
+    def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> tuple[bool, set[Position]]:
         value = self.value(position)
         visited = self._depth_first_search(position, value, mode)
         if len(visited) <= 1:
@@ -153,9 +143,9 @@ class GridBase(Generic[T]):
                 border_cells.add(cell)
         return len(border_cells) >= 2, visited
 
-    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> Set[FrozenSet[Position]]:
+    def find_all_min_2_connected_cells_touch_border(self, value, mode='orthogonal') -> set[FrozenSet[Position]]:
         excluded = []
-        cells_sets: Set[FrozenSet[Position]] = set()
+        cells_sets: set[FrozenSet[Position]] = set()
         while True:
             position = self._get_cell_of_value(value, excluded)
             if position is None:
@@ -169,7 +159,7 @@ class GridBase(Generic[T]):
             excluded.append(position)
         return cells_sets
 
-    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> Set[Position]:
+    def _depth_first_search(self, position: Position, value, mode='orthogonal', visited=None) -> set[Position]:
         if visited is None:
             visited = set()
         if (self.value(position) != value) or (position in visited):
@@ -228,7 +218,7 @@ class GridBase(Generic[T]):
                     bitarrays.append(current_bitarray)
         return bitarrays
 
-    def set_walls(self, walls: Set[FrozenSet[Position]]):
+    def set_walls(self, walls: set[FrozenSet[Position]]):
         self._walls = walls
 
     def copy_walls_from_grid(self, other_grid: 'GridBase'):
@@ -241,10 +231,10 @@ class GridBase(Generic[T]):
     def is_empty(self):
         return self == GridBase.empty()
 
-    def all_orthogonal_positions(self, position: Position) -> Set[Position]:
+    def all_orthogonal_positions(self, position: Position) -> set[Position]:
         return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
 
-    def neighbors_positions(self, position: Position, mode='orthogonal') -> Set[Position]:
+    def neighbors_positions(self, position: Position, mode='orthogonal') -> set[Position]:
         orthogonal_neighbors = {self.neighbor_up(position), self.neighbor_down(position), self.neighbor_left(position), self.neighbor_right(position)} - {None}
         if mode == 'orthogonal':
             return orthogonal_neighbors
@@ -278,38 +268,38 @@ class GridBase(Generic[T]):
     def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
         return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
-    def all_positions_up(self, position: Position) -> List[Position]:
+    def all_positions_up(self, position: Position) -> list[Position]:
         positions = []
         while position.up in self and {position, position.up} not in self._walls:
             position = position.up
             positions.append(position)
         return positions
 
-    def all_positions_down(self, position: Position) -> List[Position]:
+    def all_positions_down(self, position: Position) -> list[Position]:
         positions = []
         while position.down in self and {position, position.down} not in self._walls:
             position = position.down
             positions.append(position)
         return positions
 
-    def all_positions_left(self, position: Position) -> List[Position]:
+    def all_positions_left(self, position: Position) -> list[Position]:
         positions = []
         while position.left in self and {position, position.left} not in self._walls:
             position = position.left
             positions.append(position)
         return positions
 
-    def all_positions_right(self, position: Position) -> List[Position]:
+    def all_positions_right(self, position: Position) -> list[Position]:
         positions = []
         while position.right in self and {position, position.right} not in self._walls:
             position = position.right
             positions.append(position)
         return positions
 
-    def straddled_neighbors_positions(self, position: Position) -> Set[Position]:
+    def straddled_neighbors_positions(self, position: Position) -> set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
-    def find_all_positions_in(self, grid: 'GridBase', value_to_ignore=None) -> Set[Position]:
+    def find_all_positions_in(self, grid: 'GridBase', value_to_ignore=None) -> set[Position]:
         positions = set()
         for r in range(grid.rows_number - self.rows_number + 1):
             for c in range(grid.columns_number - self.columns_number + 1):
