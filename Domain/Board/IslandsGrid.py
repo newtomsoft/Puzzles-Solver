@@ -96,15 +96,11 @@ class IslandGrid(Grid[Island]):
         if position in visited_positions:
             return visited_positions
         visited_positions.add(position)
-        position_bridges = self.islands[position].direction_position_bridges.values()
-        for position_bridge in position_bridges:
-            if position_bridge[1] == 0:
-                continue
-            current_position = position_bridge[0]
-            if current_position not in visited_positions:
-                new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
-                if new_visited_positions != visited_positions:
-                    return new_visited_positions
+        position_and_bridges = self.islands[position].direction_position_bridges.values()
+        for current_position in [position for position, bridges_count in position_and_bridges if bridges_count > 0 and position not in visited_positions]:
+            new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
+            if new_visited_positions != visited_positions:
+                return new_visited_positions
 
         return visited_positions
 
