@@ -1,6 +1,5 @@
-﻿from typing import Dict
-
-from z3 import Solver, Not, And, Or, Int, sat
+﻿
+from z3 import Solver, Not, And, Or, Int, sat, ArithRef
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -16,7 +15,7 @@ class MasyuSolver(GameSolver):
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
         self._solver = Solver()
-        self._island_bridges_z3: Dict[Position, Dict[Direction, any]] = {}
+        self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def init_island_grid(self):
