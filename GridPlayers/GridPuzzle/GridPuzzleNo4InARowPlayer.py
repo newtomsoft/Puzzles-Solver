@@ -7,7 +7,7 @@ from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class GridPuzzleNo4InARowGridPlayer(GridPlayer, PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+class GridPuzzleNo4InARowPlayer(GridPlayer, PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution, browser: BrowserContext):
         page = browser.pages[0]

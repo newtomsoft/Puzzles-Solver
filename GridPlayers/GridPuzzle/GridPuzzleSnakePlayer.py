@@ -6,7 +6,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class GridPuzzleSnakeGridPlayer(GridPlayer, PlaywrightGridPlayer):
+class GridPuzzleSnakePlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution, browser: BrowserContext):
         page = browser.pages[0]
