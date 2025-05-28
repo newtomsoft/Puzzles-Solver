@@ -7,7 +7,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class GridPuzzleNumberChainGridPlayer(GridPlayer, PlaywrightGridPlayer):
+class GridPuzzleNumberChainPlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution: LinearPathGrid, browser: BrowserContext):
         cell_height, cell_width, page, x0, y0 = cls._get_canvas_data(browser, solution)

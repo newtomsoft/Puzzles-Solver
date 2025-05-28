@@ -9,7 +9,7 @@ from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class GridPuzzleShingokiGridPlayer(GridPlayer, PlaywrightGridPlayer):
+class GridPuzzleShingokiPlayer(GridPlayer, PlaywrightGridPlayer):
     @classmethod
     def play(cls, solution: IslandGrid, browser: BrowserContext):
         cell_height, cell_width, page, x0, y0 = cls._get_canvas_data(browser, solution)
