@@ -1,6 +1,6 @@
 ﻿from typing import Dict
 
-from z3 import ArithRef, Solver, Not, And, Or, Int, sat, Bool
+from z3 import ArithRef, Solver, Not, And, Or, Int, sat, Bool, Implies, is_true
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -30,7 +30,7 @@ class KoburinSolver(GameSolver):
                 self._island_grid[neighbor].set_bridge(position, 0)
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values() if self.input_grid[island.position] < 0}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values() if island.bridges_count > 0}
         for position in [position for position, _ in self.input_grid if position not in self._island_bridges_z3]:
             neighbors = self.input_grid.neighbors_positions(position)
             for neighbor in [neighbor for neighbor in neighbors if neighbor in self._island_bridges_z3]:
@@ -38,9 +38,7 @@ class KoburinSolver(GameSolver):
                 self._solver.add(self._island_bridges_z3[neighbor][direction] == 0)
 
         self._set_walls_around_digit()
-
-        self._black_cells_z3 = {position: Bool for position, _ in self.input_grid if position in self._island_bridges_z3}
-
+        self._black_cells_z3 = {position: Bool(f'p{position}') for position, _ in self.input_grid if position in self._island_bridges_z3}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
@@ -57,14 +55,17 @@ class KoburinSolver(GameSolver):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges_number in [(direction, model.eval(bridges).as_long()) for direction, bridges in direction_bridges.items() if position.after(direction) in self._island_bridges_z3]:
-                    if bridges_number > 0:
-                        self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
-                    elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
-                        self._island_grid[position].direction_position_bridges.pop(direction)
+                    self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
+                for position, value in [(position, value) for position, value in self.input_grid if value >= 0]:
+                    self._island_grid.set_value(position, value)
+                for position, var in self._black_cells_z3.items():
+                    if is_true(model.eval(var)):
+                        self._island_grid.set_value(position, '■')
+
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count
 
@@ -92,7 +93,8 @@ class KoburinSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self.add_black_cell_constraints()
+        self._add_black_cell_constraints()
+        self._add_no_adjacent_black_constraint()
         self._add_opposite_bridges_constraints()
         self._add_bridges_sum_constraints()
 
@@ -117,25 +119,26 @@ class KoburinSolver(GameSolver):
                 else:
                     self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
 
-    def _add_bridges_sum_constraints(self):
-        for island in [island for island in self._island_grid.islands.values() if island.position in self._island_bridges_z3]:
-            sum_constraint_2 = sum([self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
-            sum_constraint_0 = sum([self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
-            self._solver.add(Or(sum_constraint_2, sum_constraint_0))
-
-    def add_black_cell_constraints(self):
-        for position, value in [(position, value) for position, value in self.input_grid if value >= 0]:
+    def _add_black_cell_constraints(self):
+        for position, blacks_count in [(position, value) for position, value in self.input_grid if value >= 0]:
             neighbors = self.input_grid.neighbors_positions(position)
-            constraints = []
-            for neighbor in neighbors:
-                if neighbor not in self._island_bridges_z3:
+            self._solver.add(sum([self._black_cells_z3[neighbor] for neighbor in neighbors if neighbor in self._island_bridges_z3.keys()]) == blacks_count)
+
+    def _add_bridges_sum_constraints(self):
+        for position in [position for position, value in self.input_grid if value < 0]:
+            bridges_count_0 = sum([self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
+            bridges_count_2 = sum([self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
+            black_cell = self._black_cells_z3[position]
+            path_cell = Not(black_cell)
+            self._solver.add(Implies(black_cell, bridges_count_0))
+            self._solver.add(Implies(path_cell, bridges_count_2))
+
+    def _add_no_adjacent_black_constraint(self):
+        for position in [position for position, value in self.input_grid if value < 0]:
+            for neighbor_position in self.input_grid.neighbors_positions(position):
+                if neighbor_position not in self._island_bridges_z3:
                     continue
-                direction = neighbor.direction_to(position)
-                constraints.append(self._island_bridges_z3[neighbor][direction] == 0)
-            if constraints:
-                self._solver.add(Or(constraints))
-            else:
-                self._solver.add(self._black_cells_z3[position] == False)
+                self._solver.add(Implies(self._black_cells_z3[position], Not(self._black_cells_z3[neighbor_position])))
 
     def _set_walls_around_digit(self):
         for position in [position for position, value in self.input_grid if value >= 0]:
