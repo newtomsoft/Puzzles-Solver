@@ -71,7 +71,7 @@ class HeyawakeSolver(GameSolver):
             self._solver.add(sum([Not(self._grid_z3[position]) for position in region]) == black_cells_count)
 
     def _add_no_adjacent_black_cells_touching_constraints(self):
-        for position, value in self._grid_z3:
+        for position, _ in self._grid_z3:
             for neighbor_position in self._grid.neighbors_positions(position):
                 self._solver.add(Implies(Not(self._grid_z3[position]), self._grid_z3[neighbor_position]))
 
