@@ -135,7 +135,7 @@ class IslandGrid(Grid[Island]):
                 current_row = position.r
             if isinstance(item, Island):
                 result += repr(item)
-            elif isinstance(item, int):
+            elif isinstance(item, int) or isinstance(item, str):
                 result += f' {item} '
             else:
                 result += self.get_str(position)

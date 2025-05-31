@@ -21,6 +21,7 @@ from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
 from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
 from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
+from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
@@ -33,6 +34,7 @@ from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
+from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
 from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
@@ -99,6 +101,7 @@ from GridPlayers.VingtMinutes.VingtMinutesKemaruGridPlayer import VingtMinutesKe
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
+from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
@@ -149,7 +152,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
 
 
 class PuzzleMainConsole:
@@ -188,6 +190,7 @@ class PuzzleMainConsole:
             r"https://www\.20minutes\.fr/services/jeux/kemaru": (KemaruSolver, VingtMinutesKemaruGridProvider, VingtMinutesKemaruGridPlayer),
             r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuGridPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuGridPlayer),  # same player as Sudoku
+            r"https://.*gridpuzzle\.com/koburin": (KoburinSolver, GridPuzzleKoburinGridProvider, None),
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsGridPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuGridPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicGridPlayer),
