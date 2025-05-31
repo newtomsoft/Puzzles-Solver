@@ -129,12 +129,14 @@ class IslandGrid(Grid[Island]):
             return 'IslandGrid.empty()'
         current_row = 0
         result = ''
-        for position, island in self:
+        for position, item in self:
             if position.r != current_row:
                 result += '\n'
                 current_row = position.r
-            if isinstance(island, Island):
-                result += repr(island)
+            if isinstance(item, Island):
+                result += repr(item)
+            elif isinstance(item, int):
+                result += f' {item} '
             else:
                 result += self.get_str(position)
         return result
