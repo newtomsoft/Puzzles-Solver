@@ -10,13 +10,12 @@ class GridPuzzleCanvasPlayer:
         connected_positions.append(connected_positions[0])
         return connected_positions
 
-    @classmethod
-    def _trace_path(cls, cell_height, cell_width, page, solution, x0, y0):
-        connected_positions = cls._get_positions_from_position0_0(solution)
+    def _draw_path(self, cell_height, cell_width, page, solution, x0, y0):
+        connected_positions = self._get_positions_from_position0_0(solution)
         for index, position in enumerate(connected_positions[:-1]):
             next_position = connected_positions[index + 1]
             direction = position.direction_to(next_position)
-            cls._trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0)
+            self._trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0)
 
     @classmethod
     def _trace_direction_from_position(cls, direction, position, page, cell_width, cell_height, x0, y0):
