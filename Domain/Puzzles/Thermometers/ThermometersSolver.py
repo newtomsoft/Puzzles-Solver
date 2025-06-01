@@ -169,7 +169,7 @@ class ThermometersSolver(GameSolver):
                 continue
             if previous_value == 'c2' and current_value == 'c4':
                 direction = previous_position.direction_to(current_position)
-                thermometer_positions.append(current_position.after(Direction.up) if direction == Direction.left() else current_position.after(Direction.right()))
+                thermometer_positions.append(current_position.after(Direction.up()) if direction == Direction.left() else current_position.after(Direction.right()))
                 continue
             if previous_value == 'c3' and current_value == 'c1':
                 direction = previous_position.direction_to(current_position)
