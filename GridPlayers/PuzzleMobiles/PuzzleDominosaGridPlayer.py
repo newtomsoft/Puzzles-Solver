@@ -1,11 +1,10 @@
 ﻿from time import sleep
 
 from Domain.Board.Direction import Direction
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleDominosaGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
+class PuzzleDominosaGridPlayer(PuzzlesMobileGridPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell")
@@ -22,5 +21,5 @@ class PuzzleDominosaGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 page.mouse.down()
                 page.mouse.up()
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

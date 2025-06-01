@@ -2,12 +2,11 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleHashiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution: IslandGrid):
+class PuzzleHashiGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         cells = page.locator(".bridges-task-cell")
         for index, island in enumerate(solution.islands.values()):
@@ -23,5 +22,5 @@ class PuzzleHashiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                     for _ in range(value):
                         page.mouse.down()
                         page.mouse.up()
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

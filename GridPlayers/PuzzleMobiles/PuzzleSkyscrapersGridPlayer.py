@@ -1,11 +1,10 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleSkyScrapersGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleSkyScrapersGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")
 
@@ -16,5 +15,5 @@ class PuzzleSkyScrapersGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 page.keyboard.press(str(value))
 
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

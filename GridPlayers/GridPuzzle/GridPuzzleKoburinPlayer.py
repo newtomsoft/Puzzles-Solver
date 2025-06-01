@@ -14,9 +14,7 @@ class GridPuzzleKoburinPlayer(PlaywrightGridPlayer, GridPuzzleCanvasPlayer):
         self.close()
         self._process_video(video, "koburin", rectangle)
 
-    @classmethod
-    def mark_black_cells(cls, cell_height, cell_width, page, solution, x0, y0):
+    def mark_black_cells(self, cell_height, cell_width, page, solution, x0, y0):
         for position in [position for position, value in solution if value == "■"]:
             page.mouse.move(x0 + cell_width / 2 + position.c * cell_width, y0 + cell_height / 2 + position.r * cell_height)
-            cls.mouse_click(page)
-
+            self.mouse_click(page)

@@ -1,9 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
-class PuzzleBaronCampsitesGridPlayer(GridPlayer):
+class PuzzleBaronCampsitesGridPlayer(PlaywrightGridPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         grid_box_divs = page.query_selector_all('div.gridbox')

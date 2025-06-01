@@ -2,7 +2,7 @@
 import time
 from typing import Tuple, Any
 
-from playwright.sync_api import BrowserContext
+# from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Akari.AkariSolver import AkariSolver
@@ -158,13 +158,13 @@ from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinut
 class PuzzleMainConsole:
     @staticmethod
     def main():
-        game_solver, data_game, browser, game_player = PuzzleMainConsole.get_game_data_player()
+        game_solver, data_game, game_player = PuzzleMainConsole.get_game_data_player()
         solution = PuzzleMainConsole.run(game_solver, data_game)
         if game_player is not None and solution != Grid.empty():
-            game_player.play(solution, browser)
+            game_player.play(solution)
 
     @staticmethod
-    def get_game_data_player() -> Tuple[GameSolver, Any, BrowserContext, GridPlayer | None]:
+    def get_game_data_player() -> Tuple[GameSolver, Any, GridPlayer | None]:
         print("Puzzle Solver")
         print("Enter game url")
         console_input = input()
@@ -232,9 +232,9 @@ class PuzzleMainConsole:
             if re.match(pattern, console_input):
                 game_solver: GameSolver = game_class
                 grid_provider: GridProvider = grid_provider_class()
-                game_player: GridPlayer | None = player_class() if player_class is not None else None
                 game_data, browser_context = grid_provider.get_grid(console_input)
-                return game_solver, game_data, browser_context, game_player
+                game_player: GridPlayer | None = player_class(browser_context) if player_class is not None else None
+                return game_solver, game_data, game_player
         raise ValueError("No grid provider found")
 
     @staticmethod

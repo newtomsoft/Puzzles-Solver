@@ -1,12 +1,11 @@
 from time import sleep
 
 from Domain.Board.Grid import Grid
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleShikakuGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution: Grid):
+class PuzzleShikakuGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution: Grid):
         page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")
 
@@ -22,6 +21,5 @@ class PuzzleShikakuGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
             page.mouse.up()
 
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)
-

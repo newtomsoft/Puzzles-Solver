@@ -1,10 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleAkariGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
+class PuzzleAkariGridPlayer(PuzzlesMobileGridPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.cell, div.light-up-task-cell")
@@ -13,5 +12,5 @@ class PuzzleAkariGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
             if value:
                 cells[index].click()
 
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

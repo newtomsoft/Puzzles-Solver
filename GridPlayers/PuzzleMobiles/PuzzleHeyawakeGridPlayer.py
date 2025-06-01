@@ -1,11 +1,10 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleHeyawakeGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleHeyawakeGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.selectable")
         for position, value in solution:
@@ -14,5 +13,5 @@ class PuzzleHeyawakeGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 cells[index].click()
 
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

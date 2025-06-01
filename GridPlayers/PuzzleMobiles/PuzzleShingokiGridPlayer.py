@@ -2,12 +2,11 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleShingokiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution: IslandGrid):
+class PuzzleShingokiGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")
         verticals = page.locator(".loop-vertical")
@@ -24,6 +23,5 @@ class PuzzleShingokiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
                 page.mouse.down()
                 page.mouse.up()
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)
-

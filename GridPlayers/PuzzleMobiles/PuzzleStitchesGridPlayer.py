@@ -1,12 +1,11 @@
 ﻿from time import sleep
 
 from Domain.Board.Direction import Direction
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleStitchesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleStitchesGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")
         for position, value in solution:
@@ -20,5 +19,5 @@ class PuzzleStitchesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 page.mouse.move(box['x'] + box['width'], box['y'] + box['height'] // 2)
                 page.mouse.down()
                 page.mouse.up()
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)
