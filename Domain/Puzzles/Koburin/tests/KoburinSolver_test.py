@@ -299,14 +299,14 @@ class KoburinSolverTests(TestCase):
            ' │  1  └──┐  1  │  ■  2  ■  └─────┐ \n'
            ' └────────┘  ■  └─────────────────┘ '
         )
-        expected_solutions = {expected_0, expected_1, expected_2, expected_3, expected_4, expected_5}
+        expected_str_solutions = {expected_0, expected_1, expected_2, expected_3, expected_4, expected_5}
         solution_0 = game_solver.get_solution()
         solution_1 = game_solver.get_other_solution()
         solution_2 = game_solver.get_other_solution()
         solution_3 = game_solver.get_other_solution()
         solution_4 = game_solver.get_other_solution()
         solution_5 = game_solver.get_other_solution()
-        solution_6 = game_solver.get_other_solution()
         str_solutions = {str(solution_0), str(solution_1), str(solution_2), str(solution_3), str(solution_4), str(solution_5)}
-        self.assertEqual(expected_solutions, str_solutions)
+        self.assertEqual(expected_str_solutions, str_solutions)
+        solution_6 = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), solution_6)
