@@ -2,12 +2,11 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution: Grid[PipeShapeTransition]):
+class PuzzlePipesGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution: Grid[PipeShapeTransition]):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.selectable")
         for position, pipe_shape_transition in solution:
@@ -15,5 +14,5 @@ class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
             cells[index].click(click_count=pipe_shape_transition.clockwise_rotation)
 
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

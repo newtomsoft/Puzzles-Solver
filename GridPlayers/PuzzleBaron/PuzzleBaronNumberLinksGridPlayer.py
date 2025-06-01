@@ -17,16 +17,15 @@ class PuzzleBaronNumberLinksGridPlayer(PlaywrightGridPlayer):
                 continue
             numbers_processed.add(start_value)
             positions_processed = {start_position}
-            cls.mouse_move(page.mouse, solution, start_position, grid_box_divs)
-            cls.mouse_down(page.mouse)
-            next_position = cls._next_position(solution, start_position, start_value, positions_processed)
+            self.mouse_move(page.mouse, solution, start_position, grid_box_divs)
+            self.mouse_down(page.mouse)
+            next_position = self._next_position(solution, start_position, start_value, positions_processed)
             while next_position:
                 positions_processed.add(next_position)
-                cls.mouse_move(page.mouse, solution, next_position, grid_box_divs)
-                next_position = cls._next_position(solution, next_position, start_value, positions_processed)
-        cls.mouse_up(page.mouse)
+                self.mouse_move(page.mouse, solution, next_position, grid_box_divs)
+                next_position = self._next_position(solution, next_position, start_value, positions_processed)
+        self.mouse_up(page.mouse)
         sleep(20)
 
-    @classmethod
-    def _next_position(cls, solution: Grid[int], start_position: Position, start_value: int, positions_processed: set[Position]) -> Position:
+    def _next_position(self, solution: Grid[int], start_position: Position, start_value: int, positions_processed: set[Position]) -> Position:
         return next((neighbor_position for neighbor_position in solution.neighbors_positions(start_position) if neighbor_position not in positions_processed and solution[neighbor_position] == start_value), None)

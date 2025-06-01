@@ -1,12 +1,11 @@
 ﻿from time import sleep
 
 from Domain.Board.Grid import Grid
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleKakuroGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleKakuroGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         solution = Grid([line + [0] for line in solution.matrix])
         page = self.browser.pages[0]
         cells = page.locator(".cell")
@@ -17,5 +16,5 @@ class PuzzleKakuroGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 cells.nth(index).click()
                 page.keyboard.press(str(value))
 
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

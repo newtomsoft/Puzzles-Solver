@@ -1,10 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleAquariumGridPlayer(PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+class PuzzleAquariumGridPlayer(PuzzlesMobileGridPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.selectable")

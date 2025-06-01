@@ -1,11 +1,10 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleTentsGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleTentsGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.tents-cell-back > div:not(.print-helper)")
         for position, value in [(position, value) for (position, value) in solution if value]:
@@ -17,5 +16,5 @@ class PuzzleTentsGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
             page.mouse.down()
             page.mouse.up()
 
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

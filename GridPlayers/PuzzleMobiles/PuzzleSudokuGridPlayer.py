@@ -1,11 +1,10 @@
 ﻿from time import sleep
 
-from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleSudokuGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-        def play(self, solution):
+class PuzzleSudokuGridPlayer(PuzzlesMobileGridPlayer):
+    def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.button)")
         for position, value in solution:
@@ -14,5 +13,5 @@ class PuzzleSudokuGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 cells.nth(index).click()
                 page.keyboard.press(str(value))
         sleep(2)
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

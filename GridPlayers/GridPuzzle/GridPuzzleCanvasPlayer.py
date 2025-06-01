@@ -4,8 +4,7 @@ from Domain.Board.Position import Position
 
 
 class GridPuzzleCanvasPlayer:
-    @classmethod
-    def _get_positions_from_position0_0(cls, solution: IslandGrid) -> list[Position]:
+    def _get_positions_from_position0_0(self, solution: IslandGrid) -> list[Position]:
         connected_positions = solution.follow_path()
         connected_positions.append(connected_positions[0])
         return connected_positions
@@ -17,8 +16,7 @@ class GridPuzzleCanvasPlayer:
             direction = position.direction_to(next_position)
             self._trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0)
 
-    @classmethod
-    def _trace_direction_from_position(cls, direction, position, page, cell_width, cell_height, x0, y0):
+    def _trace_direction_from_position(self, direction, position, page, cell_width, cell_height, x0, y0):
         if direction == Direction.right():
             page.mouse.move(x0 + cell_width / 2 + position.c * cell_width, y0 + cell_height / 2 + position.r * cell_height)
             page.mouse.down()
