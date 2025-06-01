@@ -72,7 +72,7 @@ class PlaywrightGridPlayer(ABC):
         mouse.move(x, y, steps=steps)
 
     @classmethod
-    def mouse_click(cls, mouse: Mouse, solution: Grid, position: Position, cells_divs: list[ElementHandle]):
+    def mouse_click_on_position(cls, mouse: Mouse, solution: Grid, position: Position, cells_divs: list[ElementHandle]):
         index = solution.get_index_from_position(position)
         bounding_box = cells_divs[index].bounding_box()
         x = bounding_box['x'] + bounding_box['width'] / 2
@@ -86,6 +86,11 @@ class PlaywrightGridPlayer(ABC):
     @classmethod
     def mouse_up(cls, mouse):
         mouse.up()
+
+    @classmethod
+    def mouse_click(cls, page):
+        page.mouse.down()
+        page.mouse.up()
 
     @classmethod
     def drag_n_drop(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, cell_divs: list[ElementHandle]):

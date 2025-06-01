@@ -17,7 +17,7 @@ class ZipGridPlayer(PlaywrightGridPlayer):
         video, rectangle = cls._get_data_video(frame, page, '.grid-board-wrapper', -12, -23, 22, 28)
 
         for position in solution.path:
-            cls.mouse_click(page.mouse, solution, position, cells_divs)
+            cls.mouse_click_on_position(page.mouse, solution, position, cells_divs)
 
         sleep(5)
         browser.close()
