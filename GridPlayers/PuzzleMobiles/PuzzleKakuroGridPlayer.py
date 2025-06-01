@@ -1,17 +1,14 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
+from Domain.Board.Grid import Grid
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Domain.Board.Grid import Grid
 
 
 class PuzzleKakuroGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution, browser: BrowserContext):
+        def play(self, solution):
         solution = Grid([line + [0] for line in solution.matrix])
-        page = browser.pages[0]
+        page = self.browser.pages[0]
         cells = page.locator(".cell")
 
         for position, value in solution:

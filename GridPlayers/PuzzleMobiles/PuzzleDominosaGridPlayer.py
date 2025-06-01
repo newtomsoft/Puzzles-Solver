@@ -1,16 +1,13 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
+from Domain.Board.Direction import Direction
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Domain.Board.Direction import Direction
 
 
 class PuzzleDominosaGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution, browser: BrowserContext):
-        page = browser.pages[0]
+    def play(self, solution):
+        page = self.browser.pages[0]
         cells = page.locator(".cell")
         unknown_coefficient = 1.25
         for position, value in solution:

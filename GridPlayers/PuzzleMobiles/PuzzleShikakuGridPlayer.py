@@ -1,16 +1,13 @@
 from time import sleep
 
-from playwright.sync_api import BrowserContext
-
+from Domain.Board.Grid import Grid
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
-from Domain.Board.Grid import Grid
 
 
 class PuzzleShikakuGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution: Grid, browser: BrowserContext):
-        page = browser.pages[0]
+        def play(self, solution: Grid):
+        page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")
 
         regions_to_draw = [region for region in solution.get_regions().values() if len(region) >= 2]

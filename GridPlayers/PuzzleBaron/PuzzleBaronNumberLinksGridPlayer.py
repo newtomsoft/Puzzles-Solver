@@ -1,16 +1,13 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 
 
 class PuzzleBaronNumberLinksGridPlayer(PlaywrightGridPlayer):
-    @classmethod
-    def play(cls, solution: Grid, browser: BrowserContext):
-        page = browser.pages[0]
+    def play(self, solution: Grid):
+        page = self.browser.pages[0]
         grid_box_divs = page.query_selector_all('div.gridbox')
         numbers = [int(inner_text) if (inner_text := number_div.inner_text()) else -1 for number_div in grid_box_divs]
 

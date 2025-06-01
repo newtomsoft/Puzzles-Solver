@@ -1,15 +1,12 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
 class PuzzleTentsGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution, browser: BrowserContext):
-        page = browser.pages[0]
+        def play(self, solution):
+        page = self.browser.pages[0]
         cells = page.query_selector_all("div.tents-cell-back > div:not(.print-helper)")
         for position, value in [(position, value) for (position, value) in solution if value]:
             index = position.r * solution.columns_number + position.c
