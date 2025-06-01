@@ -6,8 +6,6 @@ from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 
 
 class MasyuSolverTests(TestCase):
-
-
     def test_solution_white_0(self):
         grid = Grid([
             [' ', 'w', ' '],
