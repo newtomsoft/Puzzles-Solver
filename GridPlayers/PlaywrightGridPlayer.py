@@ -1,15 +1,17 @@
 ﻿import datetime
 import os
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import dataclass
+from time import sleep
 from typing import Protocol
 
 from moviepy import VideoFileClip
-from playwright.async_api import BrowserContext, Mouse
+from playwright.sync_api import BrowserContext, Mouse
 from playwright.sync_api import ElementHandle, Page
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+from GridPlayers.GridPlayer import GridPlayer
 
 
 class VideoFile(Protocol):
@@ -57,10 +59,12 @@ class Rectangle:
         return cls(Point(x1, y1), Point(x2, y2))
 
 
-class PlaywrightGridPlayer(ABC):
-    @classmethod
+class PlaywrightGridPlayer(GridPlayer):
+    def __init__(self, browser: BrowserContext):
+        self.browser = browser
+
     @abstractmethod
-    def play(cls, solution, browser: BrowserContext):
+    def play(self, solution):
         pass
 
     @classmethod
@@ -99,9 +103,8 @@ class PlaywrightGridPlayer(ABC):
         cls.mouse_move(mouse, solution, end_position, cell_divs, steps=int(end_position.distance(start_position)))
         cls.mouse_up(mouse)
 
-    @classmethod
-    def _get_canvas_data(cls, browser, solution):
-        page = browser.pages[0]
+    def _get_canvas_data(self, solution):
+        page = self.browser.pages[0]
         rows_number = solution.rows_number
         columns_number = solution.columns_number
         bounded_box = page.locator("canvas").bounding_box()
@@ -144,7 +147,7 @@ class PlaywrightGridPlayer(ABC):
     def _crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: float):
         video_name = os.path.basename(input_video_path)
         video_path = os.path.dirname(input_video_path)
-        video_name_without_extension, video_name_extension = os.path.splitext(video_name)
+        _, video_name_extension = os.path.splitext(video_name)
         clip = VideoFileClip(input_video_path, audio=False)
         clip = clip.subclipped(start_time=start_time)
         cropped_clip = clip.cropped(x1=rect.x1, y1=rect.y1, x2=rect.x2, y2=rect.y2)
@@ -163,3 +166,7 @@ class PlaywrightGridPlayer(ABC):
         clip.close()
         cropped_clip.close()
         os.remove(input_video_path)
+
+    def close(self, delay_sec: int = 3):
+        sleep(delay_sec)
+        self.browser.close()

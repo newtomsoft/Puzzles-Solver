@@ -1,15 +1,12 @@
 from time import sleep
 
-from playwright.sync_api import BrowserContext
-
-from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
-class PuzzleBinairoGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution, browser: BrowserContext):
-        page = browser.pages[0]
+class PuzzleBinairoGridPlayer(PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+    def play(self, solution):
+        page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
@@ -17,5 +14,5 @@ class PuzzleBinairoGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
                 cells.nth(index).click(button="right")
             else:
                 cells.nth(index).click()
-        cls.submit_score(page)
+        self.submit_score(page)
         sleep(60)

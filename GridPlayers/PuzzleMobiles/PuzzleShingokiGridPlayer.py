@@ -1,17 +1,14 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
-from GridPlayers.GridPlayer import GridPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
+from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
 
 
 class PuzzleShingokiGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution: IslandGrid, browser: BrowserContext):
-        page = browser.pages[0]
+        def play(self, solution: IslandGrid):
+        page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")
         verticals = page.locator(".loop-vertical")
         for island in solution.islands.values():

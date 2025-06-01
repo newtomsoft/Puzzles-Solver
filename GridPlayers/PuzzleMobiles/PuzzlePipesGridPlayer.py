@@ -1,7 +1,5 @@
 ﻿from time import sleep
 
-from playwright.sync_api import BrowserContext
-
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from GridPlayers.GridPlayer import GridPlayer
@@ -9,9 +7,8 @@ from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridP
 
 
 class PuzzlePipesGridPlayer(GridPlayer, PuzzlesMobileGridPlayer):
-    @classmethod
-    def play(cls, solution: Grid[PipeShapeTransition], browser: BrowserContext):
-        page = browser.pages[0]
+        def play(self, solution: Grid[PipeShapeTransition]):
+        page = self.browser.pages[0]
         cells = page.query_selector_all("div.selectable")
         for position, pipe_shape_transition in solution:
             index = position.r * solution.columns_number + position.c
