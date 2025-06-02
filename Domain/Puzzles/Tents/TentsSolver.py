@@ -52,11 +52,11 @@ class TentsSolver(GameSolver):
         return Not(self.tent(position))
 
     def _add_constraints(self):
+        self._add_free_over_tree_constraint()
+        self._add_free_if_no_tent_near_constraint()
         self._add_sum_constraints()
-        self.add_free_if_no_tent_near_constraint()
-        self.add_no_adjacent_tent_constraint()
-        self.add_free_over_tree_constraint()
-        self.add_one_tent_for_each_tree_constraint()
+        self._add_no_adjacent_tent_constraint()
+        self._add_one_tent_for_each_tree_constraint()
 
     def _add_sum_constraints(self):
         constraints = []
@@ -66,12 +66,12 @@ class TentsSolver(GameSolver):
             constraints.append(sum(column) == self.columns_tents_numbers[i])
         self._solver.add(constraints)
 
-    def add_free_if_no_tent_near_constraint(self):
+    def _add_free_if_no_tent_near_constraint(self):
         for position, _ in self._grid:
             if all(self._grid[neighbor_position] != TentsSolver._tree_value for neighbor_position in self._grid.neighbors_positions(position)):
                 self._solver.add(self.free(position))
 
-    def add_no_adjacent_tent_constraint(self):
+    def _add_no_adjacent_tent_constraint(self):
         for position, _ in self._grid:
             r, c = position
             if r > 0:
@@ -92,11 +92,11 @@ class TentsSolver(GameSolver):
                     self._solver.add(Implies(self.tent(position), self.free(position.right)))
                     self._solver.add(Implies(self.tent(position), self.free(position.down_right)))
 
-    def add_free_over_tree_constraint(self):
+    def _add_free_over_tree_constraint(self):
         for tree_position in [position for position, value in self._grid if value == TentsSolver._tree_value]:
             self._solver.add(self.free(tree_position))
 
-    def add_one_tent_for_each_tree_constraint(self):
+    def _add_one_tent_for_each_tree_constraint(self):
         for position in [position for position, value in self._grid if value == TentsSolver._tree_value]:
             neighbors_positions = self._grid.neighbors_positions(position)
             if len(neighbors_positions) > 0:
