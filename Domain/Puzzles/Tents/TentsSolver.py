@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, Not, unsat, Or, Implies, is_true
+﻿from z3 import Solver, Bool, Not, unsat, Or, Implies, is_true, And
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -19,18 +19,31 @@ class TentsSolver(GameSolver):
         self.rows_tents_numbers = self.tents_numbers_by_column_row['row']
         self._solver = Solver()
         self._grid_z3 = None
+        self._previous_solution = None
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def get_other_solution(self) -> Grid:
+        if self._previous_solution is None:
+            return self.get_solution()
+        if self._previous_solution.is_empty():
+            return Grid.empty()
+
+        constraint = Not(And([self.tent(Position(i, j)) == self._previous_solution[i, j] for i in range(self.rows_number) for j in range(self.columns_number)]))
+        self._solver.add(constraint)
+
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def _compute_solution(self) -> Grid:
         if self._solver.check() == unsat:
             return Grid.empty()
         model = self._solver.model()
-        grid = Grid([[is_true(model.eval(self.tent(Position(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        return grid
-
-    def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        return Grid([[(is_true(model.eval(self._grid_z3.value(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def tent(self, position: Position):
         return self._grid_z3[position]
@@ -80,14 +93,11 @@ class TentsSolver(GameSolver):
                     self._solver.add(Implies(self.tent(position), self.free(position.down_right)))
 
     def add_free_over_tree_constraint(self):
-        for position, value in self._grid:
-            if value == TentsSolver._tree_value:
-                self._solver.add(self.free(position))
+        for tree_position in [position for position, value in self._grid if value == TentsSolver._tree_value]:
+            self._solver.add(self.free(tree_position))
 
     def add_one_tent_for_each_tree_constraint(self):
-        for position, value in self._grid:
-            if value == TentsSolver._tree_value:
-                neighbors_positions = self._grid.neighbors_positions(position)
-                if len(neighbors_positions) > 0:
-                    self._solver.add(Or([self.tent(position) for position in neighbors_positions]))
-
+        for position in [position for position, value in self._grid if value == TentsSolver._tree_value]:
+            neighbors_positions = self._grid.neighbors_positions(position)
+            if len(neighbors_positions) > 0:
+                self._solver.add(Or([self.tent(position) for position in neighbors_positions]))
