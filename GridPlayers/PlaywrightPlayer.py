@@ -59,7 +59,7 @@ class Rectangle:
         return cls(Point(x1, y1), Point(x2, y2))
 
 
-class PlaywrightGridPlayer(GridPlayer):
+class PlaywrightPlayer(GridPlayer):
     def __init__(self, browser: BrowserContext):
         self.browser = browser
 

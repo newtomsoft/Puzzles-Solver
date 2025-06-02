@@ -2,10 +2,10 @@
 
 from playwright.sync_api import Page
 
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class PuzzlesMobileGridPlayer(PlaywrightGridPlayer):
+class PuzzlesMobilePlayer(PlaywrightPlayer):
     @abstractmethod
     def play(self, solution):
         pass

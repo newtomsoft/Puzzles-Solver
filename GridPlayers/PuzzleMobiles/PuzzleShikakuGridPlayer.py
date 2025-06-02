@@ -1,10 +1,10 @@
 from time import sleep
 
 from Domain.Board.Grid import Grid
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleShikakuGridPlayer(PuzzlesMobileGridPlayer):
+class PuzzleShikakuGridPlayer(PuzzlesMobilePlayer):
     def play(self, solution: Grid):
         page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")

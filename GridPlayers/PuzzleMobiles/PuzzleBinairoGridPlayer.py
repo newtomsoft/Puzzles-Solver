@@ -1,10 +1,10 @@
 from time import sleep
 
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleBinairoGridPlayer(PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+class PuzzleBinairoPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")

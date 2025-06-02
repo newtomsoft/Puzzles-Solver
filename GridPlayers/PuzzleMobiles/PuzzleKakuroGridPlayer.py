@@ -1,10 +1,10 @@
 ﻿from time import sleep
 
 from Domain.Board.Grid import Grid
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleKakuroGridPlayer(PuzzlesMobileGridPlayer):
+class PuzzleKakuroGridPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         solution = Grid([line + [0] for line in solution.matrix])
         page = self.browser.pages[0]

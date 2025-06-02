@@ -1,8 +1,8 @@
 ﻿from Board.Grid import Grid
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleStr8tsPlayer(PlaywrightGridPlayer):
+class GridPuzzleStr8tsPlayer(PlaywrightPlayer):
     def play(self, solution: (Grid, Grid)):
         grid_solution, grid_blank = solution
         page = self.browser.pages[0]

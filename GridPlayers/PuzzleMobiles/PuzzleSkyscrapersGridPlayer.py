@@ -1,9 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleSkyScrapersGridPlayer(PuzzlesMobileGridPlayer):
+class PuzzleSkyScrapersGridPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")

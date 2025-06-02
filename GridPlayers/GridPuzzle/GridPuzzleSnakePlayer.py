@@ -1,7 +1,7 @@
-﻿from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+﻿from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleSnakePlayer(PlaywrightGridPlayer):
+class GridPuzzleSnakePlayer(PlaywrightPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)

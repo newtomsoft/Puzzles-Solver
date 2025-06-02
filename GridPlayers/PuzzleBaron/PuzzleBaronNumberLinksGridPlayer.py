@@ -2,10 +2,10 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class PuzzleBaronNumberLinksGridPlayer(PlaywrightGridPlayer):
+class PuzzleBaronNumberLinksPlayer(PlaywrightPlayer):
     def play(self, solution: Grid):
         page = self.browser.pages[0]
         grid_box_divs = page.query_selector_all('div.gridbox')
