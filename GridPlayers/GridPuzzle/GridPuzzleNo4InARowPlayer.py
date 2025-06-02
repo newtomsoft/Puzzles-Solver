@@ -1,8 +1,8 @@
-﻿from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+﻿from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class GridPuzzleNo4InARowPlayer(PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+class GridPuzzleNo4InARowPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)

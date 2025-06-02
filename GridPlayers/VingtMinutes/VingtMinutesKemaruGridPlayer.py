@@ -1,11 +1,11 @@
 ﻿from time import sleep
 
 from Board.Grid import Grid
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class VingtMinutesKemaruGridPlayer(PuzzlesMobileGridPlayer, PlaywrightGridPlayer):
+class VingtMinutesKemaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
     def play(self, grid_solution: Grid):
         page = self.browser.pages[0]
         cells = page.query_selector_all("g.grid-cell")

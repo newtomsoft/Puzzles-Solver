@@ -1,8 +1,8 @@
 ﻿from Domain.Board.LinearPathGrid import LinearPathGrid
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class ZipGridPlayer(PlaywrightGridPlayer):
+class ZipPlayer(PlaywrightPlayer):
     def play(self, solution: LinearPathGrid):
         page = self.browser.pages[0]
         frame = page.frames[1]

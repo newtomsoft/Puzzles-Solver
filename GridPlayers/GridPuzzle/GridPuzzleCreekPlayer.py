@@ -1,8 +1,8 @@
 ﻿from Board.Grid import Grid
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleCreekPlayer(PlaywrightGridPlayer):
+class GridPuzzleCreekPlayer(PlaywrightPlayer):
     def play(self, grid_solution: Grid):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)

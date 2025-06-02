@@ -1,9 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleAkariGridPlayer(PuzzlesMobileGridPlayer):
+class PuzzleAkariGridPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.cell, div.light-up-task-cell")

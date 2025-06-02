@@ -1,8 +1,8 @@
 ﻿from Board.LinearPathGrid import LinearPathGrid
-from GridPlayers.PlaywrightGridPlayer import PlaywrightGridPlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleNumberChainPlayer(PlaywrightGridPlayer):
+class GridPuzzleNumberChainPlayer(PlaywrightPlayer):
     def play(self, solution: LinearPathGrid):
         cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution)
         video, rectangle = self._get_data_video_viewport(page)

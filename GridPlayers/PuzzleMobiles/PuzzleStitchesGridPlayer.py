@@ -1,10 +1,10 @@
 ﻿from time import sleep
 
 from Domain.Board.Direction import Direction
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobileGridPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
 
 
-class PuzzleStitchesGridPlayer(PuzzlesMobileGridPlayer):
+class PuzzleStitchesGridPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")
