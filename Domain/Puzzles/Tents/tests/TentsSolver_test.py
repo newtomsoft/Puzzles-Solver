@@ -17,7 +17,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _],
             [_, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [3, _, 1, 1, 1], 'row': [2, _, 1, 1]}
+        tents_numbers_by_column_row = {'column': [3, 0, 1, 1, 1], 'row': [2, 0, 1, 1]}
         with self.assertRaises(ValueError) as context:
             TentsSolver(grid, tents_numbers_by_column_row)
         self.assertEqual(str(context.exception), "The rows number must be at least 5")
@@ -31,7 +31,7 @@ class TentsSolverTests(TestCase):
             [T, _, _, _, _, _],
             [_, _, _, _, T, _],
         ])
-        tents_numbers_by_column_row = {'column': [2, _, _, 2, _, _], 'row': [_, 2, _, _, _, 2]}
+        tents_numbers_by_column_row = {'column': [2, 0, 0, 2, 0, 0], 'row': [0, 2, 0, 0, 0, 2]}
         expected_solution = Grid([
             [_, _, _, _, _, _],
             [1, _, _, 1, _, _],
@@ -55,7 +55,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [1, 1, 1, _, 1, _], 'row': [_, 4, _, _, _, _]}
+        tents_numbers_by_column_row = {'column': [1, 1, 1, 0, 1, 0], 'row': [0, 4, 0, 0, 0, 0]}
 
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
         solution = game_solver.get_solution()
@@ -72,7 +72,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [_, _, 1, _, _, _], 'row': [_, 1, _, _, _, _]}
+        tents_numbers_by_column_row = {'column': [0, 0, 1, 0, 0, 0], 'row': [0, 1, 0, 0, 0, 0]}
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -88,7 +88,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [_, _, _, 1, _, _], 'row': [_, _, 1, _, _, _]}
+        tents_numbers_by_column_row = {'column': [0, 0, 0, 1, 0, 0], 'row': [0, 0, 1, 0, 0, 0]}
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -104,7 +104,7 @@ class TentsSolverTests(TestCase):
             [T, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [1, _, _, _, _, _], 'row': [_, _, _, _, 1, _]}
+        tents_numbers_by_column_row = {'column': [1, 0, 0, 0, 0, 0], 'row': [0, 0, 0, 0, 1, 0]}
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -120,7 +120,7 @@ class TentsSolverTests(TestCase):
             [T, _, _, _, _, T],
             [_, T, _, _, _, _],
         ])
-        tents_numbers_by_column_row = {'column': [3, _, 1, 1, 1, 1], 'row': [2, _, 1, 1, _, 3]}
+        tents_numbers_by_column_row = {'column': [3, 0, 1, 1, 1, 1], 'row': [2, 0, 1, 1, 0, 3]}
         expected_solution = Grid([
             [1, _, _, 1, _, _],
             [_, _, _, _, _, _],
@@ -144,7 +144,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _, T],
             [_, T, _, _, _, _]
         ])
-        tents_numbers_by_column_row = {'column': [2, 1, 1, 1, 1, 1], 'row': [2, 1, 1, 1, _, 2]}
+        tents_numbers_by_column_row = {'column': [2, 1, 1, 1, 1, 1], 'row': [2, 1, 1, 1, 0, 2]}
         expected_solution = Grid([
             [1, _, 1, _, _, _],
             [_, _, _, _, 1, _],
@@ -170,7 +170,7 @@ class TentsSolverTests(TestCase):
             [_, _, _, _, _, T, _, _],
             [_, T, _, _, _, _, _, T]
         ])
-        tents_numbers_by_column_row = {'column': [3, 1, 1, 2, _, 2, 1, 2], 'row': [2, 2, 1, 2, 1, 2, 1, 1]}
+        tents_numbers_by_column_row = {'column': [3, 1, 1, 2, 0, 2, 1, 2], 'row': [2, 2, 1, 2, 1, 2, 1, 1]}
         expected_solution = Grid([
             [1, _, _, 1, _, _, _, _],
             [_, _, _, _, _, 1, _, 1],
@@ -219,7 +219,7 @@ class TentsSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_15x15_1(self):
+    def test_solution_15x15(self):
         grid = Grid([
             [_, _, _, _, _, _, _, T, _, T, _, _, _, _, _],
             [_, T, _, T, T, T, _, _, _, _, _, _, _, T, _],
@@ -256,8 +256,6 @@ class TentsSolverTests(TestCase):
             [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0]
         ])
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
-        # solution = game_solver.get_solution() # keep this line commented
-        # solution = game_solver.get_other_solution() # keep this line commented
         solution = game_solver.get_other_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
