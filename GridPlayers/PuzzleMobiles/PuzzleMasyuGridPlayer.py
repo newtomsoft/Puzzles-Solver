@@ -18,7 +18,7 @@ class PuzzleMasyuGridPlayer(PlaywrightPlayer):
     def play(self, solution: IslandGrid):
         self.columns_number = solution.columns_number
         frame = self.page.frames[0]
-        video, rectangle = self._get_data_video(frame, '.board-mask', self.page, 50, 150, 50, 160)
+        video, rectangle = self._get_data_video(frame, '.board-mask', self.page, 50, 125, 50, 160)
         self._draw_path(solution)
         self.close()
         self._process_video(video, "masyu_puzzleMobiles", rectangle)
