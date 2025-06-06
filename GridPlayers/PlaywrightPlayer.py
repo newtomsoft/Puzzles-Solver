@@ -117,13 +117,13 @@ class PlaywrightPlayer(GridPlayer):
         return cell_height, cell_width, page, x0, y0
 
     @classmethod
-    def _get_data_video(cls, frame, page: Page, selector, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
+    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
-        x1 = int(bounding_box['x']) + x_offset
-        y1 = int(bounding_box['y']) + y_offset
-        x2 = int(bounding_box['width']) + x1 + width_offset
-        y2 = int(bounding_box['height']) + y1 + height_offset
+        x1 = int(bounding_box['x']) - x_offset
+        y1 = int(bounding_box['y']) - y_offset
+        x2 = int(bounding_box['width']) + x1 + x_offset + width_offset
+        y2 = int(bounding_box['height']) + y1 + y_offset + height_offset
         rectangle = Rectangle(Point(x1, y1), Point(x2, y2))
         return page.video, rectangle
 
