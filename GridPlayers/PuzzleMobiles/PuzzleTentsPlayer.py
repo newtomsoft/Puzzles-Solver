@@ -1,9 +1,9 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleTentsGridPlayer(PuzzlesMobilePlayer):
+class PuzzleTentsPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.tents-cell-back > div:not(.print-helper)")

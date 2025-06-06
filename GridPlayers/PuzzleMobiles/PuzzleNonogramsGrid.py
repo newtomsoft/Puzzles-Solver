@@ -1,12 +1,12 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleAkariGridPlayer(PuzzlesMobilePlayer):
+class PuzzleNonogramsPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
-        cells = page.query_selector_all("div.cell, div.light-up-task-cell")
+        cells = page.query_selector_all("div.cell.selectable")
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:

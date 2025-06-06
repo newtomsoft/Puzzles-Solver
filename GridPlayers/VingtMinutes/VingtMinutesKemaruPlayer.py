@@ -2,7 +2,7 @@
 
 from Board.Grid import Grid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class VingtMinutesKemaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):

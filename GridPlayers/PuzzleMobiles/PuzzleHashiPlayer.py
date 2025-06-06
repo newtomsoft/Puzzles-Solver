@@ -2,10 +2,10 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleHashiGridPlayer(PuzzlesMobilePlayer):
+class PuzzleHashiPlayer(PuzzlesMobilePlayer):
     def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         cells = page.locator(".bridges-task-cell")

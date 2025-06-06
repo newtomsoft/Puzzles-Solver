@@ -2,10 +2,10 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzlePipesGridPlayer(PuzzlesMobilePlayer):
+class PuzzlePipesPlayer(PuzzlesMobilePlayer):
     def play(self, solution: Grid[PipeShapeTransition]):
         page = self.browser.pages[0]
         cells = page.query_selector_all("div.selectable")
