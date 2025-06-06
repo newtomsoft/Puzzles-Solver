@@ -1,12 +1,14 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleNorinoriGridPlayer(PuzzlesMobilePlayer):
+class PuzzleBimaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
     def play(self, solution):
         page = self.browser.pages[0]
-        cells = page.locator(".cell")
+        cells = page.locator(".cell:not(.task):not(.ship)")
+
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:

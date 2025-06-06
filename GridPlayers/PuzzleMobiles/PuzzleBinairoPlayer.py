@@ -1,7 +1,7 @@
 from time import sleep
 
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleBinairoPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):

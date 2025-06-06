@@ -1,17 +1,17 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleLitsGridPlayer(PuzzlesMobilePlayer):
+class PuzzleFutoshikiPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
         page = self.browser.pages[0]
-        cells = page.query_selector_all("div.selectable")
+        cells = page.locator(".cell:not(.button)")
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:
-                cells[index].click()
-
+                cells.nth(index).click()
+                page.keyboard.press(str(value))
         sleep(2)
         self.submit_score(page)
         sleep(60)

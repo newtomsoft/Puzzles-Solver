@@ -1,17 +1,20 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from Domain.Board.Grid import Grid
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleSudokuGridPlayer(PuzzlesMobilePlayer):
+class PuzzleKakuroPlayer(PuzzlesMobilePlayer):
     def play(self, solution):
+        solution = Grid([line + [0] for line in solution.matrix])
         page = self.browser.pages[0]
-        cells = page.locator(".cell:not(.button)")
+        cells = page.locator(".cell")
+
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:
                 cells.nth(index).click()
                 page.keyboard.press(str(value))
-        sleep(2)
+
         self.submit_score(page)
         sleep(60)

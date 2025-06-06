@@ -2,10 +2,10 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.PuzzleMobiles.PuzzlesMobileGridPlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
-class PuzzleShingokiGridPlayer(PuzzlesMobilePlayer):
+class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
     def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")

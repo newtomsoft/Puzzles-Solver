@@ -6,7 +6,7 @@ from Domain.Board.Position import Position
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class PuzzleMasyuGridPlayer(PlaywrightPlayer):
+class PuzzleMasyuPlayer(PlaywrightPlayer):
     def __init__(self, browser: BrowserContext):
         super().__init__(browser)
         self.page = self.browser.pages[0]
