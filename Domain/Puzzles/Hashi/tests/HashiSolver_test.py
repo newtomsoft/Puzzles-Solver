@@ -62,7 +62,6 @@ class HashiSolverTests(TestCase):
             ' └──┘ '
         )
         self.assertEqual(expected_solution_repr, repr(solution))
-        # test doesnt work until the implementation of the __repr__ method in IslandGrid
 
     def test_solution_without_crossover(self):
         grid = Grid([
@@ -222,6 +221,21 @@ class HashiSolverTests(TestCase):
 
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
+
+    def test_multiple_solutions(self):
+        grid = Grid([
+            [2, 3, 2],
+            [3, 4, 3],
+            [2, 3, 2]
+        ])
+        game_solver = HashiSolver(grid)
+        solution = game_solver.get_solution()
+        solution_count = 1
+        while solution != IslandGrid.empty():
+            solution = game_solver.get_other_solution()
+            solution_count += 1
+
+        self.assertEqual(32, solution_count)
 
 
 if __name__ == '__main__':
