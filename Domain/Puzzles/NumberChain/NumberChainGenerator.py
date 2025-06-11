@@ -5,7 +5,7 @@ import time
 
 from tqdm import tqdm
 
-from Board.LinearPathGrid import LinearPathGrid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
