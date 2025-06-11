@@ -1,6 +1,6 @@
 ﻿from z3 import Solver, Bool, Not, And, Or, is_true, sat
 
-from Board.Position import Position
+from Domain.Board.Position import Position
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
