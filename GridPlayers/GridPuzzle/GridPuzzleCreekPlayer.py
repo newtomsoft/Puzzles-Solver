@@ -1,4 +1,4 @@
-﻿from Board.Grid import Grid
+﻿from Domain.Board.Grid import Grid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 

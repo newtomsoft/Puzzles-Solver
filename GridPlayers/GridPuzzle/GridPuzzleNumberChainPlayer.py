@@ -1,4 +1,4 @@
-﻿from Board.LinearPathGrid import LinearPathGrid
+﻿from Domain.Board.LinearPathGrid import LinearPathGrid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
