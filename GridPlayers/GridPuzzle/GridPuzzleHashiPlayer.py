@@ -1,5 +1,5 @@
-﻿from Board.IslandsGrid import IslandGrid
-from Domain.Board.Direction import Direction
+﻿from Domain.Board.Direction import Direction
+from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 

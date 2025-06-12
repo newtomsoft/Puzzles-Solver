@@ -1,9 +1,9 @@
-﻿from Board.Grid import Grid
+﻿from Domain.Board.Grid import Grid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleStr8tsPlayer(PlaywrightPlayer):
-    def play(self, solution: (Grid, Grid)):
+    def play(self, solution: tuple[Grid, Grid]):
         grid_solution, grid_blank = solution
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)

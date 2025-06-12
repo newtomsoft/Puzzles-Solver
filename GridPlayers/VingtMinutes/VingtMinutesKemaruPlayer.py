@@ -1,6 +1,6 @@
 ﻿from time import sleep
 
-from Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
