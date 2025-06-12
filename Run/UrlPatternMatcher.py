@@ -1,8 +1,5 @@
 ﻿import re
-import time
-from typing import Tuple, Any
 
-from Domain.Board.Grid import Grid
 from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -155,23 +152,22 @@ from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangG
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
 
 
-class PuzzleMainConsole:
-    @staticmethod
-    def main():
-        game_solver, data_game, game_player = PuzzleMainConsole.get_game_data_player()
-        solution = PuzzleMainConsole.run(game_solver, data_game)
-        if game_player is not None and solution != Grid.empty():
-            game_player.play(solution)
+class UrlPatternMatcher:
+    def get_components_for_url(self, url: str) -> tuple[type[GameSolver], type[GridProvider], type[GridPlayer] | None]:
+        if not url or url.strip() == "":
+            raise ValueError("Please enter a valid URL")
+
+        url_patterns = self.get_url_patterns()
+
+        for pattern, components in url_patterns.items():
+            if re.match(pattern, url):
+                return components
+
+        raise ValueError(f"No matching pattern found for URL: {url}")
 
     @staticmethod
-    def get_game_data_player() -> Tuple[GameSolver, Any, GridPlayer | None]:
-        print("Puzzle Solver")
-        print("Enter game url")
-        console_input = input()
-        if console_input == "queens":
-            console_input = "https://www.linkedin.com/games/queens/"
-
-        url_patterns = {
+    def get_url_patterns():
+        return {
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariPlayer),
             r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronLaserGridsPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumPlayer),
@@ -229,36 +225,3 @@ class PuzzleMainConsole:
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://www\.linkedin\.com/games/zip": (ZipSolver, ZipGridProvider, ZipPlayer),
         }
-        for pattern, (game_class, grid_provider_class, player_class) in url_patterns.items():
-            if re.match(pattern, console_input):
-                game_solver: GameSolver = game_class
-                grid_provider: GridProvider = grid_provider_class()
-                game_data, browser_context = grid_provider.get_grid(console_input)
-                game_player: GridPlayer | None = player_class(browser_context) if player_class is not None else None
-                return game_solver, game_data, game_player
-        raise ValueError("No grid provider found")
-
-    @staticmethod
-    def run(puzzle_game: type(GameSolver), data_game):
-        if type(data_game) is tuple:
-            grid = data_game[0]
-            extra_data = data_game[1:]
-            game_solver = puzzle_game(grid, *extra_data)
-        else:
-            game_solver = puzzle_game(data_game)
-
-        start_time = time.time()
-        solution = game_solver.get_solution()
-        end_time = time.time()
-        execution_time = end_time - start_time
-        if solution != Grid.empty():
-            print(f"Solution found in {execution_time:.2f} seconds")
-            print(solution)
-            return solution
-        else:
-            print(f"No solution found")
-            return solution
-
-
-if __name__ == '__main__':
-    PuzzleMainConsole.main()
