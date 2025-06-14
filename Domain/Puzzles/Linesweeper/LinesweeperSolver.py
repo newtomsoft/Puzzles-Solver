@@ -97,7 +97,6 @@ class LinesweeperSolver(GameSolver):
                 self._solver.add(sum(bridges_count_vars) == 0)
 
                 neighbor_positions = self._input_grid.neighbors_positions(position, "diagonal")
-
                 neighbor_connected_cells = []
                 for neighbor_position in neighbor_positions:
                     neighbor_bridge_vars = self._island_bridges_z3[neighbor_position].values()
