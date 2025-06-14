@@ -6,7 +6,7 @@ from time import sleep
 from typing import Protocol
 
 from moviepy import VideoFileClip
-from playwright.sync_api import BrowserContext, Mouse
+from playwright.sync_api import BrowserContext, Mouse, Video
 from playwright.sync_api import ElementHandle, Page
 
 from Domain.Board.Grid import Grid
@@ -117,7 +117,7 @@ class PlaywrightPlayer(GridPlayer):
         return cell_height, cell_width, page, x0, y0
 
     @classmethod
-    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> (VideoFile, Rectangle):
+    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[Video, Rectangle]:
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) - x_offset
@@ -128,7 +128,7 @@ class PlaywrightPlayer(GridPlayer):
         return page.video, rectangle
 
     @classmethod
-    def _get_data_video_viewport(cls, page: Page) -> (VideoFile, Rectangle):
+    def _get_data_video_viewport(cls, page: Page) -> tuple[Video, Rectangle]:
         viewport_size = page.viewport_size
         x1 = 0
         y1 = 0
