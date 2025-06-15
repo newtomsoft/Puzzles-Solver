@@ -12,7 +12,7 @@ https://vectors.puzzlebaron.com/init2.php?sg=7
 ## GridPuzzle
 https://gridpuzzle.com/creek/evil-15  
 https://gridpuzzle.com/bridges/size-12  
-https://en.gridpuzzle.com/linesweeper/size-12  
+https://en.gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/koburin/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
 https://gridpuzzle.com/number-chain/size-10  
@@ -23,6 +23,7 @@ https://gridpuzzle.com/traffic-lights/evil-12
 
 ## Linkedin
 https://www.linkedin.com/games/zip/  
+https://www.linkedin.com/games/queens/  
 
 ## Puzzle Mobiles
 https://www.puzzle-aquarium.com/?size=8  
