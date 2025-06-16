@@ -8,8 +8,6 @@ ____ = ' '
 
 
 class ShingokiWithGrayCirclesSolverTests(TestCase):
-
-
     def test_solution_7x7(self):
         grid = Grid([
             [____, 'b2', ____, ____, ____, 'g3', ____],
