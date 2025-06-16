@@ -60,6 +60,7 @@ from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARow
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
 from GridPlayers.GridPuzzle.GridPuzzlePurenrupuPlayer import GridPuzzlePurenrupuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPlayer
+from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
@@ -108,6 +109,7 @@ from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleN
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
+from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
@@ -211,6 +213,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuPlayer),  # same player as masyu
             r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiPlayer),
             r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersPlayer),
+            r"https://.*gridpuzzle\.com/slitherlink": (SurizaSolver, GridPuzzleSlitherlinkGridProvider, GridPuzzleSlitherlinkPlayer),
             r"https://.*gridpuzzle\.com/snake": (SnakeSolver, GridPuzzleSnakeGridProvider, GridPuzzleSnakePlayer),
             r"https://.*\.puzzle-star-battle\.com": (StarBattleSolver, PuzzleStarBattleGridProvider, PuzzleStarBattlePlayer),
             r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattlePlayer),
