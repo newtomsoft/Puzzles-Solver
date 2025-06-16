@@ -2,11 +2,11 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleGridProvider import GridPuzzleGridProvider
+from GridProviders.GridPuzzle.GridPuzzleGridTagProvider import GridPuzzleGridTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleNo4InARowGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridProvider):
+class GridPuzzleNo4InARowGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridTagProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
