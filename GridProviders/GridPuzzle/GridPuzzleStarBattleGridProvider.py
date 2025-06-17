@@ -41,7 +41,5 @@ class GridPuzzleStarBattleGridProvider(GridProvider, PlaywrightGridProvider, Gri
             open_matrix[row][col] = opens - cell_borders[row][col]
 
         regions_grid = RegionsGrid(open_matrix)
-
         stars_count = 2 if 'starbattle2' in url else 1
-
         return regions_grid, stars_count
