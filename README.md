@@ -19,6 +19,8 @@ https://gridpuzzle.com/number-chain/size-10
 https://gridpuzzle.com/pure-loop/size-12  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
+https://gridpuzzle.com/starbattle/size-10  
+https://gridpuzzle.com/starbattle2/size-11  
 https://gridpuzzle.com/str8ts/evil-9  
 https://gridpuzzle.com/traffic-lights/evil-12  
 
