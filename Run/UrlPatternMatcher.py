@@ -56,6 +56,7 @@ from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
 from GridPlayers.GridPuzzle.GridPuzzleLinesweeperPlayer import GridPuzzleLinesweeperPlayer
+from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
 from GridPlayers.GridPuzzle.GridPuzzlePurenrupuPlayer import GridPuzzlePurenrupuPlayer
@@ -106,6 +107,7 @@ from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreek
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleLinesweeperGridProvider import GridPuzzleLinesweeperGridProvider
+from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
@@ -200,6 +202,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/linesweeper":(LinesweeperSolver, GridPuzzleLinesweeperGridProvider, GridPuzzleLinesweeperPlayer),
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuPlayer),
+            r"https://.*gridpuzzle\.com/masyu": (MasyuSolver, GridPuzzleMasyuGridProvider, GridPuzzleMasyuPlayer),
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
