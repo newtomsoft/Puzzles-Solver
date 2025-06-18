@@ -170,7 +170,7 @@ class Grid(GridBase[T], Generic[T]):
 
         return visited
 
-    def _get_cell_of_value(self, value, excluded=None) -> Position or None:
+    def _get_cell_of_value(self, value, excluded=None) -> Position | None:
         if excluded is None:
             excluded = []
         return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
@@ -242,7 +242,7 @@ class Grid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> tuple['Grid', Position]:
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)
