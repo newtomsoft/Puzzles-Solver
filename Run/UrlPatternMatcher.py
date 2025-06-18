@@ -60,6 +60,7 @@ from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
 from GridPlayers.GridPuzzle.GridPuzzlePurenrupuPlayer import GridPuzzlePurenrupuPlayer
+from GridPlayers.GridPuzzle.GridPuzzleRenkatsuPlayer import GridPuzzleRenkatsuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
@@ -216,7 +217,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),  # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
             r"https://.*gridpuzzle\.com/pure-loop": (PurenrupuSolver, GridPuzzlePurenrupuGridProvider, GridPuzzlePurenrupuPlayer),
-            r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, None),
+            r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, GridPuzzleRenkatsuPlayer),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuPlayer),
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuPlayer),  # same player as masyu
             r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiPlayer),
