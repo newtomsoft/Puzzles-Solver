@@ -18,6 +18,7 @@ https://gridpuzzle.com/no-four-in-row/evil-12
 https://gridpuzzle.com/number-chain/size-10  
 https://gridpuzzle.com/pure-loop/size-12  
 https://gridpuzzle.com/masyu/evil-12  
+https://gridpuzzle.com/renkatsu/size-6  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
 https://gridpuzzle.com/starbattle/size-10  
