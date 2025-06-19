@@ -24,15 +24,21 @@ class GridPuzzleRenkatsuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         self._process_video(video, "renkatsu", rectangle)
 
     def _find_unique_different_pairs_positions(self) -> list[tuple[Position, Position]]:
-        pairs = []
+        pairs: list[tuple[Position, Position]] = list()
         if self._solution is None:
             return pairs
-        for position, value in self._solution:
-            neighbors = filter(None, [self._solution.neighbor_right(position), self._solution.neighbor_down(position)])
-            for neighbor in neighbors:
-                neighbor_value = self._solution[neighbor]
-                if neighbor_value != value:
-                    pairs.append((position, neighbor))
+
+        min_value = self._solution.min_value()
+        max_value = self._solution.max_value()
+
+        for cell_value in range(min_value, max_value + 1):
+            for cell_position in [position for position, value in self._solution if value == cell_value]:
+                for neighbor_position in self._solution.neighbors_positions(cell_position):
+                    neighbor_value = self._solution[neighbor_position]
+                    if neighbor_value != cell_value:
+                        pair = (cell_position, neighbor_position) if cell_position < neighbor_position else (neighbor_position, cell_position)
+                        if pair not in pairs:
+                            pairs.append(pair)
         return pairs
 
     def _draw_regions(self, cell_height, cell_width, page, pairs_positions: list[tuple[Position, Position]], x0, y0):
@@ -51,3 +57,4 @@ class GridPuzzleRenkatsuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
             page.mouse.down()
             page.mouse.up()
             return
+        raise ValueError(f"unexpected direction: {direction}")
