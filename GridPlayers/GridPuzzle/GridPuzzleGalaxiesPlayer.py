@@ -21,7 +21,7 @@ class GridPuzzleGalaxiesPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         self._draw_regions(cell_height, cell_width, page, pairs_positions, x0, y0)
 
         self.close()
-        self._process_video(video, "renkatsu", rectangle)
+        self._process_video(video, "galaxies", rectangle)
 
     def _find_unique_different_pairs_positions(self) -> list[tuple[Position, Position]]:
         pairs: list[tuple[Position, Position]] = list()
