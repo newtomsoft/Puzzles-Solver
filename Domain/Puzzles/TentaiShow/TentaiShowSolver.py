@@ -20,7 +20,6 @@ class TentaiShowSolver(GameSolver):
         self._previous_solution = None
 
     def _init_solver(self):
-        # Determine the range of values for the grid cells
         min_value = min(self.circle_positions.keys())
         max_value = max(self.circle_positions.keys())
         self._grid_vars = Grid([[self._model.NewIntVar(min_value, max_value, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -34,7 +33,7 @@ class TentaiShowSolver(GameSolver):
         self._previous_solution = solution
         return solution
 
-    def _ensure_all_shapes_compliant(self) -> (Grid, int):
+    def _ensure_all_shapes_compliant(self) -> tuple[Grid, int]:
         proposition_count = 0
         status = self._solver.Solve(self._model)
 
