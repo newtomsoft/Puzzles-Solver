@@ -9,6 +9,10 @@ class RegionsGrid(Grid):
         super().__init__(matrix)
         self._matrix = self._compute_regions_grid()
 
+    @staticmethod
+    def from_grid(grid: Grid):
+        return RegionsGrid(grid.matrix)
+
     def _compute_regions_grid(self):
         cells_number = self.rows_number * self.columns_number
         while True:
