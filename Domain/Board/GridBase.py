@@ -50,6 +50,12 @@ class GridBase(Generic[T]):
     def __hash__(self):
         return hash(str(self._matrix))
 
+    def min_value(self):
+        return min(min(self._matrix, key=lambda row: min(row)))
+
+    def max_value(self):
+        return max(max(self._matrix, key=lambda row: max(row)))
+
     @property
     def matrix(self):
         return self._matrix
