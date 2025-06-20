@@ -81,6 +81,7 @@ from GridPlayers.PuzzleMobiles.PuzzleBimaruPlayer import PuzzleBimaruPlayer
 from GridPlayers.PuzzleMobiles.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridPlayers.PuzzleMobiles.PuzzleDominosaPlayer import PuzzleDominosaPlayer
 from GridPlayers.PuzzleMobiles.PuzzleFutoshikiPlayer import PuzzleFutoshikiPlayer
+from GridPlayers.PuzzleMobiles.PuzzleGalaxiesPlayer import PuzzleGalaxiesPlayer
 from GridPlayers.PuzzleMobiles.PuzzleHashiPlayer import PuzzleHashiPlayer
 from GridPlayers.PuzzleMobiles.PuzzleHeyawakePlayer import PuzzleHeyawakePlayer
 from GridPlayers.PuzzleMobiles.PuzzleHitoriPlayer import PuzzleHitoriPlayer
@@ -136,6 +137,7 @@ from GridProviders.PuzzlesMobile.PuzzleBinairoGridProvider import PuzzleBinairoG
 from GridProviders.PuzzlesMobile.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from GridProviders.PuzzlesMobile.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
 from GridProviders.PuzzlesMobile.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
+from GridProviders.PuzzlesMobile.PuzzleGalaxiesGridProvider import PuzzleGalaxiesGridProvider
 from GridProviders.PuzzlesMobile.PuzzleHashiGridProvider import PuzzleHashiGridProvider
 from GridProviders.PuzzlesMobile.PuzzleHeyawakeGridProvider import PuzzleHeyawakeGridProvider
 from GridProviders.PuzzlesMobile.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
@@ -159,7 +161,6 @@ from GridProviders.PuzzlesMobile.PuzzleStitchesGridProvider import PuzzleStitche
 from GridProviders.PuzzlesMobile.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
 from GridProviders.PuzzlesMobile.PuzzleSurizaGridProvider import PuzzleSurizaGridProvider
 from GridProviders.PuzzlesMobile.PuzzleTapaGridProvider import PuzzleTapaGridProvider
-from GridProviders.PuzzlesMobile.PuzzleTentaiShowGridProvider import PuzzleTentaiShowGridProvider
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
@@ -237,7 +238,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
             r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaPlayer),
-            r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleTentaiShowGridProvider, None),
+            r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleGalaxiesGridProvider, PuzzleGalaxiesPlayer),
             r"https://.*gridpuzzle\.com/galaxies": (TentaiShowSolver, GridPuzzleGalaxiesGridProvider, GridPuzzleGalaxiesPlayer),
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsPlayer),
             r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesPlayer),

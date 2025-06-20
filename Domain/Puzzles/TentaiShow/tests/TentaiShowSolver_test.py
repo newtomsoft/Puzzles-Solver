@@ -269,7 +269,7 @@ class TentaiShowSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("This test is too slow (approximately 8 seconds)")
+    @unittest.skip("This test is too slow (approximately 13 seconds)")
     def test_solution_15x15_normal(self):
         grid_size = (15, 15)
         circles_positions = {
@@ -302,7 +302,7 @@ class TentaiShowSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-    def test_solution_15x15_hard(self):  # approximately 3 seconds
+    def test_solution_15x15_hard(self):  # approximately 9 seconds
         grid_size = (15, 15)
         circles_positions = {
             1: Position(0, 0.5), 2: Position(0, 5), 3: Position(0, 11.5), 4: Position(0.5, 3.5), 5: Position(0.5, 9.5), 6: Position(1, 1), 7: Position(1, 5.5), 8: Position(1.5, 13.5),
