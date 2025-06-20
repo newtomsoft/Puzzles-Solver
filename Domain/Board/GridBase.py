@@ -332,3 +332,18 @@ class GridBase(Generic[T]):
         for position in [position - Position(min_r, min_c) for position in positions]:
             matrix[position.r][position.c] = set_value
         return cls(matrix), Position(min_r, min_c)
+
+    def find_different_neighbors_positions(self) -> list[tuple[Position, Position]]:
+        pairs: list[tuple[Position, Position]] = list()
+        min_value = self.min_value()
+        max_value = self.max_value()
+
+        for cell_value in range(min_value, max_value + 1):
+            for cell_position in [position for position, value in self if value == cell_value]:
+                for neighbor_position in self.neighbors_positions(cell_position):
+                    neighbor_value = self[neighbor_position]
+                    if neighbor_value != cell_value:
+                        pair = (cell_position, neighbor_position) if cell_position < neighbor_position else (neighbor_position, cell_position)
+                        if pair not in pairs:
+                            pairs.append(pair)
+        return pairs

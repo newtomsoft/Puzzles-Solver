@@ -1,7 +1,7 @@
 ﻿from playwright.sync_api import BrowserContext
 
-from Board.Position import Position
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleGridCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider

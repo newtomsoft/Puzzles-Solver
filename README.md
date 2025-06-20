@@ -39,7 +39,7 @@ https://www.puzzle-binairo.com/binairo-plus-20x20-hard/
 https://www.puzzle-bridges.com/?size=18  
 https://www.puzzle-dominosa.com/?size=4  
 https://www.puzzle-futoshiki.com/futoshiki-9x9-hard/  
-https://www.puzzle-galaxies.com/?size=5  _(player not implemented)_  
+https://www.puzzle-galaxies.com/?size=5  
 https://www.puzzle-heyawake.com/?size=14  
 https://www.puzzle-hitori.com/?size=11  
 https://www.puzzle-jigsaw-sudoku.com/?size=8  
