@@ -43,10 +43,10 @@ class GridPuzzleGalaxiesPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
 
     def _draw_regions(self, cell_height, cell_width, page, pairs_positions: list[tuple[Position, Position]], x0, y0):
         for position0, position1 in pairs_positions:
-            self._trace(position0.direction_to(position1), position0, page, cell_width, cell_height, x0, y0)
+            self._click(position0.direction_to(position1), position0, page, cell_width, cell_height, x0, y0)
 
     @staticmethod
-    def _trace(direction: Direction, position, page, cell_width, cell_height, x0, y0):
+    def _click(direction: Direction, position, page, cell_width, cell_height, x0, y0):
         if direction == Direction.right():
             page.mouse.move(x0 + cell_width + position.c * cell_width, y0 + cell_height / 2 + position.r * cell_height)
             page.mouse.down()
