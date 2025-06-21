@@ -1,9 +1,10 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import FrozenSet, Generator, Generic, TypeVar, Iterable
+from typing import FrozenSet, Generator, TypeVar, Iterable, Any
 
 from bitarray import bitarray
 
+from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from Utils.colors import console_back_ground_colors, console_police_colors
@@ -11,7 +12,7 @@ from Utils.colors import console_back_ground_colors, console_police_colors
 T = TypeVar('T')
 
 
-class GridBase(Generic[T]):
+class GridBase[T]:
     def __init__(self, matrix: list[list[T]]):
         self._matrix = matrix
         self.rows_number = len(matrix)
@@ -32,10 +33,10 @@ class GridBase(Generic[T]):
             return all(value == other.value(position) for position, value in self)
         return self.matrix == other.matrix
 
-    def __contains__(self, item: Position):
-        return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
+    def __contains__(self, item: Position | T) -> bool:
+            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
 
-    def __iter__(self) -> Generator[tuple[Position, T], None, None]:
+    def __iter__(self) -> Generator[tuple[Position, T | Any], None, None]:
         for r, row in enumerate(self._matrix):
             for c, cell in enumerate(row):
                 yield Position(r, c), cell
@@ -183,7 +184,7 @@ class GridBase(Generic[T]):
 
         return visited
 
-    def _get_cell_of_value(self, value, excluded=None) -> Position or None:
+    def _get_cell_of_value(self, value, excluded=None) -> Position | None:
         if excluded is None:
             excluded = []
         return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
@@ -281,6 +282,17 @@ class GridBase(Generic[T]):
             positions.append(position)
         return positions
 
+    def all_positions_at(self, position: Position, direction: Direction) -> list[Position]:
+        if direction == Direction.up():
+            return self.all_positions_up(position)
+        if direction == Direction.down():
+            return self.all_positions_down(position)
+        if direction == Direction.left():
+            return self.all_positions_left(position)
+        if direction == Direction.right():
+            return self.all_positions_right(position)
+        raise ValueError(f"Invalid direction: {direction}")
+
     def all_positions_down(self, position: Position) -> list[Position]:
         positions = []
         while position.down in self and {position, position.down} not in self._walls:
@@ -323,7 +335,7 @@ class GridBase(Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('GridBase', Position):
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> tuple['GridBase', Position]:
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

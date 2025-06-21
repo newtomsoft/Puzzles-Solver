@@ -3,6 +3,7 @@ from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class GridPuzzleNo4InARowPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
+    game_name = "no4InARow"
     def play(self, solution):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)
@@ -21,4 +22,4 @@ class GridPuzzleNo4InARowPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
             previous_value = value
 
         self.close()
-        self._process_video(video, "no4InARow", rectangle, 0)
+        self._process_video(video, rectangle, 0)

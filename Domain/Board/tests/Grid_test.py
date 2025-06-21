@@ -564,6 +564,18 @@ class GridTest(TestCase):
         positions = grid.find_all_positions_in(grid1)
         self.assertEqual(expected_positions, positions)
 
+    def test_contains_position_true(self):
+        self.assertTrue(Position(0, 0) in self.grid_2x2)
+        self.assertTrue(Position(0, 1) in self.grid_2x2)
+        self.assertTrue(Position(1, 0) in self.grid_2x2)
+        self.assertTrue(Position(1, 1) in self.grid_2x2)
+
+    def test_contains_position_false(self):
+        self.assertFalse(Position(-1, 0) in self.grid_2x2)
+        self.assertFalse(Position(0, -1) in self.grid_2x2)
+        self.assertFalse(Position(2, 0) in self.grid_2x2)
+        self.assertFalse(Position(0, 2) in self.grid_2x2)
+        self.assertFalse(Position(2, 2) in self.grid_2x2)
 
 if __name__ == '__main__':
     unittest.main()

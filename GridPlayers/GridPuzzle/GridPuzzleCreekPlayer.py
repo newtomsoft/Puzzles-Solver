@@ -3,6 +3,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleCreekPlayer(PlaywrightPlayer):
+    game_name = "creek"
     def play(self, grid_solution: Grid):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)
@@ -13,4 +14,4 @@ class GridPuzzleCreekPlayer(PlaywrightPlayer):
             cells[index].click(click_count=2)
 
         self.close()
-        self._process_video(video, "creek", rectangle, 0)
+        self._process_video(video, rectangle, 0)

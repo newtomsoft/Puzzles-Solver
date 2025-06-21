@@ -3,6 +3,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleNumberChainPlayer(PlaywrightPlayer):
+    game_name = "number_chain"
     def play(self, solution: LinearPathGrid):
         cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution)
         video, rectangle = self._get_data_video_viewport(page)
@@ -14,4 +15,4 @@ class GridPuzzleNumberChainPlayer(PlaywrightPlayer):
         page.mouse.up()
 
         self.close()
-        self._process_video(video, "numberChain", rectangle)
+        self._process_video(video, rectangle)

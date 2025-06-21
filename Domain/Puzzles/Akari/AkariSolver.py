@@ -1,11 +1,13 @@
-﻿from z3 import Bool, Solver, sat, is_true, Not, Implies, Or
+﻿from typing import Any
+
+from z3 import Bool, Solver, sat, is_true, Not, Implies, Or
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class AkariSolver(GameSolver):
-    def __init__(self, data_game: dict[str, any]):
+    def __init__(self, data_game: dict[str, Any]):
         self._data_game = data_game
         self.rows_number = self._data_game['rows_number']
         self.columns_number = self._data_game['columns_number']

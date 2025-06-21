@@ -4,6 +4,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleHashiPlayer(PlaywrightPlayer):
+    game_name = "hashi"
     def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)
@@ -23,4 +24,4 @@ class GridPuzzleHashiPlayer(PlaywrightPlayer):
                         page.mouse.up()
 
         self.close()
-        self._process_video(video, "hashi", rectangle, 0)
+        self._process_video(video, rectangle, 0)
