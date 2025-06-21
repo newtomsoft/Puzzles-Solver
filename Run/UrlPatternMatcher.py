@@ -67,6 +67,7 @@ from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlither
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
+from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
 from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
@@ -121,6 +122,7 @@ from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzl
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
+from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
@@ -166,6 +168,7 @@ from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThe
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
 from Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
+from Puzzles.Yajilin.YajilinSolver import YajilinSolver
 
 
 class UrlPatternMatcher:
@@ -244,6 +247,7 @@ class UrlPatternMatcher:
             r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersPlayer),
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
+            r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://www\.linkedin\.com/games/zip": (ZipSolver, ZipGridProvider, ZipPlayer),
         }
