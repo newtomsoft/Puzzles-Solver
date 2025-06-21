@@ -4,7 +4,7 @@ from Domain.Board.Position import Position
 
 
 class GridPuzzleCanvasPlayer:
-    def _draw_path(self, cell_height, cell_width, page, solution, x0, y0):
+    def _draw_loop(self, cell_height, cell_width, page, solution, x0, y0):
         connected_positions = self._get_positions_from_position0_0(solution)
         for index, position in enumerate(connected_positions[:-1]):
             next_position = connected_positions[index + 1]

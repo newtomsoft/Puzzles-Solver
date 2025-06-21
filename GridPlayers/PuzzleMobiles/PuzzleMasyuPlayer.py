@@ -7,6 +7,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class PuzzleMasyuPlayer(PlaywrightPlayer):
+    game_name = "masyu_puzzleMobiles"
     def __init__(self, browser: BrowserContext):
         super().__init__(browser)
         self.page = self.browser.pages[0]
@@ -21,7 +22,7 @@ class PuzzleMasyuPlayer(PlaywrightPlayer):
         video, rectangle = self._get_data_video(frame, '.board-mask', self.page, 50, 125, 50, 160)
         self._draw_path(solution)
         self.close()
-        self._process_video(video, "masyu_puzzleMobiles", rectangle)
+        self._process_video(video, rectangle)
 
     def _draw_path(self, solution: IslandGrid):
         connected_positions = self._get_positions_from_position0_0(solution)

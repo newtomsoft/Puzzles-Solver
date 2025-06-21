@@ -2,6 +2,7 @@
 
 
 class GridPuzzleSnakePlayer(PlaywrightPlayer):
+    game_name = "snake"
     def play(self, solution):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)
@@ -11,4 +12,4 @@ class GridPuzzleSnakePlayer(PlaywrightPlayer):
             cells[position_index].click()
 
         self.close()
-        self._process_video(video, "snake", rectangle, 0)
+        self._process_video(video, rectangle, 0)

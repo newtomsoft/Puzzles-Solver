@@ -8,6 +8,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleRenkatsuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
+    game_name = "renkatsu"
     def __init__(self, browser: BrowserContext):
         super().__init__(browser)
         self._solution: Grid | None = None
@@ -21,7 +22,7 @@ class GridPuzzleRenkatsuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         self._draw_regions(cell_height, cell_width, page, pairs_positions, x0, y0)
 
         self.close()
-        self._process_video(video, "renkatsu", rectangle)
+        self._process_video(video, rectangle)
 
     def _find_unique_different_pairs_positions(self) -> list[tuple[Position, Position]]:
         pairs: list[tuple[Position, Position]] = list()

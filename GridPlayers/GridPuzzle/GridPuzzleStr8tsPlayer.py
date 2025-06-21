@@ -3,6 +3,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleStr8tsPlayer(PlaywrightPlayer):
+    game_name = "str8ts"
     def play(self, solution: tuple[Grid, Grid]):
         grid_solution, grid_blank = solution
         page = self.browser.pages[0]
@@ -15,4 +16,4 @@ class GridPuzzleStr8tsPlayer(PlaywrightPlayer):
             page.keyboard.press(str(solution_value))
 
         self.close()
-        self._process_video(video, "str8ts", rectangle, 0)
+        self._process_video(video, rectangle, 0)

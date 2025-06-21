@@ -60,6 +60,8 @@ class Rectangle:
 
 
 class PlaywrightPlayer(GridPlayer):
+    game_name = None
+
     def __init__(self, browser: BrowserContext):
         self.browser = browser
 
@@ -138,9 +140,9 @@ class PlaywrightPlayer(GridPlayer):
         return page.video, rectangle
 
     @classmethod
-    def _process_video(cls, video_file: VideoFile, name: str, rect: Rectangle, start_time: float = 0) -> str:
+    def _process_video(cls, video_file: VideoFile, rect: Rectangle, start_time: float = 0) -> str:
         video_path = video_file.path()
-        cls._crop_video(video_path, name, rect, start_time)
+        cls._crop_video(video_path, cls.game_name, rect, start_time)
         return video_path
 
     @classmethod
