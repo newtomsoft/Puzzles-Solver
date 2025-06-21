@@ -1,5 +1,5 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
+﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
 
 
-class GridPuzzleYajilinPlayer(GridPuzzleKoburinPlayer):
+class GridPuzzleYajilinPlayer(GridPuzzleLoopAndBlackCellsPlayer):
     game_name: str = "yajilin"
