@@ -13,6 +13,5 @@ class GridPuzzleKoburinGridProvider(GridProvider, PlaywrightGridProvider, GridPu
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
         pqq_string_list, size = self._get_canvas_data(html_page)
-        data_grid = pqq_string_list[0]
-        matrix = [[-1 if data_grid[i * size + j] == "." else int(data_grid[i * size + j]) for j in range(size)] for i in range(size)]
+        matrix = [[-1 if (data:=pqq_string_list[i * size + j]) == "." else int(data) for j in range(size)] for i in range(size)]
         return Grid(matrix)
