@@ -1,8 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Board.IslandsGrid import IslandGrid
 from Domain.Board.Grid import Grid
+from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Puzzles.Linesweeper.LinesweeperSolver import LinesweeperSolver
 
 _ = -1
