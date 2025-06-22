@@ -106,6 +106,18 @@ class Position:
             return Position(int(2 * position.r - self.r), int(2 * position.c - self.c))
         return Position(2 * position.r - self.r, 2 * position.c - self.c)
 
+    def is_on_row(self):
+        return self.r == math.floor(self.r)
+
+    def is_on_column(self):
+        return self.c == math.floor(self.c)
+
+    def __floor__(self):
+        return Position(math.floor(self.r), math.floor(self.c))
+
+    def __ceil__(self):
+        return Position(math.ceil(self.r), math.ceil(self.c))
+
     def __eq__(self, other):
         return isinstance(other, Position) and self.r == other.r and self.c == other.c
 
