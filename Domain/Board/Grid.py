@@ -53,11 +53,13 @@ class Grid[T](GridBase[T]):
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
             matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
-        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)]
+        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in
+                         range(self.columns_number)]
                         for r in
                         range(self.rows_number)]
         background_color_matrix = [
-            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in
+            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c
+             in
              range(self.columns_number)] for r in
             range(self.rows_number)]
         end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
@@ -71,7 +73,8 @@ class Grid[T](GridBase[T]):
         return '\n'.join(result)
 
     def _row_to_string(self, matrix, r, max_len, background_color_matrix, color_matrix, end_color, end_space):
-        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in range(self.columns_number))
+        return ''.join(f'{background_color_matrix[r][c]}{color_matrix[r][c]}{end_space}{matrix[r][c]}{end_space}{end_color}'.rjust(max_len) for c in
+                       range(self.columns_number))
 
     def get_regions(self) -> dict[int, frozenset[Position]]:
         regions = defaultdict(set)
@@ -151,7 +154,8 @@ class Grid[T](GridBase[T]):
 
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)] if mode != 'diagonal' else [(1, 1), (1, -1), (-1, 1), (-1, -1)]
         for dr, dc in directions:
-            if 0 <= position.r + dr < self.rows_number and 0 <= position.c + dc < self.columns_number and (position.r + dr, position.c + dc) not in visited:
+            if 0 <= position.r + dr < self.rows_number and 0 <= position.c + dc < self.columns_number and (position.r + dr,
+                                                                                                           position.c + dc) not in visited:
                 current_position = position + Position(dr, dc)
                 if self.value(current_position) == value:
                     new_visited = self._depth_first_search(current_position, value, mode, visited)
@@ -163,7 +167,8 @@ class Grid[T](GridBase[T]):
     def _get_cell_of_value(self, value, excluded=None) -> Position | None:
         if excluded is None:
             excluded = []
-        return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if self._matrix[i][j] == value and Position(i, j) not in excluded), None)
+        return next((Position(i, j) for i in range(self.rows_number) for j in range(self.columns_number) if
+                     self._matrix[i][j] == value and Position(i, j) not in excluded), None)
 
     @staticmethod
     def get_adjacent_combinations(neighbor_length: int, block_length: int, circular: bool) -> list[list[bool]]:
@@ -211,8 +216,33 @@ class Grid[T](GridBase[T]):
     def straddled_neighbors_positions(self, position: Position) -> set[Position]:
         return {neighbor for neighbor in position.straddled_neighbors() if neighbor in self}
 
+    def is_position_in_edge_up(self, position: Position) -> bool:
+        return position.r == 0 and 0 <= position.c < self.columns_number
+
+    def is_position_in_edge_down(self, position: Position) -> bool:
+        return position.r == self.rows_number - 1 and 0 <= position.c < self.columns_number
+
+    def is_position_in_edge_left(self, position: Position) -> bool:
+        return position.c == 0 and 0 <= position.r < self.rows_number
+
+    def is_position_in_edge_right(self, position: Position) -> bool:
+        return position.c == self.columns_number - 1 and 0 <= position.r < self.rows_number
+
+    def edge_up_positions(self) -> list[Position]:
+        return [Position(0, c) for c in range(self.columns_number)]
+
+    def edge_down_positions(self) -> list[Position]:
+        return [Position(self.rows_number - 1, c) for c in range(self.columns_number)]
+
+    def edge_left_positions(self) -> list[Position]:
+        return [Position(r, 0) for r in range(self.rows_number)]
+
+    def edge_right_positions(self) -> list[Position]:
+        return [Position(r, self.columns_number - 1) for r in range(self.rows_number)]
+
     def edges_positions(self) -> set[Position]:
-        return {position for position, _ in self if position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
+        return {position for position, _ in self if
+                position.r == 0 or position.r == self.rows_number - 1 or position.c == 0 or position.c == self.columns_number - 1}
 
     def find_all_positions_in(self, grid: 'Grid', value_to_ignore=None) -> set[Position]:
         positions = set()
