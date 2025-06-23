@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.Koburin.KoburinSolver import KoburinSolver
+from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
 
 _ = -1
 
