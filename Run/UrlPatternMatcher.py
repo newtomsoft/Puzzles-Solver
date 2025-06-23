@@ -72,6 +72,7 @@ from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlither
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
+from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
 from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
@@ -252,7 +253,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsPlayer),
             r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersPlayer),
-            "": (TilePaintSolver, GridPuzzleTilePaintGridProvider, None),
+            r"https://.*gridpuzzle\.com/tilepaint": (TilePaintSolver, GridPuzzleTilePaintGridProvider, GridPuzzleTilePaintPlayer),
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
             r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
