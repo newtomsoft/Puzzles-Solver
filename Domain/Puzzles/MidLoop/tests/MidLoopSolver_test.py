@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
-from Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
+from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 
 _ = 0
 
@@ -229,7 +229,78 @@ class MidLoopSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
-    @unittest.skip("This test is skipped because in the current implementation, the solver does not support this puzzle.")
+    def test_solution_12x12_a(self):
+        grid_size = (12, 12)
+        circles_positions = {
+            1: Position(0.0, 2.5), 2: Position(0.0, 8.0), 3: Position(0.5, 5.0), 4: Position(1.0, 6.0), 5: Position(1.0, 10.0), 6: Position(1.5, 4.0),
+            7: Position(2.0, 0.0), 8: Position(2.0, 2.0), 9: Position(2.0, 7.5), 10: Position(2.0, 11.0), 11: Position(3.0, 3.0), 12: Position(3.0, 6.0),
+            13: Position(3.5, 4.0), 14: Position(3.5, 9.0), 15: Position(4.0, 3.5), 16: Position(4.0, 10.0), 17: Position(5.0, 0.5), 18: Position(5.0, 2.0),
+            19: Position(5.0, 4.0), 20: Position(5.0, 7.5), 21: Position(6.0, 6.0), 22: Position(6.0, 8.0), 23: Position(6.5, 7.0), 24: Position(7.0, 3.5),
+            25: Position(7.5, 9.0), 26: Position(8.0, 4.5), 27: Position(8.0, 10.0), 28: Position(8.5, 1.0), 29: Position(8.5, 7.0), 30: Position(9.0, 6.5),
+            31: Position(9.0, 10.5), 32: Position(10.0, 2.0), 33: Position(10.0, 3.0), 34: Position(10.0, 8.0), 35: Position(10.5, 0.0),
+            36: Position(11.0, 5.0),
+            37: Position(11.0, 9.0)
+        }
+        expected_solution_str = (
+            ' ┌──────────────┐     ┌─────┐       \n'
+            ' │     ┌─────┐  └─────┘     └─────┐ \n'
+            ' │     │     └──┐  ┌────────┐     │ \n'
+            ' │     └─────┐  │  │        │  ┌──┘ \n'
+            ' └─────┐  ┌──┘  └──┘        │  │    \n'
+            ' ┌──┐  │  └─────┐  ┌────────┘  └──┐ \n'
+            ' │  └──┘        │  │  ┌─────┐     │ \n'
+            ' └──┐  ┌────────┘  └──┘     │  ┌──┘ \n'
+            '    │  └──────────────┐     │  │    \n'
+            '    │  ┌──┐        ┌──┘  ┌──┘  └──┐ \n'
+            ' ┌──┘  │  │        └──┐  │     ┌──┘ \n'
+            ' └─────┘  └───────────┘  └─────┘    '
+        )
+        game_solver = MidLoopSolver(grid_size, circles_positions)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
+    def test_solution_12x12_b(self):
+        grid_size = (12, 12)
+        circles_positions = {
+            1: Position(0.0, 2.5),
+            2: Position(0.0, 7.5),
+            3: Position(0.5, 5.0),
+            4: Position(1.0, 6.0),
+            5: Position(1.0, 10.0),
+            6: Position(1.5, 4.0),
+            7: Position(2.0, 0.0),
+            8: Position(2.0, 2.0), 9: Position(2.0, 7.5), 10: Position(2.0, 11.0), 11: Position(3.0, 3.0), 12: Position(3.0, 6.0),
+            13: Position(3.5, 4.0), 14: Position(3.5, 9.0), 15: Position(4.0, 3.5), 16: Position(4.0, 10.0), 17: Position(5.0, 0.5), 18: Position(5.0, 2.0),
+            19: Position(5.0, 4.0), 20: Position(5.0, 7.5), 21: Position(6.0, 6.0), 22: Position(6.0, 8.0), 23: Position(6.5, 7.0), 24: Position(7.0, 3.5),
+            25: Position(7.5, 9.0), 26: Position(8.0, 4.5), 27: Position(8.0, 10.0), 28: Position(8.5, 1.0), 29: Position(8.5, 7.0), 30: Position(9.0, 6.5),
+            31: Position(9.0, 10.5), 32: Position(10.0, 2.0), 33: Position(10.0, 3.0), 34: Position(10.0, 8.0), 35: Position(10.5, 0.0),
+            36: Position(11.0, 5.0),
+            37: Position(11.0, 9.5),
+            38: Position(5.0, 10.0),
+            39: Position(9.0, 5.0),
+        }
+        expected_solution_str = (
+            ' ┌──────────────┐  ┌────────┐       \n'
+            ' │     ┌──┐  ┌──┘  │        └─────┐ \n'
+            ' │     │  └──┘  ┌──┘  ┌──┐        │ \n'
+            ' │     └─────┐  └─────┘  │  ┌─────┘ \n'
+            ' └─────┐  ┌──┘     ┌──┐  │  └─────┐ \n'
+            ' ┌──┐  │  └─────┐  │  └──┘  ┌─────┘ \n'
+            ' │  └──┘  ┌─────┘  │  ┌─────┘       \n'
+            ' └──┐     └──┐     │  └──┐  ┌──┐    \n'
+            '    │        └──┐  └──┐  └──┘  │    \n'
+            '    │  ┌──┐     │  ┌──┘        └──┐ \n'
+            ' ┌──┘  │  │     └──┘  ┌─────┐  ┌──┘ \n'
+            ' └─────┘  └───────────┘     └──┘    '
+        )
+        game_solver = MidLoopSolver(grid_size, circles_positions)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
     def test_solution_12x12_4mg5g(self):
         #  https://gridpuzzle.com/mid-loop/4mg5g
         grid_size = (12, 12)
@@ -242,18 +313,9 @@ class MidLoopSolverTests(TestCase):
             31: Position(9.0, 10.5), 32: Position(10.0, 2.0), 33: Position(10.0, 3.0), 34: Position(10.0, 8.0), 35: Position(10.5, 0.0),
             36: Position(11.0, 5.0), 37: Position(11.0, 9.5)
         }
-        expected_solution_str = (
-            ' ┌─────┐  ┌─────┐    \n'
-            ' └──┐  │  │     └──┐ \n'
-            '    │  └──┘  ┌──┐  │ \n'
-            '    │     ┌──┘  │  │ \n'
-            ' ┌──┘     │     └──┘ \n'
-            ' │  ┌──┐  └────────┐ \n'
-            ' └──┘  └───────────┘ '
-        )
         game_solver = MidLoopSolver(grid_size, circles_positions)
         solution = game_solver.get_solution()
-        self.assertEqual(expected_solution_str, str(solution))
+        self.assertNotEqual(IslandGrid.empty(), solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 

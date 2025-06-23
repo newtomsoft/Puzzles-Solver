@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
+from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
 
 _ = 0
 

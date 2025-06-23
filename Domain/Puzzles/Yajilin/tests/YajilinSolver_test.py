@@ -1,7 +1,7 @@
 ﻿from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.Yajilin.YajilinSolver import YajilinSolver
+from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 
 ____ = ''
 
