@@ -7,15 +7,17 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
-from Domain.Puzzles.GameSolver import GameSolver
+from Puzzles.GameSolver import GameSolver
 
 
 class YajilinSolver(GameSolver):
-    direction_map = {'R': Direction.right(),
-                     'D': Direction.down(),
-                     'L': Direction.left(),
-                     'U': Direction.up()
-                     }
+    direction_map = {
+        'R': Direction.right(),
+        'D': Direction.down(),
+        'L': Direction.left(),
+        'U': Direction.up()
+    }
+
     def __init__(self, grid: Grid):
         self.input_grid = grid
         self._island_grid: IslandGrid | None = None
@@ -35,7 +37,8 @@ class YajilinSolver(GameSolver):
                 self._island_grid[neighbor].set_bridge(position, 0)
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values() if island.bridges_count > 0}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in
+                                   self._island_grid.islands.values() if island.bridges_count > 0}
         for position in [position for position, _ in self.input_grid if position not in self._island_bridges_z3]:
             neighbors = self.input_grid.neighbors_positions(position)
             for neighbor in [neighbor for neighbor in neighbors if neighbor in self._island_bridges_z3]:
@@ -58,7 +61,8 @@ class YajilinSolver(GameSolver):
             model = self._solver.model()
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
-                for direction, bridges_number in [(direction, model.eval(bridges).as_long()) for direction, bridges in direction_bridges.items() if position.after(direction) in self._island_bridges_z3]:
+                for direction, bridges_number in [(direction, model.eval(bridges).as_long()) for direction, bridges in direction_bridges.items() if
+                                                  position.after(direction) in self._island_bridges_z3]:
                     self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
@@ -104,12 +108,17 @@ class YajilinSolver(GameSolver):
         self._add_bridges_sum_constraints()
 
     def _add_initial_constraints(self):
-        constraints = [Or(direction_bridges == 0, direction_bridges == 1) for _island_bridges_z3 in self._island_bridges_z3.values() for direction_bridges in _island_bridges_z3.values()]
+        constraints = [Or(direction_bridges == 0, direction_bridges == 1) for _island_bridges_z3 in self._island_bridges_z3.values() for direction_bridges in
+                       _island_bridges_z3.values()]
         self._solver.add(constraints)
-        constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number) if Position(0, c) in self._island_bridges_z3]
-        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in range(self._island_grid.columns_number) if Position(self._island_grid.rows_number - 1, c) in self._island_bridges_z3]
-        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in range(self._island_grid.rows_number) if Position(r, self._island_grid.columns_number - 1) in self._island_bridges_z3]
-        constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number) if Position(r, 0) in self._island_bridges_z3]
+        constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number) if
+                                 Position(0, c) in self._island_bridges_z3]
+        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in
+                                   range(self._island_grid.columns_number) if Position(self._island_grid.rows_number - 1, c) in self._island_bridges_z3]
+        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in
+                                    range(self._island_grid.rows_number) if Position(r, self._island_grid.columns_number - 1) in self._island_bridges_z3]
+        constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number) if
+                                   Position(r, 0) in self._island_bridges_z3]
         self._solver.add(constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left)
 
     def _add_opposite_bridges_constraints(self):
@@ -129,12 +138,15 @@ class YajilinSolver(GameSolver):
             blacks_count = int(blacks_count_direction[0])
             direction = YajilinSolver.direction_map[blacks_count_direction[1]]
             concerned_positions = self.input_grid.all_positions_at(position, direction)
-            self._solver.add(sum([self._black_cells_z3[concerned_position] for concerned_position in concerned_positions if concerned_position in self._island_bridges_z3.keys()]) == blacks_count)
+            self._solver.add(sum([self._black_cells_z3[concerned_position] for concerned_position in concerned_positions if
+                                  concerned_position in self._island_bridges_z3.keys()]) == blacks_count)
 
     def _add_bridges_sum_constraints(self):
         for position in [position for position, value in self.input_grid if value == '']:
-            bridges_count_0 = sum([self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
-            bridges_count_2 = sum([self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
+            bridges_count_0 = sum(
+                [self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
+            bridges_count_2 = sum(
+                [self._island_bridges_z3[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
             black_cell = self._black_cells_z3[position]
             path_cell = Not(black_cell)
             self._solver.add(Implies(black_cell, bridges_count_0))
