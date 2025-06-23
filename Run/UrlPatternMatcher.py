@@ -20,6 +20,7 @@ from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
 from Domain.Puzzles.Linesweeper.LinesweeperSolver import LinesweeperSolver
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
+from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
@@ -31,6 +32,7 @@ from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
 from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
+from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
 from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
@@ -48,7 +50,9 @@ from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
 from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
+from Domain.Puzzles.TilePaint.TilePaintSolver import TilePaintSolver
 from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
+from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
@@ -124,6 +128,7 @@ from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzl
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
+from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
@@ -169,9 +174,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
-from Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
-from Puzzles.Yajilin.YajilinSolver import YajilinSolver
 
 
 class UrlPatternMatcher:
@@ -250,6 +252,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsPlayer),
             r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesPlayer),
             r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersPlayer),
+            "": (TilePaintSolver, GridPuzzleTilePaintGridProvider, None),
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
             r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
