@@ -6,7 +6,7 @@ class ZipPlayer(PlaywrightPlayer):
     game_name = "zip"
     def play(self, solution: LinearPathGrid):
         page = self.browser.pages[0]
-        frame = page.frames[0]
+        frame = page.frames[1]
         game_board = frame.wait_for_selector('.game-board')
         cells_divs = game_board.query_selector_all('div.trail-cell')
 
