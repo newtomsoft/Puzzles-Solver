@@ -33,6 +33,7 @@ https://gridpuzzle.com/yajilin/evil-12
 ## Linkedin
 https://www.linkedin.com/games/zip/  
 https://www.linkedin.com/games/queens/  
+https://www.linkedin.com/games/tango/  
 
 ## Puzzle Mobiles
 https://www.puzzle-aquarium.com/?size=8  

@@ -75,6 +75,7 @@ from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
+from GridPlayers.LinkedIn.TangoPlayer import TangoPlayer
 from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
@@ -132,6 +133,7 @@ from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8
 from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
+from GridProviders.Linkedin.TangoGridProvider import TangoGridProvider
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronCalcudokuGridProvider import PuzzleBaronCalcudokuGridProvider
@@ -247,6 +249,7 @@ class UrlPatternMatcher:
             r"https://escape-sudoku.com/": (SudokuSolver, EscapeSudokuGridProvider, None),
             r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuPlayer),  # same player as masyu
             r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
+            r"https://www\.linkedin\.com/games/tango": (BinairoPlusSolver, TangoGridProvider, TangoPlayer),
             r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleGalaxiesGridProvider, PuzzleGalaxiesPlayer),
             r"https://.*gridpuzzle\.com/galaxies": (TentaiShowSolver, GridPuzzleGalaxiesGridProvider, GridPuzzleGalaxiesPlayer),
