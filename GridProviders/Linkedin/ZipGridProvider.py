@@ -22,7 +22,7 @@ class ZipGridProvider(GridProvider, PlaywrightGridProvider):
         cells_divs = game_board.query_selector_all('div.trail-cell')
 
         numbers = []
-        for index, cell_div in enumerate(cells_divs):
+        for cell_div in cells_divs:
             text = cell_div.text_content().strip()
             numbers.append(int(text) if text else 0)
 
