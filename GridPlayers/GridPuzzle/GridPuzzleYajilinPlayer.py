@@ -2,4 +2,4 @@
 
 
 class GridPuzzleYajilinPlayer(GridPuzzleLoopAndBlackCellsPlayer):
-    game_name: str = "yajilin"
+    game_name = "yajilin"
