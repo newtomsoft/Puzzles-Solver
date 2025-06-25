@@ -13,6 +13,6 @@ class GridPuzzleLinesweeperGridProvider(GridProvider, PlaywrightGridProvider, Gr
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
         pqq_string_list, size = self._get_canvas_data(html_page)
-        data_grid = pqq_string_list[0]
+        data_grid = pqq_string_list
         matrix = [[int(number) if (number:=data_grid[i * size + j]) != '.' else -1 for j in range(size)] for i in range(size)]
         return Grid(matrix)

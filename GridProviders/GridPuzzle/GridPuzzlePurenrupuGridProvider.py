@@ -13,6 +13,6 @@ class GridPuzzlePurenrupuGridProvider(GridProvider, PlaywrightGridProvider, Grid
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
         pqq_string_list, size = self._get_canvas_data(html_page)
-        data_grid = pqq_string_list[0]
+        data_grid = pqq_string_list
         matrix = [[1 if data_grid[i * size + j] == "#" else 0 for j in range(size)] for i in range(size)]
         return Grid(matrix)
