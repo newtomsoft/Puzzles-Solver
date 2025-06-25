@@ -20,15 +20,22 @@ class TangoGridProvider(GridProvider, PlaywrightGridProvider):
         cells_divs = board.query_selector_all('div.lotka-cell')
         grid_size = int(len(cells_divs) ** 0.5)
         content = []
+        suns = 0
+        moons = 0
         for cell_div in cells_divs:
             svg = cell_div.query_selector('svg')
             value = -1
-            if svg.get_attribute('aria-label') in ['1', 'Sara Blakely']:
+            if svg.get_attribute('aria-label') in ['Soleil', 'Sara Blakely']:
                 value = 1
-            elif svg.get_attribute('aria-label') in ['0', 'Talons']:
+                suns += 1
+            elif svg.get_attribute('aria-label') in ['Lune', 'Talons']:
                 value = 0
+                moons += 1
 
             content.append(value)
+
+        if suns + moons == 0:
+            raise ValueError("No suns or moons found in the grid")
 
         matrix = [[content[int(i * grid_size + j)] for j in range(int(grid_size))] for i in range(int(grid_size))]
 
