@@ -14,9 +14,11 @@ class PuzzleMainConsole:
 
         match url:
             case "queens":
-                url = "https://www.linkedin.com/games/queens/"
+                url = "https://www.linkedin.com/games/queens"
             case "zip":
-                url = "https://www.linkedin.com/games/zip/"
+                url = "https://www.linkedin.com/games/zip"
+            case "tango":
+                url = "https://www.linkedin.com/games/tango"
 
         game_component_factory = GameComponentFactory()
         game_solver, data_game, game_player = game_component_factory.create_components_from_url(url)
