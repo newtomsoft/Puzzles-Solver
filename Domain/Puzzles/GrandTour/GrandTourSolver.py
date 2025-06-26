@@ -12,15 +12,15 @@ class GrandTourSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
-        self.init_island_grid()
+        self._init_island_grid()
         self._solver = Solver()
         self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
 
-    def init_island_grid(self):
+    def _init_island_grid(self):
         self._island_grid = IslandGrid(
-            [[Island(Position(r, c), 2) for c in range(self._input_grid.columns_number)] for r in
-             range(self._input_grid.rows_number)])
+            [[Island(Position(r, c), 2) for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)]
+        )
 
     def _init_solver(self):
         self._island_bridges_z3 = {
@@ -47,7 +47,7 @@ class GrandTourSolver(GameSolver):
                         continue
                     bridges_number = model.eval(bridges).as_long()
                     if bridges_number > 0:
-                        self._island_grid[position].set_bridge(
+                        self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[
                         position].direction_position_bridges:
@@ -66,7 +66,7 @@ class GrandTourSolver(GameSolver):
                         cell_constraints.append(self._island_bridges_z3[position][direction] == value)
                 not_loop_constraints.append(Not(And(cell_constraints)))
             self._solver.add(And(not_loop_constraints))
-            self.init_island_grid()
+            self._init_island_grid()
 
         return IslandGrid.empty(), proposition_count
 
@@ -77,7 +77,7 @@ class GrandTourSolver(GameSolver):
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
         self._solver.add(Not(And(previous_solution_constraints)))
 
-        self.init_island_grid()
+        self._init_island_grid()
         return self.get_solution()
 
     def _add_constraints(self):
@@ -87,15 +87,20 @@ class GrandTourSolver(GameSolver):
 
     def _add_all_cells_crossed_constraints(self):
         for position, direction_bridges in self._island_bridges_z3.items():
-            bridges_count_vars = list(direction_bridges.values())
-            self._solver.add(sum(bridges_count_vars) == 2)
             for bridges in direction_bridges.values():
                 self._solver.add(And(bridges >= 0, bridges <= 1))
+            self._solver.add(sum(direction_bridges.values()) == 2)
 
     def _add_initial_constraints(self):
-        for position, value in [(position, value) for position, value in self._input_grid if isinstance(value, Island)]:
-            pass
-
+        for position, island in [(position, island) for position, island in self._input_grid if isinstance(island, Island)]:
+            if island.bridges_number(Direction.right()) > 0:
+                self._solver.add(self._island_bridges_z3[position][Direction.right()] == island.bridges_number(Direction.right()))
+            if island.bridges_number(Direction.down()) > 0:
+                self._solver.add(self._island_bridges_z3[position][Direction.down()] == island.bridges_number(Direction.down()))
+            if island.bridges_number(Direction.left()) > 0:
+                self._solver.add(self._island_bridges_z3[position][Direction.left()] == island.bridges_number(Direction.left()))
+            if island.bridges_number(Direction.up()) > 0:
+                self._solver.add(self._island_bridges_z3[position][Direction.up()] == island.bridges_number(Direction.up()))
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
