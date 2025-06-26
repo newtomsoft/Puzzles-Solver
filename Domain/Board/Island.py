@@ -1,23 +1,26 @@
-from typing import Dict, Tuple
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
 
 
 class Island:
-    def __init__(self, position: Position, bridges: int, positions_bridges: Dict[Position, int] = None):
+    def __init__(self, position: Position, bridges: int, positions_bridges: dict[Position, int] = None):
         self.position = position
         self.bridges_count = bridges
         if bridges < 0 or bridges > 8:
             raise ValueError("Bridges must be between 0 and 8")
-        self.direction_position_bridges: Dict[Direction, Tuple[Position, int]] = {}
+        self.direction_position_bridges: dict[Direction, tuple[Position, int]] = {}
         if positions_bridges is not None:
             for position, bridges in positions_bridges.items():
-                self.set_bridge(position, bridges)
+                self.set_bridge_to_position(position, bridges)
 
-    def set_bridge(self, position: Position, number: int):
+    def set_bridge_to_position(self, position: Position, number: int):
         direction = self.position.direction_to(position)
         self.direction_position_bridges[direction] = position, number
+
+    def set_bridge_to_direction(self, direction: Direction, number: int):
+        to_position = self.position.after(direction)
+        self.direction_position_bridges[direction] = to_position, number
 
     def set_bridges_count_according_to_directions_bridges(self):
         self.bridges_count = sum([bridges for (_, bridges) in self.direction_position_bridges.values()])

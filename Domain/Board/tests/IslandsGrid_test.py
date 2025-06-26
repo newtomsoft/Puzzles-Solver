@@ -18,8 +18,8 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶──╴ '
@@ -32,10 +32,10 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, island02]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island01.set_bridge(Position(0, 2), 1)
-        island02.set_bridge(Position(0, 1), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(0, 2), 1)
+        island02.set_bridge_to_position(Position(0, 1), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶─────╴ '
@@ -47,8 +47,8 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00], [island10]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(1, 0), 1)
-        island10.set_bridge(Position(0, 0), 1)
+        island00.set_bridge_to_position(Position(1, 0), 1)
+        island10.set_bridge_to_position(Position(0, 0), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = (
@@ -64,10 +64,10 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00], [island10], [island20]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(1, 0), 1)
-        island10.set_bridge(Position(0, 0), 1)
-        island10.set_bridge(Position(2, 0), 1)
-        island20.set_bridge(Position(1, 0), 1)
+        island00.set_bridge_to_position(Position(1, 0), 1)
+        island10.set_bridge_to_position(Position(0, 0), 1)
+        island10.set_bridge_to_position(Position(2, 0), 1)
+        island20.set_bridge_to_position(Position(1, 0), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = (
@@ -85,14 +85,14 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01], [island10, island11]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(1, 0), 1)
-        island00.set_bridge(Position(0, 1), 1)
-        island10.set_bridge(Position(0, 0), 1)
-        island10.set_bridge(Position(1, 1), 1)
-        island01.set_bridge(Position(1, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island11.set_bridge(Position(0, 1), 1)
-        island11.set_bridge(Position(1, 0), 1)
+        island00.set_bridge_to_position(Position(1, 0), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island10.set_bridge_to_position(Position(0, 0), 1)
+        island10.set_bridge_to_position(Position(1, 1), 1)
+        island01.set_bridge_to_position(Position(1, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island11.set_bridge_to_position(Position(0, 1), 1)
+        island11.set_bridge_to_position(Position(1, 0), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = (
@@ -108,8 +108,8 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, island02]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶──╴    '
@@ -125,10 +125,10 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, none_island02, island03, island04]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island03.set_bridge(Position(0, 4), 1)
-        island04.set_bridge(Position(0, 3), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island03.set_bridge_to_position(Position(0, 4), 1)
+        island04.set_bridge_to_position(Position(0, 3), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶──╴     ╶──╴ '
@@ -144,10 +144,10 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, island02, island03, island04]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island03.set_bridge(Position(0, 4), 1)
-        island04.set_bridge(Position(0, 3), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island03.set_bridge_to_position(Position(0, 4), 1)
+        island04.set_bridge_to_position(Position(0, 3), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶──╴     ╶──╴ '
@@ -163,12 +163,12 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, none_island02, island03, island04]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island01.set_bridge(Position(0, 3), 1)
-        island03.set_bridge(Position(0, 4), 1)
-        island03.set_bridge(Position(0, 1), 1)
-        island04.set_bridge(Position(0, 3), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(0, 3), 1)
+        island03.set_bridge_to_position(Position(0, 4), 1)
+        island03.set_bridge_to_position(Position(0, 1), 1)
+        island04.set_bridge_to_position(Position(0, 3), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶───────────╴ '
@@ -185,12 +185,12 @@ class IslandsGridTest(TestCase):
 
         island_matrix = [[island00, island01, none_island02, none_island03, island04, island05]]
         island_grid = IslandGrid(island_matrix)
-        island00.set_bridge(Position(0, 1), 1)
-        island01.set_bridge(Position(0, 0), 1)
-        island01.set_bridge(Position(0, 4), 1)
-        island04.set_bridge(Position(0, 5), 1)
-        island04.set_bridge(Position(0, 1), 1)
-        island05.set_bridge(Position(0, 4), 1)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(0, 4), 1)
+        island04.set_bridge_to_position(Position(0, 5), 1)
+        island04.set_bridge_to_position(Position(0, 1), 1)
+        island05.set_bridge_to_position(Position(0, 4), 1)
 
         island_grid_repr = repr(island_grid)
         expected_repr = ' ╶──────────────╴ '

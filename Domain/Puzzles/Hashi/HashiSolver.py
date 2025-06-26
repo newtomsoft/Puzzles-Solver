@@ -49,7 +49,7 @@ class HashiSolver(GameSolver):
                 for direction, bridges_var in direction_bridges.items():
                     bridges_number = self._solver.Value(bridges_var)
                     if bridges_number > 0:
-                        self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
+                        self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
 
             self._previous_solution = self._island_grid
             connected_positions = self._island_grid.get_connected_positions()
