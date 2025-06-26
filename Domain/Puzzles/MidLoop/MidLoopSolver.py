@@ -48,7 +48,7 @@ class MidLoopSolver:
                         continue
                     bridges_number = model.eval(bridges).as_long()
                     if bridges_number > 0:
-                        self._island_grid[position].set_bridge(
+                        self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[
                         position].direction_position_bridges:

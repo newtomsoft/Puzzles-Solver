@@ -1,5 +1,3 @@
-from typing import Dict
-
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
@@ -9,7 +7,7 @@ from Domain.Board.Position import Position
 class IslandGrid(Grid[Island]):
     def __init__(self, input_matrix: list[list[int | Island]]):
         super().__init__(input_matrix)
-        self.islands: Dict[Position, Island] = {}
+        self.islands: dict[Position, Island] = {}
         for position, island_or_bridges_number in self:
             if isinstance(island_or_bridges_number, Island) and island_or_bridges_number.bridges_count != 0:
                 self.islands[position] = island_or_bridges_number
@@ -58,8 +56,8 @@ class IslandGrid(Grid[Island]):
             if min_distances.get(Direction.down()) is not None:
                 island.direction_position_bridges[Direction.down()] = min_distances[Direction.down()][1], 0
 
-    def _compute_possible_crossover_bridges(self) -> list[Dict[Position, Direction]]:
-        possible_multiples_crossover_positions: Dict[Position, Dict[Position, Direction]] = {}
+    def _compute_possible_crossover_bridges(self) -> list[dict[Position, Direction]]:
+        possible_multiples_crossover_positions: dict[Position, dict[Position, Direction]] = {}
         for island in self.islands.values():
             island_position = island.position
             for direction, (other_position, _) in island.direction_position_bridges.items():
@@ -148,7 +146,7 @@ class IslandGrid(Grid[Island]):
             while position.after(direction, iteration) in self:
                 if position.after(direction, iteration) in self.islands.keys():
                     bridges_numbers = self.islands[position.after(direction, iteration)].bridges_number(direction.opposite)
-                    island.set_bridge(position.after(direction, iteration), bridges_numbers)
+                    island.set_bridge_to_position(position.after(direction, iteration), bridges_numbers)
                     break
                 iteration += 1
         island.set_bridges_count_according_to_directions_bridges()

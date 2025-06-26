@@ -29,12 +29,12 @@ class YajilinSolver(GameSolver):
     def _init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number)] for r in range(self.input_grid.rows_number)])
         for position in [position for position, value in self.input_grid if value != '']:
-            [self._island_grid[position].set_bridge(neighbor, 0) for neighbor in position.neighbors()]
+            [self._island_grid[position].set_bridge_to_position(neighbor, 0) for neighbor in position.neighbors()]
             self._island_grid[position].set_bridges_count_according_to_directions_bridges()
             for neighbor in position.neighbors():
                 if neighbor not in self._island_grid:
                     continue
-                self._island_grid[neighbor].set_bridge(position, 0)
+                self._island_grid[neighbor].set_bridge_to_position(position, 0)
 
     def _init_solver(self):
         self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in
@@ -63,7 +63,7 @@ class YajilinSolver(GameSolver):
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges_number in [(direction, model.eval(bridges).as_long()) for direction, bridges in direction_bridges.items() if
                                                   position.after(direction) in self._island_bridges_z3]:
-                    self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
+                    self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)

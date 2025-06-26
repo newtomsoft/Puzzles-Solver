@@ -45,7 +45,7 @@ class SurizaSolver(GameSolver):
                         continue
                     bridges_number = self._solver.value(bridges)
                     if bridges_number > 0:
-                        self._island_grid[position].set_bridge(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
+                        self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
