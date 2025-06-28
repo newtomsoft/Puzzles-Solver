@@ -93,15 +93,12 @@ class GrandTourSolverTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
-
         island11 = Island(Position(1, 1), 1)
         island11.set_bridge_to_position(Position(1, 2), 1)
         island11.set_bridges_count_according_to_directions_bridges()
-
         island20 = Island(Position(2, 0), 1)
         island20.set_bridge_to_position(Position(2, 1), 1)
         island20.set_bridges_count_according_to_directions_bridges()
-
         grid.set_value(Position(1, 1), island11)
         grid.set_value(Position(2, 0), island20)
 
@@ -126,15 +123,12 @@ class GrandTourSolverTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
-
         island10 = Island(Position(1, 0), 1)
         island10.set_bridge_to_position(Position(2, 0), 1)
         island10.set_bridges_count_according_to_directions_bridges()
-
         island22 = Island(Position(2, 2), 1)
         island22.set_bridge_to_position(Position(2, 3), 1)
         island22.set_bridges_count_according_to_directions_bridges()
-
         grid.set_value(Position(1, 0), island10)
         grid.set_value(Position(2, 2), island22)
 
@@ -164,35 +158,27 @@ class GrandTourSolverTests(TestCase):
         island01 = Island(Position(0, 1), 1)
         island01.set_bridge_to_position(Position(0, 2), 1)
         island01.set_bridges_count_according_to_directions_bridges()
-
         island10 = Island(Position(1, 0), 1)
         island10.set_bridge_to_position(Position(2, 0), 1)
         island10.set_bridges_count_according_to_directions_bridges()
-
         island23 = Island(Position(2, 3), 1)
         island23.set_bridge_to_position(Position(2, 4), 1)
         island23.set_bridges_count_according_to_directions_bridges()
-
         island24 = Island(Position(2, 4), 1)
         island24.set_bridge_to_position(Position(2, 5), 1)
         island24.set_bridges_count_according_to_directions_bridges()
-
         island31 = Island(Position(3, 1), 1)
         island31.set_bridge_to_position(Position(3, 2), 1)
         island31.set_bridges_count_according_to_directions_bridges()
-
         island33 = Island(Position(3, 3), 1)
         island33.set_bridge_to_position(Position(4, 3), 1)
         island33.set_bridges_count_according_to_directions_bridges()
-
         island43 = Island(Position(4, 3), 1)
         island43.set_bridge_to_position(Position(5, 3), 1)
         island43.set_bridges_count_according_to_directions_bridges()
-
         island53 = Island(Position(5, 3), 1)
         island53.set_bridge_to_position(Position(5, 4), 1)
         island53.set_bridges_count_according_to_directions_bridges()
-
         grid.set_value(Position(0, 1), island01)
         grid.set_value(Position(1, 0), island10)
         grid.set_value(Position(2, 3), island23)
