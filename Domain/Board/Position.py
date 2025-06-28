@@ -59,8 +59,8 @@ class Position:
             return Position(self.r, self.c - count)
         return self
 
-    def before(self, direction):
-        return self.after(direction.opposite)
+    def before(self, direction, count=1) -> 'Position':
+        return self.after(direction.opposite, count)
 
     @property
     def left(self):
