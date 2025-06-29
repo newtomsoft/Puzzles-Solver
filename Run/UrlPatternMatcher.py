@@ -9,6 +9,8 @@ from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
+from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
@@ -117,6 +119,7 @@ from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProv
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
+from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
@@ -179,7 +182,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
+
 
 
 class UrlPatternMatcher:
@@ -208,6 +211,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
+            r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, None),
             r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiPlayer),
             r"https://.*gridpuzzle\.com/bridges": (HashiSolver, GridPuzzleHashiGridProvider, GridPuzzleHashiPlayer),
