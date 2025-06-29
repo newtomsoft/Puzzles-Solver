@@ -32,6 +32,7 @@ class PuzzleMainConsole:
     def run_solver(puzzle_game: type[GameSolver], data_game):
         from GameComponentFactory import GameComponentFactory
         game_component_factory = GameComponentFactory()
+        print("Solving...")
         game_solver = game_component_factory.create_solver(puzzle_game, data_game)
 
         start_time = time.time()
