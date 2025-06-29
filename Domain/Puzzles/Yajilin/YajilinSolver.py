@@ -7,7 +7,7 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
-from Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.GameSolver import GameSolver
 
 
 class YajilinSolver(GameSolver):

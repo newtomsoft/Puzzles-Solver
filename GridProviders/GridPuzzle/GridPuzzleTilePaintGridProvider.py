@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from Board.RegionsGrid import RegionsGrid
+from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleGridTagProvider import GridPuzzleGridTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
