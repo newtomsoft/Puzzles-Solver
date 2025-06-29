@@ -1,9 +1,11 @@
 import configparser
 import logging
 import os
+import tkinter as tk
+
 from abc import abstractmethod, ABC
 
-from playwright.sync_api import sync_playwright, BrowserContext
+from playwright.sync_api import BrowserContext, sync_playwright
 
 
 class PlaywrightGridProvider(ABC):
@@ -41,6 +43,7 @@ class PlaywrightGridProvider(ABC):
 
     def _read_config(self):
         self.headless = self.config['DEFAULT']['headless'] == 'True'
+        self.force_headless_if_screen_too_small = self.config['DEFAULT']['force_headless_if_screen_too_small'] == 'True'
         self.user_data_path = os.path.join(self.config_dir_path, self.config['DEFAULT']['user_data_path'])
         extensions_path = self.config['DEFAULT']['extensions_path']
         extensions_paths = extensions_path.split(',')
@@ -50,13 +53,19 @@ class PlaywrightGridProvider(ABC):
         self.password = self.config['DEFAULT']['password']
 
     def with_playwright(self, callback, source):
+        screen_width, screen_height = self.screen_size()
+        window_width, window_height = 800, 1080
+        if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):
+            self.headless = True
+            print('Screen too small, using headless mode')
+
         playwright = sync_playwright().start()
         browser_context = playwright.chromium.launch_persistent_context(
             self.user_data_path,
             record_video_dir="videos/",
-            record_video_size={"width": 1920, "height": 1080},
+            viewport={"width": window_width, "height": window_height},
+            record_video_size={"width": window_width, "height": window_height},
             headless=self.headless,
-            no_viewport=True,
             args=[
                 f'--disable-extensions-except={self.extensions_path}',
                 f'--load-extension={self.extensions_path}',
@@ -65,3 +74,11 @@ class PlaywrightGridProvider(ABC):
         )
         var = callback(browser_context, source)
         return var, browser_context
+
+    @staticmethod
+    def screen_size() -> tuple[int, int]:
+        root = tk.Tk()
+        root.withdraw()
+        width = root.winfo_screenwidth()
+        height = root.winfo_screenheight()
+        return width, height
