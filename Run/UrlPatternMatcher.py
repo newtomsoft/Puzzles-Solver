@@ -60,6 +60,7 @@ from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
+from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
@@ -211,7 +212,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
-            r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, None),
+            r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
             r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiPlayer),
             r"https://.*gridpuzzle\.com/bridges": (HashiSolver, GridPuzzleHashiGridProvider, GridPuzzleHashiPlayer),
