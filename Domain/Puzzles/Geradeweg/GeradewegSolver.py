@@ -1,5 +1,4 @@
-﻿from flask import current_app
-from z3 import *
+﻿from z3 import *
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -18,6 +17,7 @@ class GeradewegSolver:
         self._solver = Solver()
         self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
+        self._used_directions = [Direction.right(), Direction.down()]
 
     def init_island_grid(self):
         self._island_grid = IslandGrid(
@@ -106,27 +106,43 @@ class GeradewegSolver:
     def _add_lengths_constraints(self):
         for position, length in [(position, value) for position, value in self._input_grid if value > 0]:
             self._solver.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()) == 2)
-            length_vertically_constraints = self._length_constraints(position, length, Direction.down())
-            length_horizontally_constraints = self._length_constraints(position, length, Direction.right())
-            self._solver.add(Or(length_vertically_constraints, length_horizontally_constraints))
+            constraints = []
+            for direction in self._used_directions:
+                constraints.append(self._length_constraint(position, length, direction))
+            self._solver.add(Or(constraints))
 
-    def _length_constraints(self, position: Position, length: int, direction: Direction):
+    def _length_constraint(self, position: Position, length: int, direction: Direction):
+        constraints = [self._extremities_constraint(position, length, direction)]
+
+        for before_offset in range(1, length):
+            constraints.append(self._offsets_constraint(position, length, direction, before_offset))
+        return Or(constraints)
+
+    def _extremities_constraint(self, position: Position, length: int, direction: Direction):
         constraints = []
-        for before_length in range(0, length + 1):
-            after_length = length - before_length
-            first_position = position.before(direction, before_length)
-            last_position = position.after(direction, after_length)
-            if first_position not in self._input_grid or last_position not in self._input_grid:
-                continue
-            between_positions = first_position.get_positions_to(last_position)
-            current_constraints = [
-                self._island_bridges_z3[first_position][direction] == 1,
-                self._island_bridges_z3[first_position][direction.opposite] == 0,
-                self._island_bridges_z3[last_position][direction] == 0,
-                self._island_bridges_z3[last_position][direction.opposite] == 1
-            ]
-            for current_position in between_positions:
-                current_constraints.append(self._island_bridges_z3[current_position][direction] == 1)
-                current_constraints.append(self._island_bridges_z3[current_position][direction.opposite] == 1)
-            constraints.append(And(current_constraints))
-        return Or(constraints) if constraints else False
+        other_direction = next(other_direction for other_direction in self._used_directions if other_direction != direction)
+        other_direction_before_constraints = self._offsets_constraint(position, length, other_direction, 0)
+        other_direction_after_constraints = self._offsets_constraint(position, length, other_direction, length)
+        before_constraints = self._offsets_constraint(position, length, direction, 0)
+        constraints.append(And(before_constraints, Or(other_direction_before_constraints, other_direction_after_constraints)))
+        after_constraints = self._offsets_constraint(position, length, direction, length)
+        constraints.append(And(after_constraints, Or(other_direction_before_constraints, other_direction_after_constraints)))
+        return Or(constraints)
+
+    def _offsets_constraint(self, position: Position, length: int, direction: Direction, before_offset: int):
+        after_offset = length - before_offset
+        first_position = position.before(direction, before_offset)
+        last_position = position.after(direction, after_offset)
+        if first_position not in self._input_grid or last_position not in self._input_grid:
+            return False
+        between_positions = first_position.get_positions_to(last_position)
+        current_constraints = [
+            self._island_bridges_z3[first_position][direction] == 1,
+            self._island_bridges_z3[first_position][direction.opposite] == 0,
+            self._island_bridges_z3[last_position][direction] == 0,
+            self._island_bridges_z3[last_position][direction.opposite] == 1
+        ]
+        for current_position in between_positions:
+            current_constraints.append(self._island_bridges_z3[current_position][direction] == 1)
+            current_constraints.append(self._island_bridges_z3[current_position][direction.opposite] == 1)
+        return And(current_constraints)
