@@ -8,18 +8,19 @@ from Domain.Board.Position import Position
 
 
 class GeradewegSolver:
+    _used_directions = [Direction.right(), Direction.down()]
+
     def __init__(self, grid: Grid):
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
-        self.rows_number = self._input_grid.rows_number
-        self.columns_number = self._input_grid.columns_number
-        self.init_island_grid()
+        self._rows_number = self._input_grid.rows_number
+        self._columns_number = self._input_grid.columns_number
+        self._init_island_grid()
         self._solver = Solver()
         self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
-        self._used_directions = [Direction.right(), Direction.down()]
 
-    def init_island_grid(self):
+    def _init_island_grid(self):
         self._island_grid = IslandGrid(
             [[Island(Position(r, c), 2) for c in range(self._input_grid.columns_number)] for r in
              range(self._input_grid.rows_number)])
@@ -68,7 +69,7 @@ class GeradewegSolver:
                         cell_constraints.append(self._island_bridges_z3[position][direction] == value)
                 not_loop_constraints.append(Not(And(cell_constraints)))
             self._solver.add(And(not_loop_constraints))
-            self.init_island_grid()
+            self._init_island_grid()
 
         return IslandGrid.empty(), proposition_count
 
@@ -79,7 +80,7 @@ class GeradewegSolver:
                 previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
         self._solver.add(Not(And(previous_solution_constraints)))
 
-        self.init_island_grid()
+        self._init_island_grid()
         return self.get_solution()
 
     def _add_constraints(self):
