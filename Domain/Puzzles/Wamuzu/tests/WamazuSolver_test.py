@@ -134,6 +134,43 @@ class WamazuSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
+    def test_solution_12x12_0ym72(self):
+        # https://fr.gridpuzzle.com/wamuzu/0ym72
+        grid = Grid([
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+            [1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1],
+            [1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+            [0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0]
+        ])
+        expected_solution_str = (
+            ' ┌──┐  ┌──┐  ┌──┐  ╶──┐  ┌──┐  ╶──┐ \n'
+            ' ╵  └──┘  ╵  ╵  └──┐  └──┘  ╵  ┌──┘ \n'
+            ' ╷  ┌──╴  ┌──┐  ┌──┘  ╷  ╶──┐  └──┐ \n'
+            ' └──┘  ┌──┘  └──┘  ┌──┘  ╷  └──┐  ╵ \n'
+            ' ╷  ┌──┘  ┌──┐  ╷  └──┐  └──┐  └──┐ \n'
+            ' └──┘  ┌──┘  └──┘  ╶──┘  ╶──┘  ╷  ╵ \n'
+            ' ┌──┐  ╵  ┌──┐  ┌──┐  ┌──┐  ┌──┘  ╷ \n'
+            ' ╵  ╵  ┌──┘  └──┘  └──┘  └──┘  ┌──┘ \n'
+            ' ┌──┐  └──╴  ╷  ┌──╴  ┌──╴  ┌──┘  ╷ \n'
+            ' ╵  ╵  ╶──┐  └──┘  ┌──┘  ╶──┘  ┌──┘ \n'
+            ' ╷  ┌──┐  └──┐  ┌──┘  ┌──┐  ╶──┘  ╷ \n'
+            ' └──┘  └──╴  └──┘  ╶──┘  └──╴  ╶──┘ '
+        )
+
+        game_solver = WamazuSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
