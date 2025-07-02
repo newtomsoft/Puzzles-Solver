@@ -80,11 +80,11 @@ class WamazuSolver:
         return self.get_solution()
 
     def _add_constraints(self):
-        self._add_initial_constraints()
+        self._add_circles_constraints()
+        self._add_turns_constraints()
         self._add_opposite_bridges_constraints()
-        self._add_turn_constraints()
 
-    def _add_initial_constraints(self):
+    def _add_circles_constraints(self):
         for position in [position for position, value in self._input_grid if value == 1]:
             bridges = self._island_bridges_z3[position]
             bridges_count_vars = list(bridges.values())
@@ -92,6 +92,7 @@ class WamazuSolver:
             for direction_bridges in bridges.values():
                 self._solver.add(And(direction_bridges >= 0, direction_bridges <= 1))
 
+    def _add_turns_constraints(self):
         for position in [position for position, value in self._input_grid if value != 1]:
             bridges = self._island_bridges_z3[position]
             self._solver.add(Or(
@@ -111,6 +112,3 @@ class WamazuSolver:
                                      self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite])
                 else:
                     self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
-
-    def _add_turn_constraints(self):
-        pass
