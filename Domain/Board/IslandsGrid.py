@@ -102,6 +102,40 @@ class IslandGrid(Grid[Island]):
 
         return visited_positions
 
+    def get_loop_positions(self) -> set[Position]:
+        concerned_islands_count = len(self.islands)
+        visited_flat: set[Position] = set()
+        while len(visited_flat) != concerned_islands_count:
+            position = next(island.position for island in self.islands.values() if island.position not in visited_flat)
+            is_loop, positions = self._is_loop(position)
+            if is_loop:
+                return positions
+            visited_flat.update(positions)
+        return set()
+
+    def _is_loop(self, position: Position | None = None, visited_positions=None, previous_position=None) -> tuple[bool, set[Position]]:
+        if position is None:
+            position = next(island.position for island in self.islands.values() if island.bridges_count > 0)
+        if visited_positions is None:
+            visited_positions = set()
+        if position in visited_positions:
+            return True, visited_positions
+        visited_positions.add(position)
+        position_bridges = self.islands[position].direction_position_bridges.values()
+        for position_bridge in position_bridges:
+            if position_bridge[1] == 0:
+                continue
+            current_position = position_bridge[0]
+            if current_position == previous_position:
+                continue
+            if current_position in visited_positions:
+                return True, visited_positions
+            is_loop, _ = self._is_loop(current_position, visited_positions, position)
+            if is_loop:
+                return True, visited_positions
+
+        return False, visited_positions
+
     def follow_path(self, position: Position | None = None, visited_positions=None) -> list[Position]:
         if position is None:
             position = next(island.position for island in self.islands.values() if island.bridges_count > 0)
