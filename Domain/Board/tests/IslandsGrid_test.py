@@ -196,3 +196,40 @@ class IslandsGridTest(TestCase):
         expected_repr = ' ╶──────────────╴ '
 
         self.assertEqual(expected_repr, island_grid_repr)
+
+    def test_follow_path_without_loop(self):
+        island00 = Island(Position(0, 0), 1)
+        island01 = Island(Position(0, 1), 2)
+        island11 = Island(Position(1, 1), 1)
+
+        island_matrix = [[island00, island01], [None, island11]]
+        island_grid = IslandGrid(island_matrix)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(1, 1), 1)
+        island11.set_bridge_to_position(Position(0, 1), 1)
+
+        connected_positions = island_grid.follow_path(Position(0, 0))
+        expected_positions = [Position(0, 0), Position(0, 1), Position(1, 1)]
+        self.assertEqual(expected_positions, connected_positions)
+
+    def test_follow_path_with_loop(self):
+        island00 = Island(Position(0, 0), 2)
+        island01 = Island(Position(0, 1), 2)
+        island11 = Island(Position(1, 1), 2)
+        island10 = Island(Position(1, 0), 2)
+
+        island_matrix = [[island00, island01], [island10, island11]]
+        island_grid = IslandGrid(island_matrix)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island00.set_bridge_to_position(Position(1, 0), 1)
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(1, 1), 1)
+        island11.set_bridge_to_position(Position(0, 1), 1)
+        island11.set_bridge_to_position(Position(1, 0), 1)
+        island10.set_bridge_to_position(Position(0, 0), 1)
+        island10.set_bridge_to_position(Position(1, 1), 1)
+
+        connected_positions = island_grid.follow_path(Position(0, 0))
+        expected_positions = [Position(0, 0), Position(0, 1), Position(1, 1), Position(1, 0)]
+        self.assertEqual(expected_positions, connected_positions)
