@@ -94,7 +94,7 @@ class Position:
     def down_right(self):
         return Position(self.r + 1, self.c + 1)
 
-    def get_positions_to(self, position: 'Position') -> list['Position']:
+    def all_positions_between(self, position: 'Position') -> list['Position']:
         if self.r == position.r:
             return [Position(self.r, c) for c in range(min(self.c, position.c) + 1, max(self.c, position.c))]
         if self.c == position.c:
