@@ -23,6 +23,51 @@ class IslandGrid(Grid[Island]):
         self.possible_crossover_bridge = self._compute_possible_crossover_bridges()
 
     @staticmethod
+    def from_walls_grid(grid: Grid, with_edges: bool=False) -> 'IslandGrid':
+        input_matrix = [[Island(Position(r, c), 1) for c in range(grid.columns_number+1)] for r in range(grid.rows_number+1)]
+        island_grid = IslandGrid(input_matrix)
+        positions_with_bridges = set()
+        for position0, position1 in grid.walls:
+            if position0 > position1:
+                position0, position1 = position1, position0
+            if position0.direction_to(position1) == Direction.right():
+                island_grid[position1].set_bridge_to_position(position1.down, 1)
+                island_grid[position1.down].set_bridge_to_position(position1, 1)
+                positions_with_bridges.add(position1)
+                positions_with_bridges.add(position1.down)
+            elif position0.direction_to(position1) == Direction.down():
+                island_grid[position1].set_bridge_to_position(position1.right, 1)
+                island_grid[position1.right].set_bridge_to_position(position1, 1)
+                positions_with_bridges.add(position1)
+                positions_with_bridges.add(position1.right)
+
+        if not with_edges:
+            for position, _ in island_grid:
+                island_grid[position].set_bridges_count_according_to_directions_bridges()
+            return island_grid
+
+        for position in island_grid.edge_up_positions()[:-1]:
+            island_grid[position].set_bridge_to_position(position.right, 1)
+        for position in island_grid.edge_up_positions()[1:]:
+            island_grid[position].set_bridge_to_position(position.left, 1)
+        for position in island_grid.edge_down_positions()[:-1]:
+            island_grid[position].set_bridge_to_position(position.right, 1)
+        for position in island_grid.edge_down_positions()[1:]:
+            island_grid[position].set_bridge_to_position(position.left, 1)
+        for position in island_grid.edge_left_positions()[:-1]:
+            island_grid[position].set_bridge_to_position(position.down, 1)
+        for position in island_grid.edge_left_positions()[1:]:
+            island_grid[position].set_bridge_to_position(position.up, 1)
+        for position in island_grid.edge_right_positions()[:-1]:
+            island_grid[position].set_bridge_to_position(position.down, 1)
+        for position in island_grid.edge_right_positions()[1:]:
+            island_grid[position].set_bridge_to_position(position.up, 1)
+
+        for position, _ in island_grid:
+            island_grid[position].set_bridges_count_according_to_directions_bridges()
+        return island_grid
+
+    @staticmethod
     def empty() -> 'IslandGrid':
         return IslandGrid([[]])
 
@@ -63,7 +108,7 @@ class IslandGrid(Grid[Island]):
             for direction, (other_position, _) in island.direction_position_bridges.items():
                 if island_position.distance_to(other_position) == 1 or direction == Direction.left() or direction == Direction.up():
                     continue
-                cross_positions = island_position.get_positions_to(other_position)
+                cross_positions = island_position.all_positions_between(other_position)
                 for cross_position in cross_positions:
                     if possible_multiples_crossover_positions.get(cross_position) is None:
                         possible_multiples_crossover_positions[cross_position] = {}
