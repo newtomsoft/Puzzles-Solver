@@ -136,7 +136,7 @@ class GeradewegSolver:
         last_position = position.after(direction, after_offset)
         if first_position not in self._input_grid or last_position not in self._input_grid:
             return False
-        between_positions = first_position.get_positions_to(last_position)
+        between_positions = first_position.all_positions_between(last_position)
         current_constraints = [
             self._island_bridges_z3[first_position][direction] == 1,
             self._island_bridges_z3[first_position][direction.opposite] == 0,
