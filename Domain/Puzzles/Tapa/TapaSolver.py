@@ -1,7 +1,7 @@
 ﻿from z3 import Solver, Bool, Not, And, Or, is_true, sat
 
-from Domain.Board.Position import Position
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
@@ -75,7 +75,7 @@ class TapaSolver(GameSolver):
                     Not(self._grid_z3.value(r + 1, c + 1))
                 ))
 
-    def _ensure_all_black_connected(self) -> (Grid, int):
+    def _ensure_all_black_connected(self) -> tuple[Grid, int]:
         proposition_count = 0
         while self._solver.check() == sat:
             model = self._solver.model()
