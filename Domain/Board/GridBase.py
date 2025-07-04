@@ -17,7 +17,7 @@ class GridBase[T]:
         self._matrix = matrix
         self.rows_number = len(matrix)
         self.columns_number = len(matrix[0])
-        self._walls: set[FrozenSet[Position, Position]] = set()
+        self._walls: set[FrozenSet[Position]] = set()
 
     def __getitem__(self, key) -> T:
         if isinstance(key, Position):
@@ -228,6 +228,11 @@ class GridBase[T]:
     def set_walls(self, walls: set[FrozenSet[Position]]):
         self._walls = walls
 
+    def add_wall(self, wall: list[Position]):
+        if len(wall) != 2:
+            raise ValueError("Un mur doit contenir exactement deux positions")
+        self._walls.add(frozenset(wall))
+
     def copy_walls_from_grid(self, other_grid: 'GridBase'):
         self._walls = other_grid._walls
 
@@ -242,11 +247,18 @@ class GridBase[T]:
         return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
 
     def neighbors_positions(self, position: Position, mode='orthogonal') -> set[Position]:
+        if mode == 'diagonal_only':
+            return {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
+
         orthogonal_neighbors = {self.neighbor_up(position), self.neighbor_down(position), self.neighbor_left(position), self.neighbor_right(position)} - {None}
         if mode == 'orthogonal':
             return orthogonal_neighbors
-        diagonal_neighbors = {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
-        return orthogonal_neighbors | diagonal_neighbors
+
+        if mode == 'diagonal':
+            diagonal_neighbors = {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
+            return orthogonal_neighbors | diagonal_neighbors
+
+        raise ValueError(f"Invalid mode: {mode}")
 
     def neighbor_up(self, position: Position) -> Position:
         return position.up if position.up in self and {position, position.up} not in self._walls else None
