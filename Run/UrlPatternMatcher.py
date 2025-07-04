@@ -132,6 +132,7 @@ from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleN
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleRenkatsuGridProvider import GridPuzzleRenkatsuGridProvider
+from GridProviders.GridPuzzle.GridPuzzleSeeThroughGridProvider import GridPuzzleSeeThroughGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
@@ -185,6 +186,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
+from Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
 from Puzzles.Wamuzu.WamazuSolver import WamazuSolver
 
 
@@ -244,6 +246,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
             r"https://.*gridpuzzle\.com/pure-loop": (PurenrupuSolver, GridPuzzlePurenrupuGridProvider, GridPuzzlePurenrupuPlayer),
             r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, GridPuzzleRenkatsuPlayer),
+            r"https://.*gridpuzzle\.com/seethrough":(SeeThroughSolver, GridPuzzleSeeThroughGridProvider, None),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuPlayer),
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuPlayer),  # same player as masyu
             r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiPlayer),
