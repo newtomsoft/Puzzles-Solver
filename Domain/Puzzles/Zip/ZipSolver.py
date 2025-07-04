@@ -21,7 +21,7 @@ class ZipSolver(GameSolver):
 
     def get_solution(self) -> LinearPathGrid:
         if self._solver_impl:
-            return self._solver_impl.get_solution()
+            return self._solver_impl.get_solution
 
         self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._grid_z3.copy_walls_from_grid(self._grid)
