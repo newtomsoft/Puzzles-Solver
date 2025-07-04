@@ -15,7 +15,7 @@ class VectorsSolver(GameSolver):
         self._previous_solution: Grid | None = None
         self._black_positions_with_region_number: dict[Position, int] = {}
 
-    def get_solution(self) -> (Grid, int):
+    def get_solution(self) -> Grid:
         black_cell_count = [1 for position, value in self._grid if type(value) is int and value >= 0].count(1)
         self._grid_vars = [[self._model.NewIntVar(1, black_cell_count, f"grid_{r}_{c}") 
                            for c in range(self.columns_number)] 
