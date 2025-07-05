@@ -23,6 +23,7 @@ https://gridpuzzle.com/mid-loop/hard-12
 https://gridpuzzle.com/renkatsu/size-6  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
+https://gridpuzzle.com/seethrough/evil-10  
 https://gridpuzzle.com/starbattle/size-10  
 https://gridpuzzle.com/starbattle2/size-11  
 https://gridpuzzle.com/str8ts/evil-9  
