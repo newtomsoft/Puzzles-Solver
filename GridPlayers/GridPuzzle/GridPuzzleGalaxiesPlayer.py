@@ -15,7 +15,7 @@ class GridPuzzleGalaxiesPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
 
     def play(self, solution: Grid):
         self._solution = solution
-        cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution)
+        cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution.columns_number, solution.rows_number)
         video, rectangle = self._get_data_video_viewport(page)
 
         pairs_positions = self._find_unique_different_pairs_positions()
