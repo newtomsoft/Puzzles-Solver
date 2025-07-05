@@ -105,10 +105,8 @@ class PlaywrightPlayer(GridPlayer):
         cls.mouse_move(mouse, solution, end_position, cell_divs, steps=int(end_position.distance(start_position)))
         cls.mouse_up(mouse)
 
-    def _get_canvas_data(self, solution):
+    def _get_canvas_data(self, columns_number, rows_number):
         page = self.browser.pages[0]
-        rows_number = solution.rows_number
-        columns_number = solution.columns_number
         bounded_box = page.locator("canvas").bounding_box()
         x0 = bounded_box['x']
         y0 = bounded_box['y']

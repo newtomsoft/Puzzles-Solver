@@ -5,7 +5,7 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 class GridPuzzleLoopAndBlackCellsPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
     def play(self, solution: IslandGrid):
-        cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution)
+        cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution.columns_number, solution.rows_number)
         video, rectangle = self._get_data_video_viewport(page)
 
         self.mark_black_cells(cell_height, cell_width, page, solution, x0, y0)
