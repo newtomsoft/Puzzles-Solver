@@ -159,16 +159,6 @@ class Grid[T](GridBase[T]):
                 if new_visited != visited:
                     return new_visited
 
-        #
-        # directions = [(0, 1), (0, -1), (1, 0), (-1, 0)] if mode != 'diagonal' else [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-        # for dr, dc in directions:
-        #     if 0 <= position.r + dr < self.rows_number and 0 <= position.c + dc < self.columns_number and (position.r + dr, position.c + dc) not in visited:
-        #         current_position = position + Position(dr, dc)
-        #         if self.value(current_position) == value:
-        #             new_visited = self._depth_first_search(current_position, value, mode, visited)
-        #             if new_visited != visited:
-        #                 return new_visited
-
         return visited
 
     def _get_cell_of_value(self, value, excluded=None) -> Position | None:
