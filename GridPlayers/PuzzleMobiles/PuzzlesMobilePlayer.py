@@ -10,7 +10,8 @@ class PuzzlesMobilePlayer(PlaywrightPlayer):
     def play(self, solution):
         pass
 
-    def submit_score(self, page: Page):
+    @staticmethod
+    def submit_score(page: Page):
         page.wait_for_selector('.succ')
         score_submit_button = page.locator("#btnHallSubmit")
         if score_submit_button.count() > 0:
