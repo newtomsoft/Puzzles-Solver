@@ -1,7 +1,7 @@
 ﻿import uuid
 from typing import Collection
 
-from z3 import Solver, Int, sat, And, Not, Or
+from z3 import Solver, Int, sat, And, Not, Or, Implies
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -64,6 +64,7 @@ class NanroSolver(GameSolver):
         self._add_no_square_values_constraints()
         self._add_no_adjacents_same_values_with_other_regions__constraints()
         self._add_values_by_region_constraints()
+        self._add_no_isolated_values_constraints()
 
     def _add_initial_values_constraints(self):
         for position, value in [(position, value) for (position, value) in self._values_grid if value != self.no_filled_value]:
@@ -90,7 +91,11 @@ class NanroSolver(GameSolver):
             region_list = list(positions)
             for index, position in enumerate(region_list[:-2]):
                 for next_position in region_list[index + 1:]:
-                    self._solver.add(Or(self._grid_z3[position] == self._grid_z3[next_position], self._grid_z3[position] * self._grid_z3[next_position] == self.no_filled_value))
+                    self._solver.add(Or(
+                        self._grid_z3[position] == self._grid_z3[next_position],
+                        self._grid_z3[position] == self.no_filled_value,
+                        self._grid_z3[next_position] == self.no_filled_value)
+                    )
 
     def _add_count_values(self, positions: Collection[Position]):
         values_z3 = [self._grid_z3[position] for position in positions]
@@ -112,3 +117,10 @@ class NanroSolver(GameSolver):
         for position in region_positions:
             for neighbor_pos in [neighbor_position for neighbor_position in self._grid_z3.neighbors_positions(position) if neighbor_position not in region_positions]:
                 self._solver.add(Or(self._grid_z3[position] != self._grid_z3[neighbor_pos], self._grid_z3[position] == self.no_filled_value, neighbor_pos == self.no_filled_value))
+
+    def _add_no_isolated_values_constraints(self):
+        for position, _ in self._grid_z3:
+            neighbors_values = self._grid_z3.neighbors_values(position)
+            for index, neighbor_value in enumerate(neighbors_values):
+                other_values = neighbors_values[:index] + neighbors_values[index + 1:]
+                Implies(And([other_value == self.no_filled_value for other_value in other_values]), neighbor_value != self.no_filled_value)
