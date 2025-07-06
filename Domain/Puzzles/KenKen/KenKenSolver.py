@@ -18,7 +18,7 @@ class KenKenSolver(GameSolver):
         self._solver = Solver()
         self._previous_solution: Grid | None = None
 
-    def get_solution(self) -> (Grid | None, int):
+    def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         return self._compute_solution()
