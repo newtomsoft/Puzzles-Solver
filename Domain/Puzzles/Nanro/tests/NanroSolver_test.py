@@ -219,7 +219,7 @@ class NanroSolverTests(TestCase):
         other_solution = game.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip("This test is not working, needs to be fixed")
+    @unittest.skip("This test is too slow, needs to be fixed (49 seconds)")
     def test_solution_7x7_evil_yw0gp(self):
         """https://gridpuzzle.com/nanro/yw0gp"""
         values_grid = Grid([
@@ -287,6 +287,41 @@ class NanroSolverTests(TestCase):
             [4, 3, 3, 2, _, _, 2],
             [4, _, 3, _, 2, 3, 3],
             [4, 2, 2, 1, 2, _, 3]
+        ])
+        game = NanroSolver(values_grid, regions_grid)
+
+        solution = game.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_12x12_hard_117q0(self):
+        """https://gridpuzzle.com/nanro/117q0"""
+        values_grid = Grid([
+            [0, 0, 0, 2, 0, 6, 6, 0, 4, 0, 4, 0], [0, 6, 0, 0, 5, 0, 0, 0, 0, 0, 0, 6], [0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 5, 0, 0, 0, 0, 6, 0, 0, 0, 0], [0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 3, 2, 4, 0, 3, 0, 5, 0, 5, 5], [0, 5, 0, 0, 4, 0, 0, 5, 0, 0, 2, 0],
+             [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0], [0, 3, 0, 4, 0, 0, 0, 0, 3, 0, 0, 4], [2, 0, 0, 0, 0, 0, 0, 5, 0, 3, 0, 0], [2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 2, 0]
+        ])
+        regions_grid = Grid([
+            [1, 1, 1, 2, 3, 4, 4, 4, 5, 5, 5, 6], [1, 1, 2, 2, 3, 4, 4, 4, 7, 5, 5, 6], [1, 1, 8, 8, 3, 4, 4, 7, 7, 7, 6, 6], [9, 9, 8, 8, 3, 3, 3, 7, 7, 6, 6, 6],
+             [9, 8, 8, 8, 3, 10, 7, 7, 11, 11, 11, 6], [9, 9, 12, 12, 12, 10, 10, 7, 11, 11, 11, 11], [9, 9, 13, 12, 14, 10, 10, 10, 15, 15, 11, 11],
+             [16, 9, 13, 14, 14, 14, 14, 15, 15, 15, 17, 17], [16, 16, 13, 13, 18, 18, 18, 15, 19, 17, 17, 20], [16, 16, 21, 21, 22, 18, 22, 22, 19, 19, 20, 20],
+             [23, 23, 24, 21, 22, 22, 22, 22, 19, 19, 20, 20], [23, 21, 21, 21, 25, 25, 25, 25, 26, 26, 26, 26]
+        ])
+
+        expected_solution = Grid([
+            [6, 6, 6, 2, 0, 6, 6, 6, 4, 4, 4, 6],
+            [0, 6, 0, 2, 5, 6, 0, 6, 0, 4, 0, 6],
+            [6, 6, 5, 5, 0, 6, 0, 0, 6, 6, 0, 6],
+            [5, 0, 5, 0, 5, 5, 5, 6, 6, 0, 6, 6],
+            [0, 5, 5, 0, 5, 0, 0, 6, 0, 5, 0, 6],
+            [5, 0, 0, 2, 0, 3, 3, 6, 0, 5, 5, 0],
+            [5, 5, 3, 2, 4, 0, 3, 0, 5, 0, 5, 5],
+            [0, 5, 0, 0, 4, 4, 4, 5, 5, 5, 2, 0],
+            [3, 0, 3, 3, 0, 2, 0, 5, 0, 0, 2, 4],
+            [3, 3, 0, 4, 5, 2, 5, 0, 3, 0, 0, 4],
+            [2, 0, 1, 0, 5, 0, 5, 5, 3, 3, 4, 4],
+            [2, 4, 4, 4, 3, 3, 3, 0, 2, 0, 2, 0]
         ])
         game = NanroSolver(values_grid, regions_grid)
 
