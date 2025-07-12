@@ -23,8 +23,8 @@ class IslandGrid(Grid[Island]):
         self.possible_crossover_bridge = self._compute_possible_crossover_bridges()
 
     @staticmethod
-    def from_walls_grid(grid: Grid, with_edges: bool=False) -> 'IslandGrid':
-        input_matrix = [[Island(Position(r, c), 1) for c in range(grid.columns_number+1)] for r in range(grid.rows_number+1)]
+    def from_walls_grid(grid: Grid, with_edges: bool = False) -> 'IslandGrid':
+        input_matrix = [[Island(Position(r, c), 1) for c in range(grid.columns_number + 1)] for r in range(grid.rows_number + 1)]
         island_grid = IslandGrid(input_matrix)
         positions_with_bridges = set()
         for position0, position1 in grid.walls:
