@@ -1,6 +1,31 @@
+import typing
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
+
+Island_0_BridgesString = typing.Literal[
+    '   ', ' X '
+]
+Island_1_BridgesString = typing.Literal[
+    ' ╶─', ' ╵ ', '─╴ ', ' ╷ ',
+]
+Island_2_BridgesString = typing.Literal[
+    ' └─', '─┘ ', '─┐ ', ' ┌─',
+    ' │ ', '───',
+]
+Island_3_BridgesString = typing.Literal[
+    '─┬─', ' ├─', '─┴─', '─┤ ',
+]
+Island_4_BridgesString = typing.Literal[
+    '─┼─'
+]
+IslandBridgesString = typing.Union[
+    Island_0_BridgesString,
+    Island_1_BridgesString,
+    Island_2_BridgesString,
+    Island_3_BridgesString,
+    Island_4_BridgesString
+]
 
 
 class Island:
@@ -13,6 +38,65 @@ class Island:
         if positions_bridges is not None:
             for position, bridges in positions_bridges.items():
                 self.set_bridge_to_position(position, bridges)
+
+    @staticmethod
+    def from_str(position: Position, island_bridges_string: IslandBridgesString):
+        island = Island(position, 0)
+
+        match island_bridges_string:
+            case ' ╵ ':
+                island.set_bridge_to_direction(Direction.up(), 1)
+            case ' ╷ ':
+                island.set_bridge_to_direction(Direction.down(), 1)
+            case ' ╶─':
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case '─╴ ':
+                island.set_bridge_to_direction(Direction.left(), 1)
+
+            case ' └─':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case '─┘ ':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+            case '─┐ ':
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+            case ' ┌─':
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case ' │ ':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.down(), 1)
+            case '───':
+                island.set_bridge_to_direction(Direction.left(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+
+            case '─┬─':
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case ' ├─':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case '─┴─':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+            case '─┤ ':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+
+            case '─┼─':
+                island.set_bridge_to_direction(Direction.up(), 1)
+                island.set_bridge_to_direction(Direction.down(), 1)
+                island.set_bridge_to_direction(Direction.left(), 1)
+                island.set_bridge_to_direction(Direction.right(), 1)
+
+        island.set_bridges_count_according_to_directions_bridges()
+        return island
 
     def set_bridge_to_position(self, position: Position, number: int):
         direction = self.position.direction_to(position)
@@ -29,12 +113,14 @@ class Island:
         return self.bridges_count == 0
 
     def __eq__(self, other):
-        return isinstance(other, Island) and self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
+        return isinstance(other,
+                          Island) and self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
 
     def __repr__(self):
         if self.has_no_bridge():
             return '   '
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(Direction.right()) != 0:
+        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(
+                Direction.right()) != 0:
             return '─┼─'
         if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(Direction.right()) != 0:
             return '─┴─'
