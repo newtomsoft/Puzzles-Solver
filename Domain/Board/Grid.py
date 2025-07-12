@@ -5,6 +5,7 @@ from typing import TypeVar, Iterable
 from bitarray import bitarray
 
 from Domain.Board.GridBase import GridBase
+from Domain.Board.Island import Island
 from Domain.Board.Position import Position
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from Utils.colors import console_back_ground_colors, console_police_colors
@@ -32,6 +33,20 @@ class Grid[T](GridBase[T]):
 
     def __hash__(self):
         return hash(str(self._matrix))
+
+    @classmethod
+    def from_str(cls, grid_str: str, element_type: type) -> 'Grid':
+        rows_number = grid_str.count('\n') + 1
+        columns_number = len(grid_str.split('\n')[0]) // 3
+        grid_str = grid_str.replace('\n', '')
+        matrix = [[Grid.get_element_type(r, c, columns_number, grid_str, element_type) for c in range(columns_number)] for r in range(rows_number)]
+        return Grid(matrix)
+
+    @classmethod
+    def get_element_type(cls, row: int, column: int, columns_number: int, grid_str, element_type :type) -> T:
+        if element_type == type(Island):
+            return Island.from_str(Position(row, column), grid_str[3 * (row * columns_number + column): 3 * (row * columns_number + column + 1)])
+        raise ValueError(f"Unsupported element type: {element_type}")
 
     @property
     def matrix(self):
