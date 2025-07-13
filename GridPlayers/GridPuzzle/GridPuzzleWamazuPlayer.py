@@ -19,7 +19,7 @@ class GridPuzzleWamazuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
     def _draw_paths(self, cell_height, cell_width, page, solution, x0, y0):
         start_positions = self._get_circles_starts(solution)
         for start_position in start_positions:
-            connected_positions = self._get_positions_from_position(solution, start_position)
+            connected_positions = self._get_connected_positions_from_position(solution, start_position)
             for index, position in enumerate(connected_positions[:-1]):
                 next_position = connected_positions[index + 1]
                 direction = position.direction_to(next_position)
