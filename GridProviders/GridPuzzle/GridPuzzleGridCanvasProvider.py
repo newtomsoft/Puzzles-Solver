@@ -13,7 +13,7 @@ class GridPuzzleGridCanvasProvider(GridPuzzleGridProvider):
         size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
         pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
         pqq_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(pqq)
-        pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string)
+        pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string, size)
         return pqq_string_list, size
 
     @staticmethod
@@ -29,8 +29,8 @@ class GridPuzzleGridCanvasProvider(GridPuzzleGridProvider):
         return len(string) % 4 == 0 and bool(re.match('^[A-Za-z0-9+/]*={0,2}$', string))
 
     @staticmethod
-    def _split_to_list(string: str) -> list[str]:
+    def _split_to_list(string: str, size: int) -> list[str]:
         split_pipe = string.split('|')
-        if len(split_pipe) > 1:
+        if len(split_pipe) == size or len(split_pipe) == size * size:
             return split_pipe
         return [string[i:i + 1] for i in range(len(string))]
