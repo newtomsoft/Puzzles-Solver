@@ -140,10 +140,44 @@ class IslandGrid(Grid[Island]):
             return visited_positions
         visited_positions.add(position)
         position_and_bridges = self.islands[position].direction_position_bridges.values()
-        for current_position in [position for position, bridges_count in position_and_bridges if bridges_count > 0 and position not in visited_positions]:
+        next_positions = [position for position, bridges_count in position_and_bridges if bridges_count > 0 and position not in visited_positions]
+        for current_position in next_positions:
             new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
             if new_visited_positions != visited_positions:
                 return new_visited_positions
+
+        return visited_positions
+
+    def get_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
+        concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
+        visited_list: list[set[Position]] = []
+        visited_flat: set[Position] = set()
+        while len(visited_flat) != concerned_islands_count:
+            position = next(island.position for island in self.islands.values() if island.position not in visited_flat) if not exclude_without_bridge else next(
+                (island.position for island in self.islands.values() if island.bridges_count != 0 and island.position not in visited_flat), None)
+            visited = self._depth_first_linear_search_islands(position)
+            visited_list.append(visited)
+            visited_flat.update(visited)
+        return visited_list
+
+    def _depth_first_linear_search_islands(self, position: Position, previous_position=None, visited_positions=None, crossed_positions=None) -> set[Position]:
+        if visited_positions is None:
+            visited_positions = set()
+            crossed_positions = set()
+        if position in visited_positions - crossed_positions:
+            return visited_positions
+        visited_positions.add(position)
+        position_and_bridges = self.islands[position].direction_position_bridges.values()
+        next_positions = [position for position, bridges_count in position_and_bridges if
+                          bridges_count > 0 and position not in visited_positions - crossed_positions and position != previous_position]
+        if len(next_positions) > 1 and previous_position is not None:
+            crossed_positions.add(position)
+            direction = previous_position.direction_to(position)
+            linear_next_position = position.after(direction)
+            next_positions = [linear_next_position]
+        for current_position in next_positions:
+            new_visited_positions = self._depth_first_linear_search_islands(current_position, position, visited_positions, crossed_positions)
+            return new_visited_positions
 
         return visited_positions
 
@@ -181,24 +215,27 @@ class IslandGrid(Grid[Island]):
 
         return False, visited_positions
 
-    def follow_path(self, position: Position | None = None, visited_positions=None) -> list[Position]:
+    def follow_path(self, position: Position | None = None, previous_position: Position | None = None, visited_positions=None, kept_bridges_by_visited_positions=None) -> list[Position]:
         if position is None:
             position = next(island.position for island in self.islands.values() if island.bridges_count > 0)
         if visited_positions is None:
             visited_positions = []
-        if position in visited_positions:
-            return visited_positions
+            kept_bridges_by_visited_positions = {position: self.islands[position].bridges_count - 1}
         visited_positions.append(position)
         position_bridges = self.islands[position].direction_position_bridges.values()
-        for position_bridge in position_bridges:
-            if position_bridge[1] == 0:
-                continue
-            current_position = position_bridge[0]
-            if current_position not in visited_positions:
-                new_visited_positions = self.follow_path(current_position, visited_positions)
-                if new_visited_positions != visited_positions:
-                    return new_visited_positions
-
+        next_positions_candidates = [position_bridges[0] for position_bridges in position_bridges if position_bridges[1] > 0 and position_bridges[0] != previous_position]
+        if len(next_positions_candidates) == 0:
+            return visited_positions
+        if len(next_positions_candidates) == 1:
+            next_position = next_positions_candidates[0]
+        else:
+            next_position = position.after(previous_position.direction_to(position)) if previous_position else next_positions_candidates[0]
+        bridges_count = self.islands[next_position].bridges_count
+        if kept_bridges_by_visited_positions.get(next_position, bridges_count) >= 1:
+            kept_bridges_by_visited_positions[next_position] = kept_bridges_by_visited_positions.get(next_position, bridges_count) - 2
+            new_visited_positions = self.follow_path(next_position, position, visited_positions, kept_bridges_by_visited_positions)
+            if new_visited_positions != visited_positions:
+                return new_visited_positions
         return visited_positions
 
     def __repr__(self) -> str:

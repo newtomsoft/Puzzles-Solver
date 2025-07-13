@@ -27,7 +27,7 @@ class Grid[T](GridBase[T]):
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'
-        if isinstance(self[Position(0, 0)], PipeShapeTransition):
+        if isinstance(self[Position(0, 0)], PipeShapeTransition | Island):
             return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
         return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
 
