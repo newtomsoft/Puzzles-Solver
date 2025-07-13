@@ -3,28 +3,34 @@ import typing
 from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
 
-Island_0_BridgesString = typing.Literal[
-    '   ', ' X '
+IslandString0Bridge = typing.Literal[
+    '   ', ' X ', ' · '
 ]
-Island_1_BridgesString = typing.Literal[
+IslandString1Bridge = typing.Literal[
     ' ╶─', ' ╵ ', '─╴ ', ' ╷ ',
 ]
-Island_2_BridgesString = typing.Literal[
+IslandString2Bridges = typing.Literal[
     ' └─', '─┘ ', '─┐ ', ' ┌─',
     ' │ ', '───',
 ]
-Island_3_BridgesString = typing.Literal[
+IslandString3Bridges = typing.Literal[
     '─┬─', ' ├─', '─┴─', '─┤ ',
 ]
-Island_4_BridgesString = typing.Literal[
+IslandString4Bridges = typing.Literal[
     '─┼─'
 ]
-IslandBridgesString = typing.Union[
-    Island_0_BridgesString,
-    Island_1_BridgesString,
-    Island_2_BridgesString,
-    Island_3_BridgesString,
-    Island_4_BridgesString
+IslandString = typing.Union[
+    IslandString0Bridge,
+    IslandString1Bridge,
+    IslandString2Bridges,
+    IslandString3Bridges,
+    IslandString4Bridges
+]
+IslandWithBridgesString = typing.Union[
+    IslandString1Bridge,
+    IslandString2Bridges,
+    IslandString3Bridges,
+    IslandString4Bridges,
 ]
 
 
@@ -40,10 +46,16 @@ class Island:
                 self.set_bridge_to_position(position, bridges)
 
     @staticmethod
-    def from_str(position: Position, island_bridges_string: IslandBridgesString):
-        island = Island(position, 0)
+    def from_str(position: Position, island_string: IslandString):
+        initial_position_bridges = {
+            position.up: 0,
+            position.down: 0,
+            position.left:  0,
+            position.right: 0,
+        }
+        island = Island(position, 0, initial_position_bridges)
 
-        match island_bridges_string:
+        match island_string:
             case ' ╵ ':
                 island.set_bridge_to_direction(Direction.up(), 1)
             case ' ╷ ':
@@ -118,7 +130,7 @@ class Island:
 
     def __repr__(self):
         if self.has_no_bridge():
-            return '   '
+            return ' · '
         if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(
                 Direction.right()) != 0:
             return '─┼─'
