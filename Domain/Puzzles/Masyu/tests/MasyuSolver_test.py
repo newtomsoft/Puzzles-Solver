@@ -35,7 +35,7 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
-            ' │     │ \n'
+            ' │  ·  │ \n'
             ' └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -53,7 +53,7 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
-            ' │        │ \n'
+            ' │  ·  ·  │ \n'
             ' └────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -71,7 +71,7 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
-            ' │     │ \n'
+            ' │  ·  │ \n'
             ' └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -90,7 +90,7 @@ class MasyuSolverTests(TestCase):
         expected_solution_string = (
             ' ┌────────┐ \n'
             ' │  ┌─────┘ \n'
-            ' └──┘       '
+            ' └──┘  ·  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -109,12 +109,12 @@ class MasyuSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         expected_solution_string = (
-            " ┌─────┐          \n"
-            " │     └────────┐ \n"
-            " │  ┌─────┐     │ \n"
-            " │  │     └─────┘ \n"
-            " │  └────────┐    \n"
-            " └───────────┘    "
+            ' ┌─────┐  ·  ·  · \n'
+            ' │  ·  └────────┐ \n'
+            ' │  ┌─────┐  ·  │ \n'
+            ' │  │  ·  └─────┘ \n'
+            ' │  └────────┐  · \n'
+            ' └───────────┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -133,11 +133,11 @@ class MasyuSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌───────────┐ \n'
-            '    │           │ \n'
-            '    │  ┌────────┘ \n'
+            ' ·  ┌───────────┐ \n'
+            ' ·  │  ·  ·  ·  │ \n'
+            ' ·  │  ┌────────┘ \n'
             ' ┌──┘  │  ┌─────┐ \n'
-            ' │     └──┘     │ \n'
+            ' │  ·  └──┘  ·  │ \n'
             ' └──────────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -160,13 +160,13 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌───────────┐  ┌─────┐ \n'
-            ' │           │  │     │ \n'
+            ' │  ·  ·  ·  │  │  ·  │ \n'
             ' └──┐  ┌──┐  │  │  ┌──┘ \n'
-            '    │  │  │  └──┘  └──┐ \n'
+            ' ·  │  │  │  └──┘  └──┐ \n'
             ' ┌──┘  │  └────────┐  │ \n'
-            ' │     │           │  │ \n'
+            ' │  ·  │  ·  ·  ·  │  │ \n'
             ' └─────┘  ┌────────┘  │ \n'
-            '          └───────────┘ '
+            ' ·  ·  ·  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -188,12 +188,12 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────────────────┐ \n'
-            ' │     ┌─────┐  ┌──┐  │ \n'
-            ' │     │     │  │  └──┘ \n'
+            ' │  ·  ┌─────┐  ┌──┐  │ \n'
+            ' │  ·  │  ·  │  │  └──┘ \n'
             ' └─────┘  ┌──┘  └─────┐ \n'
-            '          │           │ \n'
+            ' ·  ·  ·  │  ·  ·  ·  │ \n'
             ' ┌────────┘  ┌─────┐  │ \n'
-            ' │           │  ┌──┘  │ \n'
+            ' │  ·  ·  ·  │  ┌──┘  │ \n'
             ' └───────────┘  └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -218,14 +218,14 @@ class MasyuSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌──┐  ┌────────────────────┐ \n'
-            ' │  │  │     ┌───────────┐  │ \n'
-            ' │  │  │     │        ┌──┘  │ \n'
-            ' │  │  │     └─────┐  │     │ \n'
-            ' │  │  └────────┐  │  │     │ \n'
+            ' │  │  │  ·  ┌───────────┐  │ \n'
+            ' │  │  │  ·  │  ·  ·  ┌──┘  │ \n'
+            ' │  │  │  ·  └─────┐  │  ·  │ \n'
+            ' │  │  └────────┐  │  │  ·  │ \n'
             ' │  └────────┐  │  │  └─────┘ \n'
-            ' └──┐  ┌──┐  │  │  └─────┐    \n'
-            ' ┌──┘  │  │  │  └─────┐  │    \n'
-            ' │     │  │  └────────┘  └──┐ \n'
+            ' └──┐  ┌──┐  │  │  └─────┐  · \n'
+            ' ┌──┘  │  │  │  └─────┐  │  · \n'
+            ' │  ·  │  │  └────────┘  └──┐ \n'
             ' └─────┘  └─────────────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -248,14 +248,14 @@ class MasyuSolverTests(TestCase):
         game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '       ┌───────────┐  ┌─────┐ \n'
-            ' ┌──┐  │     ┌──┐  │  │     │ \n'
-            ' │  │  │     │  │  │  │     │ \n'
-            ' │  │  │     │  │  └──┘  ┌──┘ \n'
-            ' │  └──┘  ┌──┘  └─────┐  │    \n'
-            ' └─────┐  │  ┌─────┐  │  │    \n'
+            ' ·  ·  ┌───────────┐  ┌─────┐ \n'
+            ' ┌──┐  │  ·  ┌──┐  │  │  ·  │ \n'
+            ' │  │  │  ·  │  │  │  │  ·  │ \n'
+            ' │  │  │  ·  │  │  └──┘  ┌──┘ \n'
+            ' │  └──┘  ┌──┘  └─────┐  │  · \n'
+            ' └─────┐  │  ┌─────┐  │  │  · \n'
             ' ┌──┐  │  │  │  ┌──┘  │  └──┐ \n'
-            ' │  │  │  │  │  │     └──┐  │ \n'
+            ' │  │  │  │  │  │  ·  └──┐  │ \n'
             ' │  └──┘  │  │  └────────┘  │ \n'
             ' └────────┘  └──────────────┘ '
         )
@@ -279,15 +279,15 @@ class MasyuSolverTests(TestCase):
         game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐     ┌─────┐  ┌────────┐ \n'
-            ' │  │     │     │  └─────┐  │ \n'
-            ' │  └─────┘     └─────┐  │  │ \n'
+            ' ┌──┐  ·  ┌─────┐  ┌────────┐ \n'
+            ' │  │  ·  │  ·  │  └─────┐  │ \n'
+            ' │  └─────┘  ·  └─────┐  │  │ \n'
             ' └──┐  ┌───────────┐  │  │  │ \n'
             ' ┌──┘  └────────┐  │  └──┘  │ \n'
-            ' │  ┌─────┐     │  └──┐  ┌──┘ \n'
-            ' │  │     │  ┌──┘     │  └──┐ \n'
+            ' │  ┌─────┐  ·  │  └──┐  ┌──┘ \n'
+            ' │  │  ·  │  ┌──┘  ·  │  └──┐ \n'
             ' │  └──┐  │  │  ┌──┐  └──┐  │ \n'
-            ' │     │  │  │  │  └─────┘  │ \n'
+            ' │  ·  │  │  │  │  └─────┘  │ \n'
             ' └─────┘  └──┘  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -316,27 +316,27 @@ class MasyuSolverTests(TestCase):
         game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐     ┌─────┐  ┌────────────────────┐    \n'
-            ' │  │     │     └──┘  ┌────────┐        │    \n'
-            ' │  └─────┘  ┌────────┘        │  ┌─────┘    \n'
+            ' ┌──┐  ·  ┌─────┐  ┌────────────────────┐  · \n'
+            ' │  │  ·  │  ·  └──┘  ┌────────┐  ·  ·  │  · \n'
+            ' │  └─────┘  ┌────────┘  ·  ·  │  ┌─────┘  · \n'
             ' └──┐  ┌─────┘  ┌──────────────┘  │  ┌─────┐ \n'
-            '    │  │     ┌──┘  ┌──┐           │  │     │ \n'
-            '    │  └──┐  └─────┘  └────────┐  │  │  ┌──┘ \n'
-            '    └─────┘  ┌──┐  ┌──┐  ┌─────┘  └──┘  └──┐ \n'
+            ' ·  │  │  ·  ┌──┘  ┌──┐  ·  ·  ·  │  │  ·  │ \n'
+            ' ·  │  └──┐  └─────┘  └────────┐  │  │  ┌──┘ \n'
+            ' ·  └─────┘  ┌──┐  ┌──┐  ┌─────┘  └──┘  └──┐ \n'
             ' ┌────────┐  │  │  │  │  └──┐  ┌────────┐  │ \n'
-            ' │        └──┘  │  │  │     │  │  ┌──┐  │  │ \n'
-            ' │     ┌────────┘  │  └─────┘  │  │  └──┘  │ \n'
-            ' │     └────────┐  │  ┌────────┘  │  ┌─────┘ \n'
+            ' │  ·  ·  └──┘  │  │  │  ·  │  │  ┌──┐  │  │ \n'
+            ' │  ·  ┌────────┘  │  └─────┘  │  │  └──┘  │ \n'
+            ' │  ·  └────────┐  │  ┌────────┘  │  ┌─────┘ \n'
             ' └───────────┐  │  │  │  ┌──┐  ┌──┘  └─────┐ \n'
-            ' ┌─────┐     │  └──┘  └──┘  │  │     ┌──┐  │ \n'
-            ' │     └─────┘  ┌────────┐  │  │     │  │  │ \n'
-            ' └──────────────┘        └──┘  └─────┘  └──┘ '
+            ' ┌─────┐  ·  │  └──┘  └──┘  │  │  ·  ┌──┐  │ \n'
+            ' │  ·  └─────┘  ┌────────┐  │  │  ·  │  │  │ \n'
+            ' └──────────────┘  ·  ·  └──┘  └─────┘  └──┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("Skipping because it takes too long approximately 8 seconds")
+    # @unittest.skip("Skipping because it takes too long approximately 8 seconds")
     def test_solution_20x20(self):
         grid = Grid([
             [' ', 'w', ' ', 'w', ' ', ' ', 'b', 'w', 'w', ' ', ' ', ' ', ' ', ' ', ' ', 'w', ' ', ' ', ' ', ' '],
@@ -363,26 +363,26 @@ class MasyuSolverTests(TestCase):
         game_solver = MasyuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌───────────┐     ┌────────┐  ┌──┐        ┌──────────────┐ \n'
-            ' │  ┌────────┘     │  ┌─────┘  │  └─────┐  │  ┌──┐  ┌──┐  │ \n'
-            ' │  └───────────┐  │  │        └─────┐  │  │  │  │  │  │  │ \n'
+            ' ┌───────────┐  ·  ┌────────┐  ┌──┐  ·  ·  ┌──────────────┐ \n'
+            ' │  ┌────────┘  ·  │  ┌─────┘  │  └─────┐  │  ┌──┐  ┌──┐  │ \n'
+            ' │  └───────────┐  │  │  ·  ·  └─────┐  │  │  │  │  │  │  │ \n'
             ' └───────────┐  │  │  │  ┌──┐  ┌─────┘  │  │  │  │  │  │  │ \n'
-            '             │  │  │  │  │  │  └─────┐  └──┘  │  └──┘  │  │ \n'
-            ' ┌────────┐  │  └──┘  └──┘  │        └────────┘  ┌─────┘  │ \n'
+            ' ·  ·  ·  ·  │  │  │  │  │  │  └─────┐  └──┘  │  └──┘  │  │ \n'
+            ' ┌────────┐  │  └──┘  └──┘  │  ·  ·  └────────┘  ┌─────┘  │ \n'
             ' │  ┌──┐  │  └───────────┐  └────────┐  ┌─────┐  │  ┌──┐  │ \n'
             ' │  │  │  └──────────────┘  ┌────────┘  └──┐  │  │  │  │  │ \n'
             ' │  │  └────────┐  ┌────────┘  ┌────────┐  │  │  └──┘  │  │ \n'
-            ' └──┘     ┌─────┘  │           │  ┌─────┘  │  │        │  │ \n'
-            '          │  ┌──┐  │  ┌─────┐  │  └─────┐  │  └────────┘  │ \n'
-            ' ┌────────┘  │  │  │  │     │  │  ┌──┐  │  └──┐  ┌────────┘ \n'
-            ' └──┐  ┌─────┘  └──┘  │     └──┘  │  │  └─────┘  │  ┌─────┐ \n'
-            ' ┌──┘  └────────┐     │  ┌────────┘  │  ┌──┐  ┌──┘  │  ┌──┘ \n'
-            ' │  ┌────────┐  │  ┌──┘  └────────┐  │  │  │  └─────┘  │    \n'
-            ' │  │        │  │  └───────────┐  │  └──┘  └────────┐  │    \n'
-            ' │  └─────┐  │  └────────┐     │  │     ┌──┐        │  │    \n'
-            ' └─────┐  │  └────────┐  │     │  └─────┘  │  ┌─────┘  └──┐ \n'
-            '    ┌──┘  └─────┐     │  └─────┘  ┌────────┘  │           │ \n'
-            '    └───────────┘     └───────────┘           └───────────┘ '
+            ' └──┘  ·  ┌─────┘  │  ·  ·  ·  │  ┌─────┘  │  │  ·  ·  │  │ \n'
+            ' ·  ·  ·  │  ┌──┐  │  ┌─────┐  │  └─────┐  │  └────────┘  │ \n'
+            ' ┌────────┘  │  │  │  │  ·  │  │  ┌──┐  │  └──┐  ┌────────┘ \n'
+            ' └──┐  ┌─────┘  └──┘  │  ·  └──┘  │  │  └─────┘  │  ┌─────┐ \n'
+            ' ┌──┘  └────────┐  ·  │  ┌────────┘  │  ┌──┐  ┌──┘  │  ┌──┘ \n'
+            ' │  ┌────────┐  │  ┌──┘  └────────┐  │  │  │  └─────┘  │  · \n'
+            ' │  │  ·  ·  │  │  └───────────┐  │  └──┘  └────────┐  │  · \n'
+            ' │  └─────┐  │  └────────┐  ·  │  │  ·  ┌──┐  ·  ·  │  │  · \n'
+            ' └─────┐  │  └────────┐  │  ·  │  └─────┘  │  ┌─────┘  └──┐ \n'
+            ' ·  ┌──┘  └─────┐  ·  │  └─────┘  ┌────────┘  │  ·  ·  ·  │ \n'
+            ' ·  └───────────┘  ·  └───────────┘  ·  ·  ·  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
