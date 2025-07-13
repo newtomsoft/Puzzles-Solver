@@ -18,10 +18,10 @@ class LinesweeperSolverTests(TestCase):
             [3, _, _, 2]
         ])
         expected_solution_str = (
-            '            \n'
-            ' ┌─────┐    \n'
-            ' └──┐  │    \n'
-            '    └──┘    '
+            ' ·  ·  ·  · \n'
+            ' ┌─────┐  · \n'
+            ' └──┐  │  · \n'
+            ' ·  └──┘  · '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()
@@ -38,10 +38,10 @@ class LinesweeperSolverTests(TestCase):
             [_, _, _, 3]
         ])
         expected_solution_str = (
-            '            \n'
+            ' ·  ·  ·  · \n'
             ' ┌────────┐ \n'
-            ' │     ┌──┘ \n'
-            ' └─────┘    '
+            ' │  ·  ┌──┘ \n'
+            ' └─────┘  · '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()
@@ -58,10 +58,10 @@ class LinesweeperSolverTests(TestCase):
             [3, _, _, 3]
         ])
         expected_solution_str = (
-            '    ┌──┐    \n'
+            ' ·  ┌──┐  · \n'
             ' ┌──┘  └──┐ \n'
             ' └──┐  ┌──┘ \n'
-            '    └──┘    '
+            ' ·  └──┘  · '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()
@@ -82,14 +82,14 @@ class LinesweeperSolverTests(TestCase):
             [2, _, _, _, 5, _, _, 3],
         ])
         expected_solution_str = (
-            ' ┌────────┐             \n'
-            ' │        └──┐  ┌─────┐ \n'
-            ' │     ┌──┐  └──┘     │ \n'
-            ' │  ┌──┘  │     ┌─────┘ \n'
-            ' └──┘     │     └──┐    \n'
-            '    ┌─────┘        └──┐ \n'
-            '    │     ┌─────┐  ┌──┘ \n'
-            '    └─────┘     └──┘    '
+            ' ┌────────┐  ·  ·  ·  · \n'
+            ' │  ·  ·  └──┐  ┌─────┐ \n'
+            ' │  ·  ┌──┐  └──┘  ·  │ \n'
+            ' │  ┌──┘  │  ·  ┌─────┘ \n'
+            ' └──┘  ·  │  ·  └──┐  · \n'
+            ' ·  ┌─────┘  ·  ·  └──┐ \n'
+            ' ·  │  ·  ┌─────┐  ┌──┘ \n'
+            ' ·  └─────┘  ·  └──┘  · '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()
@@ -112,16 +112,16 @@ class LinesweeperSolverTests(TestCase):
             [2, _, _, _, _, _, _, _, _, _],
         ])
         expected_solution_str = (
-            '    ┌──┐     ┌─────┐          \n'
-            '    │  └─────┘     └────────┐ \n'
-            '    └─────┐                 │ \n'
-            ' ┌──┐     └────────┐        │ \n'
-            ' │  └─────┐        └─────┐  │ \n'
-            ' │        │     ┌──┐     │  │ \n'
+            ' ·  ┌──┐  ·  ┌─────┐  ·  ·  · \n'
+            ' ·  │  └─────┘  ·  └────────┐ \n'
+            ' ·  └─────┐  ·  ·  ·  ·  ·  │ \n'
+            ' ┌──┐  ·  └────────┐  ·  ·  │ \n'
+            ' │  └─────┐  ·  ·  └─────┐  │ \n'
+            ' │  ·  ·  │  ·  ┌──┐  ·  │  │ \n'
             ' └─────┐  └─────┘  │  ┌──┘  │ \n'
-            '    ┌──┘  ┌─────┐  └──┘     │ \n'
-            '    │     │     │           │ \n'
-            '    └─────┘     └───────────┘ '
+            ' ·  ┌──┘  ┌─────┐  └──┘  ·  │ \n'
+            ' ·  │  ·  │  ·  │  ·  ·  ·  │ \n'
+            ' ·  └─────┘  ·  └───────────┘ '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()
@@ -146,18 +146,18 @@ class LinesweeperSolverTests(TestCase):
             [_, _, _, 3, _, _, 3, _, _, _, _, _],
         ])
         expected_solution_str = (
-            '    ┌────────┐  ┌──┐        ┌─────┐ \n'
-            '    │        └──┘  └──┐     │     │ \n'
-            '    │                 └──┐  │  ┌──┘ \n'
-            ' ┌──┘        ┌─────┐     └──┘  │    \n'
-            ' │  ┌─────┐  │     └──┐        └──┐ \n'
-            ' └──┘     │  └──┐     └──┐        │ \n'
-            '          │     └──┐     │        │ \n'
-            ' ┌─────┐  └──┐     │     │        │ \n'
-            ' │     └─────┘  ┌──┘  ┌──┘     ┌──┘ \n'
-            ' └────────┐     │     │     ┌──┘    \n'
-            '          └──┐  │     └──┐  └─────┐ \n'
-            '             └──┘        └────────┘ '
+            ' ·  ┌────────┐  ┌──┐  ·  ·  ┌─────┐ \n'
+            ' ·  │  ·  ·  └──┘  └──┐  ·  │  ·  │ \n'
+            ' ·  │  ·  ·  ·  ·  ·  └──┐  │  ┌──┘ \n'
+            ' ┌──┘  ·  ·  ┌─────┐  ·  └──┘  │  · \n'
+            ' │  ┌─────┐  │  ·  └──┐  ·  ·  └──┐ \n'
+            ' └──┘  ·  │  └──┐  ·  └──┐  ·  ·  │ \n'
+            ' ·  ·  ·  │  ·  └──┐  ·  │  ·  ·  │ \n'
+            ' ┌─────┐  └──┐  ·  │  ·  │  ·  ·  │ \n'
+            ' │  ·  └─────┘  ┌──┘  ┌──┘  ·  ┌──┘ \n'
+            ' └────────┐  ·  │  ·  │  ·  ┌──┘  · \n'
+            ' ·  ·  ·  └──┐  │  ·  └──┐  └─────┐ \n'
+            ' ·  ·  ·  ·  └──┘  ·  ·  └────────┘ '
         )
         game_solver = LinesweeperSolver(grid)
         solution = game_solver.get_solution()

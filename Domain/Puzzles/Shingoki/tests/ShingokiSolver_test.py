@@ -93,7 +93,7 @@ class ShingokiSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌─────┐ \n'
-            ' │     │ \n'
+            ' │  ·  │ \n'
             ' └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -111,9 +111,9 @@ class ShingokiSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
-            ' │        │ \n'
-            ' │     ┌──┘ \n'
-            ' └─────┘    '
+            ' │  ·  ·  │ \n'
+            ' │  ·  ┌──┘ \n'
+            ' └─────┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -130,9 +130,9 @@ class ShingokiSolverTests(TestCase):
         solution = game_solver.get_solution()
         expected_solution_string = (
             ' ┌────────┐ \n'
-            ' │     ┌──┘ \n'
-            ' │     │    \n'
-            ' └─────┘    '
+            ' │  ·  ┌──┘ \n'
+            ' │  ·  │  · \n'
+            ' └─────┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -147,7 +147,7 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌──┐ \n'
+            ' ·  ┌──┐ \n'
             ' ┌──┘  │ \n'
             ' └─────┘ '
         )
@@ -165,10 +165,10 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌─────┐ \n'
-            ' ┌──┘     │ \n'
+            ' ·  ┌─────┐ \n'
+            ' ┌──┘  ·  │ \n'
             ' │  ┌─────┘ \n'
-            ' └──┘       '
+            ' └──┘  ·  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -185,7 +185,7 @@ class ShingokiSolverTests(TestCase):
         expected_solution_string = (
             ' ┌─────┐ \n'
             ' └──┐  │ \n'
-            '    └──┘ '
+            ' ·  └──┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -201,10 +201,10 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌─────┐    \n'
-            ' │     │    \n'
+            ' ┌─────┐  · \n'
+            ' │  ·  │  · \n'
             ' └──┐  └──┐ \n'
-            '    └─────┘ '
+            ' ·  └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -219,7 +219,7 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐    \n'
+            ' ┌──┐  · \n'
             ' │  └──┐ \n'
             ' └─────┘ '
         )
@@ -237,10 +237,10 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌─────┐    \n'
+            ' ┌─────┐  · \n'
             ' └──┐  └──┐ \n'
-            '    │     │ \n'
-            '    └─────┘ '
+            ' ·  │  ·  │ \n'
+            ' ·  └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -257,7 +257,7 @@ class ShingokiSolverTests(TestCase):
         expected_solution_string = (
             ' ┌─────┐ \n'
             ' │  ┌──┘ \n'
-            ' └──┘    '
+            ' └──┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -274,7 +274,7 @@ class ShingokiSolverTests(TestCase):
         expected_solution_string = (
             ' ┌─────┐ \n'
             ' │  ┌──┘ \n'
-            ' └──┘    '
+            ' └──┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -292,12 +292,12 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌──┐  ┌──┐    \n'
+            ' ·  ┌──┐  ┌──┐  · \n'
             ' ┌──┘  │  │  └──┐ \n'
             ' │  ┌──┘  │  ┌──┘ \n'
-            ' │  │     │  └──┐ \n'
+            ' │  │  ·  │  └──┐ \n'
             ' │  └─────┘  ┌──┘ \n'
-            ' └───────────┘    '
+            ' └───────────┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -363,14 +363,14 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌─────────────────┐ \n'
-            '    │  ┌────────┐  ┌──┘ \n'
-            '    │  │        │  │    \n'
-            ' ┌──┘  └─────┐  │  │    \n'
-            ' │  ┌─────┐  │  └──┘    \n'
-            ' │  └──┐  │  └─────┐    \n'
+            ' ·  ┌─────────────────┐ \n'
+            ' ·  │  ┌────────┐  ┌──┘ \n'
+            ' ·  │  │  ·  ·  │  │  · \n'
+            ' ┌──┘  └─────┐  │  │  · \n'
+            ' │  ┌─────┐  │  └──┘  · \n'
+            ' │  └──┐  │  └─────┐  · \n'
             ' └──┐  │  └─────┐  └──┐ \n'
-            '    └──┘        └─────┘ '
+            ' ·  └──┘  ·  ·  └─────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -390,9 +390,9 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌───────────┐  ┌──┐ \n'
+            ' ·  ┌───────────┐  ┌──┐ \n'
             ' ┌──┘  ┌─────┐  └──┘  │ \n'
-            ' │  ┌──┘     │  ┌──┐  │ \n'
+            ' │  ┌──┘  ·  │  ┌──┐  │ \n'
             ' │  │  ┌──┐  │  │  └──┘ \n'
             ' │  │  │  │  │  │  ┌──┐ \n'
             ' │  └──┘  │  │  └──┘  │ \n'
@@ -420,17 +420,17 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐     ┌──┐     ┌──┐  ┌─────┐ \n'
+            ' ┌──┐  ·  ┌──┐  ·  ┌──┐  ┌─────┐ \n'
             ' │  └─────┘  └─────┘  │  │  ┌──┘ \n'
             ' └──┐  ┌──┐  ┌─────┐  │  │  └──┐ \n'
-            '    └──┘  │  └──┐  │  │  └──┐  │ \n'
+            ' ·  └──┘  │  └──┐  │  │  └──┐  │ \n'
             ' ┌─────┐  └─────┘  │  └─────┘  │ \n'
-            ' │  ┌──┘     ┌──┐  └────────┐  │ \n'
-            ' │  │     ┌──┘  └──┐     ┌──┘  │ \n'
+            ' │  ┌──┘  ·  ┌──┐  └────────┐  │ \n'
+            ' │  │  ·  ┌──┘  └──┐  ·  ┌──┘  │ \n'
             ' │  └──┐  └─────┐  │  ┌──┘  ┌──┘ \n'
             ' └──┐  │  ┌─────┘  │  └──┐  └──┐ \n'
             ' ┌──┘  └──┘  ┌──┐  └─────┘  ┌──┘ \n'
-            ' └───────────┘  └───────────┘    '
+            ' └───────────┘  └───────────┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -458,28 +458,28 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐  ┌──┐  ┌──┐     ┌──┐  ┌──┐  ┌─────┐  ┌──┐ \n'
+            ' ┌──┐  ┌──┐  ┌──┐  ·  ┌──┐  ┌──┐  ┌─────┐  ┌──┐ \n'
             ' │  │  │  └──┘  └──┐  │  │  │  │  │  ┌──┘  │  │ \n'
             ' │  │  │  ┌──┐  ┌──┘  │  └──┘  └──┘  │  ┌──┘  │ \n'
             ' │  │  └──┘  │  └─────┘  ┌────────┐  └──┘  ┌──┘ \n'
-            ' │  │  ┌──┐  │  ┌──┐  ┌──┘  ┌─────┘  ┌─────┘    \n'
-            ' │  │  │  │  │  │  │  │     └─────┐  └────────┐ \n'
+            ' │  │  ┌──┐  │  ┌──┐  ┌──┘  ┌─────┘  ┌─────┘  · \n'
+            ' │  │  │  │  │  │  │  │  ·  └─────┐  └────────┐ \n'
             ' │  │  │  │  │  │  │  │  ┌────────┘  ┌─────┐  │ \n'
-            ' │  │  │  └──┘  │  └──┘  └──┐  ┌─────┘     │  │ \n'
-            ' │  │  └──┐  ┌──┘  ┌─────┐  │  └──┐     ┌──┘  │ \n'
+            ' │  │  │  └──┘  │  └──┘  └──┐  ┌─────┘  ·  │  │ \n'
+            ' │  │  └──┐  ┌──┘  ┌─────┐  │  └──┐  ·  ┌──┘  │ \n'
             ' │  │  ┌──┘  └──┐  └──┐  │  └──┐  └──┐  └─────┘ \n'
             ' │  │  └─────┐  └─────┘  └──┐  └──┐  └──┐  ┌──┐ \n'
-            ' │  └──┐  ┌──┘  ┌───────────┘     └──┐  └──┘  │ \n'
+            ' │  └──┐  ┌──┘  ┌───────────┘  ·  └──┐  └──┘  │ \n'
             ' │  ┌──┘  └──┐  └──┐  ┌───────────┐  └──┐  ┌──┘ \n'
             ' │  │  ┌──┐  │  ┌──┘  └──┐  ┌──┐  └─────┘  └──┐ \n'
             ' │  └──┘  └──┘  └──┐  ┌──┘  │  │  ┌─────┐  ┌──┘ \n'
-            ' └─────────────────┘  └─────┘  └──┘     └──┘    '
+            ' └─────────────────┘  └─────┘  └──┘  ·  └──┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip('This test is too slow (around 10 seconds)')
+    # @unittest.skip('This test is too slow (around 10 seconds)')
     def test_solution_21x21(self):
         grid = Grid([
             [____, ____, ____, ____, 'b5', 'w2', ____, ____, ____, ____, 'w6', ____, ____, ____, 'b7', ____, 'w5', ____, ____, ____, ____],
@@ -507,33 +507,33 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐  ┌──┐  ┌─────┐     ┌─────────────────┐  ┌──────────────┐ \n'
-            ' │  │  │  │  │  ┌──┘     └──┐  ┌──┐  ┌──┐  └──┘  ┌─────┐  ┌──┘ \n'
-            ' │  └──┘  │  │  └───────────┘  │  └──┘  └─────┐  │     │  │    \n'
-            ' │  ┌──┐  │  └──┐  ┌───────────┘  ┌─────┐  ┌──┘  │  ┌──┘  │    \n'
-            ' └──┘  │  │     │  │     ┌─────┐  │  ┌──┘  │  ┌──┘  └──┐  └──┐ \n'
-            ' ┌──┐  │  │     │  └──┐  │  ┌──┘  │  │     │  └──┐     └─────┘ \n'
-            ' │  └──┘  │     │  ┌──┘  │  │     │  │     └─────┘  ┌──┐       \n'
-            ' │  ┌──┐  └─────┘  │     │  └──┐  │  └──┐  ┌──┐     │  └─────┐ \n'
+            ' ┌──┐  ┌──┐  ┌─────┐  ·  ┌─────────────────┐  ┌──────────────┐ \n'
+            ' │  │  │  │  │  ┌──┘  ·  └──┐  ┌──┐  ┌──┐  └──┘  ┌─────┐  ┌──┘ \n'
+            ' │  └──┘  │  │  └───────────┘  │  └──┘  └─────┐  │  ·  │  │  · \n'
+            ' │  ┌──┐  │  └──┐  ┌───────────┘  ┌─────┐  ┌──┘  │  ┌──┘  │  · \n'
+            ' └──┘  │  │  ·  │  │  ·  ┌─────┐  │  ┌──┘  │  ┌──┘  └──┐  └──┐ \n'
+            ' ┌──┐  │  │  ·  │  └──┐  │  ┌──┘  │  │  ·  │  └──┐  ·  └─────┘ \n'
+            ' │  └──┘  │  ·  │  ┌──┘  │  │  ·  │  │  ·  └─────┘  ┌──┐  ·  · \n'
+            ' │  ┌──┐  └─────┘  │  ·  │  └──┐  │  └──┐  ┌──┐  ·  │  └─────┐ \n'
             ' └──┘  └────────┐  │  ┌──┘  ┌──┘  └──┐  └──┘  └──┐  └──┐  ┌──┘ \n'
-            '    ┌──┐     ┌──┘  │  │  ┌──┘  ┌─────┘  ┌─────┐  │  ┌──┘  └──┐ \n'
-            ' ┌──┘  │     │  ┌──┘  │  └─────┘  ┌─────┘  ┌──┘  │  └──┐  ┌──┘ \n'
-            ' └──┐  └──┐  │  │     └────────┐  │        │  ┌──┘     │  │    \n'
-            '    │  ┌──┘  │  │              │  └─────┐  │  │  ┌─────┘  └──┐ \n'
-            '    │  └─────┘  └─────┐  ┌─────┘  ┌──┐  │  │  │  │  ┌────────┘ \n'
-            '    │  ┌──┐  ┌────────┘  │  ┌─────┘  │  │  └──┘  │  │          \n'
-            '    │  │  └──┘  ┌──┐     │  │     ┌──┘  │  ┌──┐  │  └─────┐    \n'
+            ' ·  ┌──┐  ·  ┌──┘  │  │  ┌──┘  ┌─────┘  ┌─────┐  │  ┌──┘  └──┐ \n'
+            ' ┌──┘  │  ·  │  ┌──┘  │  └─────┘  ┌─────┘  ┌──┘  │  └──┐  ┌──┘ \n'
+            ' └──┐  └──┐  │  │  ·  └────────┐  │  ·  ·  │  ┌──┘  ·  │  │  · \n'
+            ' ·  │  ┌──┘  │  │  ·  ·  ·  ·  │  └─────┐  │  │  ┌─────┘  └──┐ \n'
+            ' ·  │  └─────┘  └─────┐  ┌─────┘  ┌──┐  │  │  │  │  ┌────────┘ \n'
+            ' ·  │  ┌──┐  ┌────────┘  │  ┌─────┘  │  │  └──┘  │  │  ·  ·  · \n'
+            ' ·  │  │  └──┘  ┌──┐  ·  │  │  ·  ┌──┘  │  ┌──┐  │  └─────┐  · \n'
             ' ┌──┘  │  ┌─────┘  └──┐  │  └──┐  │  ┌──┘  │  │  │  ┌──┐  └──┐ \n'
             ' └──┐  └──┘  ┌─────┐  │  └──┐  │  │  └──┐  │  │  └──┘  │  ┌──┘ \n'
-            '    └──┐     └──┐  │  └─────┘  │  └──┐  │  │  └─────┐  │  │    \n'
-            ' ┌─────┘  ┌──┐  │  │  ┌──┐  ┌──┘     │  └──┘  ┌──┐  └──┘  └──┐ \n'
-            ' └────────┘  └──┘  └──┘  └──┘        └────────┘  └───────────┘ '
+            ' ·  └──┐  ·  └──┐  │  └─────┘  │  └──┐  │  │  └─────┐  │  │  · \n'
+            ' ┌─────┘  ┌──┐  │  │  ┌──┐  ┌──┘  ·  │  └──┘  ┌──┐  └──┘  └──┐ \n'
+            ' └────────┘  └──┘  └──┘  └──┘  ·  ·  └────────┘  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip('This test is too slow (around 21 seconds)')
+    # @unittest.skip('This test is too slow (around 21 seconds)')
     def test_solution_26x26(self):
         grid = Grid([
             [____, ____, ____, ____, ____, ____, ____, ____, ____, 'w11', ____, ____, ____, ____, ____, ____, ____, ____, ____, 'w3', ____, ____, ____, 'b2', ____, ____],
@@ -566,38 +566,38 @@ class ShingokiSolverTests(TestCase):
         game_solver = ShingokiSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            '    ┌─────┐  ┌──┐  ┌────────────────────────────────┐  ┌────────┐  ┌──┐  ┌──┐ \n'
-            '    └──┐  └──┘  │  └──┐  ┌────────┐  ┌──────────────┘  └──┐  ┌──┘  │  └──┘  │ \n'
-            ' ┌──┐  │  ┌──┐  │  ┌──┘  │     ┌──┘  └─────┐  ┌─────┐  ┌──┘  └──┐  └─────┐  │ \n'
-            ' │  └──┘  │  │  │  │  ┌──┘     └─────┐  ┌──┘  │  ┌──┘  │  ┌──┐  │     ┌──┘  │ \n'
-            ' │  ┌──┐  │  │  │  │  │     ┌──┐     │  └──┐  │  │     │  │  │  └─────┘  ┌──┘ \n'
-            ' └──┘  │  │  │  │  │  └─────┘  └──┐  └──┐  └──┘  └─────┘  │  └────────┐  └──┐ \n'
-            ' ┌──┐  │  │  │  └──┘  ┌──┐  ┌──┐  └──┐  └──────────────┐  │  ┌─────┐  └──┐  │ \n'
-            ' │  └──┘  │  └─────┐  │  │  │  └──┐  └────────┐  ┌─────┘  │  └──┐  │  ┌──┘  │ \n'
-            ' │  ┌─────┘        └──┘  │  │     │  ┌─────┐  │  └────────┘     │  │  │  ┌──┘ \n'
-            ' │  └──┐  ┌─────┐  ┌─────┘  │  ┌──┘  └──┐  │  │  ┌────────┐  ┌──┘  └──┘  │    \n'
-            ' └──┐  └──┘  ┌──┘  └──┐  ┌──┘  └─────┐  │  │  │  │  ┌──┐  │  └──┐  ┌──┐  └──┐ \n'
-            '    │  ┌─────┘        │  │  ┌──┐  ┌──┘  │  │  │  │  │  │  └──┐  │  │  │  ┌──┘ \n'
-            '    └──┘           ┌──┘  │  │  │  │  ┌──┘  │  └──┘  │  └──┐  │  │  │  │  │    \n'
-            ' ┌─────┐  ┌──┐     └──┐  │  │  └──┘  │     │  ┌─────┘     └──┘  │  │  │  │    \n'
-            ' └──┐  └──┘  └──┐  ┌──┘  │  └──┐  ┌──┘     └──┘                 └──┘  │  └──┐ \n'
-            '    │  ┌─────┐  │  │  ┌──┘     │  │     ┌──────────────┐  ┌──┐        │  ┌──┘ \n'
-            '    │  │  ┌──┘  │  │  │  ┌──┐  │  └──┐  │  ┌──┐  ┌─────┘  │  │  ┌──┐  │  └──┐ \n'
-            ' ┌──┘  │  └──┐  │  │  │  │  │  └──┐  └──┘  │  │  └─────┐  │  └──┘  └──┘  ┌──┘ \n'
-            ' └──┐  │     │  │  │  │  │  └─────┘  ┌─────┘  └────────┘  │  ┌────────┐  └──┐ \n'
-            ' ┌──┘  │  ┌──┘  │  └──┘  └──┐  ┌──┐  │     ┌──────────────┘  └──┐     │  ┌──┘ \n'
-            ' │  ┌──┘  └──┐  │     ┌─────┘  │  └──┘     └────────────────────┘     │  │    \n'
-            ' │  └─────┐  │  └──┐  │  ┌──┐  │  ┌──┐           ┌───────────┐  ┌─────┘  └──┐ \n'
-            ' │  ┌──┐  │  │  ┌──┘  │  │  │  │  │  │     ┌──┐  │  ┌─────┐  │  └────────┐  │ \n'
-            ' └──┘  │  │  │  │     └──┘  │  │  │  │     │  └──┘  │  ┌──┘  │     ┌──┐  │  │ \n'
-            ' ┌─────┘  │  │  └───────────┘  │  │  └─────┘  ┌─────┘  └──┐  └─────┘  └──┘  │ \n'
-            ' └────────┘  └─────────────────┘  └───────────┘           └─────────────────┘ '
+           ' ·  ┌─────┐  ┌──┐  ┌────────────────────────────────┐  ┌────────┐  ┌──┐  ┌──┐ \n'
+           ' ·  └──┐  └──┘  │  └──┐  ┌────────┐  ┌──────────────┘  └──┐  ┌──┘  │  └──┘  │ \n'
+           ' ┌──┐  │  ┌──┐  │  ┌──┘  │  ·  ┌──┘  └─────┐  ┌─────┐  ┌──┘  └──┐  └─────┐  │ \n'
+           ' │  └──┘  │  │  │  │  ┌──┘  ·  └─────┐  ┌──┘  │  ┌──┘  │  ┌──┐  │  ·  ┌──┘  │ \n'
+           ' │  ┌──┐  │  │  │  │  │  ·  ┌──┐  ·  │  └──┐  │  │  ·  │  │  │  └─────┘  ┌──┘ \n'
+           ' └──┘  │  │  │  │  │  └─────┘  └──┐  └──┐  └──┘  └─────┘  │  └────────┐  └──┐ \n'
+           ' ┌──┐  │  │  │  └──┘  ┌──┐  ┌──┐  └──┐  └──────────────┐  │  ┌─────┐  └──┐  │ \n'
+           ' │  └──┘  │  └─────┐  │  │  │  └──┐  └────────┐  ┌─────┘  │  └──┐  │  ┌──┘  │ \n'
+           ' │  ┌─────┘  ·  ·  └──┘  │  │  ·  │  ┌─────┐  │  └────────┘  ·  │  │  │  ┌──┘ \n'
+           ' │  └──┐  ┌─────┐  ┌─────┘  │  ┌──┘  └──┐  │  │  ┌────────┐  ┌──┘  └──┘  │  · \n'
+           ' └──┐  └──┘  ┌──┘  └──┐  ┌──┘  └─────┐  │  │  │  │  ┌──┐  │  └──┐  ┌──┐  └──┐ \n'
+           ' ·  │  ┌─────┘  ·  ·  │  │  ┌──┐  ┌──┘  │  │  │  │  │  │  └──┐  │  │  │  ┌──┘ \n'
+           ' ·  └──┘  ·  ·  ·  ┌──┘  │  │  │  │  ┌──┘  │  └──┘  │  └──┐  │  │  │  │  │  · \n'
+           ' ┌─────┐  ┌──┐  ·  └──┐  │  │  └──┘  │  ·  │  ┌─────┘  ·  └──┘  │  │  │  │  · \n'
+           ' └──┐  └──┘  └──┐  ┌──┘  │  └──┐  ┌──┘  ·  └──┘  ·  ·  ·  ·  ·  └──┘  │  └──┐ \n'
+           ' ·  │  ┌─────┐  │  │  ┌──┘  ·  │  │  ·  ┌──────────────┐  ┌──┐  ·  ·  │  ┌──┘ \n'
+           ' ·  │  │  ┌──┘  │  │  │  ┌──┐  │  └──┐  │  ┌──┐  ┌─────┘  │  │  ┌──┐  │  └──┐ \n'
+           ' ┌──┘  │  └──┐  │  │  │  │  │  └──┐  └──┘  │  │  └─────┐  │  └──┘  └──┘  ┌──┘ \n'
+           ' └──┐  │  ·  │  │  │  │  │  └─────┘  ┌─────┘  └────────┘  │  ┌────────┐  └──┐ \n'
+           ' ┌──┘  │  ┌──┘  │  └──┘  └──┐  ┌──┐  │  ·  ┌──────────────┘  └──┐  ·  │  ┌──┘ \n'
+           ' │  ┌──┘  └──┐  │  ·  ┌─────┘  │  └──┘  ·  └────────────────────┘  ·  │  │  · \n'
+           ' │  └─────┐  │  └──┐  │  ┌──┐  │  ┌──┐  ·  ·  ·  ┌───────────┐  ┌─────┘  └──┐ \n'
+           ' │  ┌──┐  │  │  ┌──┘  │  │  │  │  │  │  ·  ┌──┐  │  ┌─────┐  │  └────────┐  │ \n'
+           ' └──┘  │  │  │  │  ·  └──┘  │  │  │  │  ·  │  └──┘  │  ┌──┘  │  ·  ┌──┐  │  │ \n'
+           ' ┌─────┘  │  │  └───────────┘  │  │  └─────┘  ┌─────┘  └──┐  └─────┘  └──┘  │ \n'
+           ' └────────┘  └─────────────────┘  └───────────┘  ·  ·  ·  └─────────────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip('This test is too slow (around 92 seconds)')
+    # @unittest.skip('This test is too slow (around 92 seconds)')
     def test_solution_31x31(self):
         grid = Grid([
             [____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b4', 'w3', ____, ____, ____, ____, 'b3', ____, ____, ____, ____, ____, 'b3', 'b4', ____, ____, 'b2', ____, ____, ____, ____],
@@ -671,7 +671,7 @@ class ShingokiSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip('This test is too slow (around 69 seconds)')
+    # @unittest.skip('This test is too slow (around 69 seconds)')
     def test_solution_36x36(self):
         grid = Grid([
             [____, ____, 'w5', ____, ____, ____, ____, 'b3', ____, ____, ____, ____, ____, ____, ____, 'w8', ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b3', ____, ____, ____],
@@ -755,7 +755,7 @@ class ShingokiSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip('This test is too slow (around 120 seconds)')
+    # @unittest.skip('This test is too slow (around 120 seconds)')
     def test_solution_41x41(self):
         grid = Grid([
             [____, ____, ____, ____, ____, ____, ____, ____, 'w4', ____, ____, ____, 'b2', ____, 'b3', ____, ____, ____, ____, ____, ____, ____, ____, ____, ____, 'b4', ____, ____, ____, ____, ____, ____, ____, 'b3', ____, 'b2',
