@@ -7,6 +7,7 @@ from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
+from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
@@ -25,17 +26,20 @@ from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
 from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
+from Domain.Puzzles.Pipelink.PipelinkSolver import PipelinkSolver
 from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
 from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
 from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
 from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
 from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
+from Domain.Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
@@ -54,11 +58,13 @@ from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from Domain.Puzzles.TilePaint.TilePaintSolver import TilePaintSolver
 from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
+from Domain.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
 from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
+from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
@@ -123,6 +129,7 @@ from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaru
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
+from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
@@ -191,10 +198,6 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.Nanro.NanroSolver import NanroSolver
-from Puzzles.Pipelink.PipelinkSolver import PipelinkSolver
-from Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
-from Puzzles.Wamuzu.WamazuSolver import WamazuSolver
 
 
 class UrlPatternMatcher:
@@ -221,6 +224,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
+            r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
             r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
