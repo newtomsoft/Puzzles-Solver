@@ -17,6 +17,21 @@ class GridPuzzleGridCanvasProvider(GridPuzzleGridProvider):
         return pqq_string_list, size
 
     @staticmethod
+    def _get_canvas_data_extended(html_page: str) -> tuple[list[str], list[str], list[str], int]:
+        html_string = BeautifulSoup(html_page, 'html.parser').prettify()
+        size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
+        pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
+        pqq_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(pqq)
+        pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string, size)
+        ar = re.search(r'ar_data = "(.*?)";', html_string).group(1)
+        ar_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(ar)
+        ar_string_list = GridPuzzleGridCanvasProvider._split_to_list(ar_string, size)
+        ab = re.search(r'ab_data = "(.*?)";', html_string).group(1)
+        ab_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(ab)
+        ab_string_list = GridPuzzleGridCanvasProvider._split_to_list(ab_string, size)
+        return pqq_string_list, ar_string_list, ab_string_list, size
+
+    @staticmethod
     def _decode_if_custom_base64(string: str) -> str:
         if len(string) < 4 or not GridPuzzleGridCanvasProvider._is_valid_base64(string[3:]):
             return string
