@@ -116,6 +116,43 @@ class No4InARowSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_solution_evil_1q5rd(self):
+        """https://gridpuzzle.com/no-four-in-row/1q5rd"""
+        grid = Grid([
+            [_, 0, _, _, _, _, 0, 0, _, _, _, 1],
+            [1, _, 1, _, _, 1, 0, 0, _, _, 0, 1],
+            [1, _, _, _, 0, _, 1, _, _, _, 0, 1],
+            [1, _, 1, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [0, _, _, _, 1, 1, _, _, 1, _, 1, _],
+            [_, _, 0, _, 1, _, _, _, 1, 1, _, _],
+            [0, _, _, _, _, _, _, _, 1, _, 1, _],
+            [1, _, 1, _, _, _, 1, _, _, _, 0, _],
+            [1, _, _, _, 0, _, 1, _, 1, _, 1, 1],
+            [_, _, 1, _, 1, _, _, _, 1, 1, 0, _],
+            [1, _, 0, _, 0, _, 0, _, 1, _, 1, _]
+        ])
+        expected_grid = Grid([
+            [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+            [1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1],
+            [1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0],
+            [0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1],
+            [1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0],
+            [0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1],
+            [1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+            [1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1],
+            [0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0],
+            [1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1]
+        ])
+        game_solver = No4InARowSolver(grid)
+
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
