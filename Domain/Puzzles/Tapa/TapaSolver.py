@@ -18,9 +18,9 @@ class TapaSolver(GameSolver):
         self._solver = Solver()
         self._grid_z3: Grid | None = None
 
-    def get_solution(self) -> (Grid | None, int):
-        matrix_z3 = [[Bool(f"bool_{r}_{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
+    def get_solution(self) -> Grid:
         #  True for black, False for white
+        matrix_z3 = [[Bool(f"cell_{r}-{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
         self._grid_z3 = Grid(matrix_z3)
 
         self._init_borders_white()
