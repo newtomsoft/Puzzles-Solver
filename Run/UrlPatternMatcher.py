@@ -5,6 +5,7 @@ from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
+from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
 from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
@@ -128,6 +129,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometer
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
+from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
@@ -222,6 +224,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
+            r"https://.*gridpuzzle\.com/country-road": (CountryRoadSolver, GridPuzzleCountryRoadGridProvider, None),
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
             r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
