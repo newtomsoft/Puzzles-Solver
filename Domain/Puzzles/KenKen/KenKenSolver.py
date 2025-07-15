@@ -1,5 +1,4 @@
 ﻿import math
-from typing import List, Tuple
 
 from z3 import Solver, Not, And, unsat, Or, Int, Distinct, Abs
 
@@ -9,7 +8,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KenKenSolver(GameSolver):
-    def __init__(self, regions_operators_results: List[Tuple[List[Position], str, int]]):
+    def __init__(self, regions_operators_results: list[tuple[list[Position], str, int]]):
         self._regions_operators_results = regions_operators_results
         self.rows_number, self.columns_number = self._get_rows_columns_number()
         if self.rows_number != self.columns_number:
@@ -83,7 +82,7 @@ class KenKenSolver(GameSolver):
             constraint = Abs(self._grid_z3[region[0]] - self._grid_z3[region[1]]) == result
             self._solver.add(constraint)
 
-    def _get_rows_columns_number(self) -> (int, int):
+    def _get_rows_columns_number(self) -> tuple[int, int]:
         all_positions = [pos for sublist, _, _ in self._regions_operators_results for pos in sublist]
         min_r = min(pos.r for pos in all_positions)
         max_r = max(pos.r for pos in all_positions)

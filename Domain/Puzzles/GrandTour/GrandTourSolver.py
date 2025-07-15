@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, Int, sat, ArithRef
+﻿from z3 import Solver, Not, And, Int, sat
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -11,10 +11,8 @@ from Domain.Puzzles.GameSolver import GameSolver
 class GrandTourSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._input_grid = grid
-        self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._solver = Solver()
-        self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
