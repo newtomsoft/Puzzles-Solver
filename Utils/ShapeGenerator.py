@@ -1,4 +1,5 @@
 ﻿import itertools
+from typing import Collection
 
 from Domain.Board.Position import Position
 
@@ -16,7 +17,7 @@ class ShapeGenerator:
         return all_shapes
 
     @staticmethod
-    def around_shape(shape) -> set[Position]:
+    def around_shape(shape: Collection[Position]) -> set[Position]:
         shape_set = set(shape)
         enlarged_shape: set[Position] = set()
         for position in shape:
@@ -25,6 +26,16 @@ class ShapeGenerator:
                 if adjacent_cell not in shape_set:
                     enlarged_shape.add(adjacent_cell)
         return enlarged_shape
+
+    @staticmethod
+    def edges(shape: Collection[Position]) -> set[Position]:
+        shape_set = set(shape)
+        edge_positions: set[Position] = set()
+        for position in shape:
+            for neighbor_position in position.neighbors():
+                if neighbor_position not in shape_set:
+                    edge_positions.add(position)
+        return edge_positions
 
     @staticmethod
     def _generate_shapes(rows_number, columns_number, cells_number):
@@ -58,5 +69,4 @@ class ShapeGenerator:
     @staticmethod
     def _contains_square(shape):
         shape_set = set(shape)
-        if any((x + 1, y) in shape_set and (x, y + 1) in shape_set and (x + 1, y + 1) in shape_set for x, y in shape):
-            return True
+        return any((x + 1, y) in shape_set and (x, y + 1) in shape_set and (x + 1, y + 1) in shape_set for x, y in shape)
