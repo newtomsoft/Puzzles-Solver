@@ -6,6 +6,7 @@ from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class CountryRoadSolver(GameSolver):
@@ -84,6 +85,7 @@ class CountryRoadSolver(GameSolver):
         self._add_initial_constraints()
         self._add_crossed_cell_by_region_numbers_constraints()
         self._add_single_path_by_region_constraints()
+        self._add_no_adjacent_empty_cell_between_regions_constraints()
         self._add_opposite_bridges_constraints()
 
     def _add_initial_constraints(self):
@@ -99,11 +101,19 @@ class CountryRoadSolver(GameSolver):
             for position in [position for position in positions if position in numbers_by_position]:
                 number = numbers_by_position[position]
                 if number is not None:
-                    concerned_positions =  self._regions[region_id]
-                    all_bridges_for_region = []
-                    for bridges in [self._island_bridges_z3[position] for position in concerned_positions]:
-                        all_bridges_for_region += list(bridges.values())
-                    self._solver.add(Sum(all_bridges_for_region) == number * 2) # 2 bridges per island
+                    region_positions = self._regions[region_id]
+                    all_bridges_number_for_region = []
+                    for bridges in [self._island_bridges_z3[position] for position in region_positions]:
+                        all_bridges_number_for_region += list(bridges.values())
+                    self._solver.add(Sum(all_bridges_number_for_region) == number * 2)  # 2 bridges per island
+
+    def _add_single_path_by_region_constraints(self):
+        for region_positions in self._regions.values():
+            region_edges_positions = [position for position in ShapeGenerator.edges(region_positions) if position in self._island_bridges_z3]
+            out_directions = []
+            for pos in region_edges_positions:
+                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonals() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
+            self._solver.add(sum(out_directions) == 2)  # 1 for in and 1 for out
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
@@ -114,5 +124,10 @@ class CountryRoadSolver(GameSolver):
                 else:
                     self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
 
-    def _add_single_path_by_region_constraints(self):
-        pass
+    def _add_no_adjacent_empty_cell_between_regions_constraints(self):
+        for region_positions in self._regions.values():
+            for position in region_positions:
+                neighbors_positions = [position for position in self._numbers_grid.neighbors_positions(position) if position not in region_positions]
+                for neighbor_position in neighbors_positions:
+                    self._solver.add(Or(sum([self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonals()]) > 0,
+                                        sum([self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()]) > 0))
