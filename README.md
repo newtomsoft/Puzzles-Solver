@@ -12,6 +12,7 @@ https://vectors.puzzlebaron.com/init2.php?sg=7
 ## GridPuzzle
 https://gridpuzzle.com/creek/evil-15  
 https://gridpuzzle.com/bridges/size-12  
+https://gridpuzzle.com/country-road/evil-12  
 https://gridpuzzle.com/fobidoshi/evil-12  
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/linesweeper/evil-12  
