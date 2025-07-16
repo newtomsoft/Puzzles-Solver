@@ -1,6 +1,7 @@
 ﻿from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
+from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleGridCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -13,7 +14,7 @@ class GridPuzzleCountryRoadGridProvider(GridProvider, PlaywrightGridProvider, Gr
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
         pqq_string_list, ar_string_list, ab_string_list, size = self._get_canvas_data_extended(html_page)
-        numbers_matrix = [[int(number) if (number:=pqq_string_list[i * size + j]) != '' else -1 for j in range(size)] for i in range(size)]
+        numbers_matrix = [[int(number) if (number:=pqq_string_list[i * size + j]) != '' else None for j in range(size)] for i in range(size)]
 
         open_matrix = [[set() for _ in range(size)] for _ in range(size)]
         for i in range(len(ar_string_list)):
@@ -29,4 +30,4 @@ class GridPuzzleCountryRoadGridProvider(GridProvider, PlaywrightGridProvider, Gr
             if cell_border_bottom == '0':
                 open_matrix[row][col].add('bottom')
 
-        return Grid(numbers_matrix), Grid(open_matrix)
+        return Grid(numbers_matrix), RegionsGrid(open_matrix)
