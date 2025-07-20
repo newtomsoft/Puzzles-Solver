@@ -8,8 +8,6 @@ _ = -1
 
 
 class FubukiSolverTests(TestCase):
-
-
     def test_solution_grid_square(self):
         grid = Grid([
             [0, 1, 1],
