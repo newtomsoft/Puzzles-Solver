@@ -101,6 +101,13 @@ class Position:
             return [Position(r, self.c) for r in range(min(self.r, position.r) + 1, max(self.r, position.r))]
         return []
 
+    def all_positions_and_bounds_between(self, position: 'Position') -> list['Position']:
+        if self.r == position.r:
+            return [Position(self.r, c) for c in range(min(self.c, position.c), max(self.c, position.c) + 1)]
+        if self.c == position.c:
+            return [Position(r, self.c) for r in range(min(self.r, position.r), max(self.r, position.r) + 1)]
+        return []
+
     def symmetric(self, position, to_int=True) -> 'Position':
         if to_int:
             return Position(int(2 * position.r - self.r), int(2 * position.c - self.c))
