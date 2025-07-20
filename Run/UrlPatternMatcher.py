@@ -23,6 +23,7 @@ from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
 from Domain.Puzzles.Linesweeper.LinesweeperSolver import LinesweeperSolver
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
+from Domain.Puzzles.LookAir.LookAirSolver import LookAirSolver
 from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
@@ -73,6 +74,7 @@ from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTour
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
 from GridPlayers.GridPuzzle.GridPuzzleLinesweeperPlayer import GridPuzzleLinesweeperPlayer
+from GridPlayers.GridPuzzle.GridPuzzleLookAirPlayer import GridPuzzleLookAirPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMidLoopPlayer import GridPuzzleMidLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNanroPlayer import GridPuzzleNanroPlayer
@@ -139,6 +141,7 @@ from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleG
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleLinesweeperGridProvider import GridPuzzleLinesweeperGridProvider
+from GridProviders.GridPuzzle.GridPuzzleLookAirGridProvider import GridPuzzleLookAirGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMidLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
@@ -246,6 +249,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/koburin": (KoburinSolver, GridPuzzleKoburinGridProvider, GridPuzzleKoburinPlayer),
             r"https://.*gridpuzzle\.com/linesweeper":(LinesweeperSolver, GridPuzzleLinesweeperGridProvider, GridPuzzleLinesweeperPlayer),
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsPlayer),
+            r"https://.*gridpuzzle\.com/look-air": (LookAirSolver, GridPuzzleLookAirGridProvider, GridPuzzleLookAirPlayer),
             r"https://.*gridpuzzle\.com/nanro": (NanroSolver, GridPuzzleNanroGridProvider, GridPuzzleNanroPlayer),
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuPlayer),
             r"https://.*gridpuzzle\.com/masyu": (MasyuSolver, GridPuzzleMasyuGridProvider, GridPuzzleMasyuPlayer),
