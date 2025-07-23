@@ -34,7 +34,9 @@ class GridBase[T]:
         return self.matrix == other.matrix
 
     def __contains__(self, item: Position | T) -> bool:
-            return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
+        if item is None:
+            return False
+        return 0 <= item.r < self.rows_number and 0 <= item.c < self.columns_number
 
     def __iter__(self) -> Generator[tuple[Position, T | Any], None, None]:
         for r, row in enumerate(self._matrix):
@@ -87,10 +89,12 @@ class GridBase[T]:
         matrix = self._matrix.copy()
         if all([isinstance(self._matrix[r][c], bool) for r in range(self.rows_number) for c in range(self.columns_number)]):
             matrix = [[1 if self._matrix[r][c] else 0 for c in range(self.columns_number)] for r in range(self.rows_number)]
-        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)] for r in
+        color_matrix = [[console_police_colors[police_color_grid.value(r, c) % (len(console_police_colors) - 1)] if police_color_grid else '' for c in range(self.columns_number)]
+                        for r in
                         range(self.rows_number)]
         background_color_matrix = [
-            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in range(self.columns_number)] for r in
+            [console_back_ground_colors[back_ground_color_grid.value(r, c) % (len(console_police_colors) - 1)] if back_ground_color_grid else '' for c in
+             range(self.columns_number)] for r in
             range(self.rows_number)]
         end_color = console_back_ground_colors['end'] if police_color_grid or back_ground_color_grid else ''
         end_space = ' ' if back_ground_color_grid else ''
