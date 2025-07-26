@@ -137,7 +137,7 @@ class YajilinSolver(GameSolver):
         for position, blacks_count_direction in [(position, value) for position, value in self.input_grid if value != '']:
             blacks_count = int(blacks_count_direction[0])
             direction = YajilinSolver.direction_map[blacks_count_direction[1]]
-            concerned_positions = self.input_grid.all_positions_at(position, direction)
+            concerned_positions = self.input_grid.all_positions_in_direction(position, direction)
             self._solver.add(sum([self._black_cells_z3[concerned_position] for concerned_position in concerned_positions if
                                   concerned_position in self._island_bridges_z3.keys()]) == blacks_count)
 
