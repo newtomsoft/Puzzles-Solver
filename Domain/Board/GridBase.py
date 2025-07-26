@@ -298,7 +298,7 @@ class GridBase[T]:
             positions.append(position)
         return positions
 
-    def all_positions_at(self, position: Position, direction: Direction) -> list[Position]:
+    def all_positions_in_direction(self, position: Position, direction: Direction) -> list[Position]:
         if direction == Direction.up():
             return self.all_positions_up(position)
         if direction == Direction.down():

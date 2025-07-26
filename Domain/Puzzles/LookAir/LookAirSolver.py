@@ -33,7 +33,7 @@ class LookAirSolver(GameSolver):
             proposition_count += 1
             proposition = Grid([[1 if is_true(model.eval(self._grid_z3.value(i, j))) else 0 for j in range(self._columns_number)] for i in range(self._rows_number)])
 
-            impossible_segments = self._impossible_segments(proposition)
+            impossible_segments = self.impossible_segments(proposition)
             if len(impossible_segments) == 0:
                 self._previous_solution = proposition
                 return proposition, proposition_count
@@ -89,13 +89,13 @@ class LookAirSolver(GameSolver):
                 implies = Implies(And([self._grid_z3[position] for position in comparison_positions]), Or(positions_filled_constraint))
                 self._solver.add(implies)
 
-    def _impossible_segments(self, proposition: Grid) -> list[list[Position]]:
+    def impossible_segments(self, proposition: Grid) -> list[list[Position]]:
         segments: list[list[Position]] = []
-        segments.extend(self._find_direction_segments(proposition, Direction.right()))
-        segments.extend(self._find_direction_segments(proposition, Direction.down()))
+        segments.extend(self._impossible_segments_by_direction(proposition, Direction.right()))
+        segments.extend(self._impossible_segments_by_direction(proposition, Direction.down()))
         return segments
 
-    def _find_direction_segments(self, proposition: Grid, direction: Direction) -> list[list[Position]]:
+    def _impossible_segments_by_direction(self, proposition: Grid, direction: Direction) -> list[list[Position]]:
         segments: list[list[Position]] = []
 
         primary_range = range(self._rows_number) if direction == Direction.right() else range(self._columns_number)
@@ -124,13 +124,12 @@ class LookAirSolver(GameSolver):
                 if search_after_position.after(direction, length) not in proposition:
                     break
 
-                positions_to_search = proposition.all_positions_at(search_after_position, direction)
-
-                last_position = self._end_position_if_same_length(length, positions_to_search, proposition)
-                if last_position is not None:
+                to_parse_positions = proposition.all_positions_in_direction(search_after_position, direction)
+                last_found_position = self._end_position_if_same_length(length, to_parse_positions, proposition)
+                if last_found_position is not None:
                     if (before := start_position.before(direction)) in proposition:
                         start_position = before
-                    segment = start_position.all_positions_and_bounds_between(last_position)
+                    segment = start_position.all_positions_and_bounds_between(last_found_position)
                     segments.append(segment)
                 started = False
 
