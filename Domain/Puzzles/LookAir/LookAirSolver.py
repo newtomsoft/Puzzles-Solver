@@ -23,17 +23,17 @@ class LookAirSolver(GameSolver):
         if not self._solver.assertions():
             self._init_solver()
 
-        solution, _ = self._ensure_all_islands_connected()
+        solution, _ = self._ensure_squares_visibility()
         return solution
 
-    def _ensure_all_islands_connected(self) -> tuple[Grid, int]:
+    def _ensure_squares_visibility(self) -> tuple[Grid, int]:
         proposition_count = 0
         while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
             proposition = Grid([[1 if is_true(model.eval(self._grid_z3.value(i, j))) else 0 for j in range(self._columns_number)] for i in range(self._rows_number)])
 
-            impossible_segments = self.impossible_segments(proposition)
+            impossible_segments = self._impossible_segments(proposition)
             if len(impossible_segments) == 0:
                 self._previous_solution = proposition
                 return proposition, proposition_count
@@ -89,7 +89,7 @@ class LookAirSolver(GameSolver):
                 implies = Implies(And([self._grid_z3[position] for position in comparison_positions]), Or(positions_filled_constraint))
                 self._solver.add(implies)
 
-    def impossible_segments(self, proposition: Grid) -> list[list[Position]]:
+    def _impossible_segments(self, proposition: Grid) -> list[list[Position]]:
         segments: list[list[Position]] = []
         segments.extend(self._impossible_segments_by_direction(proposition, Direction.right()))
         segments.extend(self._impossible_segments_by_direction(proposition, Direction.down()))
