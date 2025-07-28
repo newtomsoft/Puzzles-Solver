@@ -106,7 +106,7 @@ class ShikakuSolver(GameSolver):
         return {(divisor, cells_number // divisor) for divisor in divisors}
 
     @staticmethod
-    def get_width_height_positions(possible_cells) -> (int, int, (int, int), (int, int)):
+    def get_width_height_positions(possible_cells) -> tuple[int, int, tuple[int, int], tuple[int, int]]:
         min_r_position = min(possible_cells, key=lambda x: x[0])
         max_r_position = max(possible_cells, key=lambda x: x[0])
         min_c_position = min(possible_cells, key=lambda x: x[1])
@@ -116,10 +116,10 @@ class ShikakuSolver(GameSolver):
         return width, height, (min_r_position[0], min_c_position[1]), (max_r_position[0], max_c_position[1])
 
     @staticmethod
-    def _invert_width_height(width: int, height: int) -> (int, int):
+    def _invert_width_height(width: int, height: int) -> tuple[int, int]:
         return height, width
 
-    def _get_cells_of_biggest_rectangle(self, position: (int, int)) -> set[tuple[int, int]]:
+    def _get_cells_of_biggest_rectangle(self, position: tuple[int, int]) -> set[tuple[int, int]]:
         moves_rows = [(1, 0), (-1, 0)]
         moves_columns = [(0, 1), (0, -1)]
         moves = moves_rows + moves_columns
