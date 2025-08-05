@@ -8,6 +8,38 @@ _ = 0
 
 
 class CloudsSolverTests(TestCase):
+    def test_no_square_less_than_2x2_bottom_right(self):
+        rows_counts = [2, 2, 2, 3]
+        columns_counts = [2, 2, 2, 3]
+
+        game_solver = CloudsSolver(rows_counts, columns_counts)
+        solution = game_solver.get_solution()
+        self.assertEqual(Grid.empty(), solution)
+
+    def test_no_square_less_than_2x2_bottom_left(self):
+        rows_counts = [2, 2, 2, 3]
+        columns_counts = [3, 2, 2, 2]
+
+        game_solver = CloudsSolver(rows_counts, columns_counts)
+        solution = game_solver.get_solution()
+        self.assertEqual(Grid.empty(), solution)
+
+    def test_no_square_less_than_2x2_top_left(self):
+        rows_counts = [3, 2, 2, 2]
+        columns_counts = [3, 2, 2, 2]
+
+        game_solver = CloudsSolver(rows_counts, columns_counts)
+        solution = game_solver.get_solution()
+        self.assertEqual(Grid.empty(), solution)
+
+    def test_no_square_less_than_2x2_top_right(self):
+        rows_counts = [3, 2, 2, 2]
+        columns_counts = [2, 2, 2, 3]
+
+        game_solver = CloudsSolver(rows_counts, columns_counts)
+        solution = game_solver.get_solution()
+        self.assertEqual(Grid.empty(), solution)
+
     def test_solution_4x4_2674y(self):
         """https://gridpuzzle.com/clouds/2674y"""
         rows_counts = [0, 3, 3, 3]
@@ -29,11 +61,11 @@ class CloudsSolverTests(TestCase):
         rows_counts = [4, 4, 0, 3, 3]
         columns_counts = [2, 2, 2, 4, 4]
         expected_grid = Grid([
-            [1, 1, 0, 1, 1],
-            [1, 1, 0, 1, 1],
-            [0, 0, 0, 0, 0],
-            [0, 0, 1, 1, 1],
-            [0, 0, 1, 1, 1]
+            [1, 1, _, 1, 1],
+            [1, 1, _, 1, 1],
+            [_, _, _, _, _],
+            [_, _, 1, 1, 1],
+            [_, _, 1, 1, 1]
         ])
         game_solver = CloudsSolver(rows_counts, columns_counts)
         solution = game_solver.get_solution()
@@ -46,14 +78,14 @@ class CloudsSolverTests(TestCase):
         rows_counts = [4, 7, 7, 7, 0, 3, 5, 5]
         columns_counts = [6, 6, 4, 7, 3, 6, 3, 3]
         expected_grid = Grid([
-            [1, 1, 1, 1, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 1, 1, 1],
-            [1, 1, 1, 1, 0, 1, 1, 1],
-            [1, 1, 1, 1, 0, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 0, 0],
-            [1, 1, 0, 1, 1, 1, 0, 0],
-            [1, 1, 0, 1, 1, 1, 0, 0]
+            [1, 1, 1, 1, _, _, _, _],
+            [1, 1, 1, 1, _, 1, 1, 1],
+            [1, 1, 1, 1, _, 1, 1, 1],
+            [1, 1, 1, 1, _, 1, 1, 1],
+            [_, _, _, _, _, _, _, _],
+            [_, _, _, 1, 1, 1, _, _],
+            [1, 1, _, 1, 1, 1, _, _],
+            [1, 1, _, 1, 1, 1, _, _]
         ])
         game_solver = CloudsSolver(rows_counts, columns_counts)
         solution = game_solver.get_solution()
@@ -66,16 +98,16 @@ class CloudsSolverTests(TestCase):
         rows_counts = [2, 8, 8, 2, 2, 5, 5, 0, 3, 3]
         columns_counts = [2, 2, 5, 5, 2, 6, 8, 2, 4, 2]
         expected_grid = Grid([
-            [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-            [1, 1, 1, 1, 0, 1, 1, 0, 1, 1],
-            [1, 1, 1, 1, 0, 1, 1, 0, 1, 1],
-            [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-            [0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-            [0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0]
+            [_, _, _, _, _, 1, 1, _, _, _],
+            [1, 1, 1, 1, _, 1, 1, _, 1, 1],
+            [1, 1, 1, 1, _, 1, 1, _, 1, 1],
+            [_, _, _, _, _, 1, 1, _, _, _],
+            [_, _, 1, 1, _, _, _, _, _, _],
+            [_, _, 1, 1, _, _, 1, 1, 1, _],
+            [_, _, 1, 1, _, _, 1, 1, 1, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, 1, 1, 1, _, _, _],
+            [_, _, _, _, 1, 1, 1, _, _, _]
         ])
         game_solver = CloudsSolver(rows_counts, columns_counts)
         solution = game_solver.get_solution()
@@ -88,21 +120,48 @@ class CloudsSolverTests(TestCase):
         rows_counts = [2, 2, 11, 11, 11, 0, 4, 8, 8, 2, 2, 9, 7, 3, 0]
         columns_counts = [6, 6, 2, 8, 6, 6, 6, 5, 5, 3, 0, 6, 9, 9, 3]
         expected_grid = Grid([
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-            [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-            [1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-            [1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0],
-            [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            [1, 1, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [1, 1, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1],
+            [_, _, _, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1],
+            [_, _, _, 1, 1, 1, 1, 1, 1, 1, _, 1, 1, 1, 1],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, 1, 1, 1, 1, _, _, _, _, _, _, _, _],
+            [1, 1, _, 1, 1, 1, 1, _, _, _, _, _, 1, 1, _],
+            [1, 1, _, 1, 1, 1, 1, _, _, _, _, _, 1, 1, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, 1, 1, _],
+            [_, _, _, _, _, _, _, 1, 1, _, _, _, _, _, _],
+            [1, 1, 1, 1, _, _, _, 1, 1, _, _, 1, 1, 1, _],
+            [1, 1, 1, 1, _, _, _, _, _, _, _, 1, 1, 1, _],
+            [_, _, _, _, _, _, _, _, _, _, _, 1, 1, 1, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _]
+        ])
+        game_solver = CloudsSolver(rows_counts, columns_counts)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_15x15_4jnme(self):
+        """https://gridpuzzle.com/clouds/4jnme"""
+        rows_counts = [0, 0, 3, 8, 8, 5, 4, 8, 8, 6, 6, 4, 8, 6, 0]
+        columns_counts = [2, 4, 9, 9, 2, 2, 8, 6, 6, 3, 3, 8, 5, 5, 2]
+        expected_grid = Grid([
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, 1, 1, 1, _, _, _, _, _, _],
+            [_, _, 1, 1, _, _, 1, 1, 1, _, _, 1, 1, 1, _],
+            [_, _, 1, 1, _, _, 1, 1, 1, _, _, 1, 1, 1, _],
+            [_, _, 1, 1, _, _, _, _, _, _, _, 1, 1, 1, _],
+            [_, _, 1, 1, _, _, _, _, 1, 1, _, _, _, _, _],
+            [_, _, 1, 1, _, _, _, _, 1, 1, _, 1, 1, 1, 1],
+            [_, _, _, _, _, 1, 1, _, 1, 1, _, 1, 1, 1, 1],
+            [1, 1, 1, 1, _, 1, 1, _, _, _, _, _, _, _, _],
+            [1, 1, 1, 1, _, _, _, _, _, _, 1, 1, _, _, _],
+            [_, _, _, _, _, _, 1, 1, _, _, 1, 1, _, _, _],
+            [_, 1, 1, 1, 1, _, 1, 1, _, _, 1, 1, _, _, _],
+            [_, 1, 1, 1, 1, _, 1, 1, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _]
         ])
         game_solver = CloudsSolver(rows_counts, columns_counts)
         solution = game_solver.get_solution()
