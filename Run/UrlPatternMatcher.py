@@ -5,6 +5,8 @@ from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
+from Domain.Puzzles.Chocona.ChoconaSolver import ChoconaSolver
+from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
 from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
@@ -66,6 +68,7 @@ from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
 from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlayer
+from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
 from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
@@ -134,6 +137,7 @@ from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaru
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
+from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
@@ -206,7 +210,7 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
-from Puzzles.Chocona.ChoconaSolver import ChoconaSolver
+
 
 
 class UrlPatternMatcher:
@@ -232,6 +236,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
             r"https://.*gridpuzzle\.com/chocona": (ChoconaSolver, GridPuzzleChoconaGridProvider, GridPuzzleChoconaPlayer),
+            r"https://.*gridpuzzle\.com/clouds": (CloudsSolver, GridPuzzleCloudsGridProvider, GridPuzzleCloudsPlayer),
             r"https://.*gridpuzzle\.com/country-road": (CountryRoadSolver, GridPuzzleCountryRoadGridProvider, GridPuzzleCountryRoadPlayer),
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
