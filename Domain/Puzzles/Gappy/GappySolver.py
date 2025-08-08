@@ -1,0 +1,79 @@
+﻿from z3 import Solver, Bool, Not, And, is_true, sat, Implies, Or
+
+from Domain.Board.Grid import Grid
+from Domain.Puzzles.GameSolver import GameSolver
+
+
+class GappySolver(GameSolver):
+    def __init__(self, rows_gaps: list[int], columns_gaps: list[int]):
+        self._rows_gaps = rows_gaps
+        self._columns_gaps = columns_gaps
+        self._rows_number = len(rows_gaps)
+        self._columns_number = len(columns_gaps)
+        self._solver = Solver()
+        self._grid_z3: Grid | None = None
+        self._previous_solution: Grid | None = None
+
+    def _init_solver(self):
+        self._grid_z3 = Grid(
+            [[Bool(f"cell_{r}-{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._add_constraints()
+
+    def get_solution(self) -> Grid:
+        if not self._solver.assertions():
+            self._init_solver()
+
+        solution = self._compute_solution()
+        self._previous_solution = solution
+        return solution
+
+    def get_other_solution(self):
+        previous_solution_constraints = []
+        for position, _ in [(position, value) for (position, value) in self._previous_solution if value]:
+            previous_solution_constraints.append(self._grid_z3[position])
+        self._solver.add(Not(And(previous_solution_constraints)))
+
+        return self.get_solution()
+
+    def _compute_solution(self) -> Grid:
+        if self._solver.check() == sat:
+            model = self._solver.model()
+            return Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
+
+        return Grid.empty()
+
+    def _add_constraints(self):
+        self._add_2_black_cells_by_line_constraints()
+        self._add_isolated_black_cells_constraints()
+        self._add_gap_between_black_cells_constraints()
+
+    def _add_2_black_cells_by_line_constraints(self):
+        for row_z3 in self._grid_z3.matrix:
+            self._solver.add(sum(row_z3[c] for c in range(self._columns_number)) == 2)
+        for column_z3 in zip(*self._grid_z3.matrix):
+            self._solver.add(sum(column_z3[r] for r in range(self._rows_number)) == 2)
+
+    def _add_isolated_black_cells_constraints(self):
+        for position, value in self._grid_z3:
+            neighbors_values = self._grid_z3.neighbors_values(position, 'diagonal')
+            self._solver.add(Implies(value, sum(neighbors_values) == 0))
+
+    def _add_gap_between_black_cells_constraints(self):
+        for index, row_z3 in enumerate(self._grid_z3.matrix):
+            gap = self._rows_gaps[index]
+            if gap == -1:
+                continue
+            patterns = []
+            for c in range(self._columns_number - gap - 1):
+                patterns.append(And(row_z3[c], row_z3[c + gap + 1]))
+            self._solver.add(Or(patterns))
+
+        for index, column_z3 in enumerate(zip(*self._grid_z3.matrix)):
+            gap = self._columns_gaps[index]
+            if gap == -1:
+                continue
+            patterns = []
+            for c in range(self._columns_number - gap - 1):
+                patterns.append(And(column_z3[c], column_z3[c + gap + 1]))
+            self._solver.add(Or(patterns))
+
