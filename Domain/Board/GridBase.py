@@ -251,6 +251,7 @@ class GridBase[T]:
         return set(self.all_positions_up(position)) | set(self.all_positions_down(position)) | set(self.all_positions_left(position)) | set(self.all_positions_right(position))
 
     def neighbors_positions(self, position: Position, mode='orthogonal') -> set[Position]:
+        """mode : orthogonal, diagonal, diagonal_only"""
         if mode == 'diagonal_only':
             return {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
 
@@ -289,6 +290,7 @@ class GridBase[T]:
         return position.down_right if position.down_right in self else None  # check if wall is not between position and position.down_right ?
 
     def neighbors_values(self, position: Position, mode='orthogonal') -> list[T]:
+        """mode : orthogonal, diagonal, diagonal_only"""
         return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
     def all_positions_up(self, position: Position) -> list[Position]:
