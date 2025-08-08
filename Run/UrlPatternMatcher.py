@@ -13,6 +13,7 @@ from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
 from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
+from Domain.Puzzles.Gappy.GappySolver import GappySolver
 from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
 from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
@@ -74,6 +75,7 @@ from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountry
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
 from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
+from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
@@ -144,6 +146,7 @@ from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzl
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
+from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
@@ -235,8 +238,7 @@ class UrlPatternMatcher:
             r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronLaserGridsPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruPlayer),
-            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer),
-            # same player as binairo
+            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer), # same player as binairo
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
             r"https://.*gridpuzzle\.com/chocona": (ChoconaSolver, GridPuzzleChoconaGridProvider, GridPuzzleChoconaPlayer),
             r"https://.*gridpuzzle\.com/clouds": (CloudsSolver, GridPuzzleCloudsGridProvider, GridPuzzleCloudsPlayer),
@@ -244,23 +246,21 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
             r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
-            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),
-            # same player as futoshiki
+            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer), # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
+            r"https://.*gridpuzzle\.com/gappy": (GappySolver, GridPuzzleGappyGridProvider, GridPuzzleGappyPlayer),
             r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
             r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiPlayer),
             r"https://.*gridpuzzle\.com/bridges": (HashiSolver, GridPuzzleHashiGridProvider, GridPuzzleHashiPlayer),
             r"https://.*\.puzzle-heyawake\.com": (HeyawakeSolver, PuzzleHeyawakeGridProvider, PuzzleHeyawakePlayer),
             r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriPlayer),
-            r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuPlayer),
-            # same player as sudoku
+            r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuPlayer), # same player as sudoku
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroPlayer),
             r"https://www\.20minutes\.fr/services/jeux/kemaru": (KemaruSolver, VingtMinutesKemaruGridProvider, VingtMinutesKemaruPlayer),
             r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuPlayer),
-            r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuPlayer),
-            # same player as Sudoku
+            r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuPlayer), # same player as Sudoku
             r"https://.*gridpuzzle\.com/koburin": (KoburinSolver, GridPuzzleKoburinGridProvider, GridPuzzleKoburinPlayer),
             r"https://.*gridpuzzle\.com/linesweeper": (LinesweeperSolver, GridPuzzleLinesweeperGridProvider, GridPuzzleLinesweeperPlayer),
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsPlayer),
@@ -269,8 +269,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuPlayer),
             r"https://.*gridpuzzle\.com/masyu": (MasyuSolver, GridPuzzleMasyuGridProvider, GridPuzzleMasyuPlayer),
             r"https://.*gridpuzzle\.com/mid-loop": (MidLoopSolver, GridPuzzleMidLoopGridProvider, GridPuzzleMidLoopPlayer),
-            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider,
-                                                              PuzzleMinesweeperMosaicPlayer),
+            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
@@ -279,8 +278,7 @@ class UrlPatternMatcher:
             r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabePlayer),
             r"https://.*gridpuzzle\.com/pipelink": (PipelinkSolver, GridPuzzlePipelinkGridProvider, GridPuzzlePipelinkPlayer),
-            r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
-            # same player and same grid provider as pipes
+            r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer), # same player and same grid provider as pipes
             r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
             r"https://.*gridpuzzle\.com/pure-loop": (PurenrupuSolver, GridPuzzlePurenrupuGridProvider, GridPuzzlePurenrupuPlayer),
             r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, GridPuzzleRenkatsuPlayer),
