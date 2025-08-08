@@ -18,7 +18,6 @@ class TrilogySolverTests(TestCase):
             [C, _, _, C],
             [C, T, C, C]
         ])
-
         expected_solution = Grid([
             [C, S, C, C],
             [S, T, S, T],
@@ -40,7 +39,6 @@ class TrilogySolverTests(TestCase):
             [T, T, _, T, T],
             [_, _, S, _, _]
         ])
-
         expected_solution = Grid([
             [T, T, S, T, T],
             [C, S, C, S, C],
@@ -68,7 +66,6 @@ class TrilogySolverTests(TestCase):
             [_, _, _, _, _, _, _, _, _, _],
             [_, _, _, _, _, _, _, _, _, _]
         ])
-
         expected_solution = Grid([
             [S, T, S, T, T, C, T, C, C, S],
             [S, T, T, C, T, C, C, S, C, S],
