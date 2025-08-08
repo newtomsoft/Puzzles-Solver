@@ -37,6 +37,7 @@ https://gridpuzzle.com/str8ts/evil-9
 https://gridpuzzle.com/straight-loop/evil-12  
 https://gridpuzzle.com/tilepaint/evil-12  
 https://gridpuzzle.com/traffic-lights/evil-12  
+https://gridpuzzle.com/trilogy/evil-10  
 https://gridpuzzle.com/wamuzu/size-12  
 https://gridpuzzle.com/yajilin/evil-12  
 
