@@ -9,7 +9,6 @@ T = -1
 
 
 class TentsSolverTests(TestCase):
-
     def test_rows_must_be_at_least_5_raises_value_error(self):
         grid = Grid([
             [_, _, _, _, _],
