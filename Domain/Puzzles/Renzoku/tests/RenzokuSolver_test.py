@@ -38,7 +38,7 @@ class RenzokuSolverTests(TestCase):
         grid = Grid([
             [_, _, _, _],
             [_, _, _, _],
-            [+4, _, _, _],
+            [4, _, _, _],
             [_, _, _, _],
         ])
         consecutive_positions = [(Position(0, 0), Position(0, 1)), (Position(0, 0), Position(1, 0)), (Position(0, 1), Position(1, 1)), (Position(0, 2), Position(1, 2)), (Position(0, 3), Position(1, 3)), (Position(1, 2), Position(1, 3)), (Position(1, 2), Position(2, 2)),
