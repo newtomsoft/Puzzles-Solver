@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, Not, And, is_true, sat, Implies, Or
+﻿from z3 import Solver, Bool, Not, And, is_true, sat, Implies, Or, Xor, If
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -45,7 +45,7 @@ class GappySolver(GameSolver):
     def _add_constraints(self):
         self._add_2_black_cells_by_line_constraints()
         self._add_isolated_black_cells_constraints()
-        self._add_gap_between_black_cells_constraints()
+        self._add_gaps_constraints()
 
     def _add_2_black_cells_by_line_constraints(self):
         for row_z3 in self._grid_z3.matrix:
@@ -58,22 +58,21 @@ class GappySolver(GameSolver):
             neighbors_values = self._grid_z3.neighbors_values(position, 'diagonal')
             self._solver.add(Implies(value, sum(neighbors_values) == 0))
 
-    def _add_gap_between_black_cells_constraints(self):
-        for index, row_z3 in enumerate(self._grid_z3.matrix):
-            gap = self._rows_gaps[index]
-            if gap == -1:
-                continue
-            patterns = []
-            for c in range(self._columns_number - gap - 1):
-                patterns.append(And(row_z3[c], row_z3[c + gap + 1]))
-            self._solver.add(Or(patterns))
+    def _add_gaps_constraints(self):
+        for index_row, row_z3 in enumerate(self._grid_z3.matrix):
+            self._add_line_gap_constraint(row_z3, self._rows_number, self._rows_gaps[index_row])
 
-        for index, column_z3 in enumerate(zip(*self._grid_z3.matrix)):
-            gap = self._columns_gaps[index]
-            if gap == -1:
-                continue
-            patterns = []
-            for c in range(self._columns_number - gap - 1):
-                patterns.append(And(column_z3[c], column_z3[c + gap + 1]))
-            self._solver.add(Or(patterns))
+        for index_column, column_z3 in enumerate(zip(*self._grid_z3.matrix)):
+            self._add_line_gap_constraint(column_z3, self._columns_number, self._columns_gaps[index_column])
 
+    def _add_line_gap_constraint(self, line_z3, line_size, gap):
+        if gap == -1:
+            return
+        patterns = []
+        for index in range(line_size - gap - 1):
+            patterns.append(And(
+                line_z3[index],
+                line_z3[index + gap + 1],
+                *[Not(line_z3[i]) for i in range(line_size) if i != index and i != index + gap + 1]
+            ))
+        self._solver.add(Or(patterns))
