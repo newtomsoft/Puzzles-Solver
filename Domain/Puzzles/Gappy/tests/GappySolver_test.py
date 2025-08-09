@@ -30,6 +30,33 @@ class GappySolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_solution_15x15_evil_0me6r(self):
+        """https://gridpuzzle.com/gappy/0me6r"""
+        rows_gaps = [1, -1, -1, 5, -1, 8, -1, 1, -1, -1, 5, 3, -1, -1, 7]
+        columns_gaps = [-1, 2, 1, 7, 7, -1, 11, -1, -1, 3, -1, 7, 2, 9, 3]
+        expected_grid = Grid([
+            [X, _, X, _, _, _, _, _, _, _, _, _, _, _, _,],
+            [_, _, _, _, _, _, X, _, X, _, _, _, _, _, _,],
+            [_, _, X, _, X, _, _, _, _, _, _, _, _, _, _,],
+            [_, _, _, _, _, _, _, X, _, _, _, _, _, X, _,],
+            [X, _, _, _, _, _, _, _, _, X, _, _, _, _, _,],
+            [_, _, _, _, _, X, _, _, _, _, _, _, _, _, X,],
+            [_, _, _, X, _, _, _, _, _, _, _, X, _, _, _,],
+            [_, _, _, _, _, X, _, X, _, _, _, _, _, _, _,],
+            [_, _, _, _, _, _, _, _, _, X, _, _, X, _, _,],
+            [_, X, _, _, _, _, _, _, _, _, _, _, _, _, X,],
+            [_, _, _, _, X, _, _, _, _, _, X, _, _, _, _,],
+            [_, _, _, _, _, _, _, _, X, _, _, _, X, _, _,],
+            [_, X, _, _, _, _, _, _, _, _, X, _, _, _, _,],
+            [_, _, _, _, _, _, X, _, _, _, _, _, _, X, _,],
+            [_, _, _, X, _, _, _, _, _, _, _, X, _, _, _,]
+        ])
+        game_solver = GappySolver(rows_gaps, columns_gaps)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
     def test_solution_18x18_evil_0jrv8(self):
         """https://gridpuzzle.com/gappy/0jrv8"""
         rows_gaps = [-1, -1, 11, 6, 1, 1, 7, 11, -1, 1, 1, -1, 1, -1, 3, 16, 1, -1]
