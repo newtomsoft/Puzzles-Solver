@@ -66,6 +66,7 @@ from Domain.Puzzles.TilePaint.TilePaintSolver import TilePaintSolver
 from Domain.Puzzles.Trilogy.TrilogySolver import TrilogySolver
 from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 from Domain.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
+from Domain.Puzzles.Yajikabe.YajilkabeSolver import YajikabeSolver
 from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
@@ -173,6 +174,7 @@ from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8
 from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTrilogyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleWamazuGridProvider import GridPuzzleWamazuGridProvider
+from GridProviders.GridPuzzle.GridPuzzleYajikabeGridProvider import GridPuzzleYajikabeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
 from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
 from GridProviders.Linkedin.TangoGridProvider import TangoGridProvider
@@ -315,6 +317,7 @@ class UrlPatternMatcher:
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
             r"https://.*gridpuzzle\.com/wamuzu": (WamazuSolver, GridPuzzleWamazuGridProvider, GridPuzzleWamazuPlayer),
             r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
+            r"https://.*gridpuzzle\.com/yajikabe": (YajikabeSolver, GridPuzzleYajikabeGridProvider, None),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://www\.linkedin\.com/games/zip": (ZipSolver, ZipGridProvider, ZipPlayer),
         }
