@@ -9,8 +9,6 @@ o = False
 
 
 class Str8tsSolverTests(TestCase):
-
-
     def test_solution_grid_not_square(self):
         numbers_grid = Grid([
             [2, 1, _],
