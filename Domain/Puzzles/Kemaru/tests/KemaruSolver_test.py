@@ -8,8 +8,6 @@ _ = 0
 
 
 class KemaruSolverTests(TestCase):
-
-
     def test_grid_must_have_at_least_2_regions_raises_value_error(self):
         grid = Grid([
             [_, _, _, _, _, _],
