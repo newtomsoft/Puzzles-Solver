@@ -102,6 +102,7 @@ from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleWamazuPlayer import GridPuzzleWamazuPlayer
+from GridPlayers.GridPuzzle.GridPuzzleYajikabePlayer import GridPuzzleYajikabePlayer
 from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
 from GridPlayers.LinkedIn.TangoPlayer import TangoPlayer
@@ -317,7 +318,7 @@ class UrlPatternMatcher:
             r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
             r"https://.*gridpuzzle\.com/wamuzu": (WamazuSolver, GridPuzzleWamazuGridProvider, GridPuzzleWamazuPlayer),
             r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
-            r"https://.*gridpuzzle\.com/yajikabe": (YajikabeSolver, GridPuzzleYajikabeGridProvider, None),
+            r"https://.*gridpuzzle\.com/yajikabe": (YajikabeSolver, GridPuzzleYajikabeGridProvider, GridPuzzleYajikabePlayer),
             r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
             r"https://www\.linkedin\.com/games/zip": (ZipSolver, ZipGridProvider, ZipPlayer),
         }

@@ -42,6 +42,7 @@ https://gridpuzzle.com/traffic-lights/evil-12
 https://gridpuzzle.com/trilogy/evil-10  
 https://gridpuzzle.com/wamuzu/size-12  
 https://gridpuzzle.com/yajilin/evil-12  
+https://gridpuzzle.com/yajikabe/evil-12  
 
 ## Linkedin
 https://www.linkedin.com/games/zip/  
