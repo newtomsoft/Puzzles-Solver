@@ -5,7 +5,7 @@ from Domain.Board.Grid import Grid
 from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
 
 _ = 0
-
+X = 1
 
 class TapaSolverTests(TestCase):
 
@@ -86,7 +86,11 @@ class TapaSolverTests(TestCase):
             [_, [8], _],
             [_, _, _],
         ])
-        expected_solution = Grid([[1, 1, 1], [1, _, 1], [1, 1, 1]])
+        expected_solution = Grid([
+            [X, X, X],
+            [X, _, X],
+            [X, X, X]
+        ])
         game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
@@ -97,7 +101,10 @@ class TapaSolverTests(TestCase):
             [[2], _],
             [[2], _],
         ])
-        expected_solution = Grid([[_, 1], [_, 1]])
+        expected_solution = Grid([
+            [_, X], 
+            [_, X]
+        ])
         game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
@@ -142,7 +149,11 @@ class TapaSolverTests(TestCase):
             [_, [7], _],
             [_, _, _],
         ])
-        expected_solution = Grid([[_, 1, 1], [1, _, 1], [1, 1, 1]])
+        expected_solution = Grid([
+            [_, X, X],
+            [X, _, X],
+            [X, X, X]
+        ])
         game_solver = TapaSolver(grid)
 
         solution = game_solver.get_solution()
@@ -156,9 +167,9 @@ class TapaSolverTests(TestCase):
             [[2], _, _, [1]],
         ])
         expected_solution = Grid([
-            [1, 1, 1, _],
-            [1, _, _, _],
-            [1, 1, 1, _],
+            [X, X, X, _],
+            [X, _, _, _],
+            [X, X, X, _],
             [_, _, _, _]
         ])
         game_solver = TapaSolver(grid)
@@ -186,12 +197,12 @@ class TapaSolverTests(TestCase):
             [[2], _, _, _, _, [3]],
         ])
         expected_solution = Grid([
-            [_, 1, 1, _, _, _],
-            [1, _, 1, 1, 1, _],
-            [1, 1, 1, _, 1, 1],
-            [1, _, 1, _, _, 1],
-            [1, 1, _, _, 1, 1],
-            [_, _, 1, 1, 1, _]
+            [_, X, X, _, _, _],
+            [X, _, X, X, X, _],
+            [X, X, X, _, X, X],
+            [X, _, X, _, _, X],
+            [X, X, _, _, X, X],
+            [_, _, X, X, X, _]
         ])
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
@@ -211,16 +222,16 @@ class TapaSolverTests(TestCase):
             [_, _, [1, 2], _, _, _, _, [1, 1, 1], _, _]
         ])
         expected_solution = Grid([
-            [_, _, 1, 1, _, _, 1, 1, 1, _],
-            [1, 1, 1, _, _, _, _, _, 1, _],
-            [_, _, 1, 1, 1, 1, 1, _, 1, 1],
-            [_, _, 1, _, 1, _, _, 1, _, 1],
-            [_, _, 1, _, _, _, 1, 1, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1, _, _, 1],
-            [1, _, _, 1, _, _, 1, 1, _, 1],
-            [1, _, _, 1, 1, _, _, 1, _, 1],
-            [1, _, _, 1, _, _, _, 1, _, 1],
-            [1, 1, _, 1, 1, 1, 1, _, 1, 1]
+            [_, _, X, X, _, _, X, X, X, _],
+            [X, X, X, _, _, _, _, _, X, _],
+            [_, _, X, X, X, X, X, _, X, X],
+            [_, _, X, _, X, _, _, X, _, X],
+            [_, _, X, _, _, _, X, X, X, X],
+            [X, X, X, X, X, X, X, _, _, X],
+            [X, _, _, X, _, _, X, X, _, X],
+            [X, _, _, X, X, _, _, X, _, X],
+            [X, _, _, X, _, _, _, X, _, X],
+            [X, X, _, X, X, X, X, _, X, X]
         ])
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
@@ -240,16 +251,16 @@ class TapaSolverTests(TestCase):
             [_, _, _, _, _, [1, 3], _, _, _, _],
         ])
         expected_solution = Grid([
-            [1, 1, 1, _, _, _, 1, 1, 1, 1],
-            [1, _, 1, 1, 1, 1, 1, _, _, 1],
-            [_, 1, 1, _, _, 1, _, _, _, 1],
-            [1, _, 1, _, 1, 1, 1, _, _, 1],
-            [1, _, _, 1, 1, _, 1, _, _, 1],
-            [1, _, 1, 1, _, 1, 1, 1, _, 1],
-            [1, _, 1, _, _, 1, _, 1, _, 1],
-            [1, _, 1, 1, 1, _, 1, 1, 1, _],
-            [1, _, _, 1, _, 1, 1, _, _, 1],
-            [1, 1, 1, 1, 1, _, 1, 1, 1, 1]
+            [X, X, X, _, _, _, X, X, X, X],
+            [X, _, X, X, X, X, X, _, _, X],
+            [_, X, X, _, _, X, _, _, _, X],
+            [X, _, X, _, X, X, X, _, _, X],
+            [X, _, _, X, X, _, X, _, _, X],
+            [X, _, X, X, _, X, X, X, _, X],
+            [X, _, X, _, _, X, _, X, _, X],
+            [X, _, X, X, X, _, X, X, X, _],
+            [X, _, _, X, _, X, X, _, _, X],
+            [X, X, X, X, X, _, X, X, X, X]
         ])
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
@@ -270,16 +281,16 @@ class TapaSolverTests(TestCase):
             [_, _, _, _, [1, 2], _, _, [4], _, _],
         ])
         expected_solution = Grid([
-            [_, _, _, _, 1, _, _, 1, 1, _],
-            [_, _, 1, 1, 1, 1, 1, 1, _, _],
-            [1, 1, 1, _, _, 1, _, _, _, 1],
-            [_, _, _, _, 1, 1, _, _, _, 1],
-            [_, _, 1, 1, 1, _, _, _, _, 1],
-            [_, _, 1, _, 1, 1, 1, _, 1, 1],
-            [1, 1, 1, _, _, _, 1, _, 1, _],
-            [1, _, _, _, _, _, 1, _, 1, _],
-            [1, _, _, _, 1, 1, 1, 1, 1, _],
-            [1, 1, 1, 1, _, _, _, _, 1, 1],
+            [_, _, _, _, X, _, _, X, X, _],
+            [_, _, X, X, X, X, X, X, _, _],
+            [X, X, X, _, _, X, _, _, _, X],
+            [_, _, _, _, X, X, _, _, _, X],
+            [_, _, X, X, X, _, _, _, _, X],
+            [_, _, X, _, X, X, X, _, X, X],
+            [X, X, X, _, _, _, X, _, X, _],
+            [X, _, _, _, _, _, X, _, X, _],
+            [X, _, _, _, X, X, X, X, X, _],
+            [X, X, X, X, _, _, _, _, X, X]
         ])
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
@@ -304,21 +315,21 @@ class TapaSolverTests(TestCase):
             [_, [3], [3], [1, 2], _, _, _, _, _, _, _, [1, 2], _, _, _]
         ])
         expected_solution = Grid([
-            [1, 1, 1, _, 1, 1, _, _, 1, 1, 1, _, _, _, _],
-            [1, _, 1, _, _, 1, 1, 1, 1, _, _, 1, 1, _, 1],
-            [1, _, 1, 1, 1, 1, _, _, 1, 1, 1, 1, _, _, 1],
-            [_, 1, _, 1, _, 1, _, 1, 1, _, _, 1, _, _, 1],
-            [_, 1, 1, _, 1, 1, 1, _, 1, 1, _, _, 1, _, 1],
-            [1, _, 1, 1, _, 1, _, 1, 1, _, _, 1, 1, 1, 1],
-            [1, _, 1, _, _, 1, _, _, _, 1, _, _, 1, _, _],
-            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, _, 1],
-            [_, _, 1, _, 1, _, _, 1, _, 1, _, _, 1, _, 1],
-            [1, 1, 1, 1, _, _, _, 1, _, 1, _, _, 1, _, 1],
-            [_, _, 1, _, 1, 1, _, _, _, 1, 1, _, 1, 1, 1],
-            [1, _, 1, 1, _, 1, 1, 1, 1, 1, _, _, _, 1, _],
-            [1, _, 1, _, 1, 1, _, _, _, 1, 1, 1, 1, _, 1],
-            [1, 1, 1, 1, _, _, _, 1, 1, 1, _, _, 1, _, 1],
-            [_, _, _, _, 1, 1, 1, 1, _, 1, 1, _, 1, 1, 1]
+            [X, X, X, _, X, X, _, _, X, X, X, _, _, _, _],
+            [X, _, X, _, _, X, X, X, X, _, _, X, X, _, X],
+            [X, _, X, X, X, X, _, _, X, X, X, X, _, _, X],
+            [_, X, _, X, _, X, _, X, X, _, _, X, _, _, X],
+            [_, X, X, _, X, X, X, _, X, X, _, _, X, _, X],
+            [X, _, X, X, _, X, _, X, X, _, _, X, X, X, X],
+            [X, _, X, _, _, X, _, _, _, X, _, _, X, _, _],
+            [X, X, X, X, X, X, X, X, X, X, X, X, X, _, X],
+            [_, _, X, _, X, _, _, X, _, X, _, _, X, _, X],
+            [X, X, X, X, _, _, _, X, _, X, _, _, X, _, X],
+            [_, _, X, _, X, X, _, _, _, X, X, _, X, X, X],
+            [X, _, X, X, _, X, X, X, X, X, _, _, _, X, _],
+            [X, _, X, _, X, X, _, _, _, X, X, X, X, _, X],
+            [X, X, X, X, _, _, _, X, X, X, _, _, X, _, X],
+            [_, _, _, _, X, X, X, X, _, X, X, _, X, X, X]
         ])
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
