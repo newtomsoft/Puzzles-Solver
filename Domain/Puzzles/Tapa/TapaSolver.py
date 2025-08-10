@@ -20,8 +20,7 @@ class TapaSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         #  True for black, False for white
-        matrix_z3 = [[Bool(f"cell_{r}-{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)]
-        self._grid_z3 = Grid(matrix_z3)
+        self._grid_z3 = Grid([[Bool(f"c_{r}-{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)])
 
         self._init_borders_white()
         self._init_adjacent_cells()
@@ -80,7 +79,8 @@ class TapaSolver(GameSolver):
         while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in range(self._grid_z3.rows_number)])
+            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in
+                                 range(self._grid_z3.rows_number)])
             black_shapes = current_grid.get_all_shapes()
             if len(black_shapes) == 1:
                 return TapaSolver.crop_grid(current_grid), proposition_count
@@ -98,11 +98,13 @@ class TapaSolver(GameSolver):
 
     @staticmethod
     def crop_grid(solution_grid: Grid):
-        return Grid([[True if solution_grid.value(r, c) else False for c in range(1, solution_grid.columns_number - 1)] for r in range(1, solution_grid.rows_number - 1)])
+        return Grid([[True if solution_grid.value(r, c) else False for c in range(1, solution_grid.columns_number - 1)] for r in
+                     range(1, solution_grid.rows_number - 1)])
 
     def _init_adjacent_cells(self):
         neighbors_count = 8
-        self.adjacent_cells = {cells_count: Grid.get_adjacent_combinations(neighbors_count, cells_count, True) for cells_count in range(neighbors_count + 1)}
+        self.adjacent_cells = {cells_count: Grid.get_adjacent_combinations(neighbors_count, cells_count, True) for cells_count in
+                               range(neighbors_count + 1)}
 
     @staticmethod
     def _combine_with_gap(blocks1: list[list[bool]], blocks2: list[list[bool]]) -> list[list[bool]]:
