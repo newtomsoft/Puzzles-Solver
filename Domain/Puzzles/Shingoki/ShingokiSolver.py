@@ -33,7 +33,7 @@ class ShingokiSolver(GameSolver):
         solution, _ = self._ensure_all_islands_connected()
         return solution
 
-    def _ensure_all_islands_connected(self) -> (Grid, int):
+    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
         while self._solver.check() == sat:
             model = self._solver.model()
