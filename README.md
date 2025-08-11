@@ -19,6 +19,7 @@ https://gridpuzzle.com/fobidoshi/evil-12
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
 https://gridpuzzle.com/koburin/evil-12  
+https://gridpuzzle.com/gyokuseki/evil-8  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
