@@ -1,4 +1,4 @@
-from z3 import Solver, Not, And, unsat, Int, Distinct, If
+from z3 import Solver, Not, And, unsat, Int
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -19,7 +19,7 @@ class TrilogySolver:
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
-    def get_other_solution(self) -> (Grid, Grid):
+    def get_other_solution(self) -> Grid:
         self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution if value > 0])))
         self._previous_solution = self._compute_solution()
         return self._previous_solution
