@@ -112,7 +112,7 @@ class IslandsGridTest(TestCase):
         island01.set_bridge_to_position(Position(0, 0), 1)
 
         island_grid_repr = repr(island_grid)
-        expected_repr = ' ╶──╴    '
+        expected_repr = ' ╶──╴  · '
 
         self.assertEqual(expected_repr, island_grid_repr)
 
@@ -131,7 +131,7 @@ class IslandsGridTest(TestCase):
         island04.set_bridge_to_position(Position(0, 3), 1)
 
         island_grid_repr = repr(island_grid)
-        expected_repr = ' ╶──╴     ╶──╴ '
+        expected_repr = ' ╶──╴  ·  ╶──╴ '
 
         self.assertEqual(expected_repr, island_grid_repr)
 
@@ -150,7 +150,7 @@ class IslandsGridTest(TestCase):
         island04.set_bridge_to_position(Position(0, 3), 1)
 
         island_grid_repr = repr(island_grid)
-        expected_repr = ' ╶──╴     ╶──╴ '
+        expected_repr = ' ╶──╴  ·  ╶──╴ '
 
         self.assertEqual(expected_repr, island_grid_repr)
 
@@ -231,5 +231,5 @@ class IslandsGridTest(TestCase):
         island10.set_bridge_to_position(Position(1, 1), 1)
 
         connected_positions = island_grid.follow_path(Position(0, 0))
-        expected_positions = [Position(0, 0), Position(0, 1), Position(1, 1), Position(1, 0)]
+        expected_positions = [Position(0, 0), Position(0, 1), Position(1, 1), Position(1, 0), Position(0, 0)]
         self.assertEqual(expected_positions, connected_positions)
