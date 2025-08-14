@@ -293,13 +293,6 @@ class GridBase[T]:
         """mode : orthogonal, diagonal, diagonal_only"""
         return [self.value(neighbor) for neighbor in self.neighbors_positions(position, mode)]
 
-    def all_positions_up(self, position: Position) -> list[Position]:
-        positions = []
-        while position.up in self and {position, position.up} not in self._walls:
-            position = position.up
-            positions.append(position)
-        return positions
-
     def all_positions_in_direction(self, position: Position, direction: Direction) -> list[Position]:
         if direction == Direction.up():
             return self.all_positions_up(position)
@@ -310,6 +303,13 @@ class GridBase[T]:
         if direction == Direction.right():
             return self.all_positions_right(position)
         raise ValueError(f"Invalid direction: {direction}")
+
+    def all_positions_up(self, position: Position) -> list[Position]:
+        positions = []
+        while position.up in self and {position, position.up} not in self._walls:
+            position = position.up
+            positions.append(position)
+        return positions
 
     def all_positions_down(self, position: Position) -> list[Position]:
         positions = []
@@ -329,6 +329,34 @@ class GridBase[T]:
         positions = []
         while position.right in self and {position, position.right} not in self._walls:
             position = position.right
+            positions.append(position)
+        return positions
+
+    def all_positions_up_right(self, position: Position) -> list[Position]:
+        positions = []
+        while position.up_right in self and {position, position.up_right} not in self._walls:
+            position = position.up_right
+            positions.append(position)
+        return positions
+
+    def all_positions_up_left(self, position: Position) -> list[Position]:
+        positions = []
+        while position.up_left in self and {position, position.up_left} not in self._walls:
+            position = position.up_left
+            positions.append(position)
+        return positions
+
+    def all_positions_down_right(self, position: Position) -> list[Position]:
+        positions = []
+        while position.down_right in self and {position, position.down_right} not in self._walls:
+            position = position.down_right
+            positions.append(position)
+        return positions
+
+    def all_positions_down_left(self, position: Position) -> list[Position]:
+        positions = []
+        while position.down_left in self and {position, position.down_left} not in self._walls:
+            position = position.down_left
             positions.append(position)
         return positions
 
