@@ -52,6 +52,7 @@ from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
 from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
 from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
+from Domain.Puzzles.StarsAndArrows.StarsAndArrowsSolver import StarsAndArrowsSolver
 from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
 from Domain.Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
 from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
@@ -100,6 +101,7 @@ from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPl
 from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
+from GridPlayers.GridPuzzle.GridPuzzleStarsAndArrowsPlayer import GridPuzzleStarsAndArrowsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
@@ -174,6 +176,7 @@ from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleSh
 from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
+from GridProviders.GridPuzzle.GridPuzzleStarsAndArrowsGridProvider import GridPuzzleStarsAndArrowsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTrilogyGridProvider
@@ -304,6 +307,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/starbattle": (StarBattleSolver, GridPuzzleStarBattleGridProvider, GridPuzzleStarBattlePlayer),
             r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattlePlayer),
             r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, QueensPlayer),
+            r"https://.*gridpuzzle\.com/stars-and-arrows": (StarsAndArrowsSolver, GridPuzzleStarsAndArrowsGridProvider, GridPuzzleStarsAndArrowsPlayer),
             r"https://.*\.puzzle-stitches\.com": (StitchesSolver, PuzzleStitchesGridProvider, PuzzleStitchesPlayer),
             r"https://.*gridpuzzle\.com/str8ts": (Str8tsSolver, GridPuzzleStr8tsGridProvider, GridPuzzleStr8tsPlayer),
             r"https://.*\.puzzle-sudoku\.com": (SudokuSolver, PuzzleSudokuGridProvider, PuzzleSudokuPlayer),
