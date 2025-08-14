@@ -17,6 +17,7 @@ from Domain.Puzzles.Gappy.GappySolver import GappySolver
 from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
 from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from Domain.Puzzles.Gyokuseki.GyokusekiSolver import GyokusekiSolver
+from Domain.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
@@ -83,6 +84,7 @@ from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGyokusekiPlayer import GridPuzzleGyokusekiPlayer
+from GridPlayers.GridPuzzle.GridPuzzleHakoiriPlayer import GridPuzzleHakoiriPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
 from GridPlayers.GridPuzzle.GridPuzzleLinesweeperPlayer import GridPuzzleLinesweeperPlayer
@@ -148,6 +150,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometer
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
+from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
@@ -264,6 +267,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
             r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
             r"https://.*gridpuzzle\.com/gyokuseki":(GyokusekiSolver, GridPuzzleGyokusekiGridProvider, GridPuzzleGyokusekiPlayer),
+            r"https://.*gridpuzzle\.com/hakoiri": (HakoiriSolver, GridPuzzleHakoiriGridProvider, GridPuzzleHakoiriPlayer),
             r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiPlayer),
             r"https://.*gridpuzzle\.com/bridges": (HashiSolver, GridPuzzleHashiGridProvider, GridPuzzleHashiPlayer),
             r"https://.*\.puzzle-heyawake\.com": (HeyawakeSolver, PuzzleHeyawakeGridProvider, PuzzleHeyawakePlayer),
