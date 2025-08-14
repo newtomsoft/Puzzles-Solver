@@ -1,6 +1,6 @@
 from typing import Callable
 
-from z3 import Solver, Not, And, unsat, Or, Int, Distinct, Implies, Bool, is_true
+from z3 import Solver, Not, And, unsat, Bool, is_true
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
