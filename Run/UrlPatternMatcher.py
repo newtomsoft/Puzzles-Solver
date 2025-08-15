@@ -10,6 +10,7 @@ from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
 from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
+from Domain.Puzzles.DotchiLoop.DotchiLoopSolver import DotchiLoopSolver
 from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
@@ -78,6 +79,7 @@ from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlay
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
+from GridPlayers.GridPuzzle.GridPuzzleDotchiLoopPlayer import GridPuzzleDotchiLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
@@ -150,6 +152,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometer
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
+from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
@@ -260,6 +263,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/country-road": (CountryRoadSolver, GridPuzzleCountryRoadGridProvider, GridPuzzleCountryRoadPlayer),
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
+            r"https://.*gridpuzzle\.com/dotchiloop": (DotchiLoopSolver, GridPuzzleDotchiLoopGridProvider, GridPuzzleDotchiLoopPlayer),
             r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer), # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
