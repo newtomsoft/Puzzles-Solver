@@ -1,10 +1,11 @@
-﻿from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+﻿from Domain.Board.Grid import Grid
+from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleChoconaPlayer(PlaywrightPlayer):
     game_name = "chocona"
 
-    def play(self, solution):
+    def play(self, solution: Grid):
         page = self.browser.pages[0]
         video, rectangle = self._get_data_video_viewport(page)
 

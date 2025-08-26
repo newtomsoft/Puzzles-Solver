@@ -101,13 +101,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, 1, 2],
             [_, _, _, 1],
         ])
+        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, _, _]}
         expected_solution = Grid([
             [1, 2, 3, 4],
             [4, 1, 2, 3],
             [3, 4, 1, 2],
             [2, 3, 4, 1],
         ])
-        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -193,13 +193,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [4, _, _, _], 'by_east': [_, _, _, _], 'by_north': [4, _, _, _], 'by_south': [_, _, _, 4]}
         expected_solution = Grid([
             [1, 2, 3, 4],
             [2, 1, 4, 3],
             [3, 4, 1, 2],
             [4, 3, 2, 1],
         ])
-        visible_skyscrapers = {'by_west': [4, _, _, _], 'by_east': [_, _, _, _], 'by_north': [4, _, _, _], 'by_south': [_, _, _, 4]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -213,13 +213,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, 1, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, 1, _, _], 'by_north': [_, 1, _, _], 'by_south': [_, _, _, _]}
         expected_solution = Grid([
             [3, 4, 2, 1],
             [1, 2, 3, 4],
             [4, 3, 1, 2],
             [2, 1, 4, 3],
         ])
-        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, 1, _, _], 'by_north': [_, 1, _, _], 'by_south': [_, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -233,13 +233,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, 3, 2],
             [3, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, 2, _], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, _, _]}
         expected_solution = Grid([
             [4, 3, 2, 1],
             [2, 1, 4, 3],
             [1, 4, 3, 2],
             [3, 2, 1, 4],
         ])
-        visible_skyscrapers = {'by_west': [_, _, 2, _], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -253,13 +253,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, 3, _, 3], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, 3, _]}
         expected_solution = Grid([
             [3, 4, 2, 1],
             [1, 2, 4, 3],
             [4, 1, 3, 2],
             [2, 3, 1, 4],
         ])
-        visible_skyscrapers = {'by_west': [_, 3, _, 3], 'by_east': [_, _, _, _], 'by_north': [_, _, _, _], 'by_south': [_, _, 3, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -273,13 +273,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, 1],
             [_, 1, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, 3, _], 'by_east': [_, 3, _, _], 'by_north': [_, _, _, 1], 'by_south': [_, _, _, _]}
         expected_solution = Grid([
             [3, 2, 1, 4],
             [1, 4, 3, 2],
             [2, 3, 4, 1],
             [4, 1, 2, 3],
         ])
-        visible_skyscrapers = {'by_west': [_, _, 3, _], 'by_east': [_, 3, _, _], 'by_north': [_, _, _, 1], 'by_south': [_, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -310,7 +310,9 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _, _, _, _],
             [_, _, _, _, _, _, _, _],
         ])
-        visible_skyscrapers = {'by_west': [3, _, _, _, _, _, _, _], 'by_east': [_, _, _, _, _, _, _, _], 'by_north': [_, _, _, _, _, _, _, _], 'by_south': [_, _, _, _, _, _, _, _]}
+        visible_skyscrapers = {
+            'by_west': [3, _, _, _, _, _, _, _], 'by_east': [_, _, _, _, _, _, _, _], 'by_north': [_, _, _, _, _, _, _, _], 'by_south': [_, _, _, _, _, _, _, _]
+        }
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertNotEqual(Grid.empty(), solution)
@@ -322,13 +324,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, 1],
             [_, 4, 1, 3],
         ])
+        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, 2], 'by_north': [3, _, _, 2], 'by_south': [2, _, 3, _]}
         expected_solution = Grid([
             [1, 3, 4, 2],
             [3, 1, 2, 4],
             [4, 2, 3, 1],
             [2, 4, 1, 3],
         ])
-        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, 2], 'by_north': [3, _, _, 2], 'by_south': [2, _, 3, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -342,13 +344,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, 2, _], 'by_east': [_, 2, _, _], 'by_north': [_, 1, _, _], 'by_south': [_, 3, 2, _]}
         expected_solution = Grid([
             [2, 4, 1, 3],
             [1, 3, 4, 2],
             [3, 1, 2, 4],
             [4, 2, 3, 1],
         ])
-        visible_skyscrapers = {'by_west': [_, _, 2, _], 'by_east': [_, 2, _, _], 'by_north': [_, 1, _, _], 'by_south': [_, 3, 2, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -362,13 +364,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, _], 'by_north': [2, _, _, _], 'by_south': [_, 2, _, 3]}
         expected_solution = Grid([
             [3, 2, 4, 1],
             [2, 3, 1, 4],
             [1, 4, 2, 3],
             [4, 1, 3, 2],
         ])
-        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, _, _], 'by_north': [2, _, _, _], 'by_south': [_, 2, _, 3]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -382,13 +384,13 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _],
             [_, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, 4, _], 'by_north': [2, 2, _, _], 'by_south': [_, _, 1, _]}
         expected_solution = Grid([
             [3, 2, 1, 4],
             [1, 4, 3, 2],
             [4, 3, 2, 1],
             [2, 1, 4, 3],
         ])
-        visible_skyscrapers = {'by_west': [_, _, _, _], 'by_east': [_, _, 4, _], 'by_north': [2, 2, _, _], 'by_south': [_, _, 1, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -416,6 +418,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _],
             [_, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [2, 2, 3, 1, 5], 'by_east': [3, 4, 2, 2, 1], 'by_north': [2, 2, 1, 2, 4], 'by_south': [2, 4, 3, 2, 1]}
         expected_solution = Grid([
             [4, 1, 5, 3, 2],
             [3, 5, 4, 2, 1],
@@ -423,7 +426,6 @@ class SkyscrapersGameTests(TestCase):
             [5, 3, 2, 1, 4],
             [1, 2, 3, 4, 5],
         ])
-        visible_skyscrapers = {'by_west': [2, 2, 3, 1, 5], 'by_east': [3, 4, 2, 2, 1], 'by_north': [2, 2, 1, 2, 4], 'by_south': [2, 4, 3, 2, 1]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -438,6 +440,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _],
             [_, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [1, _, _, 2, _], 'by_east': [3, 2, 3, _, _], 'by_north': [_, _, _, _, 4], 'by_south': [2, 3, 2, _, _]}
         expected_solution = Grid([
             [5, 3, 1, 4, 2],
             [2, 4, 3, 5, 1],
@@ -445,7 +448,6 @@ class SkyscrapersGameTests(TestCase):
             [3, 2, 5, 1, 4],
             [4, 1, 2, 3, 5],
         ])
-        visible_skyscrapers = {'by_west': [1, _, _, 2, _], 'by_east': [3, 2, 3, _, _], 'by_north': [_, _, _, _, 4], 'by_south': [2, 3, 2, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -460,6 +462,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _],
             [_, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [_, _, 4, 2, _], 'by_east': [5, 3, _, 2, _], 'by_north': [_, _, _, _, _], 'by_south': [3, _, 2, _, _]}
         expected_solution = Grid([
             [5, 4, 3, 2, 1],
             [2, 5, 1, 4, 3],
@@ -467,7 +470,6 @@ class SkyscrapersGameTests(TestCase):
             [4, 3, 5, 1, 2],
             [3, 1, 2, 5, 4],
         ])
-        visible_skyscrapers = {'by_west': [_, _, 4, 2, _], 'by_east': [5, 3, _, 2, _], 'by_north': [_, _, _, _, _], 'by_south': [3, _, 2, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -482,6 +484,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _],
             [_, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [1, _, 3, 4, _], 'by_east': [_, _, _, _, _], 'by_north': [_, _, 2, 5, _], 'by_south': [2, 3, _, _, _]}
         expected_solution = Grid([
             [5, 2, 4, 1, 3],
             [3, 5, 1, 2, 4],
@@ -489,7 +492,6 @@ class SkyscrapersGameTests(TestCase):
             [2, 1, 3, 4, 5],
             [4, 3, 2, 5, 1],
         ])
-        visible_skyscrapers = {'by_west': [1, _, 3, 4, _], 'by_east': [_, _, _, _, _], 'by_north': [_, _, 2, 5, _], 'by_south': [2, 3, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -505,6 +507,7 @@ class SkyscrapersGameTests(TestCase):
             [_, 1, _, _, _, _],
             [_, _, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [1, 5, 2, 2, 2, 3], 'by_east': [3, 1, 2, 5, 2, 2], 'by_north': [1, 2, 3, 3, 2, 2], 'by_south': [4, 2, 3, 1, 2, 3]}
         expected_solution = Grid([
             [6, 4, 1, 2, 5, 3],
             [1, 2, 3, 5, 4, 6],
@@ -513,7 +516,6 @@ class SkyscrapersGameTests(TestCase):
             [4, 1, 2, 3, 6, 5],
             [3, 5, 4, 6, 1, 2],
         ])
-        visible_skyscrapers = {'by_west': [1, 5, 2, 2, 2, 3], 'by_east': [3, 1, 2, 5, 2, 2], 'by_north': [1, 2, 3, 3, 2, 2], 'by_south': [4, 2, 3, 1, 2, 3]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -529,6 +531,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, 3, _],
             [_, _, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [1, 2, _, 2, _, _], 'by_east': [3, _, _, 1, 3, _], 'by_north': [_, _, 5, 2, 2, _], 'by_south': [_, 3, _, _, _, _]}
         expected_solution = Grid([
             [6, 3, 1, 5, 2, 4],
             [3, 6, 2, 4, 1, 5],
@@ -537,7 +540,6 @@ class SkyscrapersGameTests(TestCase):
             [4, 2, 5, 6, 3, 1],
             [1, 4, 6, 3, 5, 2],
         ])
-        visible_skyscrapers = {'by_west': [1, 2, _, 2, _, _], 'by_east': [3, _, _, 1, 3, _], 'by_north': [_, _, 5, 2, 2, _], 'by_south': [_, 3, _, _, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -553,6 +555,7 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _, _],
             [_, _, _, _, _, _],
         ])
+        visible_skyscrapers = {'by_west': [4, 2, _, 4, _, _], 'by_east': [_, 3, _, 3, 2, 3], 'by_north': [_, 4, _, 2, 3, _], 'by_south': [_, _, 3, 3, _, 4]}
         expected_solution = Grid([
             [1, 3, 2, 5, 4, 6],
             [4, 1, 6, 3, 5, 2],
@@ -561,7 +564,6 @@ class SkyscrapersGameTests(TestCase):
             [3, 5, 1, 2, 6, 4],
             [5, 6, 4, 1, 2, 3],
         ])
-        visible_skyscrapers = {'by_west': [4, 2, _, 4, _, _], 'by_east': [_, 3, _, 3, 2, 3], 'by_north': [_, 4, _, 2, 3, _], 'by_south': [_, _, 3, 3, _, 4]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -578,6 +580,9 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, _, _, _, _],
             [_, _, _, _, _, _, _],
         ])
+        visible_skyscrapers = {
+            'by_west': [2, _, 3, _, 3, _, _], 'by_east': [2, 3, 3, _, _, 3, _], 'by_north': [_, 2, _, _, _, 3, _], 'by_south': [_, _, 1, _, _, 2, 3]
+        }
         expected_solution = Grid([
             [5, 4, 1, 7, 2, 3, 6],
             [6, 7, 4, 3, 5, 1, 2],
@@ -587,7 +592,6 @@ class SkyscrapersGameTests(TestCase):
             [7, 5, 3, 1, 6, 2, 4],
             [4, 2, 7, 5, 3, 6, 1],
         ])
-        visible_skyscrapers = {'by_west': [2, _, 3, _, 3, _, _], 'by_east': [2, 3, 3, _, _, 3, _], 'by_north': [_, 2, _, _, _, 3, _], 'by_south': [_, _, 1, _, _, 2, 3]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -605,6 +609,9 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, 3, _, _, _, _],
             [_, _, _, _, _, _, _, _],
         ])
+        visible_skyscrapers = {
+            'by_west': [3, _, 4, _, _, 5, 3, 3], 'by_east': [_, 4, _, 4, _, _, 2, 2], 'by_north': [3, _, 2, _, _, _, 3, 4], 'by_south': [4, 2, _, 5, 2, 4, _, _]
+        }
         expected_solution = Grid([
             [5, 4, 7, 8, 3, 6, 1, 2],
             [6, 8, 2, 5, 4, 7, 3, 1],
@@ -615,7 +622,6 @@ class SkyscrapersGameTests(TestCase):
             [4, 1, 6, 3, 8, 2, 5, 7],
             [3, 7, 8, 2, 5, 1, 4, 6],
         ])
-        visible_skyscrapers = {'by_west': [3, _, 4, _, _, 5, 3, 3], 'by_east': [_, 4, _, 4, _, _, 2, 2], 'by_north': [3, _, 2, _, _, _, 3, 4], 'by_south': [4, 2, _, 5, 2, 4, _, _]}
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
@@ -634,6 +640,12 @@ class SkyscrapersGameTests(TestCase):
             [_, _, _, 3, _, 5, _, _, _],
             [_, _, 2, _, _, _, _, _, _],
         ])
+        visible_skyscrapers = {
+            'by_west': [_, 4, _, 1, 3, _, 3, _, _],
+            'by_east': [_, 3, 4, 3, 3, _, 3, _, _],
+            'by_north': [3, _, 2, _, 4, 4, _, 3, _],
+            'by_south': [4, 2, 2, _, 3, 3, 4, _, _]
+        }
         expected_solution = Grid([
             [4, 2, 8, 1, 3, 6, 5, 7, 9],
             [5, 7, 1, 8, 6, 2, 9, 4, 3],
@@ -645,7 +657,41 @@ class SkyscrapersGameTests(TestCase):
             [7, 4, 9, 3, 1, 5, 2, 6, 8],
             [3, 8, 2, 7, 4, 1, 6, 9, 5]
         ])
-        visible_skyscrapers = {'by_west': [_, 4, _, 1, 3, _, 3, _, _], 'by_east': [_, 3, 4, 3, 3, _, 3, _, _], 'by_north': [3, _, 2, _, 4, 4, _, 3, _], 'by_south': [4, 2, 2, _, 3, 3, 4, _, _]}
+        skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
+        solution = skyscrapers_game.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = skyscrapers_game.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_9x9_month_2025_08(self):
+        grid = Grid([
+            [_, _, _, _, 1, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _],
+            [_, 3, _, _, _, _, _, _, _],
+            [_, _, _, 2, _, _, 1, _, _],
+            [_, _, _, _, 3, _, _, _, 1],
+            [1, _, _, _, 5, 3, _, _, _],
+            [_, _, _, _, _, 4, _, _, _],
+            [_, _, _, _, _, _, _, _, _]
+        ])
+        visible_skyscrapers = {
+            'by_east': [_, 6, 3, _, 2, 2, _, 3, 3],
+            'by_north': [_, 2, 4, _, 6, _, 6, 4, 4],
+            'by_south': [5, 2, 3, 2, _, _, _, 3, 2],
+            'by_west': [2, 1, _, 2, 3, 3, 4, 4, _]
+        }
+        expected_solution = Grid([
+            [8, 5, 3, 7, 1, 9, 2, 4, 6],
+            [9, 1, 7, 8, 4, 6, 5, 3, 2],
+            [4, 9, 8, 3, 2, 1, 6, 5, 7],
+            [7, 3, 1, 9, 6, 2, 4, 8, 5],
+            [3, 4, 9, 2, 7, 5, 1, 6, 8],
+            [6, 2, 4, 5, 3, 8, 7, 9, 1],
+            [1, 7, 6, 4, 5, 3, 8, 2, 9],
+            [5, 6, 2, 1, 8, 4, 9, 7, 3],
+            [2, 8, 5, 6, 9, 7, 3, 1, 4]
+        ])
         skyscrapers_game = SkyscrapersSolver(grid, visible_skyscrapers)
         solution = skyscrapers_game.get_solution()
         self.assertEqual(expected_solution, solution)
