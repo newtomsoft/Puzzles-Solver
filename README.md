@@ -1,6 +1,15 @@
 # solvers in action for various online puzzles
-[![Tapa](https://img.youtube.com/vi/CGkBByIpNzU/0.jpg)](https://www.youtube.com/watch?v=CGkBByIpNzU)
+![numberChain_2025-05-25](https://github.com/user-attachments/assets/6f4d82e9-93fa-410e-94cf-bafb4578b25e)
+![purenrupu](https://github.com/user-attachments/assets/f929aa7e-da11-4c26-b7d7-585c4140c949)
+![koburin](https://github.com/user-attachments/assets/fc38459b-15b0-4b09-8b88-316907b456f0)
+![slitherlink](https://github.com/user-attachments/assets/ca0a7083-e678-4df6-819d-ca4bd31aa595)
+![masyu](https://github.com/user-attachments/assets/7ba45785-2e40-4a1d-a589-bddf83f6fdcb)
+![linesweeper](https://github.com/user-attachments/assets/88e4bc5f-cabe-47d9-8a85-a50bddcb3d73)
 
+![BaronStarBattles](https://github.com/user-attachments/assets/d568f8bf-f2fb-4705-a7a6-55f17fb5bfff)
+
+![kakuro](https://github.com/user-attachments/assets/162c3f8b-01c8-4d7f-bbbe-79a33f5d4109)
+![sudoku](https://github.com/user-attachments/assets/99ae94b7-8014-4e4c-9b20-f02162b2a8ad)
 
 # puzzles main list
 The different sizes and difficulties are handled
