@@ -1,3 +1,7 @@
+# solvers in action for various online puzzles
+[![Tapa](https://img.youtube.com/vi/CGkBByIpNzU/0.jpg)](https://www.youtube.com/watch?v=CGkBByIpNzU)
+
+
 # puzzles main list
 The different sizes and difficulties are handled
 
