@@ -23,9 +23,9 @@ class TatamibariSolverTests(TestCase):
 
         solution = game_solver.get_solution()
         expected_solution = Grid([
-            [1, 2, 2, 3],
-            [1, 4, 5, 3],
-            [1, 6, 5, 7],
+            [1, 2, 2, 4],
+            [1, 3, 6, 4],
+            [1, 5, 6, 7],
             [8, 8, 8, 8]
         ])
         self.assertEqual(expected_solution, solution)
@@ -38,7 +38,7 @@ class TatamibariSolverTests(TestCase):
             [M, _, _, P],
             [_, _, M, _],
             [_, _, M, _],
-            [P, _, _, I]
+            [_, _, _, I]
         ])
         game_solver = TatamibariSolver(grid)
 

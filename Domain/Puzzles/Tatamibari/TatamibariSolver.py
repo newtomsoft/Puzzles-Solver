@@ -16,10 +16,8 @@ class TatamibariSolver(GameSolver):
 
     def _compute_symbol_region_ids(self):
         symbol_region_ids: dict = {}
-        for r in range(self._rows_number):
-            for c in range(self._columns_number):
-                if self._initial_grid.value(r, c) in ['+', '-', '|']:
-                    symbol_region_ids[(r, c)] = self._initial_grid.value(r, c)
+        for position, value in [(position, value) for position, value in self._initial_grid if value in ['+', '-', '|']]:
+            symbol_region_ids[position] = value
         return symbol_region_ids
 
     def get_solution(self) -> Grid:
@@ -79,34 +77,38 @@ class TatamibariSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_grid_bounds_constraints()
-        self._add_symbols_placement_constraints()
+        self._add_value_at_symbols_constraints()
         self._add_region_shape_constraints()
-        self._add_unique_symbol_per_region_constraints()
         self._add_no_four_corners_shared_constraint()
 
     def _add_grid_bounds_constraints(self):
-        if self._grid_z3 is None:
-            return
         symbols_count = 0
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 val = self._initial_grid.value(r, c)
                 if val in ['+', '-', '|']:
                     symbols_count += 1
-        max_id = symbols_count if symbols_count > 0 else 1
+        max_id = symbols_count
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 v = self._grid_z3.value(r, c)
                 self._solver.add(And(v >= 1, v <= max_id))
 
-    def _add_symbols_placement_constraints(self):
-        pass
+    def _add_value_at_symbols_constraints(self):
+        for index, (position, symbol) in enumerate(self._symbol_region_ids.items()):
+            cell_id = self._grid_z3[position]
+            self._solver.add(cell_id == index + 1)
 
     def _add_region_shape_constraints(self):
-        pass
+        for position, symbol in self._symbol_region_ids.items():
+            if symbol == '+':
+                continue
 
-    def _add_unique_symbol_per_region_constraints(self):
-        pass
+            if symbol == '-':
+                continue
+
+            if symbol == '|':
+                continue
 
     def _add_no_four_corners_shared_constraint(self):
         for r in range(self._rows_number - 1):
@@ -116,4 +118,3 @@ class TatamibariSolver(GameSolver):
                 d = self._grid_z3.value(r + 1, c)
                 e = self._grid_z3.value(r + 1, c + 1)
                 self._solver.add(Not(Distinct(a, b, d, e)))
-
