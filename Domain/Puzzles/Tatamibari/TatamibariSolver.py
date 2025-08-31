@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Int, Not, And, Distinct
+﻿from z3 import Solver, Int, Not, And, Distinct, sat
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -15,8 +15,6 @@ class TatamibariSolver(GameSolver):
         self._symbol_region_ids: dict | None = self._compute_symbol_region_ids()
 
     def _compute_symbol_region_ids(self):
-        # Build a dict mapping (r,c) positions of symbols to their z3 region-id variables (when available)
-        # Before _init_solver, _grid_z3 is None; we still return a mapping from positions to None as placeholders.
         symbol_region_ids: dict = {}
         for r in range(self._rows_number):
             for c in range(self._columns_number):
@@ -49,7 +47,7 @@ class TatamibariSolver(GameSolver):
                     equalities.append(self._grid_z3.value(r, c) == v)
         if equalities:
             self._solver.add(Not(And(equalities)))
-        # Compute another solution (will return empty until _compute_solution is fully implemented)
+
         return self._compute_solution()
 
     def _init_solver(self):
@@ -59,7 +57,6 @@ class TatamibariSolver(GameSolver):
     def _compute_solution(self) -> Grid:
         if self._grid_z3 is None:
             return Grid.empty()
-        from z3 import sat
         check_result = self._solver.check()
         if check_result == sat:
             model = self._solver.model()
@@ -68,7 +65,7 @@ class TatamibariSolver(GameSolver):
                 row_vals = []
                 for c in range(self._columns_number):
                     v = model.eval(self._grid_z3.value(r, c))
-                    # Convert z3 IntNumRef to Python int; fallback to 0 if something unexpected
+
                     try:
                         row_vals.append(int(str(v)))
                     except Exception:
@@ -112,10 +109,6 @@ class TatamibariSolver(GameSolver):
         pass
 
     def _add_no_four_corners_shared_constraint(self):
-        # For every 2x2 block of cells, forbid the four corners from being all different regions.
-        # This encodes the rule: no grid dot is shared by corners of four different regions.
-        if self._grid_z3 is None:
-            return
         for r in range(self._rows_number - 1):
             for c in range(self._columns_number - 1):
                 a = self._grid_z3.value(r, c)
