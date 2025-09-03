@@ -39,8 +39,7 @@ class CloudsSolver(GameSolver):
     def _compute_solution(self) -> Grid:
         if self._solver.check() == sat:
             model = self._solver.model()
-            return Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in
-                         range(self._rows_number)])
+            return Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
 
         return Grid.empty()
 
