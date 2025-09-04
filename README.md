@@ -55,6 +55,7 @@ https://gridpuzzle.com/starbattle2/size-11
 https://gridpuzzle.com/stars-and-arrows/evil-15  
 https://gridpuzzle.com/str8ts/evil-9  
 https://gridpuzzle.com/straight-loop/evil-12  
+https://gridpuzzle.com/tatamibari/evil-10  
 https://gridpuzzle.com/tilepaint/evil-12  
 https://gridpuzzle.com/traffic-lights/evil-12  
 https://gridpuzzle.com/trilogy/evil-10  

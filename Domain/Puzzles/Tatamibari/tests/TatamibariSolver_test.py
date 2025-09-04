@@ -4,7 +4,7 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Puzzles.Tatamibari.TatamibariSolver import TatamibariSolver
 
-_ = ''
+_ = '.'
 M = '-'
 P = '+'
 I = '|'
