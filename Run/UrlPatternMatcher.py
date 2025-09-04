@@ -64,6 +64,7 @@ from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
 from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
+from Domain.Puzzles.Tatamibari.TatamibariSolver import TatamibariSolver
 from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
@@ -109,6 +110,7 @@ from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarsAndArrowsPlayer import GridPuzzleStarsAndArrowsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
+from GridPlayers.GridPuzzle.GridPuzzleTatamibariPlayer import GridPuzzleTatamibariPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleWamazuPlayer import GridPuzzleWamazuPlayer
@@ -154,19 +156,19 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometer
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
-from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
-from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
+from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
+from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleGyokusekiGridProvider
+from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleLinesweeperGridProvider import GridPuzzleLinesweeperGridProvider
@@ -187,6 +189,7 @@ from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnake
 from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStarsAndArrowsGridProvider import GridPuzzleStarsAndArrowsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
+from GridProviders.GridPuzzle.GridPuzzleTatamibariGridProvider import GridPuzzleTatamibariGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTrilogyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleWamazuGridProvider import GridPuzzleWamazuGridProvider
@@ -328,6 +331,7 @@ class UrlPatternMatcher:
             r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
             r"https://www\.linkedin\.com/games/tango": (BinairoPlusSolver, TangoGridProvider, TangoPlayer),
             r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaPlayer),
+            r"https://.*gridpuzzle\.com/tatamibari": (TatamibariSolver, GridPuzzleTatamibariGridProvider, GridPuzzleTatamibariPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleGalaxiesGridProvider, PuzzleGalaxiesPlayer),
             r"https://.*gridpuzzle\.com/galaxies": (TentaiShowSolver, GridPuzzleGalaxiesGridProvider, GridPuzzleGalaxiesPlayer),
             r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsPlayer),

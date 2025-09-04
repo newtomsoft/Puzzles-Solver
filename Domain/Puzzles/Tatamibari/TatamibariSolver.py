@@ -97,16 +97,16 @@ class TatamibariSolver(GameSolver):
     def _add_region_rectangle_constraints(self, position, symbol):
         region_id = self._region_id_by_position[position]
 
-        left_row = Int(f"wide_rect_{symbol}_r0_{region_id}")
-        top_column = Int(f"wide_rect_{symbol}_c0_{region_id}")
-        height = Int(f"wide_rect_{symbol}_h_{region_id}")
-        width = Int(f"wide_rect_{symbol}_w_{region_id}")
+        left_row = Int(f"rect_r0_{region_id}")
+        top_column = Int(f"rect_c0_{region_id}")
+        height = Int(f"rect_h_{region_id}")
+        width = Int(f"rect_w_{region_id}")
 
         match symbol:
             case '-':
                 self._solver.add(width > height)
             case '|':
-                self._solver.add(width < height)
+                self._solver.add(height > width)
             case '+':
                 self._solver.add(width == height)
             case _:
