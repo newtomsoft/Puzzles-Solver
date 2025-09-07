@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, Int, sat, ArithRef, Or
+﻿from z3 import Solver, Not, And, Int, sat, ArithRef, Or, Sum
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -82,17 +82,10 @@ class KuroshiroSolver(GameSolver):
 
     def _add_constraints(self):
         self._add_initial_constraints()
-        self._add_empty_cells_constraints()
         self._add_opposite_bridges_constraints()
         self._add_links_constraints()
 
     def _add_initial_constraints(self):
-        # constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
-        # constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in range(self._island_grid.columns_number)]
-        # constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in range(self._island_grid.rows_number)]
-        # constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
-        # self._solver.add(constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left)
-
         for position, direction_bridges in self._island_bridges_z3.items():
             bridges_count_vars = list(direction_bridges.values())
             input_value = self._input_grid[position]
@@ -106,41 +99,69 @@ class KuroshiroSolver(GameSolver):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] ==
-                                     self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite])
+                    self._solver.add(
+                        self._island_bridges_z3[island.position][direction] ==
+                        self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite])
                 else:
                     self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
 
-    def _add_empty_cells_constraints(self):
-        for position, circle_value in [(position, value) for position, value in self._input_grid if value not in ['□', '■']]:
-            direction_bridges = self._island_bridges_z3[position]
-            self._solver.add(And(direction_bridges[Direction.right()] == direction_bridges[Direction.left()],
-                                 direction_bridges[Direction.up()] == direction_bridges[Direction.down()])
-                             )
-
     def _add_links_constraints(self):
         for position, circle_value in [(position, value) for position, value in self._input_grid if value in ['□', '■']]:
-            _candidates_same_circles_linked_constraints = self._candidates_same_color_circles_linked_constraints(position, circle_value)
-            _candidates_other_circles_linked_constraints = self._candidates_other_color_circles_linked_constraints(position, circle_value)
-            self._solver.add(Or(*_candidates_same_circles_linked_constraints, *_candidates_other_circles_linked_constraints))
+            same_color_circles_linked_constraints = self._same_color_circles_linked_constraints(position, circle_value)
+            other_color_circles_linked_constraints = self._other_color_circles_linked_constraints(position, circle_value)
+            linked_circles_constraints = same_color_circles_linked_constraints + other_color_circles_linked_constraints
+            self._solver.add(Sum(linked_circles_constraints) == 2)
 
-    def _candidates_same_color_circles_linked_constraints(self, position: Position, circle_value: str) -> list:
+    def _same_color_circles_linked_constraints(self, position: Position, circle_value: str) -> list:
+        # it must have no turn between two circles of the same color
         or_constraints = []
         for direction in Direction.orthogonals():
             constraints = []
             found = None
-            current_position = position.after(direction)
             constraints.append(self._island_bridges_z3[position][direction] == 1)
+            current_position = position.after(direction)
             while current_position in self._island_bridges_z3:
                 if (value := self._input_grid[current_position]) == circle_value:
                     found = value
                     break
+                constraints.append(self._island_bridges_z3[current_position][direction] == 1)
                 current_position = current_position.after(direction)
             if found is None:
                 continue
             or_constraints.append(And(constraints) if len(constraints) > 1 else constraints[0])
         return or_constraints if len(or_constraints) > 0 else [False]
 
-    def _candidates_other_color_circles_linked_constraints(self, position: Position, circle_value: str):
-        # todo: implement this method
-        return [False]
+    def _other_color_circles_linked_constraints(self, circle_pos: Position, circle_value: str):
+        # it must have exactly 1 turn between two circles of different colors
+        constraints = []
+        other_color = '■' if circle_value == '□' else '□'
+        for other_circle_pos in [pos for pos, value in self._input_grid if value == other_color and pos.r != circle_pos.r and pos.c != circle_pos.c]:
+            hor_turn_pos = Position(circle_pos.r, other_circle_pos.c)
+            vert_turn_pos = Position(other_circle_pos.r, circle_pos.c)
+            hor_direction = Direction.right() if other_circle_pos.c > circle_pos.c else Direction.left()
+            vert_direction = Direction.down() if other_circle_pos.r > circle_pos.r else Direction.up()
+
+            hor_first_constraint = self._to_other_circle_constraint(circle_pos, other_circle_pos, hor_turn_pos, hor_direction, vert_direction)
+            vert_first_constraints = self._to_other_circle_constraint(circle_pos, other_circle_pos, vert_turn_pos, vert_direction, hor_direction)
+            constraints.append(Or(hor_first_constraint, vert_first_constraints))
+
+        return constraints
+
+    def _to_other_circle_constraint(self, circle_pos, other_circle_pos, turn_position, first_direction, second_direction):
+        constraints = [self._island_bridges_z3[circle_pos][first_direction] == 1]
+        current_position = circle_pos.after(first_direction)
+        while self._input_grid[current_position] == '' and current_position != turn_position:
+            constraints.append(self._island_bridges_z3[current_position][first_direction] == 1)
+            current_position = current_position.after(first_direction)
+        if self._input_grid[current_position] != '':
+            return False
+
+        constraints.append(self._island_bridges_z3[current_position][second_direction] == 1)
+        current_position = current_position.after(second_direction)
+        while self._input_grid[current_position] == '' and current_position != other_circle_pos:
+            constraints.append(self._island_bridges_z3[current_position][second_direction] == 1)
+            current_position = current_position.after(second_direction)
+        if current_position != other_circle_pos:
+            return False
+
+        return And(constraints) if len(constraints) > 1 else constraints[0]
