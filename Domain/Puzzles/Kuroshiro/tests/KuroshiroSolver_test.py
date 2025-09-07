@@ -11,7 +11,7 @@ W = '□'
 
 
 class KuroshiroSolverTests(TestCase):
-    def test_solution_3x3_black_neighbors(self):
+    def test_solution_3x3_black_cells(self):
         grid = Grid([
             [B, _, B],
             [_, _, _],
@@ -28,7 +28,7 @@ class KuroshiroSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
-    def test_solution_5x5_black_neighbors(self):
+    def test_solution_5x5_black_cells(self):
         grid = Grid([
             [B, _, _, B, _],
             [_, _, _, B, B],
@@ -49,7 +49,7 @@ class KuroshiroSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
-    def test_solution_5x5_white_neighbors(self):
+    def test_solution_5x5_white_cells(self):
         grid = Grid([
             [W, _, _, W, _],
             [_, _, _, W, W],
@@ -70,7 +70,43 @@ class KuroshiroSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
-    def test_solution_10x10_black_neighbors(self):
+    def test_solution_3x3_black_n_white_cells(self):
+        grid = Grid([
+            [W, _, W],
+            [_, _, _],
+            [_, B, _],
+        ])
+        expected_solution_str = (
+            ' ┌─────┐ \n'
+            ' │  ·  │ \n'
+            ' └─────┘ '
+        )
+        game_solver = KuroshiroSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
+    def test_solution_4x4_black_n_white_cells(self):
+        grid = Grid([
+            [W, _, B, _],
+            [_, B, B, W],
+            [W, W, B, _],
+            [_, _, B, _],
+        ])
+        expected_solution_str = (
+            ' ┌──┐  ┌──┐ \n'
+            ' │  └──┘  │ \n'
+            ' └──┐  ┌──┘ \n'
+            ' ·  └──┘  · '
+        )
+        game_solver = KuroshiroSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
+    def test_solution_10x10_black_cells(self):
         grid = Grid([
             [_, B, B, _, _, B, _, B, _, _],
             [_, B, B, _, B, _, _, B, _, B],
@@ -123,6 +159,37 @@ class KuroshiroSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
+    def test_solution_10x10_292p8(self):
+        # https://gridpuzzle.com/kuroshiro/21vxd
+        grid = Grid([
+            [_, _, _, W, _, _, W, B, _, _],
+            [B, B, B, _, _, W, _, B, B, W],
+            [B, _, B, _, B, _, W, W, B, _],
+            [_, _, _, B, _, _, W, _, B, _],
+            [_, W, B, _, B, _, _, W, _, W],
+            [W, W, _, B, _, _, _, _, W, _],
+            [_, W, _, _, W, B, _, B, _, _],
+            [_, _, W, _, _, B, W, _, _, B],
+            [_, B, W, _, W, W, _, B, W, W],
+            [_, _, W, B, _, _, _, _, B, _],
+        ])
+        expected_solution_str = (
+            ' ┌─────────────────┐  ┌─────┐ \n'
+            ' └─────┐  ┌─────┐  │  └──┐  │ \n'
+            ' ┌─────┘  │  ┌──┘  └──┐  │  │ \n'
+            ' │  ┌─────┘  └─────┐  └──┘  │ \n'
+            ' └──┘  ┌───────────┘  ┌─────┘ \n'
+            ' ┌──┐  │  ┌───────────┘  ┌──┐ \n'
+            ' │  └──┘  └──┐  ┌──┐  ┌──┘  │ \n'
+            ' │  ·  ┌──┐  └──┘  │  │  ┌──┘ \n'
+            ' └──┐  │  │  ┌──┐  └──┘  └──┐ \n'
+            ' ·  └──┘  └──┘  └───────────┘ '
+        )
+        game_solver = KuroshiroSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
 
-if __name__ == '__main__':
-    unittest.main()
+    if __name__ == '__main__':
+        unittest.main()
