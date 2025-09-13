@@ -1,6 +1,7 @@
 ﻿import re
 
 from Domain.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+
 from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -28,6 +29,7 @@ from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
 from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
+from Domain.Puzzles.Kuroshiro.KuroshiroSolver import KuroshiroSolver
 from Domain.Puzzles.Linesweeper.LinesweeperSolver import LinesweeperSolver
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.LookAir.LookAirSolver import LookAirSolver
@@ -171,6 +173,7 @@ from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleG
 from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
+from GridProviders.GridPuzzle.GridPuzzleKuroshiroGridProvider import GridPuzzleKuroshiroGridProvider
 from GridProviders.GridPuzzle.GridPuzzleLinesweeperGridProvider import GridPuzzleLinesweeperGridProvider
 from GridProviders.GridPuzzle.GridPuzzleLookAirGridProvider import GridPuzzleLookAirGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyuGridProvider
@@ -290,6 +293,7 @@ class UrlPatternMatcher:
             r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuPlayer), # same player as Sudoku
             r"https://.*gridpuzzle\.com/koburin": (KoburinSolver, GridPuzzleKoburinGridProvider, GridPuzzleKoburinPlayer),
+            r"https://.*gridpuzzle\.com/kuroshiro": (KuroshiroSolver, GridPuzzleKuroshiroGridProvider, None),
             r"https://.*gridpuzzle\.com/linesweeper": (LinesweeperSolver, GridPuzzleLinesweeperGridProvider, GridPuzzleLinesweeperPlayer),
             r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsPlayer),
             r"https://.*gridpuzzle\.com/look-air": (LookAirSolver, GridPuzzleLookAirGridProvider, GridPuzzleLookAirPlayer),
