@@ -1,8 +1,7 @@
 from playwright.sync_api import BrowserContext
 
-from Domain.Board.Grid import Grid
 from Domain.Board.RegionsGrid import RegionsGrid
-from Domain.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleGridTagProvider import GridPuzzleGridTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
