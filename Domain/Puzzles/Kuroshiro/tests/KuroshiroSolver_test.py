@@ -138,7 +138,7 @@ class KuroshiroSolverTests(TestCase):
         self.assertEqual(IslandGrid.empty(), other_solution)
 
     def test_solution_5x5_292p8(self):
-        # https://gridpuzzle.com/kuroshiro/l2x85
+        """https://gridpuzzle.com/kuroshiro/l2x85"""
         grid = Grid([
             [B, B, B, _, B],
             [_, W, _, B, B],
@@ -160,7 +160,7 @@ class KuroshiroSolverTests(TestCase):
         self.assertEqual(IslandGrid.empty(), other_solution)
 
     def test_solution_10x10_292p8(self):
-        # https://gridpuzzle.com/kuroshiro/21vxd
+        """https://gridpuzzle.com/kuroshiro/21vxd"""
         grid = Grid([
             [_, _, _, W, _, _, W, B, _, _],
             [B, B, B, _, _, W, _, B, B, W],
@@ -191,5 +191,6 @@ class KuroshiroSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
