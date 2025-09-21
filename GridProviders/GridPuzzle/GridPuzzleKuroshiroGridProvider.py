@@ -5,6 +5,10 @@ from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleGridCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
+_ = ''
+B = '■'
+W = '□'
+
 
 class GridPuzzleKuroshiroGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     def get_grid(self, url: str):
@@ -13,5 +17,13 @@ class GridPuzzleKuroshiroGridProvider(GridProvider, PlaywrightGridProvider, Grid
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
         pqq_string_list, size = self._get_canvas_data(html_page)
-        matrix = [[-1 if (data:=pqq_string_list[i * size + j]) == "." else int(data) for j in range(size)] for i in range(size)]
+        matrix = [[self._convert(pqq_string_list[i * size + j]) for j in range(size)] for i in range(size)]
         return Grid(matrix)
+
+    @staticmethod
+    def _convert(data: str) -> str:
+        if data == 'B':
+            return B
+        if data == 'W':
+            return W
+        return _
