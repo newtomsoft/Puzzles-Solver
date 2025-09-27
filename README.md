@@ -36,6 +36,7 @@ https://gridpuzzle.com/galaxies/size-15
 https://gridpuzzle.com/gappy/evil-18  
 https://gridpuzzle.com/hakoiri/evil-10  
 https://gridpuzzle.com/koburin/evil-12  
+https://gridpuzzle.com/konarupu/evil-15  -- wip  
 https://gridpuzzle.com/kuroshiro/size-10  
 https://gridpuzzle.com/gyokuseki/evil-8  
 https://gridpuzzle.com/linesweeper/evil-12  
