@@ -259,7 +259,7 @@ class GridBase[T]:
         if mode == 'orthogonal':
             return orthogonal_neighbors
 
-        if mode == 'diagonal':
+        if mode == 'diagonal' or mode == 'all':
             diagonal_neighbors = {self.neighbor_up_left(position), self.neighbor_up_right(position), self.neighbor_down_left(position), self.neighbor_down_right(position)} - {None}
             return orthogonal_neighbors | diagonal_neighbors
 
