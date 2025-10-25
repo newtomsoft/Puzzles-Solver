@@ -28,6 +28,7 @@ https://gridpuzzle.com/bridges/size-12
 https://gridpuzzle.com/chocona/evil-9  
 https://gridpuzzle.com/clouds/size-15  
 https://gridpuzzle.com/country-road/evil-12  
+https://gridpuzzle.com/doppelblock/evil-8  
 https://gridpuzzle.com/dosun-fuwari/size-8  
 https://gridpuzzle.com/dotchiloop/evil-12  
 https://gridpuzzle.com/every-second-turn/size-16  
