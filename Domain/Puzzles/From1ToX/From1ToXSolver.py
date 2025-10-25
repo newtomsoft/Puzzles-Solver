@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, unsat, Int, Distinct
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -18,26 +18,41 @@ class From1ToXSolver(GameSolver):
         self._regions = self._region_grid.get_regions()
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
+        self._model = cp_model.CpModel()
+        self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        max_region_size = max(len(region_positions) for region_positions in self._regions.values())
+        self._grid_vars = Grid([[self._model.NewIntVar(1, max_region_size, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution])))
-        self._previous_solution = self._compute_solution()
-        return self._previous_solution
-
-    def _compute_solution(self):
-        if self._solver.check() == unsat:
+        if self._previous_solution is None:
+            return self.get_solution()
+        if self._previous_solution.is_empty():
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid([[(model.eval(self._grid_z3[Position(i, j)])).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
+
+        bool_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                prev_val = self._previous_solution.value(r, c)
+                diff = self._model.NewBoolVar(f"diff_r{r}_c{c}")
+                self._model.Add(self._grid_vars[Position(r, c)] != prev_val).OnlyEnforceIf(diff)
+                self._model.Add(self._grid_vars[Position(r, c)] == prev_val).OnlyEnforceIf(diff.Not())
+                bool_vars.append(diff)
+        self._model.AddBoolOr(bool_vars)
+
+        return self._compute_solution()
+
+    def _compute_solution(self) -> Grid:
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return Grid.empty()
+        grid = Grid([[solver.Value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -46,33 +61,32 @@ class From1ToXSolver(GameSolver):
         self._add_clues_constraints()
 
     def _add_initial_constraints(self):
-        for grid_z3_value, number_value in [(self._grid_z3[position], number_value) for position, number_value in self._grid]:
+        for position, number_value in self._grid:
             if number_value != _:
-                self._solver.add(grid_z3_value == number_value)
+                self._model.Add(self._grid_vars[position] == number_value)
             else:
-                self._solver.add(grid_z3_value >= 1)
+                self._model.Add(self._grid_vars[position] >= 1)
 
     def _add_regions_distinct_and_max_value_constraints(self):
         for region_positions in self._regions.values():
-            self._solver.add(Distinct([self._grid_z3[position] for position in region_positions]))
+            region_size = len(region_positions)
+            self._model.AddAllDifferent([self._grid_vars[position] for position in region_positions])
             for position in region_positions:
-                self._add_max_value_constraints(position, len(region_positions))
+                self._add_max_value_constraints(position, region_size)
                 self._add_neighbors_not_same_value_constraint(position)
 
     def _add_max_value_constraints(self, position, region_positions_len: int):
-        self._solver.add(self._grid_z3[position] <= region_positions_len)
+        self._model.Add(self._grid_vars[position] <= region_positions_len)
 
     def _add_neighbors_not_same_value_constraint(self, position):
-        self._solver.add(
-            And([self._grid_z3[neighbor_position] != self._grid_z3[position] for neighbor_position in self._grid.neighbors_positions(position, 'orthogonal')]))
+        for neighbor_position in self._grid.neighbors_positions(position, 'orthogonal'):
+            self._model.Add(self._grid_vars[neighbor_position] != self._grid_vars[position])
 
     def _add_clues_constraints(self):
         for r in range(self.rows_number):
-            if r < len(self._rows_clues) and self._rows_clues[r] != _:
-                clue = self._rows_clues[r]
-                self._solver.add(sum([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]) == clue)
+            if self._rows_clues[r] != _:
+                self._model.Add(sum(self._grid_vars[Position(r, c)] for c in range(self.columns_number)) == self._rows_clues[r])
 
         for c in range(self.columns_number):
-            if c < len(self._columns_clues) and self._columns_clues[c] != _:
-                clue = self._columns_clues[c]
-                self._solver.add(sum([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]) == clue)
+            if self._columns_clues[c] != _:
+                self._model.Add(sum(self._grid_vars[Position(r, c)] for r in range(self.rows_number)) == self._columns_clues[c])
