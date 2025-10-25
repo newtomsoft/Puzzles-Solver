@@ -14,6 +14,7 @@ from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 from Domain.Puzzles.DotchiLoop.DotchiLoopSolver import DotchiLoopSolver
 from Domain.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySecondTurnSolver
 from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
+from Domain.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Gappy.GappySolver import GappySolver
@@ -88,6 +89,7 @@ from GridPlayers.GridPuzzle.GridPuzzleDosunFuwariPlayer import GridPuzzleDosunFu
 from GridPlayers.GridPuzzle.GridPuzzleDotchiLoopPlayer import GridPuzzleDotchiLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleEverySecondTurnPlayer import GridPuzzleEverySecondTurnPlayer
 from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
+from GridPlayers.GridPuzzle.GridPuzzleFrom1ToXPlayer import GridPuzzleFrom1ToXPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
@@ -170,6 +172,7 @@ from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzl
 from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleEverySecondTurnGridProvider import GridPuzzleEverySecondTurnGridProvider
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
+from GridProviders.GridPuzzle.GridPuzzleFrom1ToXGridProvider import GridPuzzleFrom1ToXGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
@@ -283,6 +286,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/dotchiloop": (DotchiLoopSolver, GridPuzzleDotchiLoopGridProvider, GridPuzzleDotchiLoopPlayer),
             r"https://.*gridpuzzle\.com/every-second-turn": (EverySecondTurnSolver, GridPuzzleEverySecondTurnGridProvider, GridPuzzleEverySecondTurnPlayer),
             r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
+            r"https://.*gridpuzzle\.com/from1tox": (From1ToXSolver, GridPuzzleFrom1ToXGridProvider, GridPuzzleFrom1ToXPlayer),
             r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),  # same player as futoshiki
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
             r"https://.*gridpuzzle\.com/gappy": (GappySolver, GridPuzzleGappyGridProvider, GridPuzzleGappyPlayer),
