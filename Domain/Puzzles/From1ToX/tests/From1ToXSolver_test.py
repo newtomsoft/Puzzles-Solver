@@ -4,7 +4,7 @@ from unittest import TestCase
 from Domain.Board.Grid import Grid
 from Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
 
-_ = 0
+_ = From1ToXSolver.empty
 
 
 class From1ToXSolverTests(TestCase):
@@ -230,16 +230,16 @@ class From1ToXSolverTests(TestCase):
     def test_get_solution_10x10_evil_xv6md(self):
         """https://gridpuzzle.com/from1tox/xv6md"""
         grid = Grid([
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 5, 0, 0, 0, 0, 2, 0, 0, 0],
-            [0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 3, 0, 0, 0, 0, 0, 0]
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, 2, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, 5, _, _, _, _, 2, _, _, _],
+            [_, _, _, _, _, 3, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, 3, _, _, _, _, _, _]
         ])
         region_grid = Grid([
             [1, 2, 2, 3, 4, 4, 5, 5, 5, 6],
@@ -253,8 +253,8 @@ class From1ToXSolverTests(TestCase):
             [23, 23, 23, 20, 24, 19, 25, 25, 22, 22],
             [23, 23, 24, 24, 24, 19, 25, 25, 22, 22]
         ])
-        row_clues = [24, 0, 30, 32, 27, 23, 27, 23, 33, 18]
-        column_clues = [26, 27, 28, 0, 25, 25, 25, 0, 0, 23]
+        row_clues = [24, _, 30, 32, 27, 23, 27, 23, 33, 18]
+        column_clues = [26, 27, 28, _, 25, 25, 25, _, _, 23]
 
         expected_grid = Grid([
             [2, 1, 2, 3, 1, 3, 1, 4, 3, 4],
