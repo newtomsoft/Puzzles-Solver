@@ -32,6 +32,7 @@ https://gridpuzzle.com/dosun-fuwari/size-8
 https://gridpuzzle.com/dotchiloop/evil-12  
 https://gridpuzzle.com/every-second-turn/size-16  
 https://gridpuzzle.com/fobidoshi/evil-12  
+https://gridpuzzle.com/from1tox/evil-9  
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
 https://gridpuzzle.com/hakoiri/evil-10  
