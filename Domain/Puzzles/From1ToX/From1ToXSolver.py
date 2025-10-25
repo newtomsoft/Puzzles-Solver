@@ -4,10 +4,10 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
-_ = 0
-
 
 class From1ToXSolver(GameSolver):
+    empty = None
+
     def __init__(self, grid: Grid, region_grid: Grid, rows_clues: list, columns_clues: list):
         self._grid = grid
         self.rows_number = self._grid.rows_number
@@ -62,7 +62,7 @@ class From1ToXSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, number_value in self._grid:
-            if number_value != _:
+            if number_value != self.empty:
                 self._model.Add(self._grid_vars[position] == number_value)
             else:
                 self._model.Add(self._grid_vars[position] >= 1)
@@ -83,10 +83,8 @@ class From1ToXSolver(GameSolver):
             self._model.Add(self._grid_vars[neighbor_position] != self._grid_vars[position])
 
     def _add_clues_constraints(self):
-        for r in range(self.rows_number):
-            if self._rows_clues[r] != _:
-                self._model.Add(sum(self._grid_vars[Position(r, c)] for c in range(self.columns_number)) == self._rows_clues[r])
+        for row, clue in ((row, clue) for row, clue in enumerate(self._rows_clues) if clue != self.empty):
+            self._model.Add(sum((self._grid_vars[Position(row, c)] for c in range(self.columns_number))) == clue)
 
-        for c in range(self.columns_number):
-            if self._columns_clues[c] != _:
-                self._model.Add(sum(self._grid_vars[Position(r, c)] for r in range(self.rows_number)) == self._columns_clues[c])
+        for col, clue in ((col, clue) for col, clue in enumerate(self._columns_clues) if clue != self.empty):
+            self._model.Add(sum((self._grid_vars[Position(r, col)] for r in range(self.rows_number))) == clue)
