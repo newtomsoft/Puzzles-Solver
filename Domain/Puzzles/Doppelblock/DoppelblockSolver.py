@@ -7,7 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 class DoppelblockSolver(GameSolver):
     empty = None
-    black_value = 0
+    black_value = 0 # must stay 0
 
     def __init__(self, grid: Grid, row_sums_clues: list, column_sums_clues: list):
         self._grid = grid
@@ -73,5 +73,28 @@ class DoppelblockSolver(GameSolver):
             self._solver.add(Distinct(non_zero_vars))
 
     def _add_sums_clues_constraints(self):
-        for row, clue in ((row, clue) for row, clue in enumerate(self._row_sums_clues) if clue != self.empty):
-            pass
+        for r, clue in enumerate(self._row_sums_clues):
+            if clue != self.empty:
+                row_vars = [self._grid_z3[Position(r, c)] for c in range(self.columns_number)]
+                self._add_sum_for_line_constraint(row_vars, clue)
+
+        for c, clue in enumerate(self._column_sums_clues):
+            if clue != self.empty:
+                col_vars = [self._grid_z3[Position(r, c)] for r in range(self.rows_number)]
+                self._add_sum_for_line_constraint(col_vars, clue)
+
+    def _add_sum_for_line_constraint(self, line_vars: list, clue: int):
+        sum_terms = self._calculate_between_pairs_sums(line_vars)
+        self._solver.add(sum(sum_terms) == clue)
+
+    def _calculate_between_pairs_sums(self, line_vars: list) -> list:
+        sum_terms = []
+        line_length = len(line_vars)
+
+        for i in range(line_length):
+            for j in range(i + 1, line_length):
+                is_pair_black = And(line_vars[i] == self.black_value, line_vars[j] == self.black_value)
+                between_pair_sum = sum(line_vars[k] for k in range(i + 1, j))
+                sum_terms.append(If(is_pair_black, between_pair_sum, 0))
+
+        return sum_terms
