@@ -45,6 +45,7 @@ from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
+from Domain.Puzzles.NumberCross.NumberCrossSolver import NumberCrossSolver
 from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 from Domain.Puzzles.Pipelink.PipelinkSolver import PipelinkSolver
@@ -82,6 +83,7 @@ from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.GridPuzzle.GridPuzzleNumberCrossPlayer import GridPuzzleNumberCrossPlayer
 from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
@@ -193,6 +195,7 @@ from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMid
 from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
+from GridProviders.GridPuzzle.GridPuzzleNumberCrossGridProvider import GridPuzzleNumberCrossGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePipelinkGridProvider import GridPuzzlePipelinkGridProvider
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleRegionalYajilinGridProvider import GridPuzzleRegionalYajilinGridProvider
@@ -323,6 +326,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
             r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowPlayer),
             r"https://.*gridpuzzle\.com/number-chain": (NumberChainSolver, GridPuzzleNumberChainGridProvider, GridPuzzleNumberChainPlayer),
+            r"https://.*gridpuzzle\.com/number-cross": (NumberCrossSolver, GridPuzzleNumberCrossGridProvider, GridPuzzleNumberCrossPlayer),
             r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksPlayer),
             r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabePlayer),
             r"https://.*gridpuzzle\.com/pipelink": (PipelinkSolver, GridPuzzlePipelinkGridProvider, GridPuzzlePipelinkPlayer),
