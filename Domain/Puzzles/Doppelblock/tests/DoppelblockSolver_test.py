@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
+from Domain.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
 
 _ = DoppelblockSolver.empty
 B = DoppelblockSolver.black_value
