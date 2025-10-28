@@ -2,7 +2,7 @@
 
 from z3 import Solver, Int, Not, And, Distinct, sat
 
-from Board.Position import Position
+from Domain.Board.Position import Position
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 
