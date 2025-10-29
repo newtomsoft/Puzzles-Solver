@@ -10,7 +10,7 @@ B = NumberCrossSolver.black_value
 class NumberCrossSolverTests(TestCase):
     def test_get_solution_5x5_easy_l4j0e(self):
         """https://gridpuzzle.com/number-cross/l4j0e"""
-        _grid = Grid([
+        grid = Grid([
             [7, B, 9, 6, B],
             [1, 7, 1, 4, 2],
             [1, 5, 2, 7, 7],
@@ -27,7 +27,7 @@ class NumberCrossSolverTests(TestCase):
             [B, B, B, B, 2],
             [8, 3, 3, B, B],
         ])
-        game_solver = NumberCrossSolver(_grid, row_sums_clues, column_sums_clues)
+        game_solver = NumberCrossSolver(grid, row_sums_clues, column_sums_clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -35,7 +35,7 @@ class NumberCrossSolverTests(TestCase):
 
     def test_get_solution_5x5_evil_dn72v(self):
         """https://gridpuzzle.com/number-cross/dn72v"""
-        _grid = Grid([
+        grid = Grid([
             [3, 7, 4, 3, 4],
             [7, 3, 7, 6, 4],
             [3, 9, 6, 1, 4],
@@ -52,7 +52,7 @@ class NumberCrossSolverTests(TestCase):
             [B, 3, 7, 8, B],
             [B, B, B, 3, B],
         ])
-        game_solver = NumberCrossSolver(_grid, row_sums_clues, column_sums_clues)
+        game_solver = NumberCrossSolver(grid, row_sums_clues, column_sums_clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -60,7 +60,7 @@ class NumberCrossSolverTests(TestCase):
 
     def test_get_solution_6x6_evil_n5k2w(self):
         """https://gridpuzzle.com/number-cross/n5k2w"""
-        _grid = Grid([
+        grid = Grid([
             [3, 4, 6, 6, 6, 3],
             [9, 1, 8, 7, 8, 2],
             [5, 8, 6, 2, 5, 2],
@@ -79,7 +79,7 @@ class NumberCrossSolverTests(TestCase):
             [6, 2, B, 4, 6, 7],
             [6, B, 1, B, 1, B],
         ])
-        game_solver = NumberCrossSolver(_grid, row_sums_clues, column_sums_clues)
+        game_solver = NumberCrossSolver(grid, row_sums_clues, column_sums_clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -87,7 +87,7 @@ class NumberCrossSolverTests(TestCase):
 
     def test_get_solution_10x10_evil_5jyy9(self):
         """https://gridpuzzle.com/number-cross/5jyy9"""
-        _grid = Grid([
+        grid = Grid([
             [3, 3, 1, 8, 9, 9, 7, 5, 6, 4],
             [3, 6, 1, 2, 9, 3, 2, 4, 9, 3],
             [7, 9, 7, 2, 7, 9, 2, 8, 4, 4],
@@ -114,7 +114,7 @@ class NumberCrossSolverTests(TestCase):
             [5, 9, 4, 2, 3, 6, B, B, B, B],
             [4, B, 3, 7, 5, 9, 4, 5, B, B],
         ])
-        game_solver = NumberCrossSolver(_grid, row_sums_clues, column_sums_clues)
+        game_solver = NumberCrossSolver(grid, row_sums_clues, column_sums_clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
