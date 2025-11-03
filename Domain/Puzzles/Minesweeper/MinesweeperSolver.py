@@ -33,11 +33,17 @@ class MinesweeperSolver(GameSolver):
         return Grid([[(is_true(model.eval(self._grid_z3.value(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def _add_constraints(self):
+        self._add_initial_constraints()
         self._add_sum_constraints()
+
+    def _add_initial_constraints(self):
+        for position in [position for position, cell in self._grid if cell != self.empty]:
+            self._solver.add(Not(self._grid_z3[position]))
 
     def _add_sum_constraints(self):
         constraints = []
         for position, cell in [(position, cell) for position, cell in self._grid if cell != self.empty]:
-            constraints.append(Not(self._grid_z3[position]))
             constraints.append(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
         self._solver.add(And(constraints))
+
+
