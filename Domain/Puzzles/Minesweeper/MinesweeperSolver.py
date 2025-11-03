@@ -41,9 +41,6 @@ class MinesweeperSolver(GameSolver):
             self._solver.add(Not(self._grid_z3[position]))
 
     def _add_sum_constraints(self):
-        constraints = []
         for position, cell in [(position, cell) for position, cell in self._grid if cell != self.empty]:
-            constraints.append(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
-        self._solver.add(And(constraints))
-
+            self._solver.add(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
 
