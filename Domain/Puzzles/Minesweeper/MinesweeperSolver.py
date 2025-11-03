@@ -5,6 +5,8 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class MinesweeperSolver(GameSolver):
+    empty = None
+
     def __init__(self, grid: Grid):
         self._grid = grid
         self.rows_number = self._grid.rows_number
@@ -13,7 +15,7 @@ class MinesweeperSolver(GameSolver):
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
-    def get_solution(self) -> (Grid, int):
+    def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
@@ -35,7 +37,7 @@ class MinesweeperSolver(GameSolver):
 
     def _add_sum_constraints(self):
         constraints = []
-        for position, cell in [(position, cell) for position, cell in self._grid if cell != -1]:
-            constraints.append(self._grid_z3[position])
-            constraints.append(sum([Not(value) for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
+        for position, cell in [(position, cell) for position, cell in self._grid if cell != self.empty]:
+            constraints.append(Not(self._grid_z3[position]))
+            constraints.append(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
         self._solver.add(And(constraints))
