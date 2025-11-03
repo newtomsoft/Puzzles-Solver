@@ -39,7 +39,7 @@ class SudokuBaseSolver(GameSolver):
         if not self._are_initial_numbers_different_in_sub_square():
             raise ValueError("initial numbers must be different in sub squares")
 
-    def get_solution(self) -> (Grid | None, int):
+    def get_solution(self) -> Grid:
         self._grid_vars = Grid([[self._model.NewIntVar(1, self.rows_number, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
         self._add_specific_constraints()

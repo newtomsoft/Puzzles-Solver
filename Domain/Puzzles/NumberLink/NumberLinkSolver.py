@@ -14,7 +14,7 @@ class NumberLinkSolver(GameSolver):
         self._grid_vars = None
         self._previous_solution = None
 
-    def get_solution(self) -> (Grid, int):
+    def get_solution(self) -> Grid:
         self._grid_vars = Grid([[self._model.NewIntVar(0, max(self.rows_number * self.columns_number - 1, 0), f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
