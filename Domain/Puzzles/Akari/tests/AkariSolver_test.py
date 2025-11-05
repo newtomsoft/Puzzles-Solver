@@ -6,8 +6,6 @@ from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 
 
 class AkariSolverTests(TestCase):
-
-
     def test_solution_grid_too_small_column(self):
         data_game = {
             'rows_number': 7,
