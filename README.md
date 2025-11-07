@@ -43,6 +43,7 @@ https://gridpuzzle.com/kuroshiro/size-10
 https://gridpuzzle.com/gyokuseki/evil-8  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
+https://gridpuzzle.com/meadows/size-15  
 https://gridpuzzle.com/minesweeper/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
 https://gridpuzzle.com/nanro/evil-12  
