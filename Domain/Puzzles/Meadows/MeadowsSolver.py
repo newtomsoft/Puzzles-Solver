@@ -68,7 +68,6 @@ class MeadowsSolver(GameSolver):
         pr, pc = position.r, position.c
 
         # Pre-filled cells
-        fixed_same = position
         fixed_other = [pos for pos, val in self._grid if val is not None and val != cell_value]
 
         # Bounding box of same-value givens
@@ -78,7 +77,7 @@ class MeadowsSolver(GameSolver):
         max_c = position.c
 
         # Min required square size and global max
-        min_size = max(max_r - min_r + 1, max_c - min_c + 1)
+        min_size = 1
         max_size = min(rows, cols)
 
         candidates = []
