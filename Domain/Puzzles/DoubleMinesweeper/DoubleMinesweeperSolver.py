@@ -1,10 +1,11 @@
-﻿from z3 import Solver, Bool, Not, And, unsat, is_true
+﻿from z3 import Solver, Bool, Not, And, unsat, is_true, Int
 
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
 
-class MinesweeperSolver(GameSolver):
+class DoubleMinesweeperSolver(GameSolver):
     empty = None
 
     def __init__(self, grid: Grid):
@@ -16,7 +17,7 @@ class MinesweeperSolver(GameSolver):
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -30,16 +31,19 @@ class MinesweeperSolver(GameSolver):
         if self._solver.check() == unsat:
             return Grid.empty()
         model = self._solver.model()
-        return Grid([[(is_true(model.eval(self._grid_z3.value(i, j)))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return Grid([[model.eval(self._grid_z3[Position(i, j)]).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def _add_constraints(self):
         self._add_initial_constraints()
         self._add_neighbors_constraints()
 
     def _add_initial_constraints(self):
-        for position in [position for position, cell in self._grid if cell != self.empty]:
-            pass  # todo
+        for position, cell in self._grid:
+            if cell != self.empty:
+                self._solver.add(self._grid_z3[position] == 0)
+            else:
+                self._solver.add(self._grid_z3[position] >= 0, self._grid_z3[position] <= 2)
 
     def _add_neighbors_constraints(self):
         for position, cell in [(position, cell) for position, cell in self._grid if cell != self.empty]:
-            pass  # todo (use self._grid_z3.neighbors_values)
+            self._solver.add(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)
