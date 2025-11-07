@@ -62,45 +62,89 @@ class MeadowsSolver(GameSolver):
             self._add_square_constraint(position, value)
 
     def _add_square_constraint(self, position: Position, cell_value: int):
-        candidates = []
+        # Optimized encoding: prune impossible squares early and reduce outside constraints.
         rows = self._rows_number
         cols = self._columns_number
         pr, pc = position.r, position.c
 
-        # precompute all grid positions
-        all_positions = [Position(r, c) for r in range(rows) for c in range(cols)]
+        # Pre-filled cells
+        fixed_same = position
+        fixed_other = [pos for pos, val in self._grid if val is not None and val != cell_value]
 
+        # Bounding box of same-value givens
+        min_r = position.r
+        max_r = position.r
+        min_c = position.c
+        max_c = position.c
+
+        # Min required square size and global max
+        min_size = max(max_r - min_r + 1, max_c - min_c + 1)
         max_size = min(rows, cols)
-        for size in range(1, max_size + 1):
-            for r0 in range(0, rows - size + 1):
-                for c0 in range(0, cols - size + 1):
-                    r1 = r0 + size - 1
+
+        candidates = []
+        pos_to_selectors: dict[tuple[int, int], list] = {}
+
+        for size in range(min_size, max_size + 1):
+            # top-left ranges constrained to contain the bounding box
+            r0_min = max(0, max_r - size + 1)
+            c0_min = max(0, max_c - size + 1)
+            r0_max = min(min_r, rows - size)
+            c0_max = min(min_c, cols - size)
+            if r0_min > r0_max or c0_min > c0_max:
+                continue
+
+            for r0 in range(r0_min, r0_max + 1):
+                r1 = r0 + size - 1
+                # seed row must fit
+                if not (r0 <= pr <= r1):
+                    continue
+                for c0 in range(c0_min, c0_max + 1):
                     c1 = c0 + size - 1
-                    # the square must include the given position
-                    if not (r0 <= pr <= r1 and c0 <= pc <= c1):
+                    # seed col must fit
+                    if not (c0 <= pc <= c1):
+                        continue
+
+                    # Reject if any other fixed different value lies inside
+                    conflict = False
+                    for p in fixed_other:
+                        if r0 <= p.r <= r1 and c0 <= p.c <= c1:
+                            conflict = True
+                            break
+                    if conflict:
+                        continue
+
+                    # Ensure all same-value fixed cells are inside (should be guaranteed by ranges, but keep safeguard)
+                    if not (r0 <= position.r <= r1 and c0 <= position.c <= c1):
                         continue
 
                     selector = Bool(f"sq_{cell_value}_{pr}_{pc}_{r0}_{c0}_{size}")
 
-                    # Inside constraints
-                    inside_positions = [Position(r, c) for r in range(r0, r1 + 1) for c in range(c0, c1 + 1)]
-                    for pos in inside_positions:
-                        self._solver.add(Implies(selector, self._grid_z3[pos] == cell_value))
-
-                    # Outside constraints: all other cells must be != cell_value
-                    outside_positions = [pos for pos in all_positions if not (r0 <= pos.r <= r1 and c0 <= pos.c <= c1)]
-                    for pos in outside_positions:
-                        self._solver.add(Implies(selector, self._grid_z3[pos] != cell_value))
+                    # Inside cells equal to the value when selector is true
+                    for r in range(r0, r1 + 1):
+                        for c in range(c0, c1 + 1):
+                            pos = Position(r, c)
+                            self._solver.add(Implies(selector, self._grid_z3[pos] == cell_value))
+                            pos_to_selectors.setdefault((r, c), []).append(selector)
 
                     candidates.append(selector)
 
-        # At least one candidate must be true
-        if candidates:
-            self._solver.add(Or(candidates))
-            # And they must be mutually exclusive (exactly one)
-            for i in range(len(candidates)):
-                for j in range(i + 1, len(candidates)):
-                    self._solver.add(Not(And(candidates[i], candidates[j])))
-        else:
-            # No possible square (shouldn't generally happen); force contradiction to signal unsat for this puzzle
+        # Need exactly one selected candidate
+        if not candidates:
             self._solver.add(False)
+            return
+        self._solver.add(Or(candidates))
+        for i in range(len(candidates)):
+            for j in range(i + 1, len(candidates)):
+                self._solver.add(Not(And(candidates[i], candidates[j])))
+
+        # Coverage constraints: if a cell equals this value, it must belong to the selected candidate
+        covered_positions = set(pos_to_selectors.keys())
+        for r in range(rows):
+            for c in range(cols):
+                pos = Position(r, c)
+                key = (r, c)
+                if key in covered_positions:
+                    self._solver.add(Implies(self._grid_z3[pos] == cell_value, Or(pos_to_selectors[key])))
+                else:
+                    # Can never be part of this square
+                    self._solver.add(self._grid_z3[pos] != cell_value)
