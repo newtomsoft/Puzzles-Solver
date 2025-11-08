@@ -70,12 +70,6 @@ class MeadowsSolver(GameSolver):
         # Pre-filled cells
         fixed_other = [pos for pos, val in self._grid if val is not None and val != cell_value]
 
-        # Bounding box of same-value givens
-        min_r = position.r
-        max_r = position.r
-        min_c = position.c
-        max_c = position.c
-
         # Min required square size and global max
         min_size = 1
         max_size = min(rows, cols)
@@ -85,10 +79,10 @@ class MeadowsSolver(GameSolver):
 
         for size in range(min_size, max_size + 1):
             # top-left ranges constrained to contain the bounding box
-            r0_min = max(0, max_r - size + 1)
-            c0_min = max(0, max_c - size + 1)
-            r0_max = min(min_r, rows - size)
-            c0_max = min(min_c, cols - size)
+            r0_min = max(0, position.r - size + 1)
+            c0_min = max(0, position.c - size + 1)
+            r0_max = min(position.r, rows - size)
+            c0_max = min(position.c, cols - size)
             if r0_min > r0_max or c0_min > c0_max:
                 continue
 
