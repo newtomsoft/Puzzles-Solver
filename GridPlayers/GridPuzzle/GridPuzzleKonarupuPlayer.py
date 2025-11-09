@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleKonarupuPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleKonarupuPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "konarupu"
 

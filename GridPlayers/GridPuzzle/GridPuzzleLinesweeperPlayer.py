@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleLinesweeperPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleLinesweeperPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "linesweeper"
 

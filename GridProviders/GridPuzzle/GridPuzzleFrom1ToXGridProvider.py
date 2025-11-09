@@ -1,14 +1,14 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Board.Grid import Grid
+from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleGridTagProvider import GridPuzzleGridTagProvider
+from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleFrom1ToXGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridTagProvider):
+class GridPuzzleFrom1ToXGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleTagProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

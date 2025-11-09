@@ -1,4 +1,4 @@
-﻿class GridPuzzleGridProvider:
+﻿class GridPuzzleProvider:
     @staticmethod
     def get_html(browser, url, board_selector: str | None = None):
         page = browser.pages[0]

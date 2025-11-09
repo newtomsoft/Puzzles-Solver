@@ -5,11 +5,11 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleGridProvider import GridPuzzleGridProvider
+from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleHashiGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridProvider):
+class GridPuzzleHashiGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

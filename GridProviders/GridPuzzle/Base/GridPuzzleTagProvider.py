@@ -2,10 +2,10 @@
 
 from bs4 import BeautifulSoup, ResultSet, PageElement, Tag, NavigableString
 
-from GridProviders.GridPuzzle.GridPuzzleGridProvider import GridPuzzleGridProvider
+from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 
 
-class GridPuzzleGridTagProvider(GridPuzzleGridProvider):
+class GridPuzzleTagProvider(GridPuzzleProvider):
     @staticmethod
     def _get_grid_data(html_page: str) -> tuple[BeautifulSoup, int, int, list[list], ResultSet[PageElement | Tag | NavigableString]]:
         soup = BeautifulSoup(html_page, 'html.parser')

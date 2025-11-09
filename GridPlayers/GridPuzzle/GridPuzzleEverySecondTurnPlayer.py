@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleEverySecondTurnPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleEverySecondTurnPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "everySecondTurn"
 
