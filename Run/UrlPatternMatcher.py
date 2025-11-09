@@ -71,6 +71,7 @@ from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
 from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
+from Domain.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 from Domain.Puzzles.Tatamibari.TatamibariSolver import TatamibariSolver
 from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
@@ -125,6 +126,7 @@ from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
 from GridPlayers.GridPuzzle.GridPuzzleStarsAndArrowsPlayer import GridPuzzleStarsAndArrowsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
+from GridPlayers.GridPuzzle.GridPuzzleTasukueaPlayer import GridPuzzleTasukueaPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTatamibariPlayer import GridPuzzleTatamibariPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
 from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
@@ -212,6 +214,7 @@ from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnake
 from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStarsAndArrowsGridProvider import GridPuzzleStarsAndArrowsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
+from GridProviders.GridPuzzle.GridPuzzleTasukueaGridProvider import GridPuzzleTasukueaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTatamibariGridProvider import GridPuzzleTatamibariGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
 from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTrilogyGridProvider
@@ -362,6 +365,7 @@ class UrlPatternMatcher:
             r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
             r"https://www\.linkedin\.com/games/tango": (BinairoPlusSolver, TangoGridProvider, TangoPlayer),
             r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaPlayer),
+            r"https://.*gridpuzzle\.com/tasukuea": (TasukueaSolver, GridPuzzleTasukueaGridProvider, GridPuzzleTasukueaPlayer),
             r"https://.*gridpuzzle\.com/tatamibari": (TatamibariSolver, GridPuzzleTatamibariGridProvider, GridPuzzleTatamibariPlayer),
             r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleGalaxiesGridProvider, PuzzleGalaxiesPlayer),
             r"https://.*gridpuzzle\.com/galaxies": (TentaiShowSolver, GridPuzzleGalaxiesGridProvider, GridPuzzleGalaxiesPlayer),
