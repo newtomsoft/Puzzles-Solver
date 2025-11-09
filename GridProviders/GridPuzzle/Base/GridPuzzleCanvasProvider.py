@@ -3,10 +3,10 @@ import re
 
 from bs4 import BeautifulSoup
 
-from GridProviders.GridPuzzle.GridPuzzleGridProvider import GridPuzzleGridProvider
+from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 
 
-class GridPuzzleGridCanvasProvider(GridPuzzleGridProvider):
+class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
     @staticmethod
     def _get_canvas_data(html_page: str) -> tuple[list[str], int]:
         html_string = BeautifulSoup(html_page, 'html.parser').prettify()

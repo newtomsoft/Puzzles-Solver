@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleCountryRoadPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleCountryRoadPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "country road"
 

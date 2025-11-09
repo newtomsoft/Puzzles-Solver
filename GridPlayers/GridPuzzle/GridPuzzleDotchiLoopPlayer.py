@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleDotchiLoopPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleDotchiLoopPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "dotchi loop"
 

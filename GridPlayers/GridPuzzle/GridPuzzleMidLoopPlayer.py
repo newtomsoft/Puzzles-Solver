@@ -1,5 +1,5 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleMidLoopPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleMidLoopPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name: str = "midloop"

@@ -1,9 +1,9 @@
 ﻿from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.GridPuzzle.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
+from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleLoopAndBlackCellsPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
+class GridPuzzleCanvasLoopAndBlackCellsPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
     def play(self, solution: IslandGrid):
         cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution.columns_number, solution.rows_number)
         video, rectangle = self._get_data_video_viewport(page)

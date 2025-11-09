@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleKuroshiroPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleKuroshiroPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "kuroshiro"
 

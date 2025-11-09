@@ -3,7 +3,7 @@
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleGridCanvasProvider import GridPuzzleGridCanvasProvider
+from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 _ = MeadowsSolver.empty

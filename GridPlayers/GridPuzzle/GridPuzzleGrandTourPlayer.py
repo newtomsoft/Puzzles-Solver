@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleGrandTourPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleGrandTourPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "grand_tour"
 

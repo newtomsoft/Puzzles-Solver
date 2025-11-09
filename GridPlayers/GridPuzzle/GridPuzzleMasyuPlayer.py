@@ -1,6 +1,6 @@
-﻿from GridPlayers.GridPuzzle.GridPuzzleLoopAndBlackCellsPlayer import GridPuzzleLoopAndBlackCellsPlayer
+﻿from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasLoopAndBlackCellsPlayer import GridPuzzleCanvasLoopAndBlackCellsPlayer
 
 
-class GridPuzzleMasyuPlayer(GridPuzzleLoopAndBlackCellsPlayer):
+class GridPuzzleMasyuPlayer(GridPuzzleCanvasLoopAndBlackCellsPlayer):
     game_name = "masyu"
 
