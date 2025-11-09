@@ -1,9 +1,9 @@
 ﻿from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.GridPuzzle.Base.GridPuzzleTagByBlockPlayer import GridPuzzleTagByBlockPlayer
 
 
-class GridPuzzleTilePaintPlayer(PlaywrightPlayer):
+class GridPuzzleTilePaintPlayer(GridPuzzleTagByBlockPlayer):
     game_name = "tile_paint"
     def play(self, data: tuple[Grid, dict[int, frozenset[Position]]]):
         grid_solution = data[0]
