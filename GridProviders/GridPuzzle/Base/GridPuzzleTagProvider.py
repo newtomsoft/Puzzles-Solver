@@ -1,6 +1,7 @@
 ﻿import math
 
-from bs4 import BeautifulSoup, ResultSet, PageElement, Tag, NavigableString
+from bs4 import BeautifulSoup, ResultSet, Tag
+from bs4.element import NavigableString, PageElement
 
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 

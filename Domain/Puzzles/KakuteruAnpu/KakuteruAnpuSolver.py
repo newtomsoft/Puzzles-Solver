@@ -70,55 +70,51 @@ class KakuteruAnpuSolver(GameSolver):
 
     def _add_black_region_constraint(self, region: frozenset[Position]):
         self._add_contiguity_constraint(region)
-        number = max(0 if (number:=self._numbers_grid[position]) is None else number for position in region)
+        number = max(0 if (number := self._numbers_grid[position]) is None else number for position in region)
         if number != 0:
             self._solver.add(sum([self._grid_z3[position] for position in region]) == number)
 
-    def _add_contiguity_constraint(self, positions: frozenset[Position]):
-        pos_vars: dict[tuple[int, int], BoolRef] = {}
-        for pos in positions:
-            pos_vars[(pos.r, pos.c)] = Bool(f"pos_{pos.r}_{pos.c}")
+    def _add_contiguity_constraint(self, region: frozenset[Position]):
+        region_sum = sum([self._grid_z3[position] for position in region])
 
         reach_vars: dict[tuple[int, int], BoolRef] = {}
-        for pos in positions:
+        for pos in region:
             reach_vars[(pos.r, pos.c)] = Bool(f"reach_{pos.r}_{pos.c}")
 
         root_vars: dict[tuple[int, int], BoolRef] = {}
-        for pos in positions:
+        for pos in region:
             root_vars[(pos.r, pos.c)] = Bool(f"root_{pos.r}_{pos.c}")
 
-        self._solver.add(sum([var for var in root_vars.values()]) == 1)
+        no_black = (region_sum == 0)
+        self._solver.add(Implies(no_black, sum([var for var in root_vars.values()]) == 0))
 
-        for pos in positions:
+        self._solver.add(Implies(Not(no_black), sum([var for var in root_vars.values()]) == 1))
+
+        for pos in region:
             pos_key = (pos.r, pos.c)
-            self._solver.add(Implies(root_vars[pos_key], pos_vars[pos_key]))
+            self._solver.add(Implies(root_vars[pos_key], self._grid_z3[pos]))
             self._solver.add(Implies(root_vars[pos_key], reach_vars[pos_key]))
 
         neighbor_map = defaultdict(list)
-        for pos in positions:
+        for pos in region:
             pos_key = (pos.r, pos.c)
             for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 neighbor_key = (pos.r + dx, pos.c + dy)
-                if neighbor_key in pos_vars:
+                if neighbor_key in reach_vars:
                     neighbor_map[pos_key].append(neighbor_key)
 
-        for pos in positions:
+        for pos in region:
             pos_key = (pos.r, pos.c)
-            current_pos = pos_vars[pos_key]
+            current_pos = self._grid_z3[pos]
             current_reach = reach_vars[pos_key]
             current_root = root_vars[pos_key]
 
+            self._solver.add(Implies(current_pos, current_reach))
             self._solver.add(Implies(current_reach, current_pos))
 
             if neighbor_map[pos_key]:
                 neighbor_reach_vars = [reach_vars[nk] for nk in neighbor_map[pos_key]]
-                self._solver.add(Implies(
-                    And(current_reach, Not(current_root)), Or(neighbor_reach_vars)
-                ))
-
-        for pos in positions:
-            pos_key = (pos.r, pos.c)
-            self._solver.add(Implies(pos_vars[pos_key], reach_vars[pos_key]))
+                self._solver.add(Implies(And(current_reach, Not(current_root)), Or(neighbor_reach_vars)))
 
     def _add_no_black_neighbors_between_regions_constraints(self):
         for region in self._regions.values():
@@ -129,4 +125,3 @@ class KakuteruAnpuSolver(GameSolver):
         for position in region:
             for position_neighbor in [neighbor for neighbor in self._numbers_grid.neighbors_positions(position) if neighbor in region_neighbors]:
                 self._solver.add(Not(And(self._grid_z3[position], (self._grid_z3[position_neighbor]))))
-
