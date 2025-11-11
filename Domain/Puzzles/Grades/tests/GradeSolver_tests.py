@@ -2,9 +2,9 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Grades.GradesSolver import GradesGameSolver
+from Domain.Puzzles.Grades.GradesSolver import GradesSolver
 
-_ = GradesGameSolver.no_value
+_ = GradesSolver.no_value
 
 
 class GradesGameTests(TestCase):
@@ -26,7 +26,7 @@ class GradesGameTests(TestCase):
             [0, 1, 0, 0, 0],
             [0, 0, 0, 6, 0],
         ])
-        game_solver = GradesGameSolver(grid, clues)
+        game_solver = GradesSolver(grid, clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -50,7 +50,7 @@ class GradesGameTests(TestCase):
             [0, 0, 8, 0, 0],
             [8, 0, 0, 0, 1],
         ])
-        game_solver = GradesGameSolver(grid, clues)
+        game_solver = GradesSolver(grid, clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -80,7 +80,7 @@ class GradesGameTests(TestCase):
             [0, 0, 0, 0, 0, 4, 0, 0],
             [4, 0, 6, 0, 0, 0, 0, 1],
         ])
-        game_solver = GradesGameSolver(grid, clues)
+        game_solver = GradesSolver(grid, clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -110,7 +110,7 @@ class GradesGameTests(TestCase):
             [0, 0, 0, 7, 0, 0, 0, 9],
             [0, 9, 0, 0, 0, 7, 0, 0],
         ])
-        game_solver = GradesGameSolver(grid, clues)
+        game_solver = GradesSolver(grid, clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
@@ -149,7 +149,7 @@ class GradesGameTests(TestCase):
             [0, 0, 0, 3, 0, 0, 0, 0, 0, 0],
             [6, 0, 0, 0, 0, 0, 7, 0, 0, 4],
         ])
-        game_solver = GradesGameSolver(grid, clues)
+        game_solver = GradesSolver(grid, clues)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()

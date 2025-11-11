@@ -5,14 +5,14 @@ from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
 
-class GradesGameSolver(GameSolver):
+class GradesSolver(GameSolver):
     no_value = None
 
     def __init__(self, grid: Grid, clues: dict[str, list[int]]):
         self._grid = grid
         self._clues: dict[str, list[int]] = clues
         self.rows_number = len(clues['left'])
-        self.columns_number = len(clues['up'])
+        self.columns_number = len(clues['top'])
         self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution_grid = None
@@ -55,7 +55,7 @@ class GradesGameSolver(GameSolver):
             if count != self.no_value:
                 self._solver.add(sum([If(self._grid_z3[row, col] != 0, 1, 0) for col in range(self.columns_number)]) == count)
 
-        for col, count in enumerate(self._clues['up']):
+        for col, count in enumerate(self._clues['top']):
             if count != self.no_value:
                 self._solver.add(sum([If(self._grid_z3[row, col] != 0, 1, 0) for row in range(self.rows_number)]) == count)
 
@@ -64,7 +64,7 @@ class GradesGameSolver(GameSolver):
             if sum_value != self.no_value:
                 self._solver.add(sum([self._grid_z3[row, col] for col in range(self.columns_number)]) == sum_value)
 
-        for col, sum_value in enumerate(self._clues['down']):
+        for col, sum_value in enumerate(self._clues['bottom']):
             if sum_value != self.no_value:
                 self._solver.add(sum([self._grid_z3[row, col] for row in range(self.rows_number)]) == sum_value)
 

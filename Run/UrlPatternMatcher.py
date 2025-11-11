@@ -20,6 +20,7 @@ from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Gappy.GappySolver import GappySolver
 from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
+from Domain.Puzzles.Grades.GradesSolver import GradesSolver
 from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from Domain.Puzzles.Gyokuseki.GyokusekiSolver import GyokusekiSolver
 from Domain.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
@@ -99,6 +100,7 @@ from GridPlayers.GridPuzzle.GridPuzzleFrom1ToXPlayer import GridPuzzleFrom1ToXPl
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
+from GridPlayers.GridPuzzle.GridPuzzleGradesPlayer import GridPuzzleGradesPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
 from GridPlayers.GridPuzzle.GridPuzzleGyokusekiPlayer import GridPuzzleGyokusekiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHakoiriPlayer import GridPuzzleHakoiriPlayer
@@ -188,6 +190,7 @@ from GridProviders.GridPuzzle.GridPuzzleFrom1ToXGridProvider import GridPuzzleFr
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappyGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
+from GridProviders.GridPuzzle.GridPuzzleGradesGridProvider import GridPuzzleGradesGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
 from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleGyokusekiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
@@ -308,6 +311,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
             r"https://.*gridpuzzle\.com/gappy": (GappySolver, GridPuzzleGappyGridProvider, GridPuzzleGappyPlayer),
             r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
+            r"https://.*gridpuzzle\.com/grades": (GradesSolver, GridPuzzleGradesGridProvider, GridPuzzleGradesPlayer),
             r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
             r"https://.*gridpuzzle\.com/gyokuseki": (GyokusekiSolver, GridPuzzleGyokusekiGridProvider, GridPuzzleGyokusekiPlayer),
             r"https://.*gridpuzzle\.com/hakoiri": (HakoiriSolver, GridPuzzleHakoiriGridProvider, GridPuzzleHakoiriPlayer),
