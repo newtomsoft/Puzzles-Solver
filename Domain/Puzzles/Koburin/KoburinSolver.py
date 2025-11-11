@@ -1,6 +1,4 @@
-﻿from typing import Dict
-
-from ortools.sat.cp_model_pb2 import CpSolverStatus
+﻿from ortools.sat.cp_model_pb2 import CpSolverStatus
 from ortools.sat.python import cp_model
 from ortools.sat.python.cp_model import IntVar, CpModel, CpSolver
 
@@ -20,8 +18,8 @@ class KoburinSolver(GameSolver):
         self._model: CpModel = cp_model.CpModel()
         self._solver: CpSolver = CpSolver()
         self._initialized = False
-        self._island_bridges_z3: Dict[Position, Dict[Direction, IntVar]] = {}
-        self._black_cells_z3: Dict[Position, IntVar] = {}
+        self._island_bridges_z3: dict[Position, dict[Direction, IntVar]] = {}
+        self._black_cells_z3: dict[Position, IntVar] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
