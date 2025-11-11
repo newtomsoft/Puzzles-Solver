@@ -1,9 +1,8 @@
 ﻿import unittest
 from unittest import TestCase
 
-from Domain.Puzzles.LookAir.LookAirSolverOrTools import LookAirSolver
-
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.LookAir.LookAirSolver import LookAirSolver
 
 _ = -1
 
