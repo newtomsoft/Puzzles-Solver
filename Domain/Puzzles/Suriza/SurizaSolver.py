@@ -1,6 +1,4 @@
-﻿from typing import Dict
-
-from ortools.sat.python import cp_model
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -17,7 +15,7 @@ class SurizaSolver(GameSolver):
         self._init_island_grid()
         self._model = cp_model.CpModel()
         self._solver = cp_model.CpSolver()
-        self._island_bridges: Dict[Position, Dict[Direction, cp_model.IntVar]] = {}
+        self._island_bridges: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
@@ -34,7 +32,7 @@ class SurizaSolver(GameSolver):
         solution, _ = self._ensure_all_islands_connected()
         return solution
 
-    def _ensure_all_islands_connected(self) -> (IslandGrid, int):
+    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
         status = self._solver.solve(self._model)
         while status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
