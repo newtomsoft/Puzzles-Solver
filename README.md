@@ -27,6 +27,7 @@ https://gridpuzzle.com/creek/evil-15
 https://gridpuzzle.com/bridges/size-12  
 https://gridpuzzle.com/chocona/evil-9  
 https://gridpuzzle.com/clouds/size-15  
+https://gridpuzzle.com/cocktail-lamp/evil-15  
 https://gridpuzzle.com/country-road/evil-12  
 https://gridpuzzle.com/doppelblock/evil-8  
 https://gridpuzzle.com/dosun-fuwari/size-8  
