@@ -28,7 +28,8 @@ class GridPuzzleGyokusekiGridProvider(GridProvider, PlaywrightGridProvider, Grid
     def extract_value(name: str, column_count: int, soup: BeautifulSoup):
         return int(soup.find('div', id=f'{name}_{column_count}').text) if soup.find('div', id=f'{name}_{column_count}').text != '\xa0' else -1
 
-    def extract_values_right(self, soup) -> list[int]:
+    @staticmethod
+    def extract_values_right(soup) -> list[int]:
         containers = soup.find_all(
             'div',
             class_=lambda c: c and all(cls in c.split() for cls in ['fr_txt', 'd-flex', 'flex-column'])
@@ -50,7 +51,8 @@ class GridPuzzleGyokusekiGridProvider(GridProvider, PlaywrightGridProvider, Grid
 
         return values
 
-    def extract_values_down(self, soup) -> list[int]:
+    @staticmethod
+    def extract_values_down(soup) -> list[int]:
         containers = soup.find_all(
             'div',
             class_=lambda c: c and all(cls in c.split() for cls in ['fb_txt'])

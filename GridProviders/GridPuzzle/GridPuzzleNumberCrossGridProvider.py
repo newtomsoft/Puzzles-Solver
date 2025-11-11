@@ -22,27 +22,7 @@ class GridPuzzleNumberCrossGridProvider(GridProvider, PlaywrightGridProvider, Gr
             except ValueError:
                 matrix[row][col] = 0
 
-        left_container = soup.find('div', class_='fl_txt')
-        left = []
-        if left_container:
-            left_divs = left_container.find_all('div', class_='justify-content-around')
-            for div in left_divs:
-                text = div.get_text(strip=True)
-                text = text.replace('\xa0', '').strip()
-                try:
-                    left.append(int(text))
-                except (ValueError, AttributeError):
-                    left.append(None)
-
-        up_container = soup.find('div', class_='ft_txt')
-        up = []
-        if up_container:
-            up_divs = up_container.find_all('div', class_='text-center')
-            for div in up_divs:
-                text = div.get_text(strip=True)
-                try:
-                    up.append(int(text))
-                except (ValueError, AttributeError):
-                    up.append(None)
+        left = self.make_left(soup)
+        up = self.make_top(soup)
 
         return Grid(matrix), left, up
