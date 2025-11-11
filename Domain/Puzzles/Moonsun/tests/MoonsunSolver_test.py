@@ -2,6 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.Moonsun.MoonsunSolver import MoonsunSolver
 
 _ = None
 B = 'b'
@@ -20,12 +21,16 @@ class MoonsunSolverTest(TestCase):
             [W, B, _],
             [_, B, B]
         ])
-        expected_solution = Grid([
-            [],
-        ])
+        expected_solution_str = (
+           ' ·  ┌─────┐ \n'
+           ' ·  └──┐  │ \n'
+           ' ·  ·  └──┘ \n'
+           ' ·  ·  ·  · '
+        )
+
         game_solver = MoonsunSolver(circle_grid, regions_grid)
         solution = game_solver.get_solution()
-        self.assertEqual(expected_solution, solution)
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -42,12 +47,16 @@ class MoonsunSolverTest(TestCase):
             [_, _, B, _],
             [_, B, W, B]
         ])
-        expected_solution = Grid([
-            [],
-        ])
+        expected_solution_str = (
+            ' ·  ┌─────┐ \n'
+            ' ·  └──┐  │ \n'
+            ' ·  ·  └──┘ \n'
+            ' ·  ·  ·  · '
+        )
+
         game_solver = MoonsunSolver(circle_grid, regions_grid)
         solution = game_solver.get_solution()
-        self.assertEqual(expected_solution, solution)
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
