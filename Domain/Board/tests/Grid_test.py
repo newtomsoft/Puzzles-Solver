@@ -586,5 +586,57 @@ class GridTest(TestCase):
         self.assertFalse(Position(0, 2) in self.grid_2x2)
         self.assertFalse(Position(2, 2) in self.grid_2x2)
 
+    def test_get_all_shapes_1(self):
+        grid = Grid([
+            [1, 1, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+        ])
+        expected_shapes_len = 1
+
+        shapes = grid.get_all_shapes()
+        shapes_len = len(shapes)
+
+        self.assertEqual(expected_shapes_len, shapes_len)
+
+    def test_get_all_shapes_2(self):
+        grid = Grid([
+            [1, 1, 0],
+            [1, 1, 0],
+            [1, 0, 1],
+        ])
+        expected_shapes_len = 2
+
+        shapes = grid.get_all_shapes()
+        shapes_len = len(shapes)
+
+        self.assertEqual(expected_shapes_len, shapes_len)
+
+    def test_get_all_shapes_diagonal_1_a(self):
+        grid = Grid([
+            [1, 1, 0],
+            [1, 1, 0],
+            [1, 0, 1],
+        ])
+        expected_shapes_len = 1
+
+        shapes = grid.get_all_shapes(mode='diagonal')
+        shapes_len = len(shapes)
+
+        self.assertEqual(expected_shapes_len, shapes_len)
+
+    def test_get_all_shapes_diagonal_1_b(self):
+        grid = Grid([
+            [1, 0, 1],
+            [0, 1, 0],
+            [1, 0, 1],
+        ])
+        expected_shapes_len = 1
+
+        shapes = grid.get_all_shapes(mode='diagonal')
+        shapes_len = len(shapes)
+
+        self.assertEqual(expected_shapes_len, shapes_len)
+
 if __name__ == '__main__':
     unittest.main()
