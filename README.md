@@ -37,6 +37,7 @@ https://gridpuzzle.com/fobidoshi/evil-12
 https://gridpuzzle.com/from1tox/evil-9  
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
+https://en.gridpuzzle.com/grades/evil-10  
 https://gridpuzzle.com/hakoiri/evil-10  
 https://gridpuzzle.com/koburin/evil-12  
 https://gridpuzzle.com/konarupu/evil-15  
