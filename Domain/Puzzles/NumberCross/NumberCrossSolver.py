@@ -1,4 +1,6 @@
-﻿from z3 import Solver, Not, And, unsat, If, Bool, is_true
+﻿from typing import Callable
+
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -17,28 +19,44 @@ class NumberCrossSolver(GameSolver):
         self.columns_number = self._input_grid.columns_number
         self._row_sums_clues = row_sums_clues
         self._column_sums_clues = column_sums_clues
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
+        self._model = cp_model.CpModel()
+        self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[Bool(f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.NewBoolVar(f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution if value == self.black_value])))
+        if self._previous_solution is None:
+            return self.get_solution()
+        if self._previous_solution.is_empty():
+            return Grid.empty()
+
+        diff_bools = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                prev_val = 1 if self._previous_solution.value(r, c) != self.black_value else 0
+                v = self._grid_vars[Position(r, c)]
+                diff = self._model.NewBoolVar(f"diff_{r}_{c}")
+                self._model.Add(v != prev_val).OnlyEnforceIf(diff)
+                self._model.Add(v == prev_val).OnlyEnforceIf(diff.Not())
+                diff_bools.append(diff)
+        self._model.AddBoolOr(diff_bools)
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
-    def _compute_solution(self):
-        if self._solver.check() == unsat:
+    def _compute_solution(self) -> Grid:
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
-        model = self._solver.model()
-        grid = Grid(
-            [[self._input_grid[Position(i, j)] if is_true(model.eval(self._grid_z3[Position(i, j)])) else self.black_value for j in range(self.columns_number)]
-             for i in range(self.rows_number)])
+        grid = Grid([
+            [self._input_grid[Position(i, j)] if solver.Value(self._grid_vars[Position(i, j)]) == 1 else self.black_value for j in range(self.columns_number)]
+            for i in range(self.rows_number)
+        ])
         return grid
 
     def _add_constrains(self):
@@ -48,17 +66,17 @@ class NumberCrossSolver(GameSolver):
     def _add_initials_constraints(self):
         for position, value in self._input_grid:
             if value == self.black_value:
-                pass  # todo
+                self._model.Add(self._grid_vars[position] == 0)
 
     def _add_sums_clues_constraints(self):
         self._add_constraints_for_clues(self._row_sums_clues, self._row_positions_generator)
         self._add_constraints_for_clues(self._column_sums_clues, self._column_positions_generator)
 
-    def _add_constraints_for_clues(self, line_sum_clues: list, position_generator):
-        for index, sum_clue in enumerate(line_sum_clues):
-            if sum_clue != self.empty:
-                line_positions = position_generator(index)
-                self._add_sum_for_line_constraint(line_positions, sum_clue)
+    def _add_constraints_for_clues(self, clues: list, line_positions_generator: Callable):
+        for index, clue in enumerate(clues):
+            if clue != self.empty:
+                line_positions = line_positions_generator(index)
+                self._add_sum_for_line_constraint(line_positions, clue)
 
     def _row_positions_generator(self, row_index: int) -> list:
         return [Position(row_index, c) for c in range(self.columns_number)]
@@ -67,4 +85,4 @@ class NumberCrossSolver(GameSolver):
         return [Position(r, column_index) for r in range(self.rows_number)]
 
     def _add_sum_for_line_constraint(self, line_positions: list, clue: int):
-        pass  # todo
+        self._model.Add(sum((self._input_grid[position] * self._grid_vars[position] for position in line_positions)) == clue)
