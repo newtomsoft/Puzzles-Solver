@@ -43,6 +43,7 @@ from Domain.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
 from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from Domain.Puzzles.Moonsun.MoonsunSolver import MoonsunSolver
 from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
@@ -205,6 +206,7 @@ from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyu
 from GridProviders.GridPuzzle.GridPuzzleMeadowsGridProvider import GridPuzzleMeadowsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMidLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMinesweeperGridProvider import GridPuzzleMinesweeperGridProvider
+from GridProviders.GridPuzzle.GridPuzzleMoonsunGridProvider import GridPuzzleMoonsunGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
@@ -340,6 +342,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
             r"https://.*gridpuzzle\.com/minesweeper": (MinesweeperSolver, GridPuzzleMinesweeperGridProvider, GridPuzzleMinesweeperPlayer),
+            r"https://.*gridpuzzle\.com/moonsun": (MoonsunSolver, GridPuzzleMoonsunGridProvider, None),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
             r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowPlayer),
