@@ -141,7 +141,30 @@ class MoonsunSolver(GameSolver):
         self._solver.add(Or(sum_for_positions_constraints))
 
     def _add_alternating_black_and_withe_constraints(self):
-        pass
+        # Variable binaire par position pour l'alternance globale (0/1)
+        positions = list(self._island_bridges_z3.keys())
+        pos_state = {position: Int(f"s_{position}") for position in positions}
+
+        # Domaine des variables d'état: 0 ou 1
+        self._solver.add([Or(pos_state[p] == 0, pos_state[p] == 1) for p in positions])
+
+        # Si un pont est utilisé entre deux positions voisines, leurs états doivent être opposés
+        for p in positions:
+            for d in Direction.orthogonals():
+                q = p.after(d)
+                if q in self._island_bridges_z3:
+                    self._solver.add(Or(self._island_bridges_z3[p][d] == 0, pos_state[p] + pos_state[q] == 1))
+
+        # Si une case colorée est traversée (degré == 2), l'état est fixé selon la couleur
+        for p in positions:
+            deg = sum([self._island_bridges_z3[p][direction] for direction in Direction.orthogonals()])
+            cell = self._circle_grid[p]
+            if cell == self.white:
+                # traversée => état 1
+                self._solver.add(Or(deg != 2, pos_state[p] == 1))
+            elif cell == self.black:
+                # traversée => état 0
+                self._solver.add(Or(deg != 2, pos_state[p] == 0))
 
     def _add_all_same_color_in_region_crossed_constraints(self):
         for region in self._regions.values():
