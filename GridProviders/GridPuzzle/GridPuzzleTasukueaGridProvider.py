@@ -1,11 +1,10 @@
 from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
+from Domain.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 
 
 class GridPuzzleTasukueaGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleTagProvider):
@@ -20,7 +19,7 @@ class GridPuzzleTasukueaGridProvider(GridProvider, PlaywrightGridProvider, GridP
             row = i // column_count
             col = i % column_count
             text = cell.text
-            matrix[row][col] = self.convert(text) if text != '' else MinesweeperSolver.empty
+            matrix[row][col] = self.convert(text) if text != '' else TasukueaSolver.empty
 
         return Grid(matrix)
 
