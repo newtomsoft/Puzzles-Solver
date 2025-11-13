@@ -116,6 +116,7 @@ from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMeadowsPlayer import GridPuzzleMeadowsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMidLoopPlayer import GridPuzzleMidLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMinesweeperPlayer import GridPuzzleMinesweeperPlayer
+from GridPlayers.GridPuzzle.GridPuzzleMoonsunPlayer import GridPuzzleMoonsunPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNanroPlayer import GridPuzzleNanroPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
@@ -342,7 +343,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicPlayer),
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
             r"https://.*gridpuzzle\.com/minesweeper": (MinesweeperSolver, GridPuzzleMinesweeperGridProvider, GridPuzzleMinesweeperPlayer),
-            r"https://.*gridpuzzle\.com/moonsun": (MoonsunSolver, GridPuzzleMoonsunGridProvider, None),
+            r"https://.*gridpuzzle\.com/moonsun": (MoonsunSolver, GridPuzzleMoonsunGridProvider, GridPuzzleMoonsunPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
             r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowPlayer),
