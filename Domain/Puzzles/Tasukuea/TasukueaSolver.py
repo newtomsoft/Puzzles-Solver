@@ -14,13 +14,11 @@ class TasukueaSolver(GameSolver):
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
-        # Keep the same attribute name to minimize downstream changes
-        self._grid_var: Grid = Grid.empty()  # actually CP-SAT BoolVars
+        self._grid_var: Grid = Grid.empty()
         self._model = cp_model.CpModel()
         self._solver = cp_model.CpSolver()
         self._initialized = False
         self._previous_solution: Grid | None = None
-        # Lazy-built global square model structures
         self._square_selectors = None
         self._selector_areas = None
         self._coverage = None
@@ -28,7 +26,6 @@ class TasukueaSolver(GameSolver):
         self._squares_built = False
 
     def _init_solver(self):
-        # Create BoolVars for each cell
         self._grid_var = Grid([[self._model.NewBoolVar(f"cell_{r}-{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
         self._initialized = True
@@ -66,7 +63,6 @@ class TasukueaSolver(GameSolver):
         return Grid.empty(), proposition_count
 
     def get_other_solution(self):
-        # Forbid the previous full assignment: at least one cell differs
         if self._previous_solution is not None:
             diff_literals = []
             for position, value in self._previous_solution:
