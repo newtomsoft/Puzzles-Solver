@@ -9,6 +9,7 @@ from Domain.Puzzles.Chocona.ChoconaSolver import ChoconaSolver
 from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
 from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 from Domain.Puzzles.Creek.CreekSolver import CreekSolver
+from Domain.Puzzles.Detour.DetourSolver import DetourSolver
 from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
 from Domain.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
 from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
@@ -92,6 +93,7 @@ from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlay
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
+from GridPlayers.GridPuzzle.GridPuzzleDetourPlayer import GridPuzzleDetourPlayer
 from GridPlayers.GridPuzzle.GridPuzzleDoppelblockPlayer import GridPuzzleDoppelblockPlayer
 from GridPlayers.GridPuzzle.GridPuzzleDosunFuwariPlayer import GridPuzzleDosunFuwariPlayer
 from GridPlayers.GridPuzzle.GridPuzzleDotchiLoopPlayer import GridPuzzleDotchiLoopPlayer
@@ -183,6 +185,7 @@ from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleCho
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
+from GridProviders.GridPuzzle.GridPuzzleDetourGridProvider import GridPuzzleDetourGridProvider
 from GridProviders.GridPuzzle.GridPuzzleDoppelblockGridProvider import GridPuzzleDoppelblockGridProvider
 from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
 from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
@@ -303,6 +306,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/clouds": (CloudsSolver, GridPuzzleCloudsGridProvider, GridPuzzleCloudsPlayer),
             r"https://.*gridpuzzle\.com/country-road": (CountryRoadSolver, GridPuzzleCountryRoadGridProvider, GridPuzzleCountryRoadPlayer),
             r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
+            r"https://.*gridpuzzle\.com/detour":(DetourSolver, GridPuzzleDetourGridProvider, GridPuzzleDetourPlayer),
             r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
             r"https://.*gridpuzzle\.com/doppelblock": (DoppelblockSolver, GridPuzzleDoppelblockGridProvider, GridPuzzleDoppelblockPlayer),
             r"https://.*gridpuzzle\.com/dosun-fuwari": (DosunFuwariSolver, GridPuzzleDosunFuwariGridProvider, GridPuzzleDosunFuwariPlayer),
