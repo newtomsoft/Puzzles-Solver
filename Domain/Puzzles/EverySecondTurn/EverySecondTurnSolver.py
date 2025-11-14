@@ -108,11 +108,10 @@ class EverySecondTurnSolver(GameSolver):
 
     def _add_links_constraints(self):
         for position in [position for position, value in self._input_grid if value == X]:
-            linked_circles_constraints = self._circles_linked_constraints(position)
+            linked_circles_constraints = self._one_turn_between_linked_circles_constraints(position)
             self._solver.add(Sum(linked_circles_constraints) == 2)
 
-    def _circles_linked_constraints(self, circle_pos: Position):
-        # it must have exactly 1 turn between two circles
+    def _one_turn_between_linked_circles_constraints(self, circle_pos: Position):
         constraints = []
         for other_circle_pos in [pos for pos, value in self._input_grid if value == X and pos.r != circle_pos.r and pos.c != circle_pos.c]:
             hor_turn_pos = Position(circle_pos.r, other_circle_pos.c)
