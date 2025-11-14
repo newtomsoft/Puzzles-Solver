@@ -1,7 +1,5 @@
-from typing import Dict
-
 from ortools.sat.python import cp_model
-from ortools.sat.python.cp_model import CpModel, CpSolverSolutionCallback, FEASIBLE, OPTIMAL
+from ortools.sat.python.cp_model import CpModel, FEASIBLE, OPTIMAL, IntVar
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -25,7 +23,7 @@ class MoonsunSolver(GameSolver):
         self._init_island_grid()
         self._model = CpModel()
         self._solver = cp_model.CpSolver()
-        self._island_bridges_z3: Dict[Position, Dict[Direction, Var]] = {}
+        self._island_bridges_z3: dict[Position, dict[Direction, IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
         self._solver_initialized = False
 
