@@ -118,7 +118,9 @@ class DetourSolver(GameSolver):
             self._add_clues_turn_region_constraints(region)
 
     def _add_clues_turn_region_constraints(self, region: frozenset[Position]):
-        turn_clue = max(clue if (clue:=self._clues_grid[position]) != self.empty else 0 for position in region)
+        turn_clue = max(clue if (clue:=self._clues_grid[position]) != self.empty else -1 for position in region)
+        if turn_clue == -1:
+            return
 
         turn_regions = []
         for position in region:
