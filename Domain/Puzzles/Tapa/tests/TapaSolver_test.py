@@ -267,7 +267,7 @@ class TapaSolverTests(TestCase):
         self.assertEqual(expected_solution, solution)
 
     def test_solution_grid_10x10_evil(self):
-        # https://gridpuzzle.com/tapa/jmn01
+        """https://gridpuzzle.com/tapa/jmn01"""
         grid = Grid([
             [_, _, [2], _, _, [4], _, _, _, _],
             [[2], _, _, _, _, _, _, _, [1, 3], _],
