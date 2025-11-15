@@ -49,6 +49,7 @@ https://gridpuzzle.com/look-air/evil-12
 https://gridpuzzle.com/meadows/size-15  
 https://gridpuzzle.com/minesweeper/evil-12  
 https://gridpuzzle.com/moonsun/evil-12  
+https://gridpuzzle.com/neighbours/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
 https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/number-chain/size-10  
