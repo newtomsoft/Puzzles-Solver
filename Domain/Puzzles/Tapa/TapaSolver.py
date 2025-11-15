@@ -79,7 +79,7 @@ class TapaSolver(GameSolver):
         while self._solver.check() == sat:
             model = self._solver.model()
             proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in
+            current_grid = Grid([[is_true(model.eval(self._grid_z3[Position(i, j)])) for j in range(self._grid_z3.columns_number)] for i in
                                  range(self._grid_z3.rows_number)])
             black_shapes = current_grid.get_all_shapes()
             if len(black_shapes) == 1:
