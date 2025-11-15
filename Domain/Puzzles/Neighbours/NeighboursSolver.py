@@ -7,6 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 class NeighboursSolver(GameSolver):
     empty = None
+    unknow = 0
 
     def __init__(self, clues_clues_grid: Grid):
         self._clues_grid = clues_clues_grid
@@ -107,6 +108,8 @@ class NeighboursSolver(GameSolver):
         for i in region_ids:
             clue_position = self._clue_position_by_region_id[i]
             clue_value = self._clue_by_position[clue_position]
+            if clue_value == NeighboursSolver.unknow:
+                continue
             terms = []
             for j in region_ids:
                 if j == i:
