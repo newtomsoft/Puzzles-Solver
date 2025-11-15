@@ -46,6 +46,7 @@ from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
 from Domain.Puzzles.Moonsun.MoonsunSolver import MoonsunSolver
 from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
+from Domain.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
 from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
@@ -120,6 +121,7 @@ from GridPlayers.GridPuzzle.GridPuzzleMidLoopPlayer import GridPuzzleMidLoopPlay
 from GridPlayers.GridPuzzle.GridPuzzleMinesweeperPlayer import GridPuzzleMinesweeperPlayer
 from GridPlayers.GridPuzzle.GridPuzzleMoonsunPlayer import GridPuzzleMoonsunPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNanroPlayer import GridPuzzleNanroPlayer
+from GridPlayers.GridPuzzle.GridPuzzleNeighboursPlayer import GridPuzzleNeighboursPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
 from GridPlayers.GridPuzzle.GridPuzzleNumberCrossPlayer import GridPuzzleNumberCrossPlayer
@@ -212,6 +214,7 @@ from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMid
 from GridProviders.GridPuzzle.GridPuzzleMinesweeperGridProvider import GridPuzzleMinesweeperGridProvider
 from GridProviders.GridPuzzle.GridPuzzleMoonsunGridProvider import GridPuzzleMoonsunGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
+from GridProviders.GridPuzzle.GridPuzzleNeighboursGridProvider import GridPuzzleNeighboursGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from GridProviders.GridPuzzle.GridPuzzleNumberCrossGridProvider import GridPuzzleNumberCrossGridProvider
@@ -348,6 +351,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
             r"https://.*gridpuzzle\.com/minesweeper": (MinesweeperSolver, GridPuzzleMinesweeperGridProvider, GridPuzzleMinesweeperPlayer),
             r"https://.*gridpuzzle\.com/moonsun": (MoonsunSolver, GridPuzzleMoonsunGridProvider, GridPuzzleMoonsunPlayer),
+            r"https://.*gridpuzzle\.com/neighbours": (NeighboursSolver, GridPuzzleNeighboursGridProvider, GridPuzzleNeighboursPlayer),
             r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
             r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
             r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowPlayer),
