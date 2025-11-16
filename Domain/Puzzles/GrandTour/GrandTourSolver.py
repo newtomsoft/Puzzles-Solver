@@ -22,7 +22,7 @@ class GrandTourSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()

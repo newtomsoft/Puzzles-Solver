@@ -1,5 +1,3 @@
-from typing import Dict
-
 from z3 import ArithRef, Solver, Not, And, Or, Implies, Int, sat
 
 from Domain.Board.Direction import Direction
@@ -16,14 +14,14 @@ class ShingokiSolver(GameSolver):
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._solver = Solver()
-        self._island_bridges_z3: Dict[Position, Dict[Direction, ArithRef]] = {}
+        self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number)] for r in range(self.input_grid.rows_number)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()}
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
@@ -383,4 +381,3 @@ class ShingokiSolver(GameSolver):
             constraints.append(Implies(left_down_constraint, then_left_down_constraint))
 
         return And(constraints)
-

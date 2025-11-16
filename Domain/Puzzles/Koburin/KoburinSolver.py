@@ -35,7 +35,7 @@ class KoburinSolver(GameSolver):
     def _init_solver(self):
         self._model = cp_model.CpModel()
         # Create BoolVars for bridges only on non-digit cells (bridges_count > 0 after init)
-        self._island_bridges_z3 = {island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values() if island.bridges_count > 0}
+        self._island_bridges_z3 = {island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values() if island.bridges_count > 0}
         # Neighbors of digits or out-of-set positions cannot connect to them
         for position in [position for position, _ in self.input_grid if position not in self._island_bridges_z3]:
             neighbors = self.input_grid.neighbors_positions(position)

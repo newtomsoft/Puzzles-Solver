@@ -32,7 +32,7 @@ class MoonsunSolver(GameSolver):
             [[Island(Position(r, c), 2) for c in range(self._circle_grid.columns_number)] for r in range(self._circle_grid.rows_number)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in
+        self._island_bridges_z3 = {island.position: {direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in
                                    self._island_grid.islands.values()}
         self._add_constraints()
         self._solver_initialized = True
@@ -123,7 +123,7 @@ class MoonsunSolver(GameSolver):
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
             s = self._model.NewIntVar(0, 4, f'sum_{island.position}')
-            self._model.Add(s == sum(self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonals()))
+            self._model.Add(s == sum(self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonal_directions()))
             self._model.AddAllowedAssignments([s], [(0,), (2,)])
 
     def _add_single_path_by_region_constraints(self):
@@ -131,7 +131,7 @@ class MoonsunSolver(GameSolver):
             region_edges_positions = [position for position in ShapeGenerator.edges(region_positions) if position in self._island_bridges_z3]
             out_directions = []
             for pos in region_edges_positions:
-                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonals() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
+                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonal_directions() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
             self._model.Add(sum(out_directions) == 2)  # 1 for in and 1 for out
 
     def _add_all_regions_crossed_constraints(self):
@@ -142,8 +142,8 @@ class MoonsunSolver(GameSolver):
         sum_for_positions_constraints = []
         for position in region:
             crossed = self._model.NewBoolVar(f"crossed_{position}")
-            self._model.Add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()) == 2).OnlyEnforceIf(crossed)
-            self._model.Add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()) != 2).OnlyEnforceIf(crossed.Not())
+            self._model.Add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) == 2).OnlyEnforceIf(crossed)
+            self._model.Add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) != 2).OnlyEnforceIf(crossed.Not())
             sum_for_positions_constraints.append(crossed)
         self._model.AddBoolOr(sum_for_positions_constraints)
 
@@ -156,13 +156,13 @@ class MoonsunSolver(GameSolver):
         for region_id, region in self._regions.items():
             for pos in [pos for pos in region if self._circle_grid[pos] == self.white]:
                 crossed = self._model.NewBoolVar(f"crossed_{pos}")
-                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonals()) == 2).OnlyEnforceIf(crossed)
-                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonals()) != 2).OnlyEnforceIf(crossed.Not())
+                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) == 2).OnlyEnforceIf(crossed)
+                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).OnlyEnforceIf(crossed.Not())
                 self._model.Add(colors_regions[region_id] == 1).OnlyEnforceIf(crossed)
             for pos in [pos for pos in region if self._circle_grid[pos] == self.black]:
                 crossed = self._model.NewBoolVar(f"crossed_{pos}")
-                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonals()) == 2).OnlyEnforceIf(crossed)
-                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonals()) != 2).OnlyEnforceIf(crossed.Not())
+                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) == 2).OnlyEnforceIf(crossed)
+                self._model.Add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).OnlyEnforceIf(crossed.Not())
                 self._model.Add(colors_regions[region_id] == 2).OnlyEnforceIf(crossed)
 
             for position in region:
@@ -204,11 +204,11 @@ class MoonsunSolver(GameSolver):
             self._model.Add(is_white_region + is_black_region == 1)
 
         for pos in white_positions:
-            s = sum(self._island_bridges_z3[pos][d] for d in Direction.orthogonals())
+            s = sum(self._island_bridges_z3[pos][d] for d in Direction.orthogonal_directions())
             self._model.Add(s == 2).OnlyEnforceIf(is_white_region)
             self._model.Add(s == 0).OnlyEnforceIf(is_black_region)
 
         for pos in black_positions:
-            s = sum(self._island_bridges_z3[pos][d] for d in Direction.orthogonals())
+            s = sum(self._island_bridges_z3[pos][d] for d in Direction.orthogonal_directions())
             self._model.Add(s == 2).OnlyEnforceIf(is_black_region)
             self._model.Add(s == 0).OnlyEnforceIf(is_white_region)

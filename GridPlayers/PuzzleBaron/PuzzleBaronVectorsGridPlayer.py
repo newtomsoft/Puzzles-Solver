@@ -14,7 +14,7 @@ class PuzzleBaronVectorsPlayer(PlaywrightPlayer):
         for start_position, value in solution:
             if numbers[solution.get_index_from_position(start_position)] == 0:
                 continue
-            for direction in Direction.orthogonals():
+            for direction in Direction.orthogonal_directions():
                 end_position = Position(start_position.r, start_position.c)
                 while end_position in solution and solution[end_position] == value:
                     end_position = end_position.after(direction)

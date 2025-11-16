@@ -29,7 +29,7 @@ class DetourSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -123,7 +123,7 @@ class DetourSolver(GameSolver):
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            self._model.Add(sum([self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonals()]) == 2)
+            self._model.Add(sum([self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonal_directions()]) == 2)
 
     def _add_clues_turn_regions_constraints(self):
         for region in self._regions.values():

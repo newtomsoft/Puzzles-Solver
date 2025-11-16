@@ -6,7 +6,6 @@ from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 
-
 _ = 0
 B = 1
 W = 2
@@ -31,7 +30,7 @@ class DotchiLoopSolver:
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -112,7 +111,7 @@ class DotchiLoopSolver:
     def _add_cell_color_constraints(self):
         for position, value in [(position, value) for position, value in self._value_grid if value != _]:
             if value == B:
-                for direction in Direction.orthogonals():
+                for direction in Direction.orthogonal_directions():
                     self._solver.add(self._island_bridges_z3[position][direction] == 0)
             if value == W:
                 self._solver.add(sum(self._island_bridges_z3[position].values()) == 2)

@@ -29,7 +29,7 @@ class EverySecondTurnSolver(GameSolver):
     def _init_solver(self):
         self._island_bridges = {
             island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in
-                              Direction.orthogonals()}
+                              Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()

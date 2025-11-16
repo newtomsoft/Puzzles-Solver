@@ -27,7 +27,7 @@ class RegionalYajilinSolver(GameSolver):
 
     def _init_model(self):
         self._island_bridges_vars = {
-            island.position: {direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values() if island.bridges_count > 0
         }
 

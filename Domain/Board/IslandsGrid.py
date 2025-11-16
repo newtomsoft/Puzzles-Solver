@@ -257,7 +257,7 @@ class IslandGrid(Grid[Island]):
 
     def get_str(self, position: Position) -> str:
         island = Island(position, 0)
-        for direction in Direction.orthogonals():
+        for direction in Direction.orthogonal_directions():
             iteration = 1
             while position.after(direction, iteration) in self:
                 if position.after(direction, iteration) in self.islands.keys():

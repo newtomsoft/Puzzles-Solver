@@ -27,7 +27,7 @@ class MasyuSolver(GameSolver):
     def _init_solver(self):
         self._model = cp_model.CpModel()
         self._island_bridges_z3 = {
-            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
+            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
         self._initialized = True

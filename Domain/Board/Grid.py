@@ -289,3 +289,7 @@ class Grid[T](GridBase[T]):
             self[Position(r - top, c - left)] if left <= c < self.columns_number + left and top <= r < self.rows_number + top else value
             for c in range(self.columns_number + left + right)] for r in range(self.rows_number + top + bottom)]
         return Grid(enlarged_matrix)
+
+    def are_valid_positions(self, positions):
+        return all(0 <= p.r < self.rows_number and 0 <= p.c < self.columns_number for p in positions)
+

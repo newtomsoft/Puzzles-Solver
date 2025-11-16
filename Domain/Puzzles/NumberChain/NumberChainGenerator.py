@@ -5,9 +5,9 @@ import time
 
 from tqdm import tqdm
 
-from Domain.Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
 
@@ -26,7 +26,7 @@ class NumberChainGenerator:
         max_way_length = column_number * row_number
         if not min_way_length <= path_cells_number <= max_way_length:
             raise ValueError(f"La longueur du chemin doit être entre {min_way_length} et {max_way_length}")
-        self.directions = Direction.orthogonals()
+        self.directions = Direction.orthogonal_directions()
 
     def generate_grid(self):
         self._generate_as_linear_path_grid()
