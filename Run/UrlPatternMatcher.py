@@ -2,6 +2,7 @@
 
 from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
+from Domain.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
@@ -90,6 +91,7 @@ from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.GridPuzzle.GridPuzzleBalanceLoopPlayer import GridPuzzleBalanceLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
@@ -183,6 +185,7 @@ from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometer
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
+from GridProviders.GridPuzzle.GridPuzzleBalanceLoopGridProvider import GridPuzzleBalanceLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
@@ -302,6 +305,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariPlayer),
             r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronLaserGridsPlayer),
             r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumPlayer),
+            r"https://.*gridpuzzle\.com/balance-loop": (BalanceLoopSolver, GridPuzzleBalanceLoopGridProvider, GridPuzzleBalanceLoopPlayer),
             r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruPlayer),
             r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer),
             r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
