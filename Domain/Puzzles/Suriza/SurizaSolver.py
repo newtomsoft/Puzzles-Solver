@@ -22,7 +22,7 @@ class SurizaSolver(GameSolver):
         self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number + 1)] for r in range(self.input_grid.rows_number + 1)])
 
     def _init_solver(self):
-        self._island_bridges = {island.position: {direction: self._model.new_int_var(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()}
+        self._island_bridges = {island.position: {direction: self._model.new_int_var(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
@@ -108,7 +108,7 @@ class SurizaSolver(GameSolver):
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            bridge_sum = sum(self._island_bridges[island.position][direction] for direction in Direction.orthogonals())
+            bridge_sum = sum(self._island_bridges[island.position][direction] for direction in Direction.orthogonal_directions())
             is_sum_0 = self._model.new_bool_var(f"is_sum_0_{island.position}")
             is_sum_2 = self._model.new_bool_var(f"is_sum_2_{island.position}")
 

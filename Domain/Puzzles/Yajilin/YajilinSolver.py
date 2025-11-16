@@ -37,7 +37,7 @@ class YajilinSolver(GameSolver):
                 self._island_grid[neighbor].set_bridge_to_position(position, 0)
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in
+        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in
                                    self._island_grid.islands.values() if island.bridges_count > 0}
         for position in [position for position, _ in self.input_grid if position not in self._island_bridges_z3]:
             neighbors = self.input_grid.neighbors_positions(position)

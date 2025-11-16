@@ -22,7 +22,7 @@ class PipelinkSolver(GameSolver):
 
     def _init_solver(self):
         self._grid_z3 = Grid(
-            [[{direction: Bool(f"{direction}_{r}-{c}") for direction in Direction.orthogonals()} for c in range(self._columns_number)] for r in range(self._rows_number)])
+            [[{direction: Bool(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -60,7 +60,7 @@ class PipelinkSolver(GameSolver):
                     directions_with_bridge = self._island_grid[position].direction_position_bridges.keys()
                     for direction in directions_with_bridge:
                         cell_constraints.append(self._grid_z3[position][direction])
-                    directions_without_bridge = [direction for direction in Direction.orthogonals() if direction not in directions_with_bridge]
+                    directions_without_bridge = [direction for direction in Direction.orthogonal_directions() if direction not in directions_with_bridge]
                     for direction in directions_without_bridge:
                         cell_constraints.append(Not(self._grid_z3[position][direction]))
                 not_loop_constraints.append(Not(And(cell_constraints)))
@@ -71,7 +71,7 @@ class PipelinkSolver(GameSolver):
     def get_other_solution(self):
         constraints = []
         for position, island in self._previous_solution:
-            constraints += [self._grid_z3[position][direction] == (island.direction_position_bridges.get(direction, [0,0])[1] == 1) for direction in Direction.orthogonals()]
+            constraints += [self._grid_z3[position][direction] == (island.direction_position_bridges.get(direction, [0,0])[1] == 1) for direction in Direction.orthogonal_directions()]
         self._solver.add(Not(And(constraints)))
         return self.get_solution()
 
@@ -108,7 +108,7 @@ class PipelinkSolver(GameSolver):
     def _add_bridges_sum_constraints(self):
         for position, _ in self._grid_z3:
             sum_constraint_2 = sum(
-                [self._grid_z3[position][direction] for direction in Direction.orthogonals()]) == 2
+                [self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
             sum_constraint_4 = sum(
-                [self._grid_z3[position][direction] for direction in Direction.orthogonals()]) == 4
+                [self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 4
             self._solver.add(Or(sum_constraint_2, sum_constraint_4))

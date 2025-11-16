@@ -24,7 +24,7 @@ class KuroshiroSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -115,7 +115,7 @@ class KuroshiroSolver(GameSolver):
     def _same_color_circles_linked_constraints(self, position: Position, circle_value: str) -> list:
         # it must have no turn between two circles of the same color
         or_constraints = []
-        for direction in Direction.orthogonals():
+        for direction in Direction.orthogonal_directions():
             constraints = []
             found = None
             constraints.append(self._island_bridges_z3[position][direction] == 1)

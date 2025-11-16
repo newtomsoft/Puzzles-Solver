@@ -27,7 +27,7 @@ class GeradewegSolver:
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -106,7 +106,7 @@ class GeradewegSolver:
 
     def _add_lengths_constraints(self):
         for position, length in [(position, value) for position, value in self._input_grid if value > 0]:
-            self._solver.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()) == 2)
+            self._solver.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) == 2)
             constraints = []
             for direction in self._used_directions:
                 constraints.append(self._length_constraint(position, length, direction))

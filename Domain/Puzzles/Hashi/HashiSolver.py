@@ -25,7 +25,7 @@ class HashiSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges = {
-            island.position: {direction: self._model.NewIntVar(0, 2, f"{island.position}_{direction}") for direction in Direction.orthogonals()} for island in self._island_grid.islands.values()
+            island.position: {direction: self._model.NewIntVar(0, 2, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
 

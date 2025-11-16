@@ -25,7 +25,7 @@ class CountryRoadSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonals()}
+            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -112,7 +112,7 @@ class CountryRoadSolver(GameSolver):
             region_edges_positions = [position for position in ShapeGenerator.edges(region_positions) if position in self._island_bridges_z3]
             out_directions = []
             for pos in region_edges_positions:
-                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonals() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
+                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonal_directions() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
             self._solver.add(sum(out_directions) == 2)  # 1 for in and 1 for out
 
     def _add_opposite_bridges_constraints(self):
@@ -129,5 +129,5 @@ class CountryRoadSolver(GameSolver):
             for position in region_positions:
                 neighbors_positions = [position for position in self._numbers_grid.neighbors_positions(position) if position not in region_positions]
                 for neighbor_position in neighbors_positions:
-                    self._solver.add(Or(sum([self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonals()]) > 0,
-                                        sum([self._island_bridges_z3[position][direction] for direction in Direction.orthogonals()]) > 0))
+                    self._solver.add(Or(sum([self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonal_directions()]) > 0,
+                                        sum([self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()]) > 0))

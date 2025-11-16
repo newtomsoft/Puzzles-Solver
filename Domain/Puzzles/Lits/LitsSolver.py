@@ -198,7 +198,7 @@ class LitsSolver(GameSolver):
 
     def _adjacent_regions_positions_pairs(self) -> dict[int, Set[tuple[Position, Position]]]:
         adjacents_pairs_dict = collections.defaultdict(set)
-        directions = Direction.orthogonals()
+        directions = Direction.orthogonal_directions()
         region_ids = list(self._regions.keys())
         for i, region_id0 in enumerate(region_ids):
             for region_id1 in region_ids[i + 1:]:

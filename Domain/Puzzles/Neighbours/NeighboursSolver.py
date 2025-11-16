@@ -8,6 +8,41 @@ from Domain.Puzzles.GameSolver import GameSolver
 class NeighboursSolver(GameSolver):
     empty = None
     unknow = 0
+    SHAPES = {
+        2: [
+            [Position(0, 0), Position(0, 1)],
+            [Position(0, 0), Position(1, 0)],
+        ],
+        3: [
+            [Position(0, 0), Position(0, 1), Position(0, 2)],
+            [Position(0, 0), Position(1, 0), Position(2, 0)],
+            [Position(0, 0), Position(0, 1), Position(1, 0)],
+            [Position(0, 0), Position(0, 1), Position(1, 1)],
+            [Position(0, 0), Position(1, 0), Position(1, 1)],
+            [Position(0, 1), Position(1, 0), Position(1, 1)],
+        ],
+        4: [
+            [Position(0, 0), Position(0, 1), Position(0, 2), Position(0, 3)],
+            [Position(0, 0), Position(1, 0), Position(2, 0), Position(3, 0)],
+            [Position(0, 0), Position(0, 1), Position(1, 0), Position(1, 1)],
+            [Position(0, 1), Position(1, 0), Position(1, 1), Position(1, 2)],
+            [Position(0, 0), Position(1, 0), Position(2, 0), Position(1, 1)],
+            [Position(1, 0), Position(0, 1), Position(1, 1), Position(2, 1)],
+            [Position(0, 1), Position(1, 1), Position(2, 1), Position(1, 0)],
+            [Position(0, 0), Position(1, 0), Position(2, 0), Position(2, 1)],
+            [Position(0, 2), Position(1, 0), Position(1, 1), Position(1, 2)],
+            [Position(0, 0), Position(0, 1), Position(1, 1), Position(2, 1)],
+            [Position(0, 0), Position(1, 0), Position(0, 1), Position(0, 2)],
+            [Position(0, 1), Position(1, 1), Position(2, 1), Position(2, 0)],
+            [Position(0, 0), Position(1, 0), Position(1, 1), Position(1, 2)],
+            [Position(0, 0), Position(1, 0), Position(2, 0), Position(0, 1)],
+            [Position(0, 2), Position(0, 0), Position(0, 1), Position(1, 2)],
+            [Position(0, 1), Position(0, 2), Position(1, 0), Position(1, 1)],
+            [Position(0, 0), Position(1, 0), Position(1, 1), Position(2, 1)],
+            [Position(0, 0), Position(0, 1), Position(1, 1), Position(1, 2)],
+            [Position(0, 1), Position(1, 0), Position(1, 1), Position(2, 0)],
+        ],
+    }
 
     def __init__(self, clues_clues_grid: Grid):
         self._clues_grid = clues_clues_grid
@@ -65,11 +100,16 @@ class NeighboursSolver(GameSolver):
             self._model.Add(sum(bool_vars) == area)
 
     def _add_connected_cells_regions_constraints(self):
-        steps = [Grid([[self._model.NewIntVar(0, self._rows_number * self._columns_number, f'step{region_id}_{r}_{c}')
-                        for c in range(self._columns_number)] for r in range(self._rows_number)]) for region_id in
-                 range(1, self._regions_count + 1)]
-        for region_id in self._clue_position_by_region_id.keys():
-            self._add_connected_cells_region_constraints(steps[region_id - 1], region_id)
+        area = self._rows_number * self._columns_number // self._regions_count
+        if area in self.SHAPES:
+            for region_id in self._clue_position_by_region_id.keys():
+                self._add_shape_based_connectivity_constraint(region_id, area)
+        else:
+            steps = [Grid([[self._model.NewIntVar(0, self._rows_number * self._columns_number, f'step{region_id}_{r}_{c}')
+                            for c in range(self._columns_number)] for r in range(self._rows_number)]) for region_id in
+                     range(1, self._regions_count + 1)]
+            for region_id in self._clue_position_by_region_id.keys():
+                self._add_connected_cells_region_constraints(steps[region_id - 1], region_id)
 
     def _add_connected_cells_region_constraints(self, step: Grid, region_id: int):
         is_in_region = {}
@@ -123,6 +163,30 @@ class NeighboursSolver(GameSolver):
 
                 if adjacents_ok:
                     self._model.AddBoolOr(adjacents_ok).OnlyEnforceIf(implication_condition)
+
+    def _add_shape_based_connectivity_constraint(self, region_id: int, area: int):
+        possible_placements = []
+        is_in_region_vars = {(r, c): self._model.NewBoolVar(f'is_in_region_{region_id}_{r}_{c}')
+                             for r in range(self._rows_number) for c in range(self._columns_number)}
+
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                self._model.Add(self._grid_ortools[r][c] == region_id).OnlyEnforceIf(is_in_region_vars[(r, c)])
+                self._model.Add(self._grid_ortools[r][c] != region_id).OnlyEnforceIf(is_in_region_vars[(r, c)].Not())
+
+        for s_idx, shape in enumerate(self.SHAPES[area]):
+            for r_offset in range(self._rows_number):
+                for c_offset in range(self._columns_number):
+                    placement_positions = [Position(r_offset + p.r, c_offset + p.c) for p in shape]
+
+                    if self._clues_grid.are_valid_positions(placement_positions):
+                        placement_bool = self._model.NewBoolVar(f'placement_{region_id}_{s_idx}_{r_offset}_{c_offset}')
+                        possible_placements.append(placement_bool)
+
+                        cell_bools = [is_in_region_vars[(p.r, p.c)] for p in placement_positions]
+                        self._model.AddBoolAnd(cell_bools).OnlyEnforceIf(placement_bool)
+
+        self._model.Add(sum(possible_placements) == 1)
 
     def _add_neighbours_clues_constraints(self):
         adjacent_edges: list[tuple[Position, Position]] = []
