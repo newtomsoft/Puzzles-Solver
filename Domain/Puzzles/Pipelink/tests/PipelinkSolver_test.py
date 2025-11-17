@@ -346,5 +346,6 @@ class PipelinkSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+
 if __name__ == '__main__':
     unittest.main()
