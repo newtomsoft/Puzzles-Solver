@@ -121,91 +121,45 @@ class RoundTripSolver(GameSolver):
     def _add_clues_segments_length_constraints(self):
         direction = Direction.right()
         for r in range(self._rows_number):
-            if (clue_size := self._clues[direction][r]) == self.empty:
-                continue
-            if clue_size == 0:
-                clue_size = 1
-
-            lens_var = []
-            for c in range(self._columns_number):
-                position = Position(r, c)
-                lens_var.append(self._compute_len_var(position, direction))
-
-            bridges_count = clue_size - 1
-            constraints = []
-            for i in range(len(lens_var)):
-                if i == 0:
-                    constraints.append(lens_var[i] == bridges_count)
-                else:
-                    previous_constraint = And([lens_var[j] == 0 for j in range(i)])
-                    constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
-            self._solver.add(Or(constraints))
+            positions = [Position(r, c) for c in range(self._columns_number)]
+            self._add_clue_segment_length_constraint(direction, self._clues[direction][r], positions)
 
         direction = Direction.left()
         for r in range(self._rows_number):
-            if (clue_size := self._clues[direction][r]) == self.empty:
-                continue
-            if clue_size == 0:
-                clue_size = 1
-
-            lens_var = []
-            for c in reversed(range(self._columns_number)):
-                position = Position(r, c)
-                lens_var.append(self._compute_len_var(position, direction))
-
-            bridges_count = clue_size - 1
-            constraints = []
-            for i in range(len(lens_var)):
-                if i == 0:
-                    constraints.append(lens_var[i] == bridges_count)
-                else:
-                    previous_constraint = And([lens_var[j] == 0 for j in range(i)])
-                    constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
-            self._solver.add(Or(constraints))
+            positions = [Position(r, c) for c in reversed(range(self._columns_number))]
+            self._add_clue_segment_length_constraint(direction, self._clues[direction][r], positions)
 
         direction = Direction.down()
         for c in range(self._columns_number):
-            if (clue_size := self._clues[direction][c]) == self.empty:
-                continue
-            if clue_size == 0:
-                clue_size = 1
-
-            lens_var = []
-            for r in range(self._rows_number):
-                position = Position(r, c)
-                lens_var.append(self._compute_len_var(position, direction))
-
-            bridges_count = clue_size - 1
-            constraints = []
-            for i in range(len(lens_var)):
-                if i == 0:
-                    constraints.append(lens_var[i] == bridges_count)
-                else:
-                    previous_constraint = And([lens_var[j] == 0 for j in range(i)])
-                    constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
-            self._solver.add(Or(constraints))
+            positions = [Position(r, c) for r in range(self._rows_number)]
+            self._add_clue_segment_length_constraint(direction, self._clues[direction][c], positions)
 
         direction = Direction.up()
         for c in range(self._columns_number):
-            if (clue_size := self._clues[direction][c]) == self.empty:
-                continue
-            if clue_size == 0:
-                clue_size = 1
+            positions = [Position(r, c) for r in reversed(range(self._rows_number))]
+            self._add_clue_segment_length_constraint(direction, self._clues[direction][c], positions)
 
-            lens_var = []
-            for r in reversed(range(self._rows_number)):
-                position = Position(r, c)
-                lens_var.append(self._compute_len_var(position, direction))
+    def _add_clue_segment_length_constraint(self, direction: Direction, clue_size: int, positions: list[Position]):
+        if clue_size == self.empty:
+            return
+        if clue_size == 0:
+            for position in positions:
+                self._solver.add(Not(self._grid_z3[position][direction]))
+            return
 
-            bridges_count = clue_size - 1
-            constraints = []
-            for i in range(len(lens_var)):
-                if i == 0:
-                    constraints.append(lens_var[i] == bridges_count)
-                else:
-                    previous_constraint = And([lens_var[j] == 0 for j in range(i)])
-                    constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
-            self._solver.add(Or(constraints))
+        lens_var = []
+        for position in positions:
+            lens_var.append(self._compute_len_var(position, direction))
+
+        bridges_count = clue_size - 1
+        constraints = []
+        for i in range(len(lens_var)):
+            if i == 0:
+                constraints.append(lens_var[i] == bridges_count)
+            else:
+                previous_constraint = And([lens_var[j] == 0 for j in range(i)])
+                constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
+        self._solver.add(Or(constraints))
 
     def _compute_len_var(self, position: Position, direction: Direction) -> ArithRef | None:
         positions = [position]
