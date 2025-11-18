@@ -62,6 +62,7 @@ from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
 from Domain.Puzzles.RegionalYajilin.RegionalYajilinSolver import RegionalYajilinSolver
 from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
 from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
+from Domain.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
 from Domain.Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
 from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
@@ -131,6 +132,7 @@ from GridPlayers.GridPuzzle.GridPuzzlePipelinkPlayer import GridPuzzlePipelinkPl
 from GridPlayers.GridPuzzle.GridPuzzlePurenrupuPlayer import GridPuzzlePurenrupuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleRegionalYajilinPlayer import GridPuzzleRegionalYajilinPlayer
 from GridPlayers.GridPuzzle.GridPuzzleRenkatsuPlayer import GridPuzzleRenkatsuPlayer
+from GridPlayers.GridPuzzle.GridPuzzleRoundTripPlayer import GridPuzzleRoundTripPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSeeThroughPlayer import GridPuzzleSeeThroughPlayer
 from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
@@ -225,6 +227,7 @@ from GridProviders.GridPuzzle.GridPuzzlePipelinkGridProvider import GridPuzzlePi
 from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleRegionalYajilinGridProvider import GridPuzzleRegionalYajilinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleRenkatsuGridProvider import GridPuzzleRenkatsuGridProvider
+from GridProviders.GridPuzzle.GridPuzzleRoundTripGridProvider import GridPuzzleRoundTripGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSeeThroughGridProvider import GridPuzzleSeeThroughGridProvider
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
@@ -369,6 +372,7 @@ class UrlPatternMatcher:
             r"https://.*gridpuzzle\.com/pure-loop": (PurenrupuSolver, GridPuzzlePurenrupuGridProvider, GridPuzzlePurenrupuPlayer),
             r"https://.*gridpuzzle\.com/regional-yajilin": (RegionalYajilinSolver, GridPuzzleRegionalYajilinGridProvider, GridPuzzleRegionalYajilinPlayer),
             r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, GridPuzzleRenkatsuPlayer),
+            r"https://.*gridpuzzle\.com/round-trip": (RoundTripSolver, GridPuzzleRoundTripGridProvider, GridPuzzleRoundTripPlayer),
             r"https://.*gridpuzzle\.com/seethrough": (SeeThroughSolver, GridPuzzleSeeThroughGridProvider, GridPuzzleSeeThroughPlayer),
             r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuPlayer),
             r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuPlayer),  # same player as masyu
