@@ -285,10 +285,10 @@ class RoundTripSolverTests(TestCase):
 
         expected_solution_string = (
             ' ┌───────────┐ \n'
-            ' │  ┌──┐  ·  │ \n'
-            ' └──┼──┼──┐  │ \n'
-            ' ┌──┼──┼──┼──┘ \n'
-            ' └──┘  └──┘  · '
+            ' └─────┐  ┌──┘ \n'
+            ' ·  ·  │  │  · \n'
+            ' ┌─────┼──┼──┐ \n'
+            ' └─────┘  └──┘ '
         )
 
         game_solver = RoundTripSolver(Grid.from_str(grid_str, type(Island)), clues)
