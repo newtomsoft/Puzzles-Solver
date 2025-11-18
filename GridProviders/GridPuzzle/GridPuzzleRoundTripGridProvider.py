@@ -15,10 +15,13 @@ class GridPuzzleRoundTripGridProvider(GridProvider, PlaywrightGridProvider, Grid
 
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
-        pqq_string_list, matrix_size = self._get_canvas_data_extended2(html_page)
+        pqq_string_list, up_down_right_left, matrix_size = self._get_canvas_data_extended2(html_page)
         matrix = [[self.to_island(r, c, pqq_string_list[r * matrix_size + c]) for c in range(matrix_size)] for r in range(matrix_size)]
         grid = Grid(matrix)
-        return grid
+
+        clues = self.transform_to_dict(up_down_right_left)
+
+        return grid, clues
 
     @staticmethod
     def to_island(r: int, c: int, island_car_code: str):
@@ -58,4 +61,11 @@ class GridPuzzleRoundTripGridProvider(GridProvider, PlaywrightGridProvider, Grid
         island.set_bridges_count_according_to_directions_bridges()
         return island
 
-
+    @staticmethod
+    def transform_to_dict(up_down_right_left: list[list[int]]):
+        return {
+            Direction.down(): up_down_right_left[0],
+            Direction.up(): up_down_right_left[1],
+            Direction.right(): up_down_right_left[2],
+            Direction.left(): up_down_right_left[3]
+        }

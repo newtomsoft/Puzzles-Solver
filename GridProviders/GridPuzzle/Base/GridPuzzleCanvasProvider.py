@@ -32,14 +32,18 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
         return pqq_string_list, ar_string_list, ab_string_list, size
 
     @staticmethod
-    def _get_canvas_data_extended2(html_page: str) -> tuple[list[str], int]:
+    def _get_canvas_data_extended2(html_page: str) -> tuple[list[str], list[list[int]], int]:
         html_string = BeautifulSoup(html_page, 'html.parser').prettify()
         size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
         pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
         pqq_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(pqq)
         pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string, size)
+        gpl_numbers = re.search(r'gpl\.numbers = "(.*?)";', html_string).group(1)
+        numbers_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(gpl_numbers)
+        numbers_string_list = GridPuzzleGridCanvasProvider._split_to_list(numbers_string, size)
+        up_down_left_right = GridPuzzleGridCanvasProvider._split_to_list2(numbers_string_list)
 
-        return pqq_string_list, size
+        return pqq_string_list, up_down_left_right, size
 
     @staticmethod
     def _get_canvas_data_with_pipe(html_page: str) -> tuple[list[str], int]:
@@ -47,7 +51,7 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
         size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
         pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
         pqq_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(pqq)
-        pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list_with_pipe(pqq_string, size)
+        pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list_with_pipe(pqq_string)
         return pqq_string_list, size
 
     @staticmethod
@@ -70,5 +74,23 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
         return [string[i:i + 1] for i in range(len(string))]
 
     @staticmethod
-    def _split_to_list_with_pipe(string: str, size: int) -> list[str]:
+    def _split_to_list2(input_list: list[str]) -> list[int]:
+        result = []
+        current_sublist = []
+
+        for item in input_list:
+            if item == '$':
+                if current_sublist:
+                    result.append(current_sublist)
+                    current_sublist = []
+            elif item != '|':
+                current_sublist.append(int(item))
+
+        if current_sublist:
+            result.append(current_sublist)
+
+        return result
+
+    @staticmethod
+    def _split_to_list_with_pipe(string: str) -> list[str]:
         return [string[i:i + 1] for i in range(len(string))]
