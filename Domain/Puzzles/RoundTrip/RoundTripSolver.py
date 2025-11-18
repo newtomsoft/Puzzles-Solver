@@ -119,29 +119,21 @@ class RoundTripSolver(GameSolver):
             self._solver.add(Or(sum_constraint_0, sum_constraint_2, sum_constraint_4))
 
     def _add_clues_segments_length_constraints(self):
-        direction = Direction.right()
-        for r in range(self._rows_number):
-            positions = [Position(r, c) for c in range(self._columns_number)]
-            self._add_clue_segment_length_constraint(direction, self._clues[direction][r], positions)
+        directions__range_line__positions_func = [
+            (Direction.right(), range(self._rows_number), lambda r: [Position(r, c) for c in range(self._columns_number)]),
+            (Direction.left(), range(self._rows_number), lambda r: [Position(r, c) for c in reversed(range(self._columns_number))]),
+            (Direction.down(), range(self._columns_number), lambda c: [Position(r, c) for r in range(self._rows_number)]),
+            (Direction.up(), range(self._columns_number), lambda c: [Position(r, c) for r in reversed(range(self._rows_number))])
+        ]
 
-        direction = Direction.left()
-        for r in range(self._rows_number):
-            positions = [Position(r, c) for c in reversed(range(self._columns_number))]
-            self._add_clue_segment_length_constraint(direction, self._clues[direction][r], positions)
-
-        direction = Direction.down()
-        for c in range(self._columns_number):
-            positions = [Position(r, c) for r in range(self._rows_number)]
-            self._add_clue_segment_length_constraint(direction, self._clues[direction][c], positions)
-
-        direction = Direction.up()
-        for c in range(self._columns_number):
-            positions = [Position(r, c) for r in reversed(range(self._rows_number))]
-            self._add_clue_segment_length_constraint(direction, self._clues[direction][c], positions)
+        for direction, range_line, positions_func in directions__range_line__positions_func:
+            for i in range_line:
+                positions = positions_func(i)
+                if (clue_size := self._clues[direction][i]) == self.empty:
+                    continue
+                self._add_clue_segment_length_constraint(direction, clue_size, positions)
 
     def _add_clue_segment_length_constraint(self, direction: Direction, clue_size: int, positions: list[Position]):
-        if clue_size == self.empty:
-            return
         if clue_size == 0:
             for position in positions:
                 self._solver.add(Not(self._grid_z3[position][direction]))
