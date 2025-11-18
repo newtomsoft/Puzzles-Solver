@@ -195,6 +195,78 @@ class RoundTripSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_solution_8x8_evil_1y879(self):
+        """https://gridpuzzle.com/round-trip/1y879"""
+        grid_str = (
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · '
+        )
+        clues = {
+            Direction.down(): [3, 6, 3, 2, 4, 4, 3, 2],
+            Direction.left(): [_, 6, _, _, _, 3, _, _],
+            Direction.up(): [2, _, _, 3, 2, 3, 5, 3],
+            Direction.right(): [5, _, _, _, 5, _, 3, _],
+        }
+
+        expected_solution_string = (
+            ' ┌───────────┐  ┌──┐  · \n'
+            ' │  ·  ┌─────┼──┼──┼──┐ \n'
+            ' └──┐  │  ·  │  │  └──┘ \n'
+            ' ┌──┼──┘  ┌──┘  └──┐  · \n'
+            ' │  │  ·  └────────┼──┐ \n'
+            ' └──┼──┐  ┌─────┐  │  │ \n'
+            ' ┌──┼──┘  │  ┌──┼──┼──┘ \n'
+            ' └──┘  ·  └──┘  └──┘  · '
+        )
+
+        game_solver = RoundTripSolver(Grid.from_str(grid_str, type(Island)), clues)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_string, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_8x8_evil_20e6d(self):
+        """https://gridpuzzle.com/round-trip/20e6d"""
+        grid_str = (
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  ·  · '
+        )
+        clues = {
+            Direction.down(): [2, 3, _, _, _, 2, 3, 2],
+            Direction.left(): [_, 4, 4, 4, 4, _, _, _],
+            Direction.up(): [_, _, 3, _, 4, 3, _, 3],
+            Direction.right(): [2, _, 3, _, 3, 5, 3, _],
+        }
+
+        expected_solution_string = (
+            ' ·  ·  ·  ┌──┐  ┌──┐  · \n'
+            ' ┌──┐  ┌──┼──┼──┘  │  · \n'
+            ' └──┼──┘  └──┼─────┘  · \n'
+            ' ┌──┘  ·  ·  └────────┐ \n'
+            ' └─────┐  ·  ┌────────┘ \n'
+            ' ·  ┌──┼─────┼──┐  ┌──┐ \n'
+            ' ┌──┼──┘  ┌──┼──┼──┘  │ \n'
+            ' └──┘  ·  └──┘  └─────┘ '
+        )
+
+        game_solver = RoundTripSolver(Grid.from_str(grid_str, type(Island)), clues)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_string, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
     def test_solution_5x5_evil_316vk(self):
         """https://gridpuzzle.com/round-trip/316vk"""
         grid_str = (
@@ -212,7 +284,11 @@ class RoundTripSolverTests(TestCase):
         }
 
         expected_solution_string = (
-            ''
+            ' ┌───────────┐ \n'
+            ' │  ┌──┐  ·  │ \n'
+            ' └──┼──┼──┐  │ \n'
+            ' ┌──┼──┼──┼──┘ \n'
+            ' └──┘  └──┘  · '
         )
 
         game_solver = RoundTripSolver(Grid.from_str(grid_str, type(Island)), clues)
