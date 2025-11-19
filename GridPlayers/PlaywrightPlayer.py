@@ -61,6 +61,7 @@ class Rectangle:
 
 class PlaywrightPlayer(GridPlayer):
     game_name = None
+    board_margin = 0
 
     def __init__(self, browser: BrowserContext):
         self.browser = browser
@@ -108,12 +109,12 @@ class PlaywrightPlayer(GridPlayer):
     def _get_canvas_data(self, columns_number, rows_number):
         page = self.browser.pages[0]
         bounded_box = page.locator("canvas").bounding_box()
-        x0 = bounded_box['x']
-        y0 = bounded_box['y']
+        x0 = bounded_box['x'] + self.board_margin
+        y0 = bounded_box['y'] + self.board_margin
         width = bounded_box['width']
         height = bounded_box['height']
-        cell_width = width / columns_number
-        cell_height = height / rows_number
+        cell_width = (width - 2 * self.board_margin) / columns_number
+        cell_height = (height - 2 * self.board_margin) / rows_number
         return cell_height, cell_width, page, x0, y0
 
     @classmethod
