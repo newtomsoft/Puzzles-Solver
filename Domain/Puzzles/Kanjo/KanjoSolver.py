@@ -131,53 +131,63 @@ class KanjoSolver(GameSolver):
         for position, loop_id in self._clues_by_positions.items():
             self._solver.add(self._loop_id_var_by_position[position] == loop_id)
 
-        for position, grid_z3_position in self._grid_z3:
+        for position, _ in self._grid_z3:
             for direction in Direction.orthogonal_directions():
-                next_position = position.after(direction)
-                if next_position in self._grid_z3:
-                    position_single_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
-                    position_multi_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 4
-                    next_position_single_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 2
-                    next_position_multi_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 4
+                self._add_one_loop_for_same_clues_constraints_step_position(position, direction)
 
-                    # single to single
-                    single_single_equality = self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position]
-                    self._solver.add(
-                        Implies(
-                            And(position_single_way, next_position_single_way, grid_z3_position[direction]),
-                            single_single_equality
-                        ))
+    def _add_one_loop_for_same_clues_constraints_step_position(self, position, direction: Direction):
+        next_position = position.after(direction)
+        if next_position not in self._grid_z3:
+            return
 
-                    # multi to single
-                    if direction in [Direction.left(), Direction.right()]:
-                        multi_single_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position[next_position]
-                    else:
-                        multi_single_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position[next_position]
-                    self._solver.add(
-                        Implies(
-                            And(position_multi_way, next_position_single_way),
-                            multi_single_equality
-                        ))
+        position_single_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
+        position_multi_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 4
+        next_position_single_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 2
+        next_position_multi_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 4
 
-                    # single to multi
-                    if direction in [Direction.left(), Direction.right()]:
-                        single_multi_equality = self._loop_id_var_by_position_hor[next_position] == self._loop_id_var_by_position[position]
-                    else:
-                        single_multi_equality = self._loop_id_var_by_position_ver[next_position] == self._loop_id_var_by_position[position]
-                    self._solver.add(
-                        Implies(
-                            And(position_single_way, next_position_multi_way, grid_z3_position[direction]),
-                            Or(And(single_multi_equality, next_position_multi_way),
-                               self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position])
-                        ))
+        self._add_single_to_single_constraint(position, direction, next_position, position_single_way, next_position_single_way)
+        self._add_multi_to_single_constraint(position, direction, next_position, next_position_single_way, position_multi_way)
+        self._add_single_to_multi_constraint(position, direction, next_position, next_position_multi_way, position_single_way)
+        self._add_multi_to_multi_constraint(position, direction, next_position, position_multi_way, next_position_multi_way)
 
-                    # multi to multi
-                    if direction in [Direction.left(), Direction.right()]:
-                        multi_multi_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position_hor[next_position]
-                    else:
-                        multi_multi_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position_ver[next_position]
-                    self._solver.add(
-                        Implies(
-                            And(position_multi_way, next_position_multi_way),
-                            multi_multi_equality
-                        ))
+    def _add_single_to_single_constraint(self, position, direction: Direction, next_position, position_single_way: bool, next_position_single_way: bool):
+        single_single_equality = self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position]
+        self._solver.add(
+            Implies(
+                And(position_single_way, next_position_single_way, self._grid_z3[position][direction]),
+                single_single_equality
+            ))
+
+    def _add_multi_to_single_constraint(self, position, direction: Direction, next_position, next_position_single_way: bool, position_multi_way: bool):
+        if direction in [Direction.left(), Direction.right()]:
+            multi_single_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position[next_position]
+        else:
+            multi_single_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position[next_position]
+        self._solver.add(
+            Implies(
+                And(position_multi_way, next_position_single_way),
+                multi_single_equality
+            ))
+
+    def _add_single_to_multi_constraint(self, position, direction: Direction, next_position, next_position_multi_way: bool, position_single_way: bool):
+        if direction in [Direction.left(), Direction.right()]:
+            single_multi_equality = self._loop_id_var_by_position_hor[next_position] == self._loop_id_var_by_position[position]
+        else:
+            single_multi_equality = self._loop_id_var_by_position_ver[next_position] == self._loop_id_var_by_position[position]
+        self._solver.add(
+            Implies(
+                And(position_single_way, next_position_multi_way, self._grid_z3[position][direction]),
+                Or(And(single_multi_equality, next_position_multi_way),
+                   self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position])
+            ))
+
+    def _add_multi_to_multi_constraint(self, position, direction: Direction, next_position, position_multi_way: bool, next_position_multi_way: bool):
+        if direction in [Direction.left(), Direction.right()]:
+            multi_multi_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position_hor[next_position]
+        else:
+            multi_multi_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position_ver[next_position]
+        self._solver.add(
+            Implies(
+                And(position_multi_way, next_position_multi_way),
+                multi_multi_equality
+            ))
