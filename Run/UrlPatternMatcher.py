@@ -32,6 +32,7 @@ from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
 from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
 from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
 from Domain.Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
+from Domain.Puzzles.Kanjo.KanjoSolver import KanjoSolver
 from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
@@ -113,6 +114,7 @@ from GridPlayers.GridPuzzle.GridPuzzleGyokusekiPlayer import GridPuzzleGyokuseki
 from GridPlayers.GridPuzzle.GridPuzzleHakoiriPlayer import GridPuzzleHakoiriPlayer
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKakuteruAnpuPlayer import GridPuzzleKakuteruAnpuPlayer
+from GridPlayers.GridPuzzle.GridPuzzleKanjoPlayer import GridPuzzleKanjoPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKonarupuPlayer import GridPuzzleKonarupuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleKuroshiroPlayer import GridPuzzleKuroshiroPlayer
@@ -208,6 +210,7 @@ from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleG
 from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKakuteruAnpuGridProvider import GridPuzzleKakuteruAnpuGridProvider
+from GridProviders.GridPuzzle.GridPuzzleKanjoGridProvider import GridPuzzleKanjoGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKonarupuGridProvider import GridPuzzleKonarupuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleKuroshiroGridProvider import GridPuzzleKuroshiroGridProvider
@@ -340,6 +343,7 @@ class UrlPatternMatcher:
             r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuPlayer),
             r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroPlayer),
             r"https://.*gridpuzzle\.com/cocktail-lamp": (KakuteruAnpuSolver, GridPuzzleKakuteruAnpuGridProvider, GridPuzzleKakuteruAnpuPlayer),
+            r"https://.*gridpuzzle\.com/kanjo": (KanjoSolver, GridPuzzleKanjoGridProvider, GridPuzzleKanjoPlayer),
             r"https://www\.20minutes\.fr/services/jeux/kemaru": (KemaruSolver, VingtMinutesKemaruGridProvider, VingtMinutesKemaruPlayer),
             r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuPlayer),
             r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuPlayer),  # same player as Sudoku

@@ -44,8 +44,13 @@ class Grid[T](GridBase[T]):
 
     @classmethod
     def get_element_type(cls, row: int, column: int, columns_number: int, grid_str, element_type :type) -> T:
+        column_ = 3 * (row * columns_number + column)
+        number_column_ = 3 * (row * columns_number + column + 1)
+        grid_element = grid_str[column_: number_column_]
+        if is_integer(grid_element.strip()):
+            return int(grid_element)
         if element_type == type(Island):
-            return Island.from_str(Position(row, column), grid_str[3 * (row * columns_number + column): 3 * (row * columns_number + column + 1)])
+            return Island.from_str(Position(row, column), grid_element)
         raise ValueError(f"Unsupported element type: {element_type}")
 
     @property
@@ -293,3 +298,7 @@ class Grid[T](GridBase[T]):
     def are_valid_positions(self, positions):
         return all(0 <= p.r < self.rows_number and 0 <= p.c < self.columns_number for p in positions)
 
+def is_integer(s):
+    if s.startswith('-'):
+        return s[1:].isdigit()
+    return s.isdigit()

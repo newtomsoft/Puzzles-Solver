@@ -40,8 +40,7 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
         pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string, size)
         gpl_numbers = re.search(r'gpl\.numbers = "(.*?)";', html_string).group(1)
         numbers_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(gpl_numbers)
-        numbers_string_list = GridPuzzleGridCanvasProvider._split_to_list(numbers_string, size)
-        up_down_left_right = GridPuzzleGridCanvasProvider._split_to_list2(numbers_string_list)
+        up_down_left_right = GridPuzzleGridCanvasProvider.convert_pattern(numbers_string)
 
         return pqq_string_list, up_down_left_right, size
 
@@ -74,22 +73,26 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
         return [string[i:i + 1] for i in range(len(string))]
 
     @staticmethod
-    def _split_to_list2(input_list: list[str]) -> list[int]:
-        result = []
-        current_sublist = []
+    def convert_pattern(pattern):
+        # On sépare par lignes ($)
+        lignes = pattern.split('$')
 
-        for item in input_list:
-            if item == '$':
-                if current_sublist:
-                    result.append(current_sublist)
-                    current_sublist = []
-            elif item != '|':
-                current_sublist.append(int(item))
+        grid = []
+        for ligne in lignes:
+            # On sépare par cellules (|) et on ignore le dernier élément vide
+            cellules_brutes = ligne.split('|')[:-1]
 
-        if current_sublist:
-            result.append(current_sublist)
+            ligne_convertie = []
+            for cell in cellules_brutes:
+                if cell == '':
+                    # Remplacement par None
+                    ligne_convertie.append(None)
+                else:
+                    ligne_convertie.append(int(cell))
 
-        return result
+            grid.append(ligne_convertie)
+
+        return grid
 
     @staticmethod
     def _split_to_list_with_pipe(string: str) -> list[str]:
