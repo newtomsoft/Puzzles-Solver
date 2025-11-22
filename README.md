@@ -45,6 +45,7 @@ https://gridpuzzle.com/koburin/evil-12
 https://gridpuzzle.com/konarupu/evil-15  
 https://gridpuzzle.com/kuroshiro/size-10  
 https://gridpuzzle.com/gyokuseki/evil-8  
+https://gridpuzzle.com/kanjo/evil-10  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
 https://gridpuzzle.com/meadows/size-15  
@@ -61,6 +62,7 @@ https://gridpuzzle.com/mid-loop/hard-12
 https://gridpuzzle.com/pipelink/evil-15  
 https://gridpuzzle.com/regional-yajilin/evil-10  
 https://gridpuzzle.com/renkatsu/size-6  
+https://gridpuzzle.com/round-trip/evil-12 
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
 https://gridpuzzle.com/seethrough/evil-10  
