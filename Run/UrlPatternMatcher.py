@@ -19,7 +19,6 @@ from Domain.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySecondTurn
 from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from Domain.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
 from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
-from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Gappy.GappySolver import GappySolver
 from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
 from Domain.Puzzles.Grades.GradesSolver import GradesSolver
@@ -89,10 +88,12 @@ from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
 from Domain.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
 from Domain.Puzzles.Yajikabe.YajilkabeSolver import YajikabeSolver
 from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
+from Domain.Abstractions.i_grid_provider import IGridProvider
+from Domain.Abstractions.i_puzzle_solver import IPuzzleSolver
 from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
-from GridPlayers.GridPlayer import GridPlayer
-from GridPlayers.GridPuzzle.GridPuzzleBalanceLoopPlayer import GridPuzzleBalanceLoopPlayer
+from Views.grid_player import GridPlayer
+from Views.GridPuzzle.GridPuzzleBalanceLoopPlayer import GridPuzzleBalanceLoopPlayer
 from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
@@ -146,18 +147,18 @@ from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaint
 from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
 from GridPlayers.GridPuzzle.GridPuzzleWamazuPlayer import GridPuzzleWamazuPlayer
 from GridPlayers.GridPuzzle.GridPuzzleYajikabePlayer import GridPuzzleYajikabePlayer
-from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
-from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
-from GridPlayers.LinkedIn.TangoPlayer import TangoPlayer
-from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
+from Views.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
+from Views.LinkedIn.QueensPlayer import QueensPlayer
+from Views.LinkedIn.TangoPlayer import TangoPlayer
+from Views.LinkedIn.ZipPlayer import ZipPlayer
+from Views.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
+from Views.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronLaserGridsGridPlayer import PuzzleBaronLaserGridsPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronNumberLinksGridPlayer import PuzzleBaronNumberLinksPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattlePlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleAkariPlayer import PuzzleAkariPlayer
-from GridPlayers.PuzzleMobiles.PuzzleAquariumPlayer import PuzzleAquariumPlayer
+from Views.PuzzleBaron.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsPlayer
+from Views.PuzzleMobiles.PuzzleAkariPlayer import PuzzleAkariPlayer
+from Views.PuzzleMobiles.PuzzleAquariumPlayer import PuzzleAquariumPlayer
 from GridPlayers.PuzzleMobiles.PuzzleBimaruPlayer import PuzzleBimaruPlayer
 from GridPlayers.PuzzleMobiles.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridPlayers.PuzzleMobiles.PuzzleDominosaPlayer import PuzzleDominosaPlayer
@@ -183,10 +184,9 @@ from GridPlayers.PuzzleMobiles.PuzzleStitchesPlayer import PuzzleStitchesPlayer
 from GridPlayers.PuzzleMobiles.PuzzleSudokuPlayer import PuzzleSudokuPlayer
 from GridPlayers.PuzzleMobiles.PuzzleTapaPlayer import PuzzleTapaPlayer
 from GridPlayers.PuzzleMobiles.PuzzleTentsPlayer import PuzzleTentsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometersPlayer
-from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
+from Views.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometersPlayer
+from Views.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.GridPuzzleBalanceLoopGridProvider import GridPuzzleBalanceLoopGridProvider
 from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
@@ -290,7 +290,7 @@ from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinut
 
 
 class UrlPatternMatcher:
-    def get_components_for_url(self, url: str) -> tuple[type[GameSolver], type[GridProvider], type[GridPlayer] | None]:
+    def get_components_for_url(self, url: str) -> tuple[type[IPuzzleSolver], type[IGridProvider], type[GridPlayer] | None]:
         if not url or url.strip() == "":
             raise ValueError("Please enter a valid URL")
 
