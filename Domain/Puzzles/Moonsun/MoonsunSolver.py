@@ -5,12 +5,12 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
+from Domain.Abstractions.i_puzzle_solver import IPuzzleSolver
 from Domain.Board.Position import Position
-from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
 
-class MoonsunSolver(GameSolver):
+class MoonsunSolver(IPuzzleSolver):
     white = 'w'
     black = 'b'
     no_circle = None
@@ -37,7 +37,7 @@ class MoonsunSolver(GameSolver):
         self._add_constraints()
         self._solver_initialized = True
 
-    def get_solution(self) -> IslandGrid:
+    def solve(self) -> IslandGrid:
         if not self._solver_initialized:
             self._init_solver()
 
@@ -91,7 +91,7 @@ class MoonsunSolver(GameSolver):
             self._model.AddBoolOr(previous_solution_constraints)
 
         self._init_island_grid()
-        return self.get_solution()
+        return self.solve()
 
     def _add_constraints(self):
         self._add_initial_constraints()

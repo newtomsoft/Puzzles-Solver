@@ -29,7 +29,7 @@ class MoonsunSolverTest(TestCase):
         )
 
         game_solver = MoonsunSolver(circle_grid, regions_grid)
-        solution = game_solver.get_solution()
+        solution = game_solver.solve()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -56,7 +56,7 @@ class MoonsunSolverTest(TestCase):
         )
 
         game_solver = MoonsunSolver(circle_grid, regions_grid)
-        solution = game_solver.get_solution()
+        solution = game_solver.solve()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -87,7 +87,7 @@ class MoonsunSolverTest(TestCase):
         )
 
         game_solver = MoonsunSolver(circle_grid, regions_grid)
-        solution = game_solver.get_solution()
+        solution = game_solver.solve()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -139,7 +139,7 @@ class MoonsunSolverTest(TestCase):
         )
 
         game_solver = MoonsunSolver(circle_grid, regions_grid)
-        solution = game_solver.get_solution()
+        solution = game_solver.solve()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)

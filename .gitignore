@@ -1,3 +1,5 @@
-﻿/GridProviders/Linkedin/QueensGridProvider.ini
+/GridProviders/Linkedin/QueensGridProvider.ini
 /GridProviders/Chromium/user/
-.idea/__pycache__/
+.idea/
+__pycache__/
+*.pyc
