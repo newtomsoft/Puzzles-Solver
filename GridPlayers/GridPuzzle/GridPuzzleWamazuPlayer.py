@@ -23,7 +23,7 @@ class GridPuzzleWamazuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
             for index, position in enumerate(connected_positions[:-1]):
                 next_position = connected_positions[index + 1]
                 direction = position.direction_to(next_position)
-                self._trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0)
+                self._trace_direction_from_position(position, direction, page, cell_width, cell_height, x0, y0)
 
     def _get_circles_starts(self, solution: IslandGrid) -> set[Position]:
         circles_positions = self._get_circles_positions(solution)
