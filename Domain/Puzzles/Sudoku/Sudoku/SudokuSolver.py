@@ -14,5 +14,3 @@ class SudokuSolver(SudokuBaseSolver, GameSolver):
 
     def _add_specific_constraints(self):
         self._add_distinct_in_sub_squares_constraints()
-
-

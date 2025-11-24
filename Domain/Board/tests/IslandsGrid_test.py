@@ -1,5 +1,6 @@
 ﻿from unittest import TestCase
 
+from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
@@ -216,8 +217,8 @@ class IslandsGridTest(TestCase):
     def test_follow_path_with_loop(self):
         island00 = Island(Position(0, 0), 2)
         island01 = Island(Position(0, 1), 2)
-        island11 = Island(Position(1, 1), 2)
         island10 = Island(Position(1, 0), 2)
+        island11 = Island(Position(1, 1), 2)
 
         island_matrix = [[island00, island01], [island10, island11]]
         island_grid = IslandGrid(island_matrix)
@@ -233,3 +234,97 @@ class IslandsGridTest(TestCase):
         connected_positions = island_grid.follow_path(Position(0, 0))
         expected_positions = [Position(0, 0), Position(0, 1), Position(1, 1), Position(1, 0), Position(0, 0)]
         self.assertEqual(expected_positions, connected_positions)
+
+    def test_follow_path_with_cross_loop(self):
+        island00 = Island(Position(0, 0), 2)
+        island01 = Island(Position(0, 1), 2)
+        island02 = Island(Position(0, 2), 0)
+        island10 = Island(Position(1, 0), 2)
+        island11 = Island(Position(1, 1), 4)
+        island12 = Island(Position(1, 2), 2)
+        island20 = Island(Position(2, 0), 0)
+        island21 = Island(Position(2, 1), 2)
+        island22 = Island(Position(2, 2), 2)
+
+        island_matrix = [[island00, island01, island02], [island10, island11, island12], [island20, island21, island22]]
+        island_grid = IslandGrid(island_matrix)
+        island00.set_bridge_to_position(Position(0, 1), 1)
+        island00.set_bridge_to_position(Position(1, 0), 1)
+
+        island01.set_bridge_to_position(Position(0, 0), 1)
+        island01.set_bridge_to_position(Position(1, 1), 1)
+
+        island10.set_bridge_to_position(Position(0, 0), 1)
+        island10.set_bridge_to_position(Position(1, 1), 1)
+
+        island11.set_bridge_to_position(Position(0, 1), 1)
+        island11.set_bridge_to_position(Position(1, 0), 1)
+        island11.set_bridge_to_position(Position(1, 2), 1)
+        island11.set_bridge_to_position(Position(2, 1), 1)
+
+        island12.set_bridge_to_position(Position(1, 1), 1)
+        island12.set_bridge_to_position(Position(2, 2), 1)
+
+        island21.set_bridge_to_position(Position(1, 1), 1)
+        island21.set_bridge_to_position(Position(2, 2), 1)
+
+        island22.set_bridge_to_position(Position(1, 2), 1)
+        island22.set_bridge_to_position(Position(2, 1), 1)
+
+        connected_positions = island_grid.follow_path(Position(0, 0))
+        expected_positions = [
+            Position(0, 0),
+            Position(0, 1),
+            Position(1, 1),
+            Position(2, 1),
+            Position(2, 2),
+            Position(1, 2),
+            Position(1, 1),
+            Position(1, 0),
+            Position(0, 0)
+        ]
+        self.assertEqual(expected_positions, connected_positions)
+
+    def test_subset(self):
+        grid_str = (
+            ' ┌─────────────────┐ \n'
+            ' └─────┐  ┌─────┐  │ \n'
+            ' ┌──┐  └──┼─────┼──┘ \n'
+            ' │  └──┐  └─────┼──┐ \n'
+            ' └──┐  │  ┌──┐  └──┘ \n'
+            ' ┌──┘  │  │  │  ┌──┐ \n'
+            ' └─────┘  └──┘  └──┘ '
+        )
+        grid_str2 = (
+            ' ┌─────────────────┐ \n'
+            ' └─────┐  ┌─────┐  │ \n'
+            ' ┌──┐  └──┼─────┼──┘ \n'
+            ' │  └──┐  └─────┼──┐ \n'
+            ' └──┐  │  ┌──┐  └──┘ \n'
+            ' ┌──┘  │  │  │  ┌──┐ \n'
+            ' └─────┘  └──┘  └──┘ '
+        )
+        grid = Grid.from_str(grid_str, type(Island))
+        grid.__class__ = IslandGrid
+
+        positions = [
+            Position(1, 3), Position(1, 4), Position(1, 5),
+            Position(2, 3), Position(2, 5),
+            Position(3, 3), Position(3, 4), Position(3, 5),
+            Position(4, 5), Position(4, 6)
+        ]
+        subset_grid = grid.subset(positions)
+
+
+        subset_grid_str = repr(subset_grid)
+        expected_subset_grid_str = (
+            ' ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ┌─────┐  · \n'
+            ' ·  ·  ·  │  ·  │  · \n'
+            ' ·  ·  ·  └─────┼──┐ \n'
+            ' ·  ·  ·  ·  ·  └──┘ \n'
+            ' ·  ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ·  ·  ·  ·  · '
+        )
+
+        self.assertEqual(expected_subset_grid_str, subset_grid_str)

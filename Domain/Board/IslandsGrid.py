@@ -148,7 +148,7 @@ class IslandGrid(Grid[Island]):
 
         return visited_positions
 
-    def get_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
+    def compute_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
         concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
         visited_list: list[set[Position]] = []
         visited_flat: set[Position] = set()
@@ -223,7 +223,8 @@ class IslandGrid(Grid[Island]):
             kept_bridges_by_visited_positions = {position: self.islands[position].bridges_count - 1}
         visited_positions.append(position)
         position_bridges = self.islands[position].direction_position_bridges.values()
-        next_positions_candidates = [position_bridges[0] for position_bridges in position_bridges if position_bridges[1] > 0 and position_bridges[0] != previous_position]
+        next_positions_candidates = [position_bridges[0] for position_bridges in position_bridges if
+                                     position_bridges[1] > 0 and position_bridges[0] != previous_position]
         if len(next_positions_candidates) == 0:
             return visited_positions
         if len(next_positions_candidates) == 1:
