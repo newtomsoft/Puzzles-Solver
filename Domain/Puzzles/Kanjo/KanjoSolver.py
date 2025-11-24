@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 
 from z3 import Solver, Not, And, Or, sat, Bool, is_true, Sum, Int, Implies
 
@@ -19,6 +19,11 @@ class KanjoSolver(GameSolver):
         self._input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
         self._clues_by_positions = {position: clue_loop for position, clue_loop in self._input_grid if type(clue_loop) is int}
+
+        self._positions_by_clues = defaultdict(list)
+        for position, clue_loop in self._clues_by_positions.items():
+            self._positions_by_clues[clue_loop].append(position)
+
         self._loop_count = len(Counter(self._clues_by_positions.values()))
         self._loop_id_var_by_position = {position: Int(f"loop_id_{position}") for position, _ in self._input_grid}
         self._loop_id_var_by_position_hor = {position: Int(f"loop_id_hor_{position}") for position, _ in self._input_grid}
@@ -44,6 +49,10 @@ class KanjoSolver(GameSolver):
         solution, _ = self._ensure_all_islands_grouped()
         return solution
 
+    def get_other_solution(self):
+        self._exclude_positions_values_together(self._previous_solution.get_positions())
+        return self.get_solution()
+
     def _ensure_all_islands_grouped(self) -> tuple[IslandGrid, int]:
         propositions_count = 0
         while self._solver.check() == sat:
@@ -59,27 +68,41 @@ class KanjoSolver(GameSolver):
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
-            connected_positions = self._island_grid.get_linear_connected_positions(exclude_without_bridge=False)
+            connected_positions = self._island_grid.compute_linear_connected_positions(exclude_without_bridge=False)
             if len(connected_positions) == self._loop_count:
                 self._previous_solution = self._island_grid
                 return self._island_grid, propositions_count
 
-            # todo optimize adding constraints
-            constraints = []
-            for position, island in self._island_grid:
-                constraints += [self._grid_z3[position][direction] == (island.direction_position_bridges.get(direction, [0, 0])[1] == 1) for direction in
-                                Direction.orthogonal_directions()]
-            self._solver.add(Not(And(constraints)))
+            for loop in connected_positions:
+                if self._exclude_loop_without_clue(loop):
+                    continue
+
+                self._exclude_loop_with_forgotten_clue(loop)
 
         return IslandGrid.empty(), propositions_count
 
-    def get_other_solution(self):
-        constraints = []
-        for position, island in self._previous_solution:
-            constraints += [self._grid_z3[position][direction] == (island.direction_position_bridges.get(direction, [0, 0])[1] == 1) for direction in
-                            Direction.orthogonal_directions()]
-        self._solver.add(Not(And(constraints)))
-        return self.get_solution()
+    def _exclude_loop_without_clue(self, loop: set[Position]) -> bool:
+        if loop.isdisjoint(self._clues_by_positions.keys()):
+            self._exclude_positions_values_together(loop)
+            return True
+        return False
+
+    def _exclude_loop_with_forgotten_clue(self, loop: set[Position]) -> bool:
+        clue = self._get_clue_from_positions(loop)
+        positions_clue = set(self._positions_by_clues[clue])
+        if not positions_clue.issubset(loop):
+            self._exclude_positions_values_together(loop)
+            return True
+        return False
+
+    def _exclude_positions_values_together(self, positions: set[Position]):
+        no_clue_constraints = []
+        for position in positions:
+            no_clue_constraints += [
+                self._grid_z3[position][direction] == (self._island_grid[position].direction_position_bridges.get(direction, [0, 0])[1] == 1) for
+                direction in Direction.orthogonal_directions()
+            ]
+        self._solver.add(Not(And(no_clue_constraints)))
 
     def _add_constraints(self):
         self._add_initials_constraints()
@@ -191,3 +214,6 @@ class KanjoSolver(GameSolver):
                 And(position_multi_way, next_position_multi_way),
                 multi_multi_equality
             ))
+
+    def _get_clue_from_positions(self, loop: set[Position]) -> int | None:
+        return next((self._clues_by_positions.get(position) for position in loop if self._clues_by_positions.get(position) is not None), None)
