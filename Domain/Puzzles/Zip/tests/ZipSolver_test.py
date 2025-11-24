@@ -4,13 +4,15 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 
+_ = 0
+a = 10
 
 class ZipSolverTests(TestCase):
     def test_solution_basic_grid(self):
         grid = Grid([
-            [1, 0, 4],
-            [0, 5, 0],
-            [2, 0, 3]
+            [1, _, 4],
+            [_, 5, _],
+            [2, _, 3]
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -26,12 +28,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_6x6(self):
         grid = Grid([
-            [0, 0, 0, 4, 7, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 8, 1, 0, 0],
-            [5, 3, 0, 0, 2, 6],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, 4, 7, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, 8, 1, _, _],
+            [5, 3, _, _, 2, 6],
+            [_, _, _, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -50,13 +52,13 @@ class ZipSolverTests(TestCase):
 
     def test_solution_7x7(self):
         grid = Grid([
-            [7, 0, 0, 0, 0, 0, 6],
-            [0, 2, 0, 0, 0, 0, 0],
-            [0, 0, 9, 0, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 8, 0, 0],
-            [0, 0, 0, 0, 0, 3, 0],
-            [4, 0, 0, 0, 0, 0, 5],
+            [7, _, _, _, _, _, 6],
+            [_, 2, _, _, _, _, _],
+            [_, _, 9, _, _, _, _],
+            [_, _, _, 1, _, _, _],
+            [_, _, _, _, 8, _, _],
+            [_, _, _, _, _, 3, _],
+            [4, _, _, _, _, _, 5],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -76,12 +78,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_6x6_with_wall(self):
         grid = Grid([
-            [3, 0, 0, 0, 0, 9],
-            [0, 2, 0, 0, 10, 0],
-            [0, 0, 1, 8, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 4, 0, 0, 6, 0],
-            [0, 0, 5, 7, 0, 0],
+            [3, _, _, _, _, 9],
+            [_, 2, _, _, a, _],
+            [_, _, 1, 8, _, _],
+            [_, _, _, _, _, _],
+            [_, 4, _, _, 6, _],
+            [_, _, 5, 7, _, _],
         ])
         grid.set_walls(
             {
@@ -109,12 +111,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_6x6_with_u_turn(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 2, 0, 0, 5],
-            [0, 0, 0, 0, 0, 3],
-            [6, 0, 0, 0, 0, 0],
-            [1, 0, 0, 4, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, _, 2, _, _, 5],
+            [_, _, _, _, _, 3],
+            [6, _, _, _, _, _],
+            [1, _, _, 4, _, _],
+            [_, _, _, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -133,12 +135,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_6x6_with_wall_and_u_turn(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 6, 0, 0, 2],
-            [0, 5, 0, 0, 3, 0],
-            [0, 8, 0, 0, 1, 0],
-            [7, 0, 0, 4, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, _, 6, _, _, 2],
+            [_, 5, _, _, 3, _],
+            [_, 8, _, _, 1, _],
+            [7, _, _, 4, _, _],
+            [_, _, _, _, _, _],
         ])
         grid.set_walls(
             {
@@ -171,12 +173,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_24(self):
         grid = Grid([
-            [6, 0, 0, 0, 0, 7],
-            [0, 3, 0, 0, 0, 0],
-            [0, 0, 0, 5, 0, 0],
-            [0, 0, 4, 0, 0, 0],
-            [0, 0, 0, 0, 2, 0],
-            [1, 0, 0, 0, 0, 8],
+            [6, _, _, _, _, 7],
+            [_, 3, _, _, _, _],
+            [_, _, _, 5, _, _],
+            [_, _, 4, _, _, _],
+            [_, _, _, _, 2, _],
+            [1, _, _, _, _, 8],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -195,12 +197,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_25(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [2, 0, 0, 0, 4, 0],
-            [0, 0, 6, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [3, 0, 7, 0, 5, 0],
-            [0, 0, 1, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [2, _, _, _, 4, _],
+            [_, _, 6, _, _, _],
+            [_, _, _, _, _, _],
+            [3, _, 7, _, 5, _],
+            [_, _, 1, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -219,12 +221,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_26(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 0, 0],
-            [0, 4, 0, 0, 0, 0],
-            [0, 0, 0, 0, 3, 0],
-            [0, 0, 0, 0, 2, 0],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, 1, _, _, _, _],
+            [_, 4, _, _, _, _],
+            [_, _, _, _, 3, _],
+            [_, _, _, _, 2, _],
+            [_, _, _, _, _, _],
         ])
         grid.set_walls({
             frozenset([Position(1, 0), Position(1, 1)]),
@@ -259,12 +261,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_27(self):
         grid = Grid([
-            [6, 0, 0, 0, 0, 5],
-            [0, 0, 0, 0, 0, 0],
-            [0, 7, 1, 8, 2, 0],
-            [0, 0, 0, 0, 0, 0],
-            [3, 0, 0, 0, 0, 4],
-            [0, 0, 0, 0, 0, 0],
+            [6, _, _, _, _, 5],
+            [_, _, _, _, _, _],
+            [_, 7, 1, 8, 2, _],
+            [_, _, _, _, _, _],
+            [3, _, _, _, _, 4],
+            [_, _, _, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -283,12 +285,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_28(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 5, 3, 0],
-            [0, 0, 4, 0, 0, 0],
-            [0, 0, 0, 2, 0, 0],
-            [0, 1, 6, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, _],
+            [_, _, _, 5, 3, _],
+            [_, _, 4, _, _, _],
+            [_, _, _, 2, _, _],
+            [_, 1, 6, _, _, _],
+            [_, _, _, _, _, _],
         ])
         grid.set_walls({
             frozenset([Position(0, 1), Position(1, 1)]),
@@ -317,12 +319,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_29(self):
         grid = Grid([
-            [6, 0, 0, 0, 0, 5],
-            [0, 0, 0, 0, 0, 0],
-            [0, 7, 1, 8, 2, 0],
-            [0, 0, 0, 0, 0, 0],
-            [3, 0, 0, 0, 0, 4],
-            [0, 0, 0, 0, 0, 0],
+            [6, _, _, _, _, 5],
+            [_, _, _, _, _, _],
+            [_, 7, 1, 8, 2, _],
+            [_, _, _, _, _, _],
+            [3, _, _, _, _, 4],
+            [_, _, _, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -341,12 +343,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_30(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 3],
-            [0, 6, 0, 0, 0, 0],
-            [0, 0, 7, 0, 0, 4],
-            [1, 0, 0, 2, 0, 0],
-            [0, 0, 0, 0, 8, 0],
-            [5, 0, 0, 0, 0, 0],
+            [_, _, _, _, _, 3],
+            [_, 6, _, _, _, _],
+            [_, _, 7, _, _, 4],
+            [1, _, _, 2, _, _],
+            [_, _, _, _, 8, _],
+            [5, _, _, _, _, _],
         ])
         game_solver = ZipSolver(grid)
         solution = game_solver.get_solution()
@@ -365,12 +367,12 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_03_31(self):
         grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 2, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1]
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, 2, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, 1]
         ])
         grid.set_walls({
             frozenset({Position(1, 4), Position(1, 5)}),
@@ -413,13 +415,13 @@ class ZipSolverTests(TestCase):
 
     def test_solution_2025_04_01(self):
         grid = Grid([
-            [1, 0, 0, 2, 0, 0, 3],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0]
+            [1, _, _, 2, _, _, 3],
+            [_, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _]
         ])
         grid.set_walls({
             frozenset({Position(5, 5), Position(6, 5)}),
