@@ -1,415 +1,212 @@
-﻿import re
-
-from Domain.Puzzles.Akari.AkariSolver import AkariSolver
-from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
-from Domain.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
-from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
-from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
-from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
-from Domain.Puzzles.Chocona.ChoconaSolver import ChoconaSolver
-from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
-from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
-from Domain.Puzzles.Creek.CreekSolver import CreekSolver
-from Domain.Puzzles.Detour.DetourSolver import DetourSolver
-from Domain.Puzzles.Dominosa.DominosaSolver import DominosaSolver
-from Domain.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
-from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
-from Domain.Puzzles.DotchiLoop.DotchiLoopSolver import DotchiLoopSolver
-from Domain.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySecondTurnSolver
-from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
-from Domain.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
-from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
+﻿import Run.Games.AkariConfig
+import Run.Games.AquariumConfig
+import Run.Games.BalanceLoopConfig
+import Run.Games.BimaruConfig
+import Run.Games.BinairoConfig
+import Run.Games.BinairoPlusConfig
+import Run.Games.BinairoPlusConfig
+import Run.Games.ChoconaConfig
+import Run.Games.CloudsConfig
+import Run.Games.CountryRoadConfig
+import Run.Games.CreekConfig
+import Run.Games.DominosaConfig
+import Run.Games.DoppelblockConfig
+import Run.Games.DosunFuwariConfig
+import Run.Games.DotchiLoopConfig
+import Run.Games.EverySecondTurnConfig
+import Run.Games.FobidoshiConfig
+import Run.Games.From1ToXConfig
+import Run.Games.FutoshikiConfig
+import Run.Games.GappyConfig
+import Run.Games.GeradewegConfig
+import Run.Games.GradesConfig
+import Run.Games.GrandTourConfig
+import Run.Games.GyokusekiConfig
+import Run.Games.HakoiriConfig
+import Run.Games.HashiConfig
+import Run.Games.HeyawakeConfig
+import Run.Games.HitoriConfig
+import Run.Games.JigsawSudokuConfig
+import Run.Games.KakurasuConfig
+import Run.Games.KakuroConfig
+import Run.Games.KakuteruAnpuConfig
+import Run.Games.KanjoConfig
+import Run.Games.KemaruConfig
+import Run.Games.KenKenConfig
+import Run.Games.KillerSudokuConfig
+import Run.Games.KoburinConfig
+import Run.Games.KonarupuConfig
+import Run.Games.KuroshiroConfig
+import Run.Games.LinesweeperConfig
+import Run.Games.LitsConfig
+import Run.Games.LookAirConfig
+import Run.Games.MasyuConfig
+import Run.Games.MeadowsConfig
+import Run.Games.MidLoopConfig
+import Run.Games.MinesweeperConfig
+import Run.Games.MinesweeperMosaicConfig
+import Run.Games.MoonsunConfig
+import Run.Games.NanroConfig
+import Run.Games.NeighboursConfig
+import Run.Games.No4InARowConfig
+import Run.Games.NonogramConfig
+import Run.Games.NorinoriConfig
+import Run.Games.NumberChainConfig
+import Run.Games.NumberCrossConfig
+import Run.Games.NumberLinkConfig
+import Run.Games.NurikabeConfig
+import Run.Games.PipelinkConfig
+import Run.Games.PipesConfig
+import Run.Games.PipesWrapConfig
+import Run.Games.PurenrupuConfig
+import Run.Games.RegionalYajilinConfig
+import Run.Games.RenkatsuConfig
+import Run.Games.RenzokuConfig
+import Run.Games.RoundTripConfig
+import Run.Games.SeeThroughConfig
+import Run.Games.ShikakuConfig
+import Run.Games.ShingokiConfig
+import Run.Games.SkyscrapersConfig
+import Run.Games.SnakeConfig
+import Run.Games.StarBattleConfig
+import Run.Games.StarsAndArrowsConfig
+import Run.Games.StitchesConfig
+import Run.Games.Str8tsConfig
+import Run.Games.SudokuConfig
+import Run.Games.SumpleteConfig
+import Run.Games.SurizaConfig
+import Run.Games.TapaConfig
+import Run.Games.TasukueaConfig
+import Run.Games.TatamibariConfig
+import Run.Games.TentaiShowConfig
+import Run.Games.TentsConfig
+import Run.Games.ThermometersConfig
+import Run.Games.TilePaintConfig
+import Run.Games.TrilogyConfig
+import Run.Games.VectorsConfig
+import Run.Games.WamazuConfig
+import Run.Games.YajikabeConfig
+import Run.Games.YajilinConfig
+import Run.Games.YinYangConfig
+import Run.Games.ZipConfig
 from Domain.Puzzles.GameSolver import GameSolver
-from Domain.Puzzles.Gappy.GappySolver import GappySolver
-from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
-from Domain.Puzzles.Grades.GradesSolver import GradesSolver
-from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
-from Domain.Puzzles.Gyokuseki.GyokusekiSolver import GyokusekiSolver
-from Domain.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
-from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
-from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
-from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
-from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
-from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
-from Domain.Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
-from Domain.Puzzles.Kanjo.KanjoSolver import KanjoSolver
-from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
-from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
-from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
-from Domain.Puzzles.Konarupu.KonarupuSolver import KonarupuSolver
-from Domain.Puzzles.Kuroshiro.KuroshiroSolver import KuroshiroSolver
-from Domain.Puzzles.Linesweeper.LinesweeperSolver import LinesweeperSolver
-from Domain.Puzzles.Lits.LitsSolver import LitsSolver
-from Domain.Puzzles.LookAir.LookAirSolver import LookAirSolver
-from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
-from Domain.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
-from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
-from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
-from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
-from Domain.Puzzles.Moonsun.MoonsunSolver import MoonsunSolver
-from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
-from Domain.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
-from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
-from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
-from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
-from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
-from Domain.Puzzles.NumberCross.NumberCrossSolver import NumberCrossSolver
-from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
-from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-from Domain.Puzzles.Pipelink.PipelinkSolver import PipelinkSolver
-from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
-from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
-from Domain.Puzzles.Purenrupu.PurenrupuSolver import PurenrupuSolver
-from Domain.Puzzles.RegionalYajilin.RegionalYajilinSolver import RegionalYajilinSolver
-from Domain.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
-from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
-from Domain.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
-from Domain.Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
-from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
-from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
-from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
-from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
-from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
-from Domain.Puzzles.StarsAndArrows.StarsAndArrowsSolver import StarsAndArrowsSolver
-from Domain.Puzzles.Stitches.StitchesSolver import StitchesSolver
-from Domain.Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
-from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
-from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
-from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
-from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
-from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
-from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
-from Domain.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
-from Domain.Puzzles.Tatamibari.TatamibariSolver import TatamibariSolver
-from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
-from Domain.Puzzles.Tents.TentsSolver import TentsSolver
-from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
-from Domain.Puzzles.TilePaint.TilePaintSolver import TilePaintSolver
-from Domain.Puzzles.Trilogy.TrilogySolver import TrilogySolver
-from Domain.Puzzles.Vectors.VectorsSolver import VectorsSolver
-from Domain.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
-from Domain.Puzzles.Yajikabe.YajilkabeSolver import YajikabeSolver
-from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
-from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
-from Domain.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.GridPlayer import GridPlayer
-from GridPlayers.GridPuzzle.GridPuzzleBalanceLoopPlayer import GridPuzzleBalanceLoopPlayer
-from GridPlayers.GridPuzzle.GridPuzzleChoconaPlayer import GridPuzzleChoconaPlayer
-from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
-from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
-from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
-from GridPlayers.GridPuzzle.GridPuzzleDetourPlayer import GridPuzzleDetourPlayer
-from GridPlayers.GridPuzzle.GridPuzzleDoppelblockPlayer import GridPuzzleDoppelblockPlayer
-from GridPlayers.GridPuzzle.GridPuzzleDosunFuwariPlayer import GridPuzzleDosunFuwariPlayer
-from GridPlayers.GridPuzzle.GridPuzzleDotchiLoopPlayer import GridPuzzleDotchiLoopPlayer
-from GridPlayers.GridPuzzle.GridPuzzleEverySecondTurnPlayer import GridPuzzleEverySecondTurnPlayer
-from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
-from GridPlayers.GridPuzzle.GridPuzzleFrom1ToXPlayer import GridPuzzleFrom1ToXPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGappyPlayer import GridPuzzleGappyPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGradesPlayer import GridPuzzleGradesPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
-from GridPlayers.GridPuzzle.GridPuzzleGyokusekiPlayer import GridPuzzleGyokusekiPlayer
-from GridPlayers.GridPuzzle.GridPuzzleHakoiriPlayer import GridPuzzleHakoiriPlayer
-from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
-from GridPlayers.GridPuzzle.GridPuzzleKakuteruAnpuPlayer import GridPuzzleKakuteruAnpuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleKanjoPlayer import GridPuzzleKanjoPlayer
-from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
-from GridPlayers.GridPuzzle.GridPuzzleKonarupuPlayer import GridPuzzleKonarupuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleKuroshiroPlayer import GridPuzzleKuroshiroPlayer
-from GridPlayers.GridPuzzle.GridPuzzleLinesweeperPlayer import GridPuzzleLinesweeperPlayer
-from GridPlayers.GridPuzzle.GridPuzzleLookAirPlayer import GridPuzzleLookAirPlayer
-from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleMeadowsPlayer import GridPuzzleMeadowsPlayer
-from GridPlayers.GridPuzzle.GridPuzzleMidLoopPlayer import GridPuzzleMidLoopPlayer
-from GridPlayers.GridPuzzle.GridPuzzleMinesweeperPlayer import GridPuzzleMinesweeperPlayer
-from GridPlayers.GridPuzzle.GridPuzzleMoonsunPlayer import GridPuzzleMoonsunPlayer
-from GridPlayers.GridPuzzle.GridPuzzleNanroPlayer import GridPuzzleNanroPlayer
-from GridPlayers.GridPuzzle.GridPuzzleNeighboursPlayer import GridPuzzleNeighboursPlayer
-from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
-from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
-from GridPlayers.GridPuzzle.GridPuzzleNumberCrossPlayer import GridPuzzleNumberCrossPlayer
-from GridPlayers.GridPuzzle.GridPuzzlePipelinkPlayer import GridPuzzlePipelinkPlayer
-from GridPlayers.GridPuzzle.GridPuzzlePurenrupuPlayer import GridPuzzlePurenrupuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleRegionalYajilinPlayer import GridPuzzleRegionalYajilinPlayer
-from GridPlayers.GridPuzzle.GridPuzzleRenkatsuPlayer import GridPuzzleRenkatsuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleRoundTripPlayer import GridPuzzleRoundTripPlayer
-from GridPlayers.GridPuzzle.GridPuzzleSeeThroughPlayer import GridPuzzleSeeThroughPlayer
-from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPlayer
-from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
-from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
-from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
-from GridPlayers.GridPuzzle.GridPuzzleStarsAndArrowsPlayer import GridPuzzleStarsAndArrowsPlayer
-from GridPlayers.GridPuzzle.GridPuzzleStr8tsPlayer import GridPuzzleStr8tsPlayer
-from GridPlayers.GridPuzzle.GridPuzzleTasukueaPlayer import GridPuzzleTasukueaPlayer
-from GridPlayers.GridPuzzle.GridPuzzleTatamibariPlayer import GridPuzzleTatamibariPlayer
-from GridPlayers.GridPuzzle.GridPuzzleTilePaintPlayer import GridPuzzleTilePaintPlayer
-from GridPlayers.GridPuzzle.GridPuzzleTrilogyPlayer import GridPuzzleTrilogyPlayer
-from GridPlayers.GridPuzzle.GridPuzzleWamazuPlayer import GridPuzzleWamazuPlayer
-from GridPlayers.GridPuzzle.GridPuzzleYajikabePlayer import GridPuzzleYajikabePlayer
-from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
-from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
-from GridPlayers.LinkedIn.TangoPlayer import TangoPlayer
-from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronLaserGridsGridPlayer import PuzzleBaronLaserGridsPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronNumberLinksGridPlayer import PuzzleBaronNumberLinksPlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattlePlayer
-from GridPlayers.PuzzleBaron.PuzzleBaronVectorsGridPlayer import PuzzleBaronVectorsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleAkariPlayer import PuzzleAkariPlayer
-from GridPlayers.PuzzleMobiles.PuzzleAquariumPlayer import PuzzleAquariumPlayer
-from GridPlayers.PuzzleMobiles.PuzzleBimaruPlayer import PuzzleBimaruPlayer
-from GridPlayers.PuzzleMobiles.PuzzleBinairoPlayer import PuzzleBinairoPlayer
-from GridPlayers.PuzzleMobiles.PuzzleDominosaPlayer import PuzzleDominosaPlayer
-from GridPlayers.PuzzleMobiles.PuzzleFutoshikiPlayer import PuzzleFutoshikiPlayer
-from GridPlayers.PuzzleMobiles.PuzzleGalaxiesPlayer import PuzzleGalaxiesPlayer
-from GridPlayers.PuzzleMobiles.PuzzleHashiPlayer import PuzzleHashiPlayer
-from GridPlayers.PuzzleMobiles.PuzzleHeyawakePlayer import PuzzleHeyawakePlayer
-from GridPlayers.PuzzleMobiles.PuzzleHitoriPlayer import PuzzleHitoriPlayer
-from GridPlayers.PuzzleMobiles.PuzzleKakurasuPlayer import PuzzleKakurasuPlayer
-from GridPlayers.PuzzleMobiles.PuzzleKakuroPlayer import PuzzleKakuroPlayer
-from GridPlayers.PuzzleMobiles.PuzzleLitsPlayer import PuzzleLitsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleMasyuPlayer import PuzzleMasyuPlayer
-from GridPlayers.PuzzleMobiles.PuzzleMinesweeperMosaicPlayer import PuzzleMinesweeperMosaicPlayer
-from GridPlayers.PuzzleMobiles.PuzzleMinesweeperPlayer import PuzzleMinesweeperPlayer
-from GridPlayers.PuzzleMobiles.PuzzleNonogramsGrid import PuzzleNonogramsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleNorinoriPlayer import PuzzleNorinoriPlayer
-from GridPlayers.PuzzleMobiles.PuzzleNurikabePlayer import PuzzleNurikabePlayer
-from GridPlayers.PuzzleMobiles.PuzzlePipesPlayer import PuzzlePipesPlayer
-from GridPlayers.PuzzleMobiles.PuzzleShikakuPlayer import PuzzleShikakuPlayer
-from GridPlayers.PuzzleMobiles.PuzzleSkyscrapersPlayer import PuzzleSkyScrapersPlayer
-from GridPlayers.PuzzleMobiles.PuzzleStarBattlePlayer import PuzzleStarBattlePlayer
-from GridPlayers.PuzzleMobiles.PuzzleStitchesPlayer import PuzzleStitchesPlayer
-from GridPlayers.PuzzleMobiles.PuzzleSudokuPlayer import PuzzleSudokuPlayer
-from GridPlayers.PuzzleMobiles.PuzzleTapaPlayer import PuzzleTapaPlayer
-from GridPlayers.PuzzleMobiles.PuzzleTentsPlayer import PuzzleTentsPlayer
-from GridPlayers.PuzzleMobiles.PuzzleThermometersPlayer import PuzzleThermometersPlayer
-from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
-from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridProvider import GridProvider
-from GridProviders.GridPuzzle.GridPuzzleBalanceLoopGridProvider import GridPuzzleBalanceLoopGridProvider
-from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleChoconaGridProvider
-from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
-from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
-from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
-from GridProviders.GridPuzzle.GridPuzzleDetourGridProvider import GridPuzzleDetourGridProvider
-from GridProviders.GridPuzzle.GridPuzzleDoppelblockGridProvider import GridPuzzleDoppelblockGridProvider
-from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
-from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzleDotchiLoopGridProvider
-from GridProviders.GridPuzzle.GridPuzzleEverySecondTurnGridProvider import GridPuzzleEverySecondTurnGridProvider
-from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
-from GridProviders.GridPuzzle.GridPuzzleFrom1ToXGridProvider import GridPuzzleFrom1ToXGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappyGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGradesGridProvider import GridPuzzleGradesGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
-from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleGyokusekiGridProvider
-from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
-from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
-from GridProviders.GridPuzzle.GridPuzzleKakuteruAnpuGridProvider import GridPuzzleKakuteruAnpuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleKanjoGridProvider import GridPuzzleKanjoGridProvider
-from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
-from GridProviders.GridPuzzle.GridPuzzleKonarupuGridProvider import GridPuzzleKonarupuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleKuroshiroGridProvider import GridPuzzleKuroshiroGridProvider
-from GridProviders.GridPuzzle.GridPuzzleLinesweeperGridProvider import GridPuzzleLinesweeperGridProvider
-from GridProviders.GridPuzzle.GridPuzzleLookAirGridProvider import GridPuzzleLookAirGridProvider
-from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleMeadowsGridProvider import GridPuzzleMeadowsGridProvider
-from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMidLoopGridProvider
-from GridProviders.GridPuzzle.GridPuzzleMinesweeperGridProvider import GridPuzzleMinesweeperGridProvider
-from GridProviders.GridPuzzle.GridPuzzleMoonsunGridProvider import GridPuzzleMoonsunGridProvider
-from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
-from GridProviders.GridPuzzle.GridPuzzleNeighboursGridProvider import GridPuzzleNeighboursGridProvider
-from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
-from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
-from GridProviders.GridPuzzle.GridPuzzleNumberCrossGridProvider import GridPuzzleNumberCrossGridProvider
-from GridProviders.GridPuzzle.GridPuzzlePipelinkGridProvider import GridPuzzlePipelinkGridProvider
-from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzlePurenrupuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleRegionalYajilinGridProvider import GridPuzzleRegionalYajilinGridProvider
-from GridProviders.GridPuzzle.GridPuzzleRenkatsuGridProvider import GridPuzzleRenkatsuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleRoundTripGridProvider import GridPuzzleRoundTripGridProvider
-from GridProviders.GridPuzzle.GridPuzzleSeeThroughGridProvider import GridPuzzleSeeThroughGridProvider
-from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider
-from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
-from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
-from GridProviders.GridPuzzle.GridPuzzleStarBattleGridProvider import GridPuzzleStarBattleGridProvider
-from GridProviders.GridPuzzle.GridPuzzleStarsAndArrowsGridProvider import GridPuzzleStarsAndArrowsGridProvider
-from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8tsGridProvider
-from GridProviders.GridPuzzle.GridPuzzleTasukueaGridProvider import GridPuzzleTasukueaGridProvider
-from GridProviders.GridPuzzle.GridPuzzleTatamibariGridProvider import GridPuzzleTatamibariGridProvider
-from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleTilePaintGridProvider
-from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTrilogyGridProvider
-from GridProviders.GridPuzzle.GridPuzzleWamazuGridProvider import GridPuzzleWamazuGridProvider
-from GridProviders.GridPuzzle.GridPuzzleYajikabeGridProvider import GridPuzzleYajikabeGridProvider
-from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
-from GridProviders.Linkedin.QueensGridProvider import QueensGridProvider
-from GridProviders.Linkedin.TangoGridProvider import TangoGridProvider
-from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
-from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronCalcudokuGridProvider import PuzzleBaronCalcudokuGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronCampsitesGridProvider import PuzzleBaronCampsitesGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronLaserGridsGridProvider import PuzzleBaronLaserGridsGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronNumberLinksGridProvider import PuzzleBaronNumberLinksGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronStarBattleGridProvider import PuzzleBaronStarBattleGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronVectorsGridProvider import PuzzleBaronVectorsGridProvider
-from GridProviders.PuzzlesMobile.PuzzleAkariGridProvider import PuzzleAkariGridProvider
-from GridProviders.PuzzlesMobile.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
-from GridProviders.PuzzlesMobile.PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
-from GridProviders.PuzzlesMobile.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
-from GridProviders.PuzzlesMobile.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
-from GridProviders.PuzzlesMobile.PuzzleDominosaGridProvider import PuzzleDominosaGridProvider
-from GridProviders.PuzzlesMobile.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
-from GridProviders.PuzzlesMobile.PuzzleGalaxiesGridProvider import PuzzleGalaxiesGridProvider
-from GridProviders.PuzzlesMobile.PuzzleHashiGridProvider import PuzzleHashiGridProvider
-from GridProviders.PuzzlesMobile.PuzzleHeyawakeGridProvider import PuzzleHeyawakeGridProvider
-from GridProviders.PuzzlesMobile.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
-from GridProviders.PuzzlesMobile.PuzzleJigsawSudokuGridProvider import PuzzleJigsawSudokuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
-from GridProviders.PuzzlesMobile.PuzzleKillerSudokuGridProvider import PuzzleKillerSudokuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleLitsGridProvider import PuzzleLitsGridProvider
-from GridProviders.PuzzlesMobile.PuzzleMasyuGridProvider import PuzzleMasyuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
-from GridProviders.PuzzlesMobile.PuzzleNonogramGridProvider import PuzzleNonogramGridProvider
-from GridProviders.PuzzlesMobile.PuzzleNorinoriGridProvider import PuzzleNorinoriGridProvider
-from GridProviders.PuzzlesMobile.PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
-from GridProviders.PuzzlesMobile.PuzzlePipesGridProvider import PuzzlePipesGridProvider
-from GridProviders.PuzzlesMobile.PuzzleRenzokuGridProvider import PuzzleRenzokuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleShingokiGridProvider import PuzzleShingokiGridProvider
-from GridProviders.PuzzlesMobile.PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridProvider
-from GridProviders.PuzzlesMobile.PuzzleStarBattleGridProvider import PuzzleStarBattleGridProvider
-from GridProviders.PuzzlesMobile.PuzzleStitchesGridProvider import PuzzleStitchesGridProvider
-from GridProviders.PuzzlesMobile.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
-from GridProviders.PuzzlesMobile.PuzzleSurizaGridProvider import PuzzleSurizaGridProvider
-from GridProviders.PuzzlesMobile.PuzzleTapaGridProvider import PuzzleTapaGridProvider
-from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
-from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
-from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangGridProvider
-from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
+from Run.GameRegistry import GameRegistry
 
 
 class UrlPatternMatcher:
+    _initialized = False
+
+    def __init__(self):
+        self._initialize_registry()
+
+    @classmethod
+    def _initialize_registry(cls):
+        if cls._initialized:
+            return
+
+        Run.Games.SudokuConfig.register_sudoku()
+        Run.Games.ShingokiConfig.register_shingoki()
+        Run.Games.AkariConfig.register_akari()
+        Run.Games.AquariumConfig.register_aquarium()
+        Run.Games.BalanceLoopConfig.register_balanceloop()
+        Run.Games.BimaruConfig.register_bimaru()
+        Run.Games.BinairoPlusConfig.register_binairoplus()
+        Run.Games.BinairoConfig.register_binairo()
+        Run.Games.ChoconaConfig.register_chocona()
+        Run.Games.CloudsConfig.register_clouds()
+        Run.Games.CountryRoadConfig.register_countryroad()
+        Run.Games.CreekConfig.register_creek()
+        Run.Games.DominosaConfig.register_dominosa()
+        Run.Games.DoppelblockConfig.register_doppelblock()
+        Run.Games.DosunFuwariConfig.register_dosunfuwari()
+        Run.Games.DotchiLoopConfig.register_dotchiloop()
+        Run.Games.EverySecondTurnConfig.register_everysecondturn()
+        Run.Games.FobidoshiConfig.register_fobidoshi()
+        Run.Games.From1ToXConfig.register_from1tox()
+        Run.Games.RenzokuConfig.register_renzoku()
+        Run.Games.FutoshikiConfig.register_futoshiki()
+        Run.Games.GappyConfig.register_gappy()
+        Run.Games.GeradewegConfig.register_geradeweg()
+        Run.Games.GradesConfig.register_grades()
+        Run.Games.GrandTourConfig.register_grandtour()
+        Run.Games.GyokusekiConfig.register_gyokuseki()
+        Run.Games.HakoiriConfig.register_hakoiri()
+        Run.Games.HashiConfig.register_hashi()
+        Run.Games.HeyawakeConfig.register_heyawake()
+        Run.Games.HitoriConfig.register_hitori()
+        Run.Games.JigsawSudokuConfig.register_jigsawsudoku()
+        Run.Games.KakurasuConfig.register_kakurasu()
+        Run.Games.KakuroConfig.register_kakuro()
+        Run.Games.KakuteruAnpuConfig.register_kakuteruanpu()
+        Run.Games.KanjoConfig.register_kanjo()
+        Run.Games.KemaruConfig.register_kemaru()
+        Run.Games.KenKenConfig.register_kenken()
+        Run.Games.KillerSudokuConfig.register_killersudoku()
+        Run.Games.KoburinConfig.register_koburin()
+        Run.Games.KonarupuConfig.register_konarupu()
+        Run.Games.KuroshiroConfig.register_kuroshiro()
+        Run.Games.LinesweeperConfig.register_linesweeper()
+        Run.Games.LitsConfig.register_lits()
+        Run.Games.LookAirConfig.register_lookair()
+        Run.Games.NanroConfig.register_nanro()
+        Run.Games.MasyuConfig.register_masyu()
+        Run.Games.MeadowsConfig.register_meadows()
+        Run.Games.MidLoopConfig.register_midloop()
+        Run.Games.MinesweeperMosaicConfig.register_minesweepermosaic()
+        Run.Games.MinesweeperConfig.register_minesweeper()
+        Run.Games.MoonsunConfig.register_moonsun()
+        Run.Games.NeighboursConfig.register_neighbours()
+        Run.Games.NonogramConfig.register_nonogram()
+        Run.Games.NorinoriConfig.register_norinori()
+        Run.Games.No4InARowConfig.register_no4inarow()
+        Run.Games.NumberChainConfig.register_numberchain()
+        Run.Games.NumberCrossConfig.register_numbercross()
+        Run.Games.NumberLinkConfig.register_numberlink()
+        Run.Games.NurikabeConfig.register_nurikabe()
+        Run.Games.PipelinkConfig.register_pipelink()
+        Run.Games.BinairoPlusConfig.register_binairoplus()
+        Run.Games.PipesConfig.register_pipes()
+        Run.Games.PipesWrapConfig.register_pipeswrap()
+        Run.Games.PurenrupuConfig.register_purenrupu()
+        Run.Games.RegionalYajilinConfig.register_regionalyajilin()
+        Run.Games.RenkatsuConfig.register_renkatsu()
+        Run.Games.RoundTripConfig.register_roundtrip()
+        Run.Games.SeeThroughConfig.register_seethrough()
+        Run.Games.ShikakuConfig.register_shikaku()
+        Run.Games.SkyscrapersConfig.register_skyscrapers()
+        Run.Games.SnakeConfig.register_snake()
+        Run.Games.StarBattleConfig.register_starbattle()
+        Run.Games.StarsAndArrowsConfig.register_starsandarrows()
+        Run.Games.StitchesConfig.register_stitches()
+        Run.Games.Str8tsConfig.register_str8ts()
+        Run.Games.SumpleteConfig.register_sumplete()
+        Run.Games.SurizaConfig.register_suriza()
+        Run.Games.TapaConfig.register_tapa()
+        Run.Games.TasukueaConfig.register_tasukuea()
+        Run.Games.TatamibariConfig.register_tatamibari()
+        Run.Games.TentaiShowConfig.register_tentaishow()
+        Run.Games.TentsConfig.register_tents()
+        Run.Games.ThermometersConfig.register_thermometers()
+        Run.Games.TilePaintConfig.register_tilepaint()
+        Run.Games.TrilogyConfig.register_trilogy()
+        Run.Games.VectorsConfig.register_vectors()
+        Run.Games.WamazuConfig.register_wamazu()
+        Run.Games.YajikabeConfig.register_yajikabe()
+        Run.Games.YajilinConfig.register_yajilin()
+        Run.Games.YinYangConfig.register_yinyang()
+        Run.Games.ZipConfig.register_zip()
+
+        cls._initialized = True
+
     def get_components_for_url(self, url: str) -> tuple[type[GameSolver], type[GridProvider], type[GridPlayer] | None]:
         if not url or url.strip() == "":
             raise ValueError("Please enter a valid URL")
 
-        url_patterns = self.get_url_patterns()
-
-        for pattern, components in url_patterns.items():
-            if re.match(pattern, url):
-                return components
-
-        raise ValueError(f"No matching pattern found for URL: {url}")
+        return GameRegistry.get_components_for_url(url)
 
     @staticmethod
     def get_url_patterns():
-        return {
-            r"https://.*\.puzzle-light-up\.com": (AkariSolver, PuzzleAkariGridProvider, PuzzleAkariPlayer),
-            r"https://lasergrids\.puzzlebaron\.com/init2\.php": (AkariSolver, PuzzleBaronLaserGridsGridProvider, PuzzleBaronLaserGridsPlayer),
-            r"https://.*\.puzzle-aquarium\.com": (AquariumSolver, PuzzleAquariumGridProvider, PuzzleAquariumPlayer),
-            r"https://.*gridpuzzle\.com/balance-loop": (BalanceLoopSolver, GridPuzzleBalanceLoopGridProvider, GridPuzzleBalanceLoopPlayer),
-            r"https://.*\.puzzle-battleships\.com": (BimaruSolver, PuzzleBimaruGridProvider, PuzzleBimaruPlayer),
-            r"https://.*\.puzzle-binairo\.com/.*binairo-plus": (BinairoPlusSolver, PuzzleBinairoPlusGridProvider, PuzzleBinairoPlayer),
-            r"https://.*\.puzzle-binairo\.com": (BinairoSolver, PuzzleBinairoGridProvider, PuzzleBinairoPlayer),
-            r"https://.*gridpuzzle\.com/chocona": (ChoconaSolver, GridPuzzleChoconaGridProvider, GridPuzzleChoconaPlayer),
-            r"https://.*gridpuzzle\.com/clouds": (CloudsSolver, GridPuzzleCloudsGridProvider, GridPuzzleCloudsPlayer),
-            r"https://.*gridpuzzle\.com/country-road": (CountryRoadSolver, GridPuzzleCountryRoadGridProvider, GridPuzzleCountryRoadPlayer),
-            r"https://.*gridpuzzle\.com/creek": (CreekSolver, GridPuzzleCreekGridProvider, GridPuzzleCreekPlayer),
-            r"https://.*gridpuzzle\.com/detour":(DetourSolver, GridPuzzleDetourGridProvider, GridPuzzleDetourPlayer),
-            r"https://.*\.puzzle-dominosa\.com": (DominosaSolver, PuzzleDominosaGridProvider, PuzzleDominosaPlayer),
-            r"https://.*gridpuzzle\.com/doppelblock": (DoppelblockSolver, GridPuzzleDoppelblockGridProvider, GridPuzzleDoppelblockPlayer),
-            r"https://.*gridpuzzle\.com/dosun-fuwari": (DosunFuwariSolver, GridPuzzleDosunFuwariGridProvider, GridPuzzleDosunFuwariPlayer),
-            r"https://.*gridpuzzle\.com/dotchiloop": (DotchiLoopSolver, GridPuzzleDotchiLoopGridProvider, GridPuzzleDotchiLoopPlayer),
-            r"https://.*gridpuzzle\.com/every-second-turn": (EverySecondTurnSolver, GridPuzzleEverySecondTurnGridProvider, GridPuzzleEverySecondTurnPlayer),
-            r"https://.*gridpuzzle\.com/fobidoshi": (FobidoshiSolver, GridPuzzleFobidoshiGridProvider, GridPuzzleFobidoshiPlayer),
-            r"https://.*gridpuzzle\.com/from1tox": (From1ToXSolver, GridPuzzleFrom1ToXGridProvider, GridPuzzleFrom1ToXPlayer),
-            r"https://.*\.puzzle-futoshiki\.com/.*renzoku": (RenzokuSolver, PuzzleRenzokuGridProvider, PuzzleFutoshikiPlayer),  # same player as futoshiki
-            r"https://.*\.puzzle-futoshiki\.com": (FutoshikiSolver, PuzzleFutoshikiGridProvider, PuzzleFutoshikiPlayer),
-            r"https://.*gridpuzzle\.com/gappy": (GappySolver, GridPuzzleGappyGridProvider, GridPuzzleGappyPlayer),
-            r"https://.*gridpuzzle\.com/straight-loop": (GeradewegSolver, GridPuzzleGeradewegGridProvider, GridPuzzleGeradewegPlayer),
-            r"https://.*gridpuzzle\.com/grades": (GradesSolver, GridPuzzleGradesGridProvider, GridPuzzleGradesPlayer),
-            r"https://.*gridpuzzle\.com/grandtour": (GrandTourSolver, GridPuzzleGrandTourGridProvider, GridPuzzleGrandTourPlayer),
-            r"https://.*gridpuzzle\.com/gyokuseki": (GyokusekiSolver, GridPuzzleGyokusekiGridProvider, GridPuzzleGyokusekiPlayer),
-            r"https://.*gridpuzzle\.com/hakoiri": (HakoiriSolver, GridPuzzleHakoiriGridProvider, GridPuzzleHakoiriPlayer),
-            r"https://.*\.puzzle-bridges\.com": (HashiSolver, PuzzleHashiGridProvider, PuzzleHashiPlayer),
-            r"https://.*gridpuzzle\.com/bridges": (HashiSolver, GridPuzzleHashiGridProvider, GridPuzzleHashiPlayer),
-            r"https://.*\.puzzle-heyawake\.com": (HeyawakeSolver, PuzzleHeyawakeGridProvider, PuzzleHeyawakePlayer),
-            r"https://.*\.puzzle-hitori\.com": (HitoriSolver, PuzzleHitoriGridProvider, PuzzleHitoriPlayer),
-            r"https://.*\.puzzle-jigsaw-sudoku\.com": (JigsawSudokuSolver, PuzzleJigsawSudokuGridProvider, PuzzleSudokuPlayer),  # same player as sudoku
-            r"https://.*\.puzzle-kakurasu\.com": (KakurasuSolver, PuzzleKakurasuGridProvider, PuzzleKakurasuPlayer),
-            r"https://.*\.puzzle-kakuro\.com": (KakuroSolver, PuzzleKakuroGridProvider, PuzzleKakuroPlayer),
-            r"https://.*gridpuzzle\.com/cocktail-lamp": (KakuteruAnpuSolver, GridPuzzleKakuteruAnpuGridProvider, GridPuzzleKakuteruAnpuPlayer),
-            r"https://.*gridpuzzle\.com/kanjo": (KanjoSolver, GridPuzzleKanjoGridProvider, GridPuzzleKanjoPlayer),
-            r"https://www\.20minutes\.fr/services/jeux/kemaru": (KemaruSolver, VingtMinutesKemaruGridProvider, VingtMinutesKemaruPlayer),
-            r"https://calcudoku\.puzzlebaron\.com/init2\.php": (KenKenSolver, PuzzleBaronCalcudokuGridProvider, PuzzleBaronCalcudokuPlayer),
-            r"https://.*\.puzzle-killer-sudoku\.com": (KillerSudokuSolver, PuzzleKillerSudokuGridProvider, PuzzleSudokuPlayer),  # same player as Sudoku
-            r"https://.*gridpuzzle\.com/koburin": (KoburinSolver, GridPuzzleKoburinGridProvider, GridPuzzleKoburinPlayer),
-            r"https://.*gridpuzzle\.com/konarupu": (KonarupuSolver, GridPuzzleKonarupuGridProvider, GridPuzzleKonarupuPlayer),
-            r"https://.*gridpuzzle\.com/kuroshiro": (KuroshiroSolver, GridPuzzleKuroshiroGridProvider, GridPuzzleKuroshiroPlayer),
-            r"https://.*gridpuzzle\.com/linesweeper": (LinesweeperSolver, GridPuzzleLinesweeperGridProvider, GridPuzzleLinesweeperPlayer),
-            r"https://.*\.puzzle-lits\.com": (LitsSolver, PuzzleLitsGridProvider, PuzzleLitsPlayer),
-            r"https://.*gridpuzzle\.com/look-air": (LookAirSolver, GridPuzzleLookAirGridProvider, GridPuzzleLookAirPlayer),
-            r"https://.*gridpuzzle\.com/nanro": (NanroSolver, GridPuzzleNanroGridProvider, GridPuzzleNanroPlayer),
-            r"https://.*\.puzzle-masyu\.com": (MasyuSolver, PuzzleMasyuGridProvider, PuzzleMasyuPlayer),
-            r"https://.*gridpuzzle\.com/masyu": (MasyuSolver, GridPuzzleMasyuGridProvider, GridPuzzleMasyuPlayer),
-            r"https://.*gridpuzzle\.com/meadows": (MeadowsSolver, GridPuzzleMeadowsGridProvider, GridPuzzleMeadowsPlayer),
-            r"https://.*gridpuzzle\.com/mid-loop": (MidLoopSolver, GridPuzzleMidLoopGridProvider, GridPuzzleMidLoopPlayer),
-            r"https://.*\.puzzle-minesweeper\.com/.*mosaic": (MinesweeperMosaicSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperMosaicPlayer),
-            r"https://.*\.puzzle-minesweeper\.com": (MinesweeperSolver, PuzzleMinesweeperMosaicGridProvider, PuzzleMinesweeperPlayer),
-            r"https://.*gridpuzzle\.com/minesweeper": (MinesweeperSolver, GridPuzzleMinesweeperGridProvider, GridPuzzleMinesweeperPlayer),
-            r"https://.*gridpuzzle\.com/moonsun": (MoonsunSolver, GridPuzzleMoonsunGridProvider, GridPuzzleMoonsunPlayer),
-            r"https://.*gridpuzzle\.com/neighbours": (NeighboursSolver, GridPuzzleNeighboursGridProvider, GridPuzzleNeighboursPlayer),
-            r"https://.*\.puzzle-nonograms\.com": (NonogramSolver, PuzzleNonogramGridProvider, PuzzleNonogramsPlayer),
-            r"https://.*\.puzzle-norinori\.com": (NorinoriSolver, PuzzleNorinoriGridProvider, PuzzleNorinoriPlayer),
-            r"https://.*gridpuzzle\.com/no-four-in-row": (No4InARowSolver, GridPuzzleNo4InARowGridProvider, GridPuzzleNo4InARowPlayer),
-            r"https://.*gridpuzzle\.com/number-chain": (NumberChainSolver, GridPuzzleNumberChainGridProvider, GridPuzzleNumberChainPlayer),
-            r"https://.*gridpuzzle\.com/number-cross": (NumberCrossSolver, GridPuzzleNumberCrossGridProvider, GridPuzzleNumberCrossPlayer),
-            r"https://numberlinks\.puzzlebaron\.com/init2\.php": (NumberLinkSolver, PuzzleBaronNumberLinksGridProvider, PuzzleBaronNumberLinksPlayer),
-            r"https://.*\.puzzle-nurikabe\.com": (NurikabeSolver, PuzzleNurikabeGridProvider, PuzzleNurikabePlayer),
-            r"https://.*gridpuzzle\.com/pipelink": (PipelinkSolver, GridPuzzlePipelinkGridProvider, GridPuzzlePipelinkPlayer),
-            r"https://.*\.puzzle-pipes\.com/\?size=\d{2,}": (PipesWrapSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
-            r"https://.*\.puzzle-pipes\.com": (PipesSolver, PuzzlePipesGridProvider, PuzzlePipesPlayer),
-            r"https://.*gridpuzzle\.com/pure-loop": (PurenrupuSolver, GridPuzzlePurenrupuGridProvider, GridPuzzlePurenrupuPlayer),
-            r"https://.*gridpuzzle\.com/regional-yajilin": (RegionalYajilinSolver, GridPuzzleRegionalYajilinGridProvider, GridPuzzleRegionalYajilinPlayer),
-            r"https://.*gridpuzzle\.com/renkatsu": (RenkatsuSolver, GridPuzzleRenkatsuGridProvider, GridPuzzleRenkatsuPlayer),
-            r"https://.*gridpuzzle\.com/round-trip": (RoundTripSolver, GridPuzzleRoundTripGridProvider, GridPuzzleRoundTripPlayer),
-            r"https://.*gridpuzzle\.com/seethrough": (SeeThroughSolver, GridPuzzleSeeThroughGridProvider, GridPuzzleSeeThroughPlayer),
-            r"https://.*\.puzzle-shikaku\.com": (ShikakuSolver, PuzzleShikakuGridProvider, PuzzleShikakuPlayer),
-            r"https://.*\.puzzle-shingoki\.com": (ShingokiSolver, PuzzleShingokiGridProvider, PuzzleMasyuPlayer),  # same player as masyu
-            r"https://.*gridpuzzle\.com/traffic-lights": (ShingokiSolver, GridPuzzleShingokiGridProvider, GridPuzzleShingokiPlayer),
-            r"https://.*\.puzzle-skyscrapers\.com": (SkyscrapersSolver, PuzzleSkyscrapersGridProvider, PuzzleSkyScrapersPlayer),
-            r"https://.*gridpuzzle\.com/slitherlink": (SurizaSolver, GridPuzzleSlitherlinkGridProvider, GridPuzzleSlitherlinkPlayer),
-            r"https://.*gridpuzzle\.com/snake": (SnakeSolver, GridPuzzleSnakeGridProvider, GridPuzzleSnakePlayer),
-            r"https://.*\.puzzle-star-battle\.com": (StarBattleSolver, PuzzleStarBattleGridProvider, PuzzleStarBattlePlayer),
-            r"https://.*gridpuzzle\.com/starbattle": (StarBattleSolver, GridPuzzleStarBattleGridProvider, GridPuzzleStarBattlePlayer),
-            r"https://starbattle\.puzzlebaron\.com/init2\.php": (StarBattleSolver, PuzzleBaronStarBattleGridProvider, PuzzleBaronStarBattlePlayer),
-            r"https://www\.linkedin\.com/games/queens": (StarBattleSolver, QueensGridProvider, QueensPlayer),
-            r"https://.*gridpuzzle\.com/stars-and-arrows": (StarsAndArrowsSolver, GridPuzzleStarsAndArrowsGridProvider, GridPuzzleStarsAndArrowsPlayer),
-            r"https://.*\.puzzle-stitches\.com": (StitchesSolver, PuzzleStitchesGridProvider, PuzzleStitchesPlayer),
-            r"https://.*gridpuzzle\.com/str8ts": (Str8tsSolver, GridPuzzleStr8tsGridProvider, GridPuzzleStr8tsPlayer),
-            r"https://.*\.puzzle-sudoku\.com": (SudokuSolver, PuzzleSudokuGridProvider, PuzzleSudokuPlayer),
-            r"https://escape-sudoku.com/": (SudokuSolver, EscapeSudokuGridProvider, None),
-            r"https://.*\.puzzle-loop\.com": (SurizaSolver, PuzzleSurizaGridProvider, PuzzleMasyuPlayer),  # same player as masyu
-            r"https://playsumplete\.com/": (SumpleteSolver, PlaySumpleteGridProvider, None),
-            r"https://www\.linkedin\.com/games/tango": (BinairoPlusSolver, TangoGridProvider, TangoPlayer),
-            r"https://.*\.puzzle-tapa\.com": (TapaSolver, PuzzleTapaGridProvider, PuzzleTapaPlayer),
-            r"https://.*gridpuzzle\.com/tasukuea": (TasukueaSolver, GridPuzzleTasukueaGridProvider, GridPuzzleTasukueaPlayer),
-            r"https://.*gridpuzzle\.com/tatamibari": (TatamibariSolver, GridPuzzleTatamibariGridProvider, GridPuzzleTatamibariPlayer),
-            r"https://.*\.puzzle-galaxies\.com": (TentaiShowSolver, PuzzleGalaxiesGridProvider, PuzzleGalaxiesPlayer),
-            r"https://.*gridpuzzle\.com/galaxies": (TentaiShowSolver, GridPuzzleGalaxiesGridProvider, GridPuzzleGalaxiesPlayer),
-            r"https://.*\.puzzle-tents\.com": (TentsSolver, PuzzleTentsGridProvider, PuzzleTentsPlayer),
-            r"https://campsites\.puzzlebaron\.com/init2\.php": (TentsSolver, PuzzleBaronCampsitesGridProvider, PuzzleBaronCampsitesPlayer),
-            r"https://.*\.puzzle-thermometers\.com": (ThermometersSolver, PuzzleThermometersGridProvider, PuzzleThermometersPlayer),
-            r"https://.*gridpuzzle\.com/tilepaint": (TilePaintSolver, GridPuzzleTilePaintGridProvider, GridPuzzleTilePaintPlayer),
-            r"https://.*gridpuzzle\.com/trilogy": (TrilogySolver, GridPuzzleTrilogyGridProvider, GridPuzzleTrilogyPlayer),
-            r"https://vectors\.puzzlebaron\.com/init2\.php": (VectorsSolver, PuzzleBaronVectorsGridProvider, PuzzleBaronVectorsPlayer),
-            r"https://.*gridpuzzle\.com/wamuzu": (WamazuSolver, GridPuzzleWamazuGridProvider, GridPuzzleWamazuPlayer),
-            r"https://.*gridpuzzle\.com/yajilin": (YajilinSolver, GridPuzzleYajilinGridProvider, GridPuzzleYajilinPlayer),
-            r"https://.*gridpuzzle\.com/yajikabe": (YajikabeSolver, GridPuzzleYajikabeGridProvider, GridPuzzleYajikabePlayer),
-            r"https://.*\.puzzle-yin-yang\.com": (YinYangSolver, PuzzleYinYangGridProvider, PuzzleBinairoPlayer),  # same player as binairo
-            r"https://www\.linkedin\.com/games/zip": (ZipSolver, ZipGridProvider, ZipPlayer),
-        }
+        # Return the registry's patterns for backward compatibility if needed
+        return GameRegistry.get_all_patterns()
