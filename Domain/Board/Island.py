@@ -128,6 +128,9 @@ class Island:
         return isinstance(other,
                           Island) and self.position == other.position and self.bridges_count == other.bridges_count and self.direction_position_bridges == other.direction_position_bridges
 
+    def __hash__(self):
+        return hash(self.position)
+
     def __repr__(self):
         if self.has_no_bridge():
             return ' · '
