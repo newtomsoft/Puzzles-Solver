@@ -160,6 +160,14 @@ class IslandGrid(Grid[Island]):
             visited_flat.update(visited)
         return visited_list
 
+    def compute_linear_connected_cells(self, exclude_without_bridge=False) -> list[set[Island]]:
+        connected_positions_list = self.compute_linear_connected_positions(exclude_without_bridge)
+        connected_islands_list = []
+        for connected_positions in connected_positions_list:
+            connected_islands = {self.islands[position] for position in connected_positions}
+            connected_islands_list.append(connected_islands)
+        return connected_islands_list
+
     def _depth_first_linear_search_islands(self, position: Position, previous_position=None, visited_positions=None, crossed_positions=None) -> set[Position]:
         if visited_positions is None:
             visited_positions = set()
