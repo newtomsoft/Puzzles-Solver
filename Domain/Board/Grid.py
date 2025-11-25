@@ -47,6 +47,8 @@ class Grid[T](GridBase[T]):
         column_ = 3 * (row * columns_number + column)
         number_column_ = 3 * (row * columns_number + column + 1)
         grid_element = grid_str[column_: number_column_]
+        if grid_element is None:
+            return None
         if is_integer(grid_element.strip()):
             return int(grid_element)
         if element_type == type(Island):

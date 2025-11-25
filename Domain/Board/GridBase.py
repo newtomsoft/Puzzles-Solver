@@ -82,6 +82,9 @@ class GridBase[T]:
     def get_index_from_position(self, position: Position) -> int:
         return position.r * self.columns_number + position.c
 
+    def get_positions(self):
+        return [Position(r, c) for r in range(self.rows_number) for c in range(self.columns_number)]
+
     def get_position_from_index(self, index: int) -> Position:
         return Position(index // self.columns_number, index % self.columns_number)
 

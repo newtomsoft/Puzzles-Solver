@@ -9,7 +9,7 @@ class GridPuzzleCanvasPlayer:
         for index, position in enumerate(connected_positions[:-1]):
             next_position = connected_positions[index + 1]
             direction = position.direction_to(next_position)
-            self._trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0)
+            self._trace_direction_from_position(position, direction, page, cell_width, cell_height, x0, y0)
 
     @staticmethod
     def _get_connected_positions(island_grid: IslandGrid, end_with_first: bool = False) -> list[Position]:
@@ -26,7 +26,7 @@ class GridPuzzleCanvasPlayer:
         return connected_positions
 
     @staticmethod
-    def _trace_direction_from_position(direction, position, page, cell_width, cell_height, x0, y0):
+    def _trace_direction_from_position(position: Position, direction: Direction, page, cell_width, cell_height, x0, y0):
         if direction == Direction.right():
             page.mouse.move(x0 + cell_width / 2 + position.c * cell_width, y0 + cell_height / 2 + position.r * cell_height)
             page.mouse.down()

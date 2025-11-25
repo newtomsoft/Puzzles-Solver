@@ -148,7 +148,7 @@ class IslandGrid(Grid[Island]):
 
         return visited_positions
 
-    def get_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
+    def compute_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
         concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
         visited_list: list[set[Position]] = []
         visited_flat: set[Position] = set()
@@ -159,6 +159,14 @@ class IslandGrid(Grid[Island]):
             visited_list.append(visited)
             visited_flat.update(visited)
         return visited_list
+
+    def compute_linear_connected_cells(self, exclude_without_bridge=False) -> list[set[Island]]:
+        connected_positions_list = self.compute_linear_connected_positions(exclude_without_bridge)
+        connected_islands_list = []
+        for connected_positions in connected_positions_list:
+            connected_islands = {self.islands[position] for position in connected_positions}
+            connected_islands_list.append(connected_islands)
+        return connected_islands_list
 
     def _depth_first_linear_search_islands(self, position: Position, previous_position=None, visited_positions=None, crossed_positions=None) -> set[Position]:
         if visited_positions is None:
@@ -223,7 +231,8 @@ class IslandGrid(Grid[Island]):
             kept_bridges_by_visited_positions = {position: self.islands[position].bridges_count - 1}
         visited_positions.append(position)
         position_bridges = self.islands[position].direction_position_bridges.values()
-        next_positions_candidates = [position_bridges[0] for position_bridges in position_bridges if position_bridges[1] > 0 and position_bridges[0] != previous_position]
+        next_positions_candidates = [position_bridges[0] for position_bridges in position_bridges if
+                                     position_bridges[1] > 0 and position_bridges[0] != previous_position]
         if len(next_positions_candidates) == 0:
             return visited_positions
         if len(next_positions_candidates) == 1:

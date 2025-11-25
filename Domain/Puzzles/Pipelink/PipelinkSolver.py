@@ -47,7 +47,7 @@ class PipelinkSolver(GameSolver):
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
-            connected_positions = self._island_grid.get_linear_connected_positions(exclude_without_bridge=True)
+            connected_positions = self._island_grid.compute_linear_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 self._previous_solution = self._island_grid
                 return self._island_grid, propositions_count

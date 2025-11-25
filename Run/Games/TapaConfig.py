@@ -1,0 +1,12 @@
+from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
+from GridPlayers.PuzzleMobiles.PuzzleTapaPlayer import PuzzleTapaPlayer
+from GridProviders.PuzzlesMobile.PuzzleTapaGridProvider import PuzzleTapaGridProvider
+from Run.GameRegistry import GameRegistry
+
+
+def register_tapa():
+    GameRegistry.register_game(
+        r"https://.*\.puzzle-tapa\.com", 
+        PuzzleTapaGridProvider, 
+        PuzzleTapaPlayer
+    )(TapaSolver)
