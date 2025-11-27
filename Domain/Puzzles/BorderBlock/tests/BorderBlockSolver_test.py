@@ -177,6 +177,59 @@ class BorderBlockSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_10x10_evil_k9724(self):
+        """https://gridpuzzle.com/bodaburokku/k9724"""
+        grid = Grid([
+            [_, _, 16, _, 10, _, _, _, _, _],
+            [_, _, _, 2, _, 21, _, _, 6, _],
+            [_, _, _, _, _, _, _, _, _, 4],
+            [_, _, 7, _, 15, 17, _, 11, _, _],
+            [_, 3, _, _, _, _, _, _, _, _],
+            [_, _, 9, _, _, _, _, _, _, _],
+            [_, _, 5, _, 1, 1, _, _, 12, _],
+            [_, _, _, _, _, 1, 13, _, 18, _],
+            [14, _, 20, _, 1, _, _, _, _, _],
+            [_, _, 8, _, _, _, _, _, _, 19]
+        ])
+        dots_positions = [
+            Position(-0.5, 0.5), Position(-0.5, 2.5), Position(-0.5, 7.5), Position(0.5, 0.5), Position(0.5, 2.5), Position(0.5, 3.5), Position(0.5, 4.5),
+            Position(0.5, 6.5), Position(0.5, 9.5), Position(1.5, 3.5), Position(1.5, 6.5), Position(2.5, 1.5), Position(2.5, 3.5), Position(2.5, 5.5),
+            Position(2.5, 6.5), Position(2.5, 7.5), Position(2.5, 9.5), Position(3.5, -0.5), Position(3.5, 1.5), Position(3.5, 2.5), Position(3.5, 8.5),
+            Position(4.5, 4.5), Position(4.5, 8.5), Position(5.5, -0.5), Position(5.5, 4.5), Position(6.5, 1.5), Position(6.5, 2.5), Position(7.5, 1.5),
+            Position(7.5, 2.5), Position(7.5, 6.5), Position(8.5, 2.5), Position(8.5, 6.5), Position(8.5, 8.5), Position(8.5, 9.5), Position(9.5, 0.5),
+            Position(9.5, 3.5), Position(9.5, 4.5)
+        ]
+
+        expected_grid = Grid([
+            [3, 16, 16, 10, 10, 10, 10, 10, 6, 6],
+            [3, 2, 2, 2, 15, 21, 21, 6, 6, 4],
+            [3, 2, 7, 7, 15, 15, 15, 6, 4, 4],
+            [3, 3, 7, 17, 15, 17, 13, 11, 4, 12],
+            [9, 3, 9, 17, 17, 17, 13, 11, 11, 12],
+            [9, 9, 9, 9, 9, 13, 13, 13, 13, 12],
+            [14, 9, 5, 9, 1, 1, 13, 12, 12, 12],
+            [14, 14, 5, 1, 1, 1, 13, 12, 18, 12],
+            [14, 8, 20, 1, 1, 1, 1, 18, 18, 12],
+            [14, 8, 8, 8, 1, 19, 19, 19, 19, 19],
+        ])
+        # other =
+        # 3 16 16 10 10 10 10 10 6 6
+        # 3 2 2 2 15 21 21 6 6 4
+        # 3 2 7 7 15 15 15 6 4 4
+        # 3 3 7 17 15 17 13 11 4 12
+        # 9 3 9 17 17 17 13 11 11 12
+        # 9 9 9 9 9 13 13 13 13 12
+        # 14 9 5 9 1 1 13 12 12 12
+        # 14 14 14 1 1 1 13 12 18 12
+        # 14 8 20 1 1 1 1 18 18 12
+        # 14 8 8 8 1 19 19 19 19 19
+
+        game_solver = BorderBlockSolver(grid, dots_positions)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
