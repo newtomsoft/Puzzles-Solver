@@ -5,6 +5,7 @@ import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
 import Run.Games.BinairoPlusConfig
+import Run.Games.BorderBlockConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
 import Run.Games.CountryRoadConfig
@@ -106,6 +107,7 @@ class UrlPatternMatcher:
         if cls._initialized:
             return
 
+        Run.Games.BorderBlockConfig.register_border_block()
         Run.Games.SudokuConfig.register_sudoku()
         Run.Games.ShingokiConfig.register_shingoki()
         Run.Games.AkariConfig.register_akari()

@@ -74,18 +74,15 @@ class GridPuzzleGridCanvasProvider(GridPuzzleProvider):
 
     @staticmethod
     def convert_pattern(pattern):
-        # On sépare par lignes ($)
         lignes = pattern.split('$')
 
         grid = []
         for ligne in lignes:
-            # On sépare par cellules (|) et on ignore le dernier élément vide
             cellules_brutes = ligne.split('|')[:-1]
 
             ligne_convertie = []
             for cell in cellules_brutes:
                 if cell == '':
-                    # Remplacement par None
                     ligne_convertie.append(None)
                 else:
                     ligne_convertie.append(int(cell))
