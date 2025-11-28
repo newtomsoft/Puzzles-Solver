@@ -25,6 +25,7 @@ https://vectors.puzzlebaron.com/init2.php?sg=7
 ## GridPuzzle
 https://gridpuzzle.com/creek/evil-15  
 https://gridpuzzle.com/balance-loop/evil-12  
+https://gridpuzzle.com/bodaburokku/evil-10  
 https://gridpuzzle.com/bridges/size-12  
 https://gridpuzzle.com/chocona/evil-9  
 https://gridpuzzle.com/clouds/size-15  
