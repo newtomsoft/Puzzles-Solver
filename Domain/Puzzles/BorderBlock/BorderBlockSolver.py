@@ -1,16 +1,18 @@
 from itertools import combinations
+from typing import Collection
 
 from z3 import Solver, Int, And, Not, Or, Distinct, ArithRef, sat
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class BorderBlockSolver(GameSolver):
     empty = None
 
-    def __init__(self, grid: Grid, dots: list[Position]):
+    def __init__(self, grid: Grid, dots: Collection[Position]):
         self._input_grid = grid
         self._dots = dots
         self._rows_number = self._input_grid.rows_number
@@ -40,16 +42,12 @@ class BorderBlockSolver(GameSolver):
             if len(not_compliant_shapes) == 0:
                 return proposition_grid, proposition_count
 
-            self._solver.add(Not(And([self._grid_z3[position] == value for position, value in proposition_grid])))
-
-            # for circle_value, shapes_positions in not_compliant_shapes:
-            #     selected_circle_position = next(iter(self.circle_positions[circle_value].straddled_neighbors()))
-            #     for shape_positions in shapes_positions:
-            #         if selected_circle_position not in shape_positions:
-            #             shape_constraints = [self._grid_z3[position] == circle_value for position in shape_positions]
-            #             around_constraints = [self._grid_z3[position] == proposition_grid[position] for position in ShapeGenerator.around_shape(shape_positions) if position in proposition_grid]
-            #             constraint = Not(And(shape_constraints + around_constraints))
-            #             self._solver.add(constraint)
+            for region_id, shapes_positions in not_compliant_shapes:
+                positions = frozenset().union(*shapes_positions)
+                shape_constraints = [self._grid_z3[position] == region_id for position in positions]
+                around_constraints = [self._grid_z3[position] != region_id for position in ShapeGenerator.around_shape(positions) if position in proposition_grid]
+                constraint = Not(And(shape_constraints + around_constraints))
+                self._solver.add(constraint)
 
         return Grid.empty(), proposition_count
 
