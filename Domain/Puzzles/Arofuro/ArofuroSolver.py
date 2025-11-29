@@ -1,4 +1,4 @@
-from z3 import Solver, Int, And, Not, Implies, If, Sum, sat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -17,21 +17,22 @@ class ArofuroSolver(GameSolver):
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
-        self._solver = Solver()
-        self._grid_z3 = None
-        self._region_id_z3 = None
-        self._rank_z3 = None
+        self._model = cp_model.CpModel()
+        self._grid_vars = None
+        self._region_id_vars = None
+        self._rank_vars = None
         self._previous_solution = Grid.empty()
+        self._solver = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Int(f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
-        self._region_id_z3 = Grid([[Int(f"region_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
-        self._rank_z3 = Grid([[Int(f"rank_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._grid_vars = Grid([[self._model.NewIntVar(0, 4, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._region_id_vars = Grid([[self._model.NewIntVar(-1, self._rows_number * self._columns_number, f"region_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._rank_vars = Grid([[self._model.NewIntVar(0, self._rows_number * self._columns_number, f"rank_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def solution_to_string(self) -> str:
         value_by_arrow = {0: '•', 1: '↑', 2: '↓', 3: '→', 4: '←'}
-        if not self._solver.assertions():
+        if self._solver is None:
             self.get_solution()
 
         grid_str = ""
@@ -43,12 +44,14 @@ class ArofuroSolver(GameSolver):
         return grid_str.strip('\n')
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if self._solver is None:
             self._init_solver()
 
-        if self._solver.check() == sat:
-            model = self._solver.model()
-            solution_grid = Grid([[model.eval(self._grid_z3[r][c]).as_long() for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._solver = cp_model.CpSolver()
+        status = self._solver.Solve(self._model)
+
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            solution_grid = Grid([[self._solver.Value(self._grid_vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)])
             self._previous_solution = solution_grid
             return solution_grid
         return Grid.empty()
@@ -57,12 +60,18 @@ class ArofuroSolver(GameSolver):
         if self._previous_solution == Grid.empty():
             return self.get_solution()
 
-        constraints = []
+        negated_constraints_bools = []
         for position, _ in self._grid:
             if self._previous_solution[position] != 0:  # Only constrain arrows
-                constraints.append(self._grid_z3[position] == self._previous_solution[position])
+                b = self._model.NewBoolVar(f"neq_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] != self._previous_solution[position]).OnlyEnforceIf(b)
+                self._model.Add(self._grid_vars[position] == self._previous_solution[position]).OnlyEnforceIf(b.Not())
+                negated_constraints_bools.append(b)
         
-        self._solver.add(Not(And(constraints)))
+        if not negated_constraints_bools:
+            return Grid.empty()
+
+        self._model.AddBoolOr(negated_constraints_bools)
         return self.get_solution()
 
     def _add_constraints(self):
@@ -73,116 +82,119 @@ class ArofuroSolver(GameSolver):
         self._add_count_constraints()
 
     def _add_domain_constraints(self):
-        for position, _ in self._grid:
-            self._solver.add(And(self._grid_z3[position] >= 0, self._grid_z3[position] <= 4))
-            self._solver.add(self._rank_z3[position] >= 0)
-            self._solver.add(self._region_id_z3[position] >= -1)
+        # Already handled by variable initialization
+        pass
 
     def _add_input_constraints(self):
-        number_cells = []
-        for position, _ in self._grid:
-            val = self._grid[position]
+        for position, val in self._grid:
             if val == self.Black:
-                self._solver.add(self._grid_z3[position] == 0)
-                self._solver.add(self._rank_z3[position] == 0)
-                # Assign a special region_id to BlackCells so arrows cannot point to them
-                self._solver.add(self._region_id_z3[position] == -1)
+                self._model.Add(self._grid_vars[position] == 0)
+                self._model.Add(self._rank_vars[position] == 0)
+                self._model.Add(self._region_id_vars[position] == -1)
             elif val != self.Empty:
-                # It's a number cell
-                self._solver.add(self._grid_z3[position] == 0)
-                self._solver.add(self._rank_z3[position] == 0)
-                # Unique region ID for each number cell. Let's use linear index + 1
+                self._model.Add(self._grid_vars[position] == 0)
+                self._model.Add(self._rank_vars[position] == 0)
                 region_id = self._grid.get_index_from_position(position) + 1
-                self._solver.add(self._region_id_z3[position] == region_id)
-                number_cells.append(position)
-            else:
-                # It's an arrow cell
-                self._solver.add(self._grid_z3[position] >= 1)
-                self._solver.add(self._rank_z3[position] > 0)
-                # Region ID must be one of the number cells' IDs
-                # (Optimization: This is implicitly enforced by flow, but good to have bounds)
-
-        # Optimization: If we know all possible region IDs, we could constrain them.
-        # But flow constraints will handle it.
+                self._model.Add(self._region_id_vars[position] == region_id)
+            else: # Arrow cell
+                self._model.Add(self._grid_vars[position] >= 1)
+                self._model.Add(self._rank_vars[position] > 0)
 
     def _add_adjacency_constraints(self):
-        # No two orthogonally adjacent arrows can point in the same direction.
         for position, _ in self._grid:
-            current = self._grid_z3[position]
+            current = self._grid_vars[position]
 
             # Right neighbor
             right_pos = position.right
             if right_pos in self._grid:
-                right = self._grid_z3[right_pos]
-                self._solver.add(Implies(And(current > 0, right > 0), current != right))
+                right = self._grid_vars[right_pos]
+
+                b_current = self._model.NewBoolVar("")
+                self._model.Add(current > 0).OnlyEnforceIf(b_current)
+                self._model.Add(current == 0).OnlyEnforceIf(b_current.Not())
+
+                b_right = self._model.NewBoolVar("")
+                self._model.Add(right > 0).OnlyEnforceIf(b_right)
+                self._model.Add(right == 0).OnlyEnforceIf(b_right.Not())
+
+                self._model.Add(current != right).OnlyEnforceIf([b_current, b_right])
 
             # Bottom neighbor
             bottom_pos = position.down
             if bottom_pos in self._grid:
-                bottom = self._grid_z3[bottom_pos]
-                self._solver.add(Implies(And(current > 0, bottom > 0), current != bottom))
+                bottom = self._grid_vars[bottom_pos]
+
+                b_current = self._model.NewBoolVar("")
+                self._model.Add(current > 0).OnlyEnforceIf(b_current)
+                self._model.Add(current == 0).OnlyEnforceIf(b_current.Not())
+
+                b_bottom = self._model.NewBoolVar("")
+                self._model.Add(bottom > 0).OnlyEnforceIf(b_bottom)
+                self._model.Add(bottom == 0).OnlyEnforceIf(b_bottom.Not())
+
+                self._model.Add(current != bottom).OnlyEnforceIf([b_current, b_bottom])
 
     def _add_flow_constraints(self):
         for position, _ in self._grid:
-            # If it's an arrow, it must point to a valid neighbor
-            # And that neighbor must have the same region ID and lower rank
-
             # North
             north_pos = position.up
             if north_pos in self._grid:
-                points_north = self._grid_z3[position] == self.up
-                target_north = north_pos
-                self._solver.add(Implies(points_north, And(
-                    self._region_id_z3[position] == self._region_id_z3[target_north],
-                    self._rank_z3[position] == self._rank_z3[target_north] + 1
-                )))
+                points_north = self._model.NewBoolVar(f"points_north_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] == self.up).OnlyEnforceIf(points_north)
+                self._model.Add(self._grid_vars[position] != self.up).OnlyEnforceIf(points_north.Not())
+
+                self._model.Add(self._region_id_vars[position] == self._region_id_vars[north_pos]).OnlyEnforceIf(points_north)
+                self._model.Add(self._rank_vars[position] == self._rank_vars[north_pos] + 1).OnlyEnforceIf(points_north)
             else:
-                self._solver.add(self._grid_z3[position] != self.up)  # Cannot point North if at top edge
+                self._model.Add(self._grid_vars[position] != self.up)
 
             # South
             south_pos = position.down
             if south_pos in self._grid:
-                points_south = self._grid_z3[position] == self.down
-                target_south = south_pos
-                self._solver.add(Implies(points_south, And(
-                    self._region_id_z3[position] == self._region_id_z3[target_south],
-                    self._rank_z3[position] == self._rank_z3[target_south] + 1
-                )))
+                points_south = self._model.NewBoolVar(f"points_south_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] == self.down).OnlyEnforceIf(points_south)
+                self._model.Add(self._grid_vars[position] != self.down).OnlyEnforceIf(points_south.Not())
+
+                self._model.Add(self._region_id_vars[position] == self._region_id_vars[south_pos]).OnlyEnforceIf(points_south)
+                self._model.Add(self._rank_vars[position] == self._rank_vars[south_pos] + 1).OnlyEnforceIf(points_south)
             else:
-                self._solver.add(self._grid_z3[position] != self.down)
+                self._model.Add(self._grid_vars[position] != self.down)
 
             # East
             east_pos = position.right
             if east_pos in self._grid:
-                points_east = self._grid_z3[position] == self.right
-                target_east = east_pos
-                self._solver.add(Implies(points_east, And(
-                    self._region_id_z3[position] == self._region_id_z3[target_east],
-                    self._rank_z3[position] == self._rank_z3[target_east] + 1
-                )))
+                points_east = self._model.NewBoolVar(f"points_east_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] == self.right).OnlyEnforceIf(points_east)
+                self._model.Add(self._grid_vars[position] != self.right).OnlyEnforceIf(points_east.Not())
+
+                self._model.Add(self._region_id_vars[position] == self._region_id_vars[east_pos]).OnlyEnforceIf(points_east)
+                self._model.Add(self._rank_vars[position] == self._rank_vars[east_pos] + 1).OnlyEnforceIf(points_east)
             else:
-                self._solver.add(self._grid_z3[position] != self.right)
+                self._model.Add(self._grid_vars[position] != self.right)
 
             # West
             west_pos = position.left
             if west_pos in self._grid:
-                points_west = self._grid_z3[position] == self.left
-                target_west = west_pos
-                self._solver.add(Implies(points_west, And(
-                    self._region_id_z3[position] == self._region_id_z3[target_west],
-                    self._rank_z3[position] == self._rank_z3[target_west] + 1
-                )))
+                points_west = self._model.NewBoolVar(f"points_west_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] == self.left).OnlyEnforceIf(points_west)
+                self._model.Add(self._grid_vars[position] != self.left).OnlyEnforceIf(points_west.Not())
+
+                self._model.Add(self._region_id_vars[position] == self._region_id_vars[west_pos]).OnlyEnforceIf(points_west)
+                self._model.Add(self._rank_vars[position] == self._rank_vars[west_pos] + 1).OnlyEnforceIf(points_west)
             else:
-                self._solver.add(self._grid_z3[position] != self.left)
+                self._model.Add(self._grid_vars[position] != self.left)
 
     def _add_count_constraints(self):
-        for position, _ in self._grid:
-            val = self._grid[position]
+        for position, val in self._grid:
             if val is not None and val != self.Black:
                 region_id = self._grid.get_index_from_position(position) + 1
 
-                count_in_region = Sum([If(self._region_id_z3[Position(i, j)] == region_id, 1, 0)
-                                       for i in range(self._rows_number)
-                                       for j in range(self._columns_number)])
+                region_indicators = []
+                for r in range(self._rows_number):
+                    for c in range(self._columns_number):
+                        indicator = self._model.NewBoolVar(f"in_region_{region_id}_{r}_{c}")
+                        self._model.Add(self._region_id_vars[r][c] == region_id).OnlyEnforceIf(indicator)
+                        self._model.Add(self._region_id_vars[r][c] != region_id).OnlyEnforceIf(indicator.Not())
+                        region_indicators.append(indicator)
 
-                self._solver.add(count_in_region == val + 1)
+                self._model.Add(sum(region_indicators) == val + 1)
