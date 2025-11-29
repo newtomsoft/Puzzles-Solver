@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
+from Domain.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
 
 _ = From1ToXSolver.empty
 
