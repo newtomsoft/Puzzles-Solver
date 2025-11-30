@@ -2,6 +2,7 @@
 from itertools import combinations
 from typing import FrozenSet, Generator, TypeVar, Iterable, Any
 
+import numpy as np
 from bitarray import bitarray
 
 from Domain.Board.Direction import Direction
@@ -10,6 +11,10 @@ from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from Utils.colors import console_back_ground_colors, console_police_colors
 
 T = TypeVar('T')
+
+
+def safe_max(row):
+    return max(x for x in row if x is not None)
 
 
 class GridBase[T]:
@@ -57,7 +62,8 @@ class GridBase[T]:
         return min(min(self._matrix, key=lambda row: min(row)))
 
     def max_value(self):
-        return max(max(self._matrix, key=lambda row: max(row)))
+        matrice_np = np.array(self._matrix, dtype=float)
+        return np.nanmax(matrice_np)
 
     @property
     def matrix(self):
