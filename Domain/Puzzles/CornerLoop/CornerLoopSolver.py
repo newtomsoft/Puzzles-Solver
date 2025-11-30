@@ -1,3 +1,3 @@
-from Puzzles.Konarupu.KonarupuSolver import KonarupuSolver
+from Domain.Puzzles.Konarupu.KonarupuSolver import KonarupuSolver
 
 CornerLoopSolver = KonarupuSolver
