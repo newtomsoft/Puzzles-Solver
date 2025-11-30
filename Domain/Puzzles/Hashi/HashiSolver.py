@@ -99,10 +99,6 @@ class HashiSolver(GameSolver):
             bridge_vars = list(direction_bridges.values())
             self._model.Add(sum(bridge_vars) == self._island_grid[position].bridges_count)
 
-            for bridges in direction_bridges.values():
-                self._model.Add(bridges >= 0)
-                self._model.Add(bridges <= 2)
-
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is None:
