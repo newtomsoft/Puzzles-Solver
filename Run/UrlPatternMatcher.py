@@ -1,5 +1,6 @@
 ﻿import Run.Games.AkariConfig
 import Run.Games.AquariumConfig
+import Run.Games.ArofuroConfig
 import Run.Games.BalanceLoopConfig
 import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
@@ -107,6 +108,7 @@ class UrlPatternMatcher:
         if cls._initialized:
             return
 
+        Run.Games.ArofuroConfig.register_arofuro()
         Run.Games.BorderBlockConfig.register_border_block()
         Run.Games.SudokuConfig.register_sudoku()
         Run.Games.ShingokiConfig.register_shingoki()

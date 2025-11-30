@@ -12,3 +12,5 @@
 __init__.py
 /videos/
 /CSharp/.idea/
+__pycache__/
+*.py[cod]
