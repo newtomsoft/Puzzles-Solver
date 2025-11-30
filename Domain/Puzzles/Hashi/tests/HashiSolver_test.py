@@ -2,9 +2,7 @@ import unittest
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
-from Domain.Board.Position import Position
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 
 _ = '_'
@@ -44,7 +42,7 @@ class HashiSolverTests(TestCase):
         expected_solution_repr = (
             ' ┌──┐ \n'
             ' └──┘ \n'
-            '      '
+            ' ·  · '
         )
         self.assertEqual(expected_solution_repr, repr(solution))
 
@@ -72,59 +70,19 @@ class HashiSolverTests(TestCase):
             [_, _, 1, _],
             [2, _, _, 2]
         ])
+
+        expected_solution_str = (
+            ' ╶──┬─────╗ \n'
+            ' ·  ║  ║  ║ \n'
+            ' ╷  ║  ├──┤ \n'
+            ' │  ║  │  │ \n'
+            ' │  ·  ╵  │ \n'
+            ' └────────┘ '
+        )
         game_solver = HashiSolver(grid)
 
         solution = game_solver.get_solution()
-        self.assertNotEqual(IslandGrid.empty(), solution)
-
-        expected_island_0_0 = Island(Position(0, 0), 1)
-        expected_island_0_1 = Island(Position(0, 1), 4)
-        expected_island_0_3 = Island(Position(0, 3), 3)
-        expected_island_1_2 = Island(Position(1, 2), 2)
-        expected_island_2_0 = Island(Position(2, 0), 1)
-        expected_island_2_2 = Island(Position(2, 2), 4)
-        expected_island_2_3 = Island(Position(2, 3), 4)
-        expected_island_3_1 = Island(Position(3, 1), 2)
-        expected_island_4_2 = Island(Position(4, 2), 1)
-        expected_island_5_0 = Island(Position(5, 0), 2)
-        expected_island_5_3 = Island(Position(5, 3), 2)
-        expected_island_0_0.set_bridge_to_position(Position(0, 1), 1)
-        expected_island_0_0.set_bridge_to_position(Position(2, 0), 0)
-        expected_island_0_1.set_bridge_to_position(Position(0, 0), 1)
-        expected_island_0_1.set_bridge_to_position(Position(0, 3), 1)
-        expected_island_0_1.set_bridge_to_position(Position(3, 1), 2)
-        expected_island_0_3.set_bridge_to_position(Position(0, 1), 1)
-        expected_island_0_3.set_bridge_to_position(Position(2, 3), 2)
-        expected_island_1_2.set_bridge_to_position(Position(2, 2), 2)
-        expected_island_2_0.set_bridge_to_position(Position(5, 0), 1)
-        expected_island_2_0.set_bridge_to_position(Position(0, 0), 0)
-        expected_island_2_0.set_bridge_to_position(Position(2, 2), 0)
-        expected_island_2_2.set_bridge_to_position(Position(1, 2), 2)
-        expected_island_2_2.set_bridge_to_position(Position(2, 3), 1)
-        expected_island_2_2.set_bridge_to_position(Position(4, 2), 1)
-        expected_island_2_2.set_bridge_to_position(Position(2, 0), 0)
-        expected_island_2_3.set_bridge_to_position(Position(0, 3), 2)
-        expected_island_2_3.set_bridge_to_position(Position(2, 2), 1)
-        expected_island_2_3.set_bridge_to_position(Position(5, 3), 1)
-        expected_island_3_1.set_bridge_to_position(Position(0, 1), 2)
-        expected_island_4_2.set_bridge_to_position(Position(2, 2), 1)
-        expected_island_5_0.set_bridge_to_position(Position(2, 0), 1)
-        expected_island_5_0.set_bridge_to_position(Position(5, 3), 1)
-        expected_island_5_3.set_bridge_to_position(Position(2, 3), 1)
-        expected_island_5_3.set_bridge_to_position(Position(5, 0), 1)
-
-        self.assertEqual(expected_island_0_0, solution[Position(0, 0)])
-        self.assertEqual(expected_island_0_1, solution[Position(0, 1)])
-        self.assertEqual(expected_island_0_3, solution[Position(0, 3)])
-        self.assertEqual(expected_island_1_2, solution[Position(1, 2)])
-        self.assertEqual(expected_island_2_0, solution[Position(2, 0)])
-        self.assertEqual(expected_island_2_2, solution[Position(2, 2)])
-        self.assertEqual(expected_island_2_3, solution[Position(2, 3)])
-        self.assertEqual(expected_island_3_1, solution[Position(3, 1)])
-        self.assertEqual(expected_island_4_2, solution[Position(4, 2)])
-        self.assertEqual(expected_island_5_0, solution[Position(5, 0)])
-        self.assertEqual(expected_island_5_3, solution[Position(5, 3)])
-
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
@@ -136,36 +94,14 @@ class HashiSolverTests(TestCase):
         ])
         game_solver = HashiSolver(grid)
 
+        expected_solution_str = (
+            ' ·  ╶──┐ \n'
+            ' ┌═════┘ \n'
+            ' └══╴  · '
+        )
+
         solution = game_solver.get_solution()
-        self.assertNotEqual(IslandGrid.empty(), solution)
-
-        expected_island_0_1 = Island(Position(0, 1), 1)
-        expected_island_0_2 = Island(Position(0, 2), 2)
-        expected_island_1_0 = Island(Position(1, 0), 3)
-        expected_island_1_2 = Island(Position(1, 2), 3)
-        expected_island_2_0 = Island(Position(2, 0), 3)
-        expected_island_2_1 = Island(Position(2, 1), 2)
-
-        expected_island_0_1.set_bridge_to_position(Position(0, 2), 1)
-        expected_island_0_1.set_bridge_to_position(Position(2, 1), 0)
-        expected_island_0_2.set_bridge_to_position(Position(0, 1), 1)
-        expected_island_0_2.set_bridge_to_position(Position(1, 2), 1)
-        expected_island_1_0.set_bridge_to_position(Position(1, 2), 2)
-        expected_island_1_0.set_bridge_to_position(Position(2, 0), 1)
-        expected_island_1_2.set_bridge_to_position(Position(1, 0), 2)
-        expected_island_1_2.set_bridge_to_position(Position(0, 2), 1)
-        expected_island_2_0.set_bridge_to_position(Position(1, 0), 1)
-        expected_island_2_0.set_bridge_to_position(Position(2, 1), 2)
-        expected_island_2_1.set_bridge_to_position(Position(2, 0), 2)
-        expected_island_2_1.set_bridge_to_position(Position(0, 1), 0)
-
-        self.assertEqual(expected_island_0_1, solution[Position(0, 1)])
-        self.assertEqual(expected_island_0_2, solution[Position(0, 2)])
-        self.assertEqual(expected_island_1_0, solution[Position(1, 0)])
-        self.assertEqual(expected_island_1_2, solution[Position(1, 2)])
-        self.assertEqual(expected_island_2_0, solution[Position(2, 0)])
-        self.assertEqual(expected_island_2_1, solution[Position(2, 1)])
-
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
@@ -176,28 +112,13 @@ class HashiSolverTests(TestCase):
         ])
         game_solver = HashiSolver(grid)
 
+        expected_solution_repr = (
+            ' ╶──┐ \n'
+            ' ╶──┘ '
+        )
+
         solution = game_solver.get_solution()
-        self.assertNotEqual(IslandGrid.empty(), solution)
-
-        expected_island_0_0 = Island(Position(0, 0), 1)
-        expected_island_0_1 = Island(Position(0, 1), 2)
-        expected_island_1_0 = Island(Position(1, 0), 1)
-        expected_island_1_1 = Island(Position(1, 1), 2)
-
-        expected_island_0_0.set_bridge_to_position(Position(0, 1), 1)
-        expected_island_0_0.set_bridge_to_position(Position(1, 0), 0)
-        expected_island_0_1.set_bridge_to_position(Position(0, 0), 1)
-        expected_island_0_1.set_bridge_to_position(Position(1, 1), 1)
-        expected_island_1_0.set_bridge_to_position(Position(1, 1), 1)
-        expected_island_1_0.set_bridge_to_position(Position(0, 0), 0)
-        expected_island_1_1.set_bridge_to_position(Position(1, 0), 1)
-        expected_island_1_1.set_bridge_to_position(Position(0, 1), 1)
-
-        self.assertEqual(expected_island_0_0, solution[Position(0, 0)])
-        self.assertEqual(expected_island_0_1, solution[Position(0, 1)])
-        self.assertEqual(expected_island_1_0, solution[Position(1, 0)])
-        self.assertEqual(expected_island_1_1, solution[Position(1, 1)])
-
+        self.assertEqual(expected_solution_repr, repr(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 
@@ -214,11 +135,23 @@ class HashiSolverTests(TestCase):
             [2, _, _, _, _, 4, _, _, 2, _],
             [_, 2, _, _, _, _, _, _, _, 3]
         ])
+
+        expected_solution_str = (
+            ' ┌════─┬────────┬───────────╗ \n'
+            ' │  ·  │  ·  ║  │  ╶─────┐  ║ \n'
+            ' │  ·  │  ·  ║  │  ·  ·  │  ║ \n'
+            ' │  ·  │  ·  ║  │  ·  ·  │  │ \n'
+            ' │  ·  ║  ·  ║  │  ╶─────┤  │ \n'
+            ' ║  ·  ║  ·  ║  │  ·  ·  │  │ \n'
+            ' ║  ·  ║  ·  ║  │  ·  ·  │  │ \n'
+            ' ·  ·  ╚═════╝  │  ·  ·  │  │ \n'
+            ' ╶═════════════─┴────────┘  │ \n'
+            ' ·  ╶═══════════════════════┘ '
+        )
+
         game_solver = HashiSolver(grid)
-
         solution = game_solver.get_solution()
-        self.assertNotEqual(IslandGrid.empty(), solution)
-
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(IslandGrid.empty(), other_solution)
 

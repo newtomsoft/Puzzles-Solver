@@ -134,38 +134,85 @@ class Island:
     def __repr__(self):
         if self.has_no_bridge():
             return ' · '
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(
-                Direction.right()) != 0:
-            return '─┼─'
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(Direction.right()) != 0:
-            return '─┴─'
-        if self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0 and self.bridges_number(Direction.right()) != 0:
-            return '─┬─'
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0:
-            return '─┤ '
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.right()) != 0:
-            return ' ├─'
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.left()) != 0:
-            return '─┘ '
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.right()) != 0:
-            return ' └─'
-        if self.bridges_number(Direction.down()) != 0 and self.bridges_number(Direction.left()) != 0:
-            return '─┐ '
-        if self.bridges_number(Direction.right()) != 0 and self.bridges_number(Direction.down()) != 0:
-            return ' ┌─'
-        if self.bridges_number(Direction.up()) != 0 and self.bridges_number(Direction.down()) != 0:
-            return ' │ '
-        if self.bridges_number(Direction.down()) != 0:
-            return ' ╷ '
-        if self.bridges_number(Direction.up()) != 0:
-            return ' ╵ '
-        if self.bridges_number(Direction.right()) != 0 and self.bridges_number(Direction.left()) != 0:
-            return '───'
-        if self.bridges_number(Direction.right()) != 0:
-            return ' ╶─'
-        if self.bridges_number(Direction.left()) != 0:
-            return '─╴ '
-        return ' X '
+
+        up = self.bridges_number(Direction.up())
+        down = self.bridges_number(Direction.down())
+        left = self.bridges_number(Direction.left())
+        right = self.bridges_number(Direction.right())
+
+        left_char = ' '
+        if left == 1:
+            left_char = '─'
+        elif left == 2:
+            left_char = '═'
+
+        right_char = ' '
+        if right == 1:
+            right_char = '─'
+        elif right == 2:
+            right_char = '═'
+
+        center_map = {
+            (1, 1, 1, 1): '┼',
+            (2, 2, 2, 2): '╬',
+            (2, 2, 1, 1): '╫',
+            (1, 1, 2, 2): '╪',
+
+            (0, 1, 1, 1): '┬',
+            (0, 2, 2, 2): '╦',
+            (0, 1, 2, 2): '╤',
+            (0, 2, 1, 1): '╥',
+
+            (1, 0, 1, 1): '┴',
+            (2, 0, 2, 2): '╩',
+            (1, 0, 2, 2): '╧',
+            (2, 0, 1, 1): '╨',
+
+            (1, 1, 0, 1): '├',
+            (2, 2, 0, 2): '╠',
+            (1, 1, 0, 2): '╞',
+            (2, 2, 0, 1): '╟',
+
+            (1, 1, 1, 0): '┤',
+            (2, 2, 2, 0): '╣',
+            (1, 1, 2, 0): '╡',
+            (2, 2, 1, 0): '╢',
+
+            (1, 0, 1, 0): '┘', (2, 0, 2, 0): '╝', (2, 0, 1, 0): '╜', (1, 0, 2, 0): '╛',
+            (1, 0, 0, 1): '└', (2, 0, 0, 2): '╚', (2, 0, 0, 1): '╙', (1, 0, 0, 2): '╘',
+            (0, 1, 1, 0): '┐', (0, 2, 2, 0): '╗', (0, 2, 1, 0): '╖', (0, 1, 2, 0): '╕',
+            (0, 1, 0, 1): '┌', (0, 2, 0, 2): '╔', (0, 2, 0, 1): '╓', (0, 1, 0, 2): '╒',
+
+            (1, 1, 0, 0): '│', (2, 2, 0, 0): '║',
+            (0, 0, 1, 1): '─', (0, 0, 2, 2): '═',
+
+            (1, 0, 0, 0): '╵', (2, 0, 0, 0): '║',
+            (0, 1, 0, 0): '╷', (0, 2, 0, 0): '║',
+            (0, 0, 1, 0): '╴', (0, 0, 2, 0): '═',
+            (0, 0, 0, 1): '╶', (0, 0, 0, 2): '═',
+        }
+
+        center_char = center_map.get((up, down, left, right))
+
+        if center_char is None:
+            if up and down and left and right:
+                center_char = '┼'
+            elif up and left and right:
+                center_char = '┴'
+            elif down and left and right:
+                center_char = '┬'
+            elif up and down and left:
+                center_char = '┤'
+            elif up and down and right:
+                center_char = '├'
+            elif up and down:
+                center_char = '│' if up == 1 else '║'  # Approximation verticale
+            elif left and right:
+                center_char = '─' if left == 1 else '═'  # Approximation horizontale
+            else:
+                center_char = 'X'
+
+        return f'{left_char}{center_char}{right_char}'
 
     def bridges_number(self, direction: Direction):
         return self.direction_position_bridges.get(direction, (0, 0))[1]
