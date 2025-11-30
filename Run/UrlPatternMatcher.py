@@ -47,6 +47,7 @@ import Run.Games.MeadowsConfig
 import Run.Games.MidLoopConfig
 import Run.Games.MinesweeperConfig
 import Run.Games.MinesweeperMosaicConfig
+import Run.Games.MintonetteConfig
 import Run.Games.MoonsunConfig
 import Run.Games.NanroConfig
 import Run.Games.NeighboursConfig
@@ -160,6 +161,7 @@ class UrlPatternMatcher:
         Run.Games.MidLoopConfig.register_midloop()
         Run.Games.MinesweeperMosaicConfig.register_minesweepermosaic()
         Run.Games.MinesweeperConfig.register_minesweeper()
+        Run.Games.MintonetteConfig.register_mintonette()
         Run.Games.MoonsunConfig.register_moonsun()
         Run.Games.NeighboursConfig.register_neighbours()
         Run.Games.NonogramConfig.register_nonogram()
