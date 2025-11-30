@@ -60,6 +60,7 @@ https://gridpuzzle.com/number-cross/evil-10
 https://gridpuzzle.com/pure-loop/size-12  
 https://gridpuzzle.com/masyu/evil-12  
 https://gridpuzzle.com/mid-loop/hard-12  
+https://gridpuzzle.com/mintonette/evil-15 (WIP)  
 https://gridpuzzle.com/pipelink/evil-15  
 https://gridpuzzle.com/regional-yajilin/evil-10  
 https://gridpuzzle.com/renkatsu/size-6  
