@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 
 _ = DosunFuwariSolver.empty
 B = DosunFuwariSolver.black

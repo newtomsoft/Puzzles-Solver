@@ -12,7 +12,7 @@ class ChoconaSolver(GameSolver):
         self._rows_number = self._numbers_grid.rows_number
         self._columns_number = self._numbers_grid.columns_number
         self._solver = Solver()
-        self._previous_solution: Grid | None = None
+        self._previous_solution: Grid = Grid.empty()
 
     def _init_solver(self):
         self._grid_z3 = Grid([[Bool(f"cell_{r}-{c}") for c in range(self._numbers_grid.columns_number)] for r in range(self._numbers_grid.rows_number)])

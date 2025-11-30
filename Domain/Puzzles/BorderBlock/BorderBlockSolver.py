@@ -20,7 +20,7 @@ class BorderBlockSolver(GameSolver):
         self._max_region_id = max(value for position, value in self._input_grid if value is not None)
         self._grid_z3: Grid = Grid.empty()
         self._solver = Solver()
-        self._previous_solution: Grid | None = None
+        self._previous_solution: Grid = Grid.empty()
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Int(f"region_id_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
