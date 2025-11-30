@@ -23,7 +23,6 @@ https://starbattle.puzzlebaron.com/init2.php?sg=3
 https://vectors.puzzlebaron.com/init2.php?sg=7  
 
 ## GridPuzzle
-https://gridpuzzle.com/creek/evil-15  
 https://gridpuzzle.com/balance-loop/evil-12  
 https://gridpuzzle.com/bodaburokku/evil-10  
 https://gridpuzzle.com/bridges/size-12  
@@ -31,6 +30,7 @@ https://gridpuzzle.com/chocona/evil-9
 https://gridpuzzle.com/clouds/size-15  
 https://gridpuzzle.com/cocktail-lamp/evil-15  
 https://gridpuzzle.com/country-road/evil-12  
+https://gridpuzzle.com/creek/evil-15  
 https://gridpuzzle.com/detour/evil-12  
 https://gridpuzzle.com/doppelblock/evil-8  
 https://gridpuzzle.com/dosun-fuwari/size-8  
@@ -40,34 +40,34 @@ https://gridpuzzle.com/fobidoshi/evil-12
 https://gridpuzzle.com/from1tox/evil-9  
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
-https://en.gridpuzzle.com/grades/evil-10  
+https://gridpuzzle.com/grades/evil-10  
+https://gridpuzzle.com/gyokuseki/evil-8  
 https://gridpuzzle.com/hakoiri/evil-10  
+https://gridpuzzle.com/kanjo/evil-10  
 https://gridpuzzle.com/koburin/evil-12  
 https://gridpuzzle.com/konarupu/evil-15  
 https://gridpuzzle.com/kuroshiro/size-10  
-https://gridpuzzle.com/gyokuseki/evil-8  
-https://gridpuzzle.com/kanjo/evil-10  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
+https://gridpuzzle.com/masyu/evil-12  
 https://gridpuzzle.com/meadows/size-15  
+https://gridpuzzle.com/mid-loop/hard-12  
 https://gridpuzzle.com/minesweeper/evil-12  
+https://gridpuzzle.com/mintonette/evil-15 (WIP)  
 https://gridpuzzle.com/moonsun/evil-12  
+https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/neighbours/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
-https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/number-chain/size-10  
 https://gridpuzzle.com/number-cross/evil-10  
-https://gridpuzzle.com/pure-loop/size-12  
-https://gridpuzzle.com/masyu/evil-12  
-https://gridpuzzle.com/mid-loop/hard-12  
-https://gridpuzzle.com/mintonette/evil-15 (WIP)  
 https://gridpuzzle.com/pipelink/evil-15  
+https://gridpuzzle.com/pure-loop/size-12  
 https://gridpuzzle.com/regional-yajilin/evil-10  
 https://gridpuzzle.com/renkatsu/size-6  
 https://gridpuzzle.com/round-trip/evil-12  
+https://gridpuzzle.com/seethrough/evil-10  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
-https://gridpuzzle.com/seethrough/evil-10  
 https://gridpuzzle.com/starbattle/size-10  
 https://gridpuzzle.com/starbattle2/size-11  
 https://gridpuzzle.com/stars-and-arrows/evil-15  
@@ -80,8 +80,8 @@ https://gridpuzzle.com/tilepaint/evil-12
 https://gridpuzzle.com/traffic-lights/evil-12  
 https://gridpuzzle.com/trilogy/evil-10  
 https://gridpuzzle.com/wamuzu/size-12  
-https://gridpuzzle.com/yajilin/evil-12  
 https://gridpuzzle.com/yajikabe/evil-12  
+https://gridpuzzle.com/yajilin/evil-12  
 
 ## Linkedin
 https://www.linkedin.com/games/zip/  
