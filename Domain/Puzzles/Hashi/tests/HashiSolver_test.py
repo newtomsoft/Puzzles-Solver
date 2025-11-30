@@ -72,7 +72,7 @@ class HashiSolverTests(TestCase):
         ])
 
         expected_solution_str = (
-            ' ╶──┬─────╗ \n'
+            ' ╶──╥─────╖ \n'
             ' ·  ║  ║  ║ \n'
             ' ╷  ║  ├──┤ \n'
             ' │  ║  │  │ \n'
@@ -96,8 +96,8 @@ class HashiSolverTests(TestCase):
 
         expected_solution_str = (
             ' ·  ╶──┐ \n'
-            ' ┌═════┘ \n'
-            ' └══╴  · '
+            ' ╒═════╛ \n'
+            ' ╘═══  · '
         )
 
         solution = game_solver.get_solution()
@@ -137,16 +137,16 @@ class HashiSolverTests(TestCase):
         ])
 
         expected_solution_str = (
-            ' ┌════─┬────────┬───────────╗ \n'
+            ' ╒═════┬────────┬───────────╖ \n'
             ' │  ·  │  ·  ║  │  ╶─────┐  ║ \n'
             ' │  ·  │  ·  ║  │  ·  ·  │  ║ \n'
-            ' │  ·  │  ·  ║  │  ·  ·  │  │ \n'
+            ' │  ·  │  ·  ║  │  ·  ·  │  ║ \n'
             ' │  ·  ║  ·  ║  │  ╶─────┤  │ \n'
             ' ║  ·  ║  ·  ║  │  ·  ·  │  │ \n'
             ' ║  ·  ║  ·  ║  │  ·  ·  │  │ \n'
             ' ·  ·  ╚═════╝  │  ·  ·  │  │ \n'
-            ' ╶═════════════─┴────────┘  │ \n'
-            ' ·  ╶═══════════════════════┘ '
+            ' ═══════════════┴────────┘  │ \n'
+            ' ·  ════════════════════════╛ '
         )
 
         game_solver = HashiSolver(grid)
