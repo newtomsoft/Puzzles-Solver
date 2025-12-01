@@ -1,6 +1,6 @@
-from collections import Counter, defaultdict
+from collections import defaultdict
 
-from z3 import Solver, Not, And, Or, sat, Bool, is_true, Sum, Int, Implies
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -18,202 +18,259 @@ class KanjoSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
-        self._clues_by_positions = {position: clue_loop for position, clue_loop in self._input_grid if type(clue_loop) is int}
-
+        
+        raw_clues = {pos: val for pos, val in self._input_grid if isinstance(val, int)}
+        self._clues_by_positions = raw_clues
+        
+        unique_clues = sorted(list(set(raw_clues.values())))
+        self._clue_map = {clue: i for i, clue in enumerate(unique_clues)}
+        self._loop_count = len(unique_clues)
+        
         self._positions_by_clues = defaultdict(list)
-        for position, clue_loop in self._clues_by_positions.items():
-            self._positions_by_clues[clue_loop].append(position)
+        for pos, val in raw_clues.items():
+            self._positions_by_clues[val].append(pos)
 
-        self._loop_count = len(Counter(self._clues_by_positions.values()))
-        self._loop_id_var_by_position = {position: Int(f"loop_id_{position}") for position, _ in self._input_grid}
-        self._loop_id_var_by_position_hor = {position: Int(f"loop_id_hor_{position}") for position, _ in self._input_grid}
-        self._loop_id_var_by_position_ver = {position: Int(f"loop_id_ver_{position}") for position, _ in self._input_grid}
-        self._island_grid: IslandGrid | None = None
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
-        self._previous_solution: IslandGrid
+        self._model = None
+        self._solver = None
+        
+        self._h_arcs = None
+        self._v_arcs = None
+        self._loop_id = None
+        self._loop_id_hor = None
+        self._loop_id_ver = None
+        self._is_deg2 = None
+        self._is_deg4 = None
+        
+        self._island_grid = None
+        self._previous_solution = None
 
-    def _init_island_grid(self):
-        self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self._columns_number)] for r in range(self._rows_number)])
-
-    def _init_solver(self):
-        self._grid_z3 = Grid(
-            [[{direction: Bool(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in
-             range(self._rows_number)])
+    def _init_model(self):
+        self._model = cp_model.CpModel()
+        self._create_variables()
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
-            self._init_solver()
-
+        if self._model is None:
+            self._init_model()
+        
+        self._solver = cp_model.CpSolver()
         solution, _ = self._ensure_all_islands_grouped()
         return solution
 
     def get_other_solution(self):
-        self._exclude_positions_values_together(self._previous_solution.get_positions())
+        if self._previous_solution:
+             self._exclude_solution(self._previous_solution)
         return self.get_solution()
 
-    def _ensure_all_islands_grouped(self) -> tuple[IslandGrid, int]:
-        propositions_count = 0
-        while self._solver.check() == sat:
-            self._init_island_grid()
-            model = self._solver.model()
-            propositions_count += 1
-            for position, direction_bridges in self._grid_z3:
-                for direction, bridges in direction_bridges.items():
-                    bridges_number = 1 if is_true(model.eval(bridges)) else 0
-                    if bridges_number > 0:
-                        self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
-                    elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
-                        self._island_grid[position].direction_position_bridges.pop(direction)
-                self._island_grid[position].set_bridges_count_according_to_directions_bridges()
-
-            connected_positions = self._island_grid.compute_linear_connected_positions(exclude_without_bridge=False)
-            if len(connected_positions) == self._loop_count:
-                self._previous_solution = self._island_grid
-                return self._island_grid, propositions_count
-
-            for loop in connected_positions:
-                if self._exclude_loop_without_clue(loop):
-                    continue
-
-                self._exclude_loop_with_forgotten_clue(loop)
-
-        return IslandGrid.empty(), propositions_count
-
-    def _exclude_loop_without_clue(self, loop: set[Position]) -> bool:
-        if loop.isdisjoint(self._clues_by_positions.keys()):
-            self._exclude_positions_values_together(loop)
-            return True
-        return False
-
-    def _exclude_loop_with_forgotten_clue(self, loop: set[Position]) -> bool:
-        clue = self._get_clue_from_positions(loop)
-        positions_clue = set(self._positions_by_clues[clue])
-        if not positions_clue.issubset(loop):
-            self._exclude_positions_values_together(loop)
-            return True
-        return False
-
-    def _exclude_positions_values_together(self, positions: set[Position]):
-        no_clue_constraints = []
-        for position in positions:
-            no_clue_constraints += [
-                self._grid_z3[position][direction] == (self._island_grid[position].direction_position_bridges.get(direction, [0, 0])[1] == 1) for
-                direction in Direction.orthogonal_directions()
-            ]
-        self._solver.add(Not(And(no_clue_constraints)))
+    def _create_variables(self):
+        rows, cols = self._rows_number, self._columns_number
+        self._h_arcs = [[self._model.NewBoolVar(f'h_{r}_{c}') for c in range(cols-1)] for r in range(rows)]
+        self._v_arcs = [[self._model.NewBoolVar(f'v_{r}_{c}') for c in range(cols)] for r in range(rows-1)]
+        
+        self._loop_id = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._loop_id_hor = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_h_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._loop_id_ver = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_v_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        
+        self._is_deg2 = [[self._model.NewBoolVar(f'd2_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._is_deg4 = [[self._model.NewBoolVar(f'd4_{r}_{c}') for c in range(cols)] for r in range(rows)]
 
     def _add_constraints(self):
-        self._add_initials_constraints()
-        self._add_opposite_constraints()
-        self._add_bridges_sum_constraints()
-        self._add_one_way_by_clues_constraints()
-        self._add_one_loop_for_same_clues_constraints()
+        rows, cols = self._rows_number, self._columns_number
+        
+        for r in range(rows):
+            for c in range(cols):
+                edges = []
+                if c > 0: edges.append(self._h_arcs[r][c-1])
+                if c < cols - 1: edges.append(self._h_arcs[r][c])
+                if r > 0: edges.append(self._v_arcs[r-1][c])
+                if r < rows - 1: edges.append(self._v_arcs[r][c])
+                
+                degree = sum(edges)
+                
+                # Must be 2 or 4
+                self._model.Add(degree == 2).OnlyEnforceIf(self._is_deg2[r][c])
+                self._model.Add(degree == 4).OnlyEnforceIf(self._is_deg4[r][c])
+                self._model.Add(self._is_deg2[r][c] + self._is_deg4[r][c] == 1)
+                
+        # 2. Clue Constraints
+        for pos, clue_val in self._clues_by_positions.items():
+            r, c = pos.r, pos.c
+            mapped_id = self._clue_map[clue_val]
+            
+            # Clues imply degree 2
+            self._model.Add(self._is_deg2[r][c] == 1)
+            # Clues imply loop_id
+            self._model.Add(self._loop_id[r][c] == mapped_id)
 
-    def _add_initials_constraints(self):
-        for position in self._grid_z3.edge_up_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.up()]))
-        for position in self._grid_z3.edge_down_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.down()]))
-        for position in self._grid_z3.edge_left_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.left()]))
-        for position in self._grid_z3.edge_right_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.right()]))
+        # 3. Pre-filled Bridges
+        for r in range(rows):
+            for c in range(cols):
+                pos = Position(r, c)
+                item = self._input_grid[pos]
+                if isinstance(item, Island) and not item.has_no_bridge():
+                    for direction, (_, val) in item.direction_position_bridges.items():
+                        is_bridge = (val == 1)
+                        arc = self._get_arc_var(r, c, direction)
+                        if arc is not None:
+                            self._model.Add(arc == is_bridge)
 
-        for position, island in [(position, island) for position, island in self._input_grid if type(island) is Island and not island.has_no_bridge()]:
-            for direction, (_, bridges) in island.direction_position_bridges.items():
-                self._solver.add(self._grid_z3[position][direction] == (bridges == 1))
+        # 4. Loop ID Propagation
+        for r in range(rows):
+            for c in range(cols):
+                # Horizontal Connection (Right)
+                if c < cols - 1:
+                    edge = self._h_arcs[r][c]
+                    
+                    u_d2 = self._is_deg2[r][c]
+                    u_d4 = self._is_deg4[r][c]
+                    v_d2 = self._is_deg2[r][c+1]
+                    v_d4 = self._is_deg4[r][c+1]
+                    
+                    # u(2) - v(2)
+                    self._model.Add(self._loop_id[r][c] == self._loop_id[r][c+1]).OnlyEnforceIf([edge, u_d2, v_d2])
+                    # u(4) - v(2)
+                    self._model.Add(self._loop_id_hor[r][c] == self._loop_id[r][c+1]).OnlyEnforceIf([edge, u_d4, v_d2])
+                    # u(2) - v(4)
+                    self._model.Add(self._loop_id[r][c] == self._loop_id_hor[r][c+1]).OnlyEnforceIf([edge, u_d2, v_d4])
+                    # u(4) - v(4)
+                    self._model.Add(self._loop_id_hor[r][c] == self._loop_id_hor[r][c+1]).OnlyEnforceIf([edge, u_d4, v_d4])
 
-    def _add_opposite_constraints(self):
-        for position, _ in self._grid_z3:
-            if position.up in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.up()] == self._grid_z3[position.up][Direction.down()])
-            if position.down in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.down()] == self._grid_z3[position.down][Direction.up()])
-            if position.left in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.left()] == self._grid_z3[position.left][Direction.right()])
-            if position.right in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.right()] == self._grid_z3[position.right][Direction.left()])
+                # Vertical Connection (Down)
+                if r < rows - 1:
+                    edge = self._v_arcs[r][c]
+                    
+                    u_d2 = self._is_deg2[r][c]
+                    u_d4 = self._is_deg4[r][c]
+                    v_d2 = self._is_deg2[r+1][c]
+                    v_d4 = self._is_deg4[r+1][c]
+                    
+                    # u(2) - v(2)
+                    self._model.Add(self._loop_id[r][c] == self._loop_id[r+1][c]).OnlyEnforceIf([edge, u_d2, v_d2])
+                    # u(4) - v(2)
+                    self._model.Add(self._loop_id_ver[r][c] == self._loop_id[r+1][c]).OnlyEnforceIf([edge, u_d4, v_d2])
+                    # u(2) - v(4)
+                    self._model.Add(self._loop_id[r][c] == self._loop_id_ver[r+1][c]).OnlyEnforceIf([edge, u_d2, v_d4])
+                    # u(4) - v(4)
+                    self._model.Add(self._loop_id_ver[r][c] == self._loop_id_ver[r+1][c]).OnlyEnforceIf([edge, u_d4, v_d4])
 
-    def _add_bridges_sum_constraints(self):
-        for position, _ in self._grid_z3:
-            sum_constraint_2 = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
-            sum_constraint_4 = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 4
-            self._solver.add(Or(sum_constraint_2, sum_constraint_4))
+    def _ensure_all_islands_grouped(self):
+        propositions_count = 0
+        while True:
+            status = self._solver.Solve(self._model)
+            if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+                return IslandGrid.empty(), propositions_count
+            
+            propositions_count += 1
+            self._build_island_grid_from_solution()
+            
+            connected_positions = self._island_grid.compute_linear_connected_positions(exclude_without_bridge=False)
+            
+            if len(connected_positions) == self._loop_count:
+                all_valid = True
+                for loop in connected_positions:
+                    if self._exclude_loop_without_clue(loop):
+                        all_valid = False
+                        break 
+                    if self._exclude_loop_with_forgotten_clue(loop):
+                        all_valid = False
+                        break
+                
+                if all_valid:
+                    self._previous_solution = self._island_grid
+                    return self._island_grid, propositions_count
+            else:
+                 for loop in connected_positions:
+                    if self._exclude_loop_without_clue(loop): continue
+                    self._exclude_loop_with_forgotten_clue(loop)
+    
+    def _exclude_solution(self, solution):
+        constraints = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                 pos = Position(r, c)
+                 island = solution[pos]
+                 
+                 if c < self._columns_number - 1:
+                     has_right = Direction.right() in island.direction_position_bridges and island.direction_position_bridges[Direction.right()][1] > 0
+                     if has_right:
+                         constraints.append(self._h_arcs[r][c].Not())
+                     else:
+                         constraints.append(self._h_arcs[r][c])
+                 
+                 if r < self._rows_number - 1:
+                     has_down = Direction.down() in island.direction_position_bridges and island.direction_position_bridges[Direction.down()][1] > 0
+                     if has_down:
+                         constraints.append(self._v_arcs[r][c].Not())
+                     else:
+                         constraints.append(self._v_arcs[r][c])
+        self._model.AddBoolOr(constraints)
 
-    def _add_one_way_by_clues_constraints(self):
-        for position, loop_id in self._clues_by_positions.items():
-            self._add_one_way_clue_constraints(position)
+    def _exclude_loop_without_clue(self, loop):
+        has_clue = not loop.isdisjoint(self._clues_by_positions.keys())
+        if not has_clue:
+            self._exclude_positions_values_together(loop)
+            return True
+        return False
 
-    def _add_one_way_clue_constraints(self, position: Position):
-        sum_constraint = Sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
-        self._solver.add(sum_constraint)
+    def _exclude_loop_with_forgotten_clue(self, loop):
+        clue_val = self._get_clue_from_positions(loop)
+        if clue_val is None: return False 
+        
+        required_positions = set(self._positions_by_clues[clue_val])
+        if not required_positions.issubset(loop):
+            self._exclude_positions_values_together(loop)
+            return True
+        return False
 
-    def _add_one_loop_for_same_clues_constraints(self):
-        for position, loop_id in self._clues_by_positions.items():
-            self._solver.add(self._loop_id_var_by_position[position] == loop_id)
-
-        for position, _ in self._grid_z3:
+    def _exclude_positions_values_together(self, positions):
+        constraints = []
+        for pos in positions:
+            r, c = pos.r, pos.c
             for direction in Direction.orthogonal_directions():
-                self._add_one_loop_for_same_clues_constraints_step_position(position, direction)
+                arc = self._get_arc_var(r, c, direction)
+                if arc is not None:
+                    val = self._solver.Value(arc)
+                    if val:
+                        constraints.append(arc.Not())
+                    else:
+                        constraints.append(arc)
+        
+        self._model.AddBoolOr(constraints)
 
-    def _add_one_loop_for_same_clues_constraints_step_position(self, position, direction: Direction):
-        next_position = position.after(direction)
-        if next_position not in self._grid_z3:
-            return
+    def _get_arc_var(self, r, c, direction):
+        if direction == Direction.right():
+            if c < self._columns_number - 1: return self._h_arcs[r][c]
+        elif direction == Direction.left():
+            if c > 0: return self._h_arcs[r][c-1]
+        elif direction == Direction.down():
+            if r < self._rows_number - 1: return self._v_arcs[r][c]
+        elif direction == Direction.up():
+            if r > 0: return self._v_arcs[r-1][c]
+        return None
 
-        position_single_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 2
-        position_multi_way = sum([self._grid_z3[position][direction] for direction in Direction.orthogonal_directions()]) == 4
-        next_position_single_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 2
-        next_position_multi_way = sum([self._grid_z3[next_position][direction] for direction in Direction.orthogonal_directions()]) == 4
+    def _build_island_grid_from_solution(self):
+        self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self._columns_number)] for r in range(self._rows_number)])
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                island = self._island_grid[pos]
+                
+                if c < self._columns_number - 1 and self._solver.Value(self._h_arcs[r][c]):
+                    island.set_bridge_to_direction(Direction.right(), 1)
 
-        self._add_single_to_single_constraint(position, direction, next_position, position_single_way, next_position_single_way)
-        self._add_multi_to_single_constraint(position, direction, next_position, next_position_single_way, position_multi_way)
-        self._add_single_to_multi_constraint(position, direction, next_position, next_position_multi_way, position_single_way)
-        self._add_multi_to_multi_constraint(position, direction, next_position, position_multi_way, next_position_multi_way)
+                if c > 0 and self._solver.Value(self._h_arcs[r][c-1]):
+                    island.set_bridge_to_direction(Direction.left(), 1)
 
-    def _add_single_to_single_constraint(self, position, direction: Direction, next_position, position_single_way: bool, next_position_single_way: bool):
-        single_single_equality = self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position]
-        self._solver.add(
-            Implies(
-                And(position_single_way, next_position_single_way, self._grid_z3[position][direction]),
-                single_single_equality
-            ))
+                if r < self._rows_number - 1 and self._solver.Value(self._v_arcs[r][c]):
+                    island.set_bridge_to_direction(Direction.down(), 1)
 
-    def _add_multi_to_single_constraint(self, position, direction: Direction, next_position, next_position_single_way: bool, position_multi_way: bool):
-        if direction in [Direction.left(), Direction.right()]:
-            multi_single_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position[next_position]
-        else:
-            multi_single_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position[next_position]
-        self._solver.add(
-            Implies(
-                And(position_multi_way, next_position_single_way),
-                multi_single_equality
-            ))
+                if r > 0 and self._solver.Value(self._v_arcs[r-1][c]):
+                    island.set_bridge_to_direction(Direction.up(), 1)
+                
+                island.set_bridges_count_according_to_directions_bridges()
 
-    def _add_single_to_multi_constraint(self, position, direction: Direction, next_position, next_position_multi_way: bool, position_single_way: bool):
-        if direction in [Direction.left(), Direction.right()]:
-            single_multi_equality = self._loop_id_var_by_position_hor[next_position] == self._loop_id_var_by_position[position]
-        else:
-            single_multi_equality = self._loop_id_var_by_position_ver[next_position] == self._loop_id_var_by_position[position]
-        self._solver.add(
-            Implies(
-                And(position_single_way, next_position_multi_way, self._grid_z3[position][direction]),
-                Or(And(single_multi_equality, next_position_multi_way),
-                   self._loop_id_var_by_position[position] == self._loop_id_var_by_position[next_position])
-            ))
-
-    def _add_multi_to_multi_constraint(self, position, direction: Direction, next_position, position_multi_way: bool, next_position_multi_way: bool):
-        if direction in [Direction.left(), Direction.right()]:
-            multi_multi_equality = self._loop_id_var_by_position_hor[position] == self._loop_id_var_by_position_hor[next_position]
-        else:
-            multi_multi_equality = self._loop_id_var_by_position_ver[position] == self._loop_id_var_by_position_ver[next_position]
-        self._solver.add(
-            Implies(
-                And(position_multi_way, next_position_multi_way),
-                multi_multi_equality
-            ))
-
-    def _get_clue_from_positions(self, loop: set[Position]) -> int | None:
-        return next((self._clues_by_positions.get(position) for position in loop if self._clues_by_positions.get(position) is not None), None)
+    def _get_clue_from_positions(self, loop):
+        for pos in loop:
+            if pos in self._clues_by_positions:
+                return self._clues_by_positions[pos]
+        return None
