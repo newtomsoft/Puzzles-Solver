@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleAkariGridProvider import PuzzleAkariGridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_akari():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-light-up\.com", 
         PuzzleAkariGridProvider, 
         PuzzleAkariPlayer
     )(AkariSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://lasergrids\.puzzlebaron\.com/init2\.php", 
         PuzzleBaronLaserGridsGridProvider, 
         PuzzleBaronLaserGridsPlayer

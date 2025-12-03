@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleSkyscrapersGridProvider import PuzzleSkys
 from Run.GameRegistry import GameRegistry
 
 
-def register_skyscrapers():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-skyscrapers\.com", 
         PuzzleSkyscrapersGridProvider, 
         PuzzleSkyScrapersPlayer

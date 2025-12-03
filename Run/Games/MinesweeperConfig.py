@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleMinesweeperMosaicGridProvider import Puzz
 from Run.GameRegistry import GameRegistry
 
 
-def register_minesweeper():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-minesweeper\.com", 
         PuzzleMinesweeperMosaicGridProvider, 
         PuzzleMinesweeperPlayer
     )(MinesweeperSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/minesweeper", 
         GridPuzzleMinesweeperGridProvider, 
         GridPuzzleMinesweeperPlayer

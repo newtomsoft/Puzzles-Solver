@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleDotchiLoopGridProvider import GridPuzzle
 from Run.GameRegistry import GameRegistry
 
 
-def register_dotchiloop():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/dotchiloop", 
         GridPuzzleDotchiLoopGridProvider, 
         GridPuzzleDotchiLoopPlayer

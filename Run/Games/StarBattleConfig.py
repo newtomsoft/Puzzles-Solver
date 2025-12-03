@@ -10,26 +10,26 @@ from GridProviders.PuzzlesMobile.PuzzleStarBattleGridProvider import PuzzleStarB
 from Run.GameRegistry import GameRegistry
 
 
-def register_starbattle():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-star-battle\.com", 
         PuzzleStarBattleGridProvider, 
         PuzzleStarBattlePlayer
     )(StarBattleSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/starbattle", 
         GridPuzzleStarBattleGridProvider, 
         GridPuzzleStarBattlePlayer
     )(StarBattleSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://starbattle\.puzzlebaron\.com/init2\.php", 
         PuzzleBaronStarBattleGridProvider, 
         PuzzleBaronStarBattlePlayer
     )(StarBattleSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://www\.linkedin\.com/games/queens", 
         QueensGridProvider, 
         QueensPlayer

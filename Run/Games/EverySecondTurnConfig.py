@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleEverySecondTurnGridProvider import GridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_everysecondturn():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/every-second-turn", 
         GridPuzzleEverySecondTurnGridProvider, 
         GridPuzzleEverySecondTurnPlayer

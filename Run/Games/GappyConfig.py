@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleGappyGridProvider import GridPuzzleGappy
 from Run.GameRegistry import GameRegistry
 
 
-def register_gappy():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/gappy", 
         GridPuzzleGappyGridProvider, 
         GridPuzzleGappyPlayer

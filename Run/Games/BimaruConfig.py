@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleBimaruGridProvider import PuzzleBimaruGri
 from Run.GameRegistry import GameRegistry
 
 
-def register_bimaru():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-battleships\.com", 
         PuzzleBimaruGridProvider, 
         PuzzleBimaruPlayer

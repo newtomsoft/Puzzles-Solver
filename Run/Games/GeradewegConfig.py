@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleG
 from Run.GameRegistry import GameRegistry
 
 
-def register_geradeweg():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/straight-loop", 
         GridPuzzleGeradewegGridProvider, 
         GridPuzzleGeradewegPlayer

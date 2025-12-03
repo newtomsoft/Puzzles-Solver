@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleNumberCrossGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_numbercross():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/number-cross", 
         GridPuzzleNumberCrossGridProvider, 
         GridPuzzleNumberCrossPlayer

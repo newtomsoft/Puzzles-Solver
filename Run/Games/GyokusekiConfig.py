@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleGyokusekiGridProvider import GridPuzzleG
 from Run.GameRegistry import GameRegistry
 
 
-def register_gyokuseki():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/gyokuseki", 
         GridPuzzleGyokusekiGridProvider, 
         GridPuzzleGyokusekiPlayer

@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleG
 from Run.GameRegistry import GameRegistry
 
 
-def register_grandtour():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/grandtour", 
         GridPuzzleGrandTourGridProvider, 
         GridPuzzleGrandTourPlayer

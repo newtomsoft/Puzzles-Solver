@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleRenkatsuGridProvider import GridPuzzleRe
 from Run.GameRegistry import GameRegistry
 
 
-def register_renkatsu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/renkatsu", 
         GridPuzzleRenkatsuGridProvider, 
         GridPuzzleRenkatsuPlayer

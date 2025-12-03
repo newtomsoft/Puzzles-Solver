@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleSurizaGridProvider import PuzzleSurizaGri
 from Run.GameRegistry import GameRegistry
 
 
-def register_suriza():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/slitherlink", 
         GridPuzzleSlitherlinkGridProvider, 
         GridPuzzleSlitherlinkPlayer
     )(SurizaSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*\.puzzle-loop\.com", 
         PuzzleSurizaGridProvider, 
         PuzzleMasyuPlayer

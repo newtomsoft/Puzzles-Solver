@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_countryroad():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/country-road", 
         GridPuzzleCountryRoadGridProvider, 
         GridPuzzleCountryRoadPlayer

@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleArofuroGridProvider import GridPuzzleAro
 from Run.GameRegistry import GameRegistry
 
 
-def register_arofuro():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/arofuro", 
         GridPuzzleArofuroGridProvider, 
         GridPuzzleArofuroPlayer

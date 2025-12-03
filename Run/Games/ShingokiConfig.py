@@ -6,16 +6,16 @@ from GridProviders.PuzzlesMobile.PuzzleShingokiGridProvider import PuzzleShingok
 from Run.GameRegistry import GameRegistry
 
 
-def register_shingoki():
+def register():
     # Puzzle Shingoki (uses Masyu player)
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*\.puzzle-shingoki\.com", 
         PuzzleShingokiGridProvider, 
         PuzzleMasyuPlayer
     )(ShingokiSolver)
 
     # Grid Puzzle Traffic Lights
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/traffic-lights", 
         GridPuzzleShingokiGridProvider, 
         GridPuzzleShingokiPlayer

@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleFutoshikiGridProvider import PuzzleFutosh
 from Run.GameRegistry import GameRegistry
 
 
-def register_futoshiki():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-futoshiki\.com", 
         PuzzleFutoshikiGridProvider, 
         PuzzleFutoshikiPlayer

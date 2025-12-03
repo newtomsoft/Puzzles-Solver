@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleN
 from Run.GameRegistry import GameRegistry
 
 
-def register_no4inarow():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/no-four-in-row", 
         GridPuzzleNo4InARowGridProvider, 
         GridPuzzleNo4InARowPlayer

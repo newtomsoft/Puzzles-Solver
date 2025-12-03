@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzlePurenrupuGridProvider import GridPuzzleP
 from Run.GameRegistry import GameRegistry
 
 
-def register_purenrupu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/pure-loop", 
         GridPuzzlePurenrupuGridProvider, 
         GridPuzzlePurenrupuPlayer

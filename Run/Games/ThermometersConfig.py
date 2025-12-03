@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThe
 from Run.GameRegistry import GameRegistry
 
 
-def register_thermometers():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-thermometers\.com", 
         PuzzleThermometersGridProvider, 
         PuzzleThermometersPlayer

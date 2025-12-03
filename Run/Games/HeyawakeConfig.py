@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleHeyawakeGridProvider import PuzzleHeyawak
 from Run.GameRegistry import GameRegistry
 
 
-def register_heyawake():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-heyawake\.com", 
         PuzzleHeyawakeGridProvider, 
         PuzzleHeyawakePlayer

@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleGalaxiesGridProvider import PuzzleGalaxie
 from Run.GameRegistry import GameRegistry
 
 
-def register_tentaishow():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-galaxies\.com", 
         PuzzleGalaxiesGridProvider, 
         PuzzleGalaxiesPlayer
     )(TentaiShowSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/galaxies", 
         GridPuzzleGalaxiesGridProvider, 
         GridPuzzleGalaxiesPlayer
