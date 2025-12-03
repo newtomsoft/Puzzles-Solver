@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleHashiGridProvider import PuzzleHashiGridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_hashi():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-bridges\.com", 
         PuzzleHashiGridProvider, 
         PuzzleHashiPlayer
     )(HashiSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/bridges", 
         GridPuzzleHashiGridProvider, 
         GridPuzzleHashiPlayer

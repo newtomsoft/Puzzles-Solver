@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleKakurasuGridProvider import PuzzleKakuras
 from Run.GameRegistry import GameRegistry
 
 
-def register_kakurasu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-kakurasu\.com", 
         PuzzleKakurasuGridProvider, 
         PuzzleKakurasuPlayer

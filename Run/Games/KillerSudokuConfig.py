@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleKillerSudokuGridProvider import PuzzleKil
 from Run.GameRegistry import GameRegistry
 
 
-def register_killersudoku():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-killer-sudoku\.com", 
         PuzzleKillerSudokuGridProvider, 
         PuzzleSudokuPlayer

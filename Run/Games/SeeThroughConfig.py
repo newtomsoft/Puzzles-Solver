@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleSeeThroughGridProvider import GridPuzzle
 from Run.GameRegistry import GameRegistry
 
 
-def register_seethrough():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/seethrough", 
         GridPuzzleSeeThroughGridProvider, 
         GridPuzzleSeeThroughPlayer

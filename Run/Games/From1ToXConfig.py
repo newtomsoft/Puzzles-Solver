@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleFrom1ToXGridProvider import GridPuzzleFr
 from Run.GameRegistry import GameRegistry
 
 
-def register_from1tox():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/from1tox", 
         GridPuzzleFrom1ToXGridProvider, 
         GridPuzzleFrom1ToXPlayer

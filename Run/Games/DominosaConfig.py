@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleDominosaGridProvider import PuzzleDominos
 from Run.GameRegistry import GameRegistry
 
 
-def register_dominosa():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-dominosa\.com", 
         PuzzleDominosaGridProvider, 
         PuzzleDominosaPlayer

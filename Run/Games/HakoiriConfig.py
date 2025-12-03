@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHak
 from Run.GameRegistry import GameRegistry
 
 
-def register_hakoiri():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/hakoiri", 
         GridPuzzleHakoiriGridProvider, 
         GridPuzzleHakoiriPlayer

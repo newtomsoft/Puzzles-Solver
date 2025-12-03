@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleChoconaGridProvider import GridPuzzleCho
 from Run.GameRegistry import GameRegistry
 
 
-def register_chocona():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/chocona", 
         GridPuzzleChoconaGridProvider, 
         GridPuzzleChoconaPlayer

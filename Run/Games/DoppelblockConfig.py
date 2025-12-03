@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleDoppelblockGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_doppelblock():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/doppelblock", 
         GridPuzzleDoppelblockGridProvider, 
         GridPuzzleDoppelblockPlayer

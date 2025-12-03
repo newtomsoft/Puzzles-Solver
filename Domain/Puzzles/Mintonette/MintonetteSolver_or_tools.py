@@ -11,8 +11,6 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class MintonetteSolver(GameSolver):
-    horizontal = -1
-    vertical = -2
     Empty = None
     Unknown = -1
 
@@ -51,16 +49,17 @@ class MintonetteSolver(GameSolver):
         if not self._grid_ortools:
             self._init_solver()
 
-        solution = self._compute_solution()
+        solution, _ = self._ensure_no_loop_solution()
         return solution
 
     def get_other_solution(self) -> IslandGrid:
         self._exclude_positions_values_together(self._previous_solution.get_positions())
         return self.get_solution()
 
-    def _compute_solution(self) -> IslandGrid:
-        status = self._solver.Solve(self._model)
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+    def _ensure_no_loop_solution(self) -> tuple[IslandGrid, int]:
+        proposition_count = 0
+        while self._solver.Solve(self._model) in { cp_model.OPTIMAL, cp_model.FEASIBLE }:
+            proposition_count += 1
             self._init_island_grid()
             for position, direction_bridges in self._grid_ortools:
                 for direction, bridges in direction_bridges.items():
@@ -71,10 +70,17 @@ class MintonetteSolver(GameSolver):
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
-            self._previous_solution = self._island_grid
-            return self._island_grid
+            connected_paths = self._island_grid.get_connected_positions()
+            compliant = True
+            for positions in connected_paths:
+                if all(position not in self._turn_clues_by_positions for position in positions):
+                    compliant = False
+                    self._exclude_positions_values_together(positions)
+            if compliant:
+                self._previous_solution = self._island_grid
+                return self._island_grid, proposition_count
 
-        return IslandGrid.empty()
+        return IslandGrid.empty(), proposition_count
 
     def _exclude_positions_values_together(self, positions: set[Position]):
         no_clue_constraints = []
@@ -141,10 +147,9 @@ class MintonetteSolver(GameSolver):
                 paths_constraints.append(path_active)
             self._model.AddBoolOr(paths_constraints)
 
-
     def _compute_candidates_paths(self, start_node: Position) -> list[tuple]:
         value = self._input_grid[start_node]
-        n_turn = value if value != self.Unknown else self._rows_number * self._columns_number
+        n_turn = value if value != self.Unknown else 7
 
         found_paths: list[tuple] = []
         queue = deque([(start_node, None, 0, [start_node])])
@@ -186,3 +191,5 @@ class MintonetteSolver(GameSolver):
                         continue
 
         return found_paths
+
+

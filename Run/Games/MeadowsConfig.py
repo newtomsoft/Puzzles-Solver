@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleMeadowsGridProvider import GridPuzzleMea
 from Run.GameRegistry import GameRegistry
 
 
-def register_meadows():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/meadows", 
         GridPuzzleMeadowsGridProvider, 
         GridPuzzleMeadowsPlayer

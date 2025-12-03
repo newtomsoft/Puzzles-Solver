@@ -4,8 +4,8 @@ from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 from Run.GameRegistry import GameRegistry
 
 
-def register_zip():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://www\.linkedin\.com/games/zip", 
         ZipGridProvider, 
         ZipPlayer

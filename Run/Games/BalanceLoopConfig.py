@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleBalanceLoopGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_balanceloop():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/balance-loop", 
         GridPuzzleBalanceLoopGridProvider, 
         GridPuzzleBalanceLoopPlayer

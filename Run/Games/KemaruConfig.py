@@ -4,8 +4,8 @@ from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinut
 from Run.GameRegistry import GameRegistry
 
 
-def register_kemaru():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://www\.20minutes\.fr/services/jeux/kemaru", 
         VingtMinutesKemaruGridProvider, 
         VingtMinutesKemaruPlayer
