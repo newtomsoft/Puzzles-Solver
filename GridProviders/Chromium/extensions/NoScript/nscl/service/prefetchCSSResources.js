@@ -1,0 +1,154 @@
+/*
+ * NoScript Commons Library
+ * Reusable building blocks for cross-browser security/privacy WebExtensions.
+ * Copyright (C) 2020-2024 Giorgio Maone <https://maone.net>
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+"use strict";
+(() => {
+  let enabled = new Map();
+  let corsInfoCache = new Map();
+  browser.tabs.onRemoved.addListener(tab => {
+    enabled.delete(tab.id);
+  });
+  let reqKey = (frameId, destination, origin) => `${frameId}|${destination}@${origin}`;
+
+  browser.runtime.onMessage.addListener(
+    ({__prefetchCSSResources__: msg}, sender) => {
+      if (!msg) return;
+      let {tab, url, origin} = sender;
+      if (!origin) origin = new URL(url).origin;
+      let requests = enabled.get(tab.id);
+      switch(msg.type) {
+        case "enableCORS":
+         if (!requests) {
+            enabled.set(tab.id, requests = new Set());
+          }
+          requests.add(reqKey(sender.frameId, msg.opts.url, origin));
+          return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+  });
+
+  let corsInfo = (r, forget = false) => {
+    let {tabId, frameId, url, requestId} = r;
+    if (corsInfoCache.has(requestId)) {
+      let cached = corsInfoCache.get(requestId);
+      if (forget) corsInfoCache.delete(requestId);
+      return cached;
+    }
+    let origin = new URL(r.initiator || r.originUrl || r.documentUrl).origin;
+    let destination = new URL(url).origin;
+    let info;
+    if (destination !== origin) {
+      info = {origin};
+      let requests = enabled.get(tabId);
+      if (requests) {
+        let key = reqKey(frameId, url, origin);
+        info.authorize = requests.has(key);
+        requests.delete(key);
+      }
+    } else {
+      info = null;
+    }
+    corsInfoCache.set(requestId, info);
+    return info;
+  }
+
+  if (!UA.isMozilla) {
+    console.warn("Cannot patch CORS header for prefetchCSSResource. TODO: use DNR if possible.");
+    return;
+  }
+
+  const allCssFilter =  {
+    urls: ['<all_urls>'],
+    types: ['stylesheet']
+  };
+
+  const options = ["blocking"];
+  try {
+    browser.webRequest.onBeforeRequest.addListener(r => {
+      corsInfo(r); // needed to cache corseInfo keying by requestId, instead of URL w/ #hash
+    }, allCssFilter, options);
+  } catch (e) {
+    console.error(e);
+
+  }
+
+  options.push('requestHeaders');
+
+  function patchHeaders(headers, patch) {
+    for (const h of headers) {
+      const name = h.name.toLowerCase();
+      if (name in patch) {
+        h.value = patch[name];
+        delete patch[name];
+      }
+    }
+    for (const [name, value] of Object.entries(patch)) {
+      headers.push({name, value});
+    }
+  }
+
+  browser.webRequest.onBeforeSendHeaders.addListener(r => {
+    let crossSite = corsInfo(r);
+    if (!(crossSite?.authorize)) return;
+    // here we try to force a cached response
+    let {requestHeaders} = r;
+    patchHeaders(requestHeaders, {
+      "cache-control": "max-age=604800",
+    });
+    return {requestHeaders};
+  }, allCssFilter, options);
+
+  options[1] = 'responseHeaders';
+  if (!UA.isMozilla) {
+    options.push('extraHeaders'); // required by Chromium to handle CORS headers
+  }
+
+  browser.webRequest.onHeadersReceived.addListener(r => {
+    let crossSite = corsInfo(r);
+    if (!crossSite) return;
+    let {authorize, origin} = crossSite;
+    let {responseHeaders} = r;
+
+    patchHeaders(responseHeaders,
+      authorize
+      ? {
+        "cache-control": "no-store",
+        "vary": "origin",
+        "access-control-allow-origin": origin
+      }
+      : {
+        "cache-control": "private, max-age=604800, immutable"
+      }
+    );
+
+    return {responseHeaders};
+  }, allCssFilter, options);
+
+  let cleanup = r => {
+    let crossSite = corsInfo(r, true);
+    if (!(crossSite?.authorize)) return;
+    if (!r.fromCache) {
+      debug("Warning: cross-site CSS request from CSS resource prefetching NOT from cache.");
+    }
+  }
+  for (let ev of ["onCompleted", "onErrorOccurred"]) {
+    browser.webRequest[ev].addListener(cleanup, allCssFilter);
+  }
+})();
