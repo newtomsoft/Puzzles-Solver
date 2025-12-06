@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleStarsAndArrowsGridProvider import GridPu
 from Run.GameRegistry import GameRegistry
 
 
-def register_starsandarrows():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/stars-and-arrows", 
         GridPuzzleStarsAndArrowsGridProvider, 
         GridPuzzleStarsAndArrowsPlayer

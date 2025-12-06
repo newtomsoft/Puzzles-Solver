@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMid
 from Run.GameRegistry import GameRegistry
 
 
-def register_midloop():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/mid-loop", 
         GridPuzzleMidLoopGridProvider, 
         GridPuzzleMidLoopPlayer

@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleWamazuGridProvider import GridPuzzleWama
 from Run.GameRegistry import GameRegistry
 
 
-def register_wamazu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/wamuzu", 
         GridPuzzleWamazuGridProvider, 
         GridPuzzleWamazuPlayer

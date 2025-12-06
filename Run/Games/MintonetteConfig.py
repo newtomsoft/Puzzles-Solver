@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleMintonetteGridProvider import GridPuzzle
 from Run.GameRegistry import GameRegistry
 
 
-def register_mintonette():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/mintonette", 
         GridPuzzleMintonetteGridProvider, 
         GridPuzzleMintonettePlayer

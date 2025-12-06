@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleShikakuGridProvider import PuzzleShikakuG
 from Run.GameRegistry import GameRegistry
 
 
-def register_shikaku():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-shikaku\.com", 
         PuzzleShikakuGridProvider, 
         PuzzleShikakuPlayer

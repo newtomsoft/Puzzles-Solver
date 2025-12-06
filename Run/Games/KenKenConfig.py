@@ -4,8 +4,8 @@ from GridProviders.PuzzleBaron.PuzzleBaronCalcudokuGridProvider import PuzzleBar
 from Run.GameRegistry import GameRegistry
 
 
-def register_kenken():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://calcudoku\.puzzlebaron\.com/init2\.php", 
         PuzzleBaronCalcudokuGridProvider, 
         PuzzleBaronCalcudokuPlayer

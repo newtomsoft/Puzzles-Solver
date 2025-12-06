@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleKuroshiroGridProvider import GridPuzzleK
 from Run.GameRegistry import GameRegistry
 
 
-def register_kuroshiro():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/kuroshiro", 
         GridPuzzleKuroshiroGridProvider, 
         GridPuzzleKuroshiroPlayer

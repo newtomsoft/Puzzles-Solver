@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleTrilogyGridProvider import GridPuzzleTri
 from Run.GameRegistry import GameRegistry
 
 
-def register_trilogy():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/trilogy", 
         GridPuzzleTrilogyGridProvider, 
         GridPuzzleTrilogyPlayer

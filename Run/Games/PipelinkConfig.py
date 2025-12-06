@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzlePipelinkGridProvider import GridPuzzlePi
 from Run.GameRegistry import GameRegistry
 
 
-def register_pipelink():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/pipelink", 
         GridPuzzlePipelinkGridProvider, 
         GridPuzzlePipelinkPlayer

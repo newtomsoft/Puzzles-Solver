@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleKonarupuGridProvider import GridPuzzleKo
 from Run.GameRegistry import GameRegistry
 
 
-def register_konarupu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/konarupu", 
         GridPuzzleKonarupuGridProvider, 
         GridPuzzleKonarupuPlayer

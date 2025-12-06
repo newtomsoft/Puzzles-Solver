@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleMasyuGridProvider import PuzzleMasyuGridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_masyu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-masyu\.com", 
         PuzzleMasyuGridProvider, 
         PuzzleMasyuPlayer
     )(MasyuSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/masyu", 
         GridPuzzleMasyuGridProvider, 
         GridPuzzleMasyuPlayer

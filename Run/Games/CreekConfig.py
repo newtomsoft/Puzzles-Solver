@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreek
 from Run.GameRegistry import GameRegistry
 
 
-def register_creek():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/creek", 
         GridPuzzleCreekGridProvider, 
         GridPuzzleCreekPlayer

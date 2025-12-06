@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYaj
 from Run.GameRegistry import GameRegistry
 
 
-def register_yajilin():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/yajilin", 
         GridPuzzleYajilinGridProvider, 
         GridPuzzleYajilinPlayer

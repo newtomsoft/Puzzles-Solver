@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleClou
 from Run.GameRegistry import GameRegistry
 
 
-def register_clouds():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/clouds", 
         GridPuzzleCloudsGridProvider, 
         GridPuzzleCloudsPlayer

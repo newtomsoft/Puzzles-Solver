@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleTapaGridProvider import PuzzleTapaGridPro
 from Run.GameRegistry import GameRegistry
 
 
-def register_tapa():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-tapa\.com", 
         PuzzleTapaGridProvider, 
         PuzzleTapaPlayer

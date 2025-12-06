@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleTasukueaGridProvider import GridPuzzleTa
 from Run.GameRegistry import GameRegistry
 
 
-def register_tasukuea():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/tasukuea", 
         GridPuzzleTasukueaGridProvider, 
         GridPuzzleTasukueaPlayer

@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleNonogramGridProvider import PuzzleNonogra
 from Run.GameRegistry import GameRegistry
 
 
-def register_nonogram():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-nonograms\.com", 
         PuzzleNonogramGridProvider, 
         PuzzleNonogramsPlayer

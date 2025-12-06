@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleBinairoGridProvider import PuzzleBinairoG
 from Run.GameRegistry import GameRegistry
 
 
-def register_binairo():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-binairo\.com", 
         PuzzleBinairoGridProvider, 
         PuzzleBinairoPlayer

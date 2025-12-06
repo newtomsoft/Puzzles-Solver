@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleNorinoriGridProvider import PuzzleNorinor
 from Run.GameRegistry import GameRegistry
 
 
-def register_norinori():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-norinori\.com", 
         PuzzleNorinoriGridProvider, 
         PuzzleNorinoriPlayer

@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleF
 from Run.GameRegistry import GameRegistry
 
 
-def register_fobidoshi():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/fobidoshi", 
         GridPuzzleFobidoshiGridProvider, 
         GridPuzzleFobidoshiPlayer

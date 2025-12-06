@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanro
 from Run.GameRegistry import GameRegistry
 
 
-def register_nanro():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/nanro", 
         GridPuzzleNanroGridProvider, 
         GridPuzzleNanroPlayer

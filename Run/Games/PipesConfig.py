@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzlePipesGridProvider import PuzzlePipesGridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_pipes():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-pipes\.com", 
         PuzzlePipesGridProvider, 
         PuzzlePipesPlayer
