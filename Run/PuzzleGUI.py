@@ -1,9 +1,9 @@
 import os
 import sys
 import threading
+import time
 import tkinter as tk
 from tkinter import scrolledtext, messagebox
-import time
 
 # Ensure project root and Run directory are in path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -69,6 +69,13 @@ class PuzzleGUI:
         tk.Button(btn_frame, text="Zip", command=lambda: self.set_url("zip")).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Tango", command=lambda: self.set_url("tango")).pack(side="left", padx=5)
 
+        # Options Frame
+        options_frame = tk.Frame(root)
+        options_frame.pack(pady=5)
+
+        self.record_video_var = tk.BooleanVar(value=True)
+        tk.Checkbutton(options_frame, text="Enregistrer vidéo", variable=self.record_video_var).pack(side="left", padx=10)
+
         # Action Buttons
         action_frame = tk.Frame(root)
         action_frame.pack(pady=10)
@@ -110,6 +117,9 @@ class PuzzleGUI:
 
     def run_logic(self, url):
         try:
+            # Set video recording preference via environment variable
+            os.environ["PLAYWRIGHT_RECORD_VIDEO"] = "True" if self.record_video_var.get() else "False"
+            
             print(f"Starting solver for: {url}")
 
             # Map short names to full URLs

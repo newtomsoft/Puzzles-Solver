@@ -2,7 +2,6 @@ import configparser
 import logging
 import os
 import tkinter as tk
-
 from abc import abstractmethod, ABC
 
 from playwright.sync_api import BrowserContext, sync_playwright
@@ -15,6 +14,7 @@ class PlaywrightGridProvider(ABC):
         self.extensions_path = ''
         self.user_data_path = ''
         self.headless = True
+        self.record_video = True
         self.email = ''
         self.password = ''
         self.config = self.get_config()
@@ -44,6 +44,7 @@ class PlaywrightGridProvider(ABC):
     def _read_config(self):
         self.headless = self.config['DEFAULT']['headless'] == 'True'
         self.force_headless_if_screen_too_small = self.config['DEFAULT']['force_headless_if_screen_too_small'] == 'True'
+        self.record_video = os.environ.get('PLAYWRIGHT_RECORD_VIDEO', 'True') == 'True'
         self.user_data_path = os.path.join(self.config_dir_path, self.config['DEFAULT']['user_data_path'])
         extensions_path = self.config['DEFAULT']['extensions_path']
         extensions_paths = extensions_path.split(',')
@@ -60,18 +61,23 @@ class PlaywrightGridProvider(ABC):
             print('Screen too small, using headless mode')
 
         playwright = sync_playwright().start()
-        browser_context = playwright.chromium.launch_persistent_context(
-            self.user_data_path,
-            record_video_dir="videos/",
-            viewport={"width": window_width, "height": window_height},
-            record_video_size={"width": window_width, "height": window_height},
-            headless=self.headless,
-            args=[
-                f'--disable-extensions-except={self.extensions_path}',
-                f'--load-extension={self.extensions_path}',
-                '--start-maximized'
-            ]
-        )
+
+        launch_args = {
+            'user_data_dir': self.user_data_path,
+            'viewport': {"width": window_width, "height": window_height},
+            'headless': self.headless,
+        }
+        if self.record_video:
+            launch_args['record_video_dir'] = "videos/"
+            launch_args['record_video_size'] = {"width": window_width, "height": window_height}
+
+        launch_args['args'] = [
+            f'--disable-extensions-except={self.extensions_path}',
+            f'--load-extension={self.extensions_path}',
+            '--start-maximized'
+        ]
+
+        browser_context = playwright.chromium.launch_persistent_context(**launch_args)
         var = callback(browser_context, source)
         return var, browser_context
 
