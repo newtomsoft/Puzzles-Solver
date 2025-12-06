@@ -118,7 +118,10 @@ class PlaywrightPlayer(GridPlayer):
         return cell_height, cell_width, page, x0, y0
 
     @classmethod
-    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[Video, Rectangle]:
+    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[Video, Rectangle] | tuple[None, None]:
+        if page.video is None:
+            return None, None
+        
         game_board_wrapper = frame.wait_for_selector(selector)
         bounding_box = game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) - x_offset
@@ -129,7 +132,10 @@ class PlaywrightPlayer(GridPlayer):
         return page.video, rectangle
 
     @classmethod
-    def _get_data_video_viewport(cls, page: Page) -> tuple[Video, Rectangle]:
+    def _get_data_video_viewport(cls, page: Page) -> tuple[Video, Rectangle] | tuple[None, None]:
+        if page.video is None:
+            return None, None
+        
         viewport_size = page.viewport_size
         x1 = 0
         y1 = 0
@@ -139,7 +145,10 @@ class PlaywrightPlayer(GridPlayer):
         return page.video, rectangle
 
     @classmethod
-    def _process_video(cls, video_file: VideoFile, rect: Rectangle, start_time: float = 0) -> str:
+    def _process_video(cls, video_file: VideoFile, rect: Rectangle, start_time: float = 0) -> str | None:
+        if video_file is None or rect is None:
+            return None
+        
         video_path = video_file.path()
         cls._crop_video(video_path, cls.game_name, rect, start_time)
         return video_path
