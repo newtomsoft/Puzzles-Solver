@@ -35,6 +35,7 @@ Thumbs.db
 /GridProviders/Linkedin/ZipGridProvider.ini
 /GridProviders/Chromium/user/
 /GridProviders/Chromium/extensions/
+/GridProviders/Chromium/
 /GridProviders/Firefox/user/
 /GridProviders/Firefox/
 /Run/videos/
@@ -58,4 +59,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
-*.swp
+
+# PyInstaller
+/build/
+/dist/
