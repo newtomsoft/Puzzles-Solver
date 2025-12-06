@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKob
 from Run.GameRegistry import GameRegistry
 
 
-def register_koburin():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/koburin", 
         GridPuzzleKoburinGridProvider, 
         GridPuzzleKoburinPlayer

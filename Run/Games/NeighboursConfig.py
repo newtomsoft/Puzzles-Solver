@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleNeighboursGridProvider import GridPuzzle
 from Run.GameRegistry import GameRegistry
 
 
-def register_neighbours():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/neighbours", 
         GridPuzzleNeighboursGridProvider, 
         GridPuzzleNeighboursPlayer

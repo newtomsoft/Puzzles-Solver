@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleJigsawSudokuGridProvider import PuzzleJig
 from Run.GameRegistry import GameRegistry
 
 
-def register_jigsawsudoku():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-jigsaw-sudoku\.com", 
         PuzzleJigsawSudokuGridProvider, 
         PuzzleSudokuPlayer

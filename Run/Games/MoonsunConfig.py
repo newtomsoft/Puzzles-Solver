@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleMoonsunGridProvider import GridPuzzleMoo
 from Run.GameRegistry import GameRegistry
 
 
-def register_moonsun():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/moonsun", 
         GridPuzzleMoonsunGridProvider, 
         GridPuzzleMoonsunPlayer

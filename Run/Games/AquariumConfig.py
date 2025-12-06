@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleAquariumGridProvider import PuzzleAquariu
 from Run.GameRegistry import GameRegistry
 
 
-def register_aquarium():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-aquarium\.com", 
         PuzzleAquariumGridProvider, 
         PuzzleAquariumPlayer

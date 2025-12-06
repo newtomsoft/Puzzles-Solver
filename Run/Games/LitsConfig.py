@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleLitsGridProvider import PuzzleLitsGridPro
 from Run.GameRegistry import GameRegistry
 
 
-def register_lits():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-lits\.com", 
         PuzzleLitsGridProvider, 
         PuzzleLitsPlayer

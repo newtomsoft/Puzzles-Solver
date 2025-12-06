@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleTatamibariGridProvider import GridPuzzle
 from Run.GameRegistry import GameRegistry
 
 
-def register_tatamibari():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/tatamibari", 
         GridPuzzleTatamibariGridProvider, 
         GridPuzzleTatamibariPlayer

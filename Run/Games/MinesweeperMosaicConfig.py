@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleMinesweeperMosaicGridProvider import Puzz
 from Run.GameRegistry import GameRegistry
 
 
-def register_minesweepermosaic():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-minesweeper\.com/.*mosaic", 
         PuzzleMinesweeperMosaicGridProvider, 
         PuzzleMinesweeperMosaicPlayer

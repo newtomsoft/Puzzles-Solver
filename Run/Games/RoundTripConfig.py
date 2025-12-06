@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleRoundTripGridProvider import GridPuzzleR
 from Run.GameRegistry import GameRegistry
 
 
-def register_roundtrip():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/round-trip", 
         GridPuzzleRoundTripGridProvider, 
         GridPuzzleRoundTripPlayer

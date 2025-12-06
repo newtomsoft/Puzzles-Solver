@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleNurikabeGridProvider import PuzzleNurikab
 from Run.GameRegistry import GameRegistry
 
 
-def register_nurikabe():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-nurikabe\.com", 
         PuzzleNurikabeGridProvider, 
         PuzzleNurikabePlayer

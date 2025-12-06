@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleYinYangGridProvider import PuzzleYinYangG
 from Run.GameRegistry import GameRegistry
 
 
-def register_yinyang():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-yin-yang\.com", 
         PuzzleYinYangGridProvider, 
         PuzzleBinairoPlayer

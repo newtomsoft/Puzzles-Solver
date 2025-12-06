@@ -4,8 +4,8 @@ from GridProviders.PuzzleBaron.PuzzleBaronNumberLinksGridProvider import PuzzleB
 from Run.GameRegistry import GameRegistry
 
 
-def register_numberlink():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://numberlinks\.puzzlebaron\.com/init2\.php", 
         PuzzleBaronNumberLinksGridProvider, 
         PuzzleBaronNumberLinksPlayer

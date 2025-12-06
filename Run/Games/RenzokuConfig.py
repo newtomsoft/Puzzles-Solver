@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleRenzokuGridProvider import PuzzleRenzokuG
 from Run.GameRegistry import GameRegistry
 
 
-def register_renzoku():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-futoshiki\.com/.*renzoku", 
         PuzzleRenzokuGridProvider, 
         PuzzleFutoshikiPlayer

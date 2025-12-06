@@ -3,8 +3,8 @@ from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGrid
 from Run.GameRegistry import GameRegistry
 
 
-def register_sumplete():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://playsumplete\.com/", 
         PlaySumpleteGridProvider, 
         None

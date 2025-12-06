@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_numberchain():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/number-chain", 
         GridPuzzleNumberChainGridProvider, 
         GridPuzzleNumberChainPlayer

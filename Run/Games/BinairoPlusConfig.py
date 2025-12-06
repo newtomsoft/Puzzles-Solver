@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleBinairoPlusGridProvider import PuzzleBina
 from Run.GameRegistry import GameRegistry
 
 
-def register_binairoplus():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://www\.linkedin\.com/games/tango", 
         TangoGridProvider, 
         TangoPlayer
     )(BinairoPlusSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://.*\.puzzle-binairo\.com/.*binairo-plus", 
         PuzzleBinairoPlusGridProvider, 
         PuzzleBinairoPlayer

@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleLookAirGridProvider import GridPuzzleLoo
 from Run.GameRegistry import GameRegistry
 
 
-def register_lookair():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/look-air", 
         GridPuzzleLookAirGridProvider, 
         GridPuzzleLookAirPlayer

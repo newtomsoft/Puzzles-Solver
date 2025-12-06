@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleStr8tsGridProvider import GridPuzzleStr8
 from Run.GameRegistry import GameRegistry
 
 
-def register_str8ts():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/str8ts", 
         GridPuzzleStr8tsGridProvider, 
         GridPuzzleStr8tsPlayer

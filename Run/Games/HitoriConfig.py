@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleHitoriGridProvider import PuzzleHitoriGri
 from Run.GameRegistry import GameRegistry
 
 
-def register_hitori():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-hitori\.com", 
         PuzzleHitoriGridProvider, 
         PuzzleHitoriPlayer

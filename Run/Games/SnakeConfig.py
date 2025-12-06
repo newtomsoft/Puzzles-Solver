@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnake
 from Run.GameRegistry import GameRegistry
 
 
-def register_snake():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/snake", 
         GridPuzzleSnakeGridProvider, 
         GridPuzzleSnakePlayer

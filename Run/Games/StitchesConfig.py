@@ -4,8 +4,8 @@ from GridProviders.PuzzlesMobile.PuzzleStitchesGridProvider import PuzzleStitche
 from Run.GameRegistry import GameRegistry
 
 
-def register_stitches():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-stitches\.com", 
         PuzzleStitchesGridProvider, 
         PuzzleStitchesPlayer

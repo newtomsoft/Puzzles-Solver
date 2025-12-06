@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleBorderBlockGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_border_block():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/bodaburokku",
         GridPuzzleBorderBlockGridProvider,
         GridPuzzleBorderBlockPlayer

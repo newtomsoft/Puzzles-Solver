@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleGradesGridProvider import GridPuzzleGrad
 from Run.GameRegistry import GameRegistry
 
 
-def register_grades():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/grades", 
         GridPuzzleGradesGridProvider, 
         GridPuzzleGradesPlayer

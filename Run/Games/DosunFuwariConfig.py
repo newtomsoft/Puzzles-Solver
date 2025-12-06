@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzl
 from Run.GameRegistry import GameRegistry
 
 
-def register_dosunfuwari():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/dosun-fuwari", 
         GridPuzzleDosunFuwariGridProvider, 
         GridPuzzleDosunFuwariPlayer

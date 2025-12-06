@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleKakuteruAnpuGridProvider import GridPuzz
 from Run.GameRegistry import GameRegistry
 
 
-def register_kakuteruanpu():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/cocktail-lamp", 
         GridPuzzleKakuteruAnpuGridProvider, 
         GridPuzzleKakuteruAnpuPlayer

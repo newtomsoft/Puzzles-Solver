@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleKanjoGridProvider import GridPuzzleKanjo
 from Run.GameRegistry import GameRegistry
 
 
-def register_kanjo():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/kanjo", 
         GridPuzzleKanjoGridProvider, 
         GridPuzzleKanjoPlayer

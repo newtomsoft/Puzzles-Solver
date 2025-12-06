@@ -53,7 +53,7 @@ https://gridpuzzle.com/masyu/evil-12
 https://gridpuzzle.com/meadows/size-15  
 https://gridpuzzle.com/mid-loop/hard-12  
 https://gridpuzzle.com/minesweeper/evil-12  
-https://gridpuzzle.com/mintonette/evil-15 (WIP)  
+https://gridpuzzle.com/mintonette/evil-15  
 https://gridpuzzle.com/moonsun/evil-12  
 https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/neighbours/evil-12  

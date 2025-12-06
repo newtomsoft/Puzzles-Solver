@@ -6,14 +6,14 @@ from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridP
 from Run.GameRegistry import GameRegistry
 
 
-def register_tents():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*\.puzzle-tents\.com", 
         PuzzleTentsGridProvider, 
         PuzzleTentsPlayer
     )(TentsSolver)
 
-    GameRegistry.register_game(
+    GameRegistry.register(
         r"https://campsites\.puzzlebaron\.com/init2\.php", 
         PuzzleBaronCampsitesGridProvider, 
         PuzzleBaronCampsitesPlayer

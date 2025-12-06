@@ -4,8 +4,8 @@ from GridProviders.GridPuzzle.GridPuzzleTilePaintGridProvider import GridPuzzleT
 from Run.GameRegistry import GameRegistry
 
 
-def register_tilepaint():
-    GameRegistry.register_game(
+def register():
+    GameRegistry.register(
         r"https://.*gridpuzzle\.com/tilepaint", 
         GridPuzzleTilePaintGridProvider, 
         GridPuzzleTilePaintPlayer
