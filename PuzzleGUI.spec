@@ -40,7 +40,6 @@ from PyInstaller.utils.hooks import copy_metadata
 datas = [
     ('GridProviders/ScrapingGridProvider.ini', 'GridProviders'),
     ('GridProviders/Chromium', 'GridProviders/Chromium'),
-    ('GridProviders/Firefox', 'GridProviders/Firefox'),
 ]
 
 # Collect metadata for packages that need it (using copy_metadata for importlib.metadata support)
