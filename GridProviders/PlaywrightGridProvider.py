@@ -3,12 +3,14 @@ import logging
 import os
 import tkinter as tk
 
-from abc import abstractmethod, ABC
+from abc import abstractmethod
 
 from playwright.sync_api import BrowserContext, sync_playwright
 
+from GridProviders.GridProvider import GridProvider
 
-class PlaywrightGridProvider(ABC):
+
+class PlaywrightGridProvider(GridProvider):
     def __init__(self):
         self.config_file_name = 'ScrapingGridProvider.ini'
         self.config_dir_path = os.path.dirname(os.path.abspath(__file__))
@@ -19,6 +21,9 @@ class PlaywrightGridProvider(ABC):
         self.password = ''
         self.config = self.get_config()
         self._read_config()
+
+    def get_grid(self, url: str):
+        return self.with_playwright(self.scrap_grid, url)
 
     @abstractmethod
     def scrap_grid(self, browser: BrowserContext, url):
@@ -77,8 +82,11 @@ class PlaywrightGridProvider(ABC):
 
     @staticmethod
     def screen_size() -> tuple[int, int]:
-        root = tk.Tk()
-        root.withdraw()
-        width = root.winfo_screenwidth()
-        height = root.winfo_screenheight()
-        return width, height
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            width = root.winfo_screenwidth()
+            height = root.winfo_screenheight()
+            return width, height
+        except Exception:
+            return 1920, 1080
