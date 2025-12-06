@@ -149,7 +149,7 @@ class MintonetteSolver(GameSolver):
 
     def _compute_candidates_paths(self, start_node: Position) -> list[tuple]:
         value = self._input_grid[start_node]
-        n_turn = value if value != self.Unknown else 7
+        n_turn = value if value != self.Unknown else 8
 
         found_paths: list[tuple] = []
         queue = deque([(start_node, None, 0, [start_node])])
