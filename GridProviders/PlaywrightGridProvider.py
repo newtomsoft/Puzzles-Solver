@@ -77,8 +77,14 @@ class PlaywrightGridProvider(ABC):
 
     @staticmethod
     def screen_size() -> tuple[int, int]:
-        root = tk.Tk()
-        root.withdraw()
-        width = root.winfo_screenwidth()
-        height = root.winfo_screenheight()
-        return width, height
+        if "PUZZLE_SOLVER_GUI_MODE" in os.environ:
+            return 1920, 1080
+
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            width = root.winfo_screenwidth()
+            height = root.winfo_screenheight()
+            return width, height
+        except Exception:
+            return 800, 600
