@@ -73,7 +73,7 @@ class PuzzleGUI:
         options_frame = tk.Frame(root)
         options_frame.pack(pady=5)
 
-        self.record_video_var = tk.BooleanVar(value=True)
+        self.record_video_var = tk.BooleanVar(value=False)
         tk.Checkbutton(options_frame, text="Enregistrer vidéo", variable=self.record_video_var).pack(side="left", padx=10)
 
         # Action Buttons
@@ -161,4 +161,12 @@ class PuzzleGUI:
 if __name__ == "__main__":
     root = tk.Tk()
     app = PuzzleGUI(root)
+    
+    # Close splash screen if bundled
+    try:
+        import pyi_splash
+        pyi_splash.close()
+    except ImportError:
+        pass
+        
     root.mainloop()
