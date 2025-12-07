@@ -159,6 +159,15 @@ class PuzzleGUI:
             self.root.after(0, lambda: self.run_btn.config(state="normal", text="Start Solver"))
 
 if __name__ == "__main__":
+    # Fix for frozen executable looking for browsers in internal dir
+    if getattr(sys, 'frozen', False):
+        local_app_data = os.environ.get('LOCALAPPDATA')
+        if local_app_data:
+            playwright_path = os.path.join(local_app_data, 'ms-playwright')
+            if os.path.exists(playwright_path):
+                os.environ['PLAYWRIGHT_BROWSERS_PATH'] = playwright_path
+                print(f"Playwright browsers path forced to: {playwright_path}")
+
     root = tk.Tk()
     app = PuzzleGUI(root)
     
