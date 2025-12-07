@@ -1,6 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import sys
+import os
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 block_cipher = None
@@ -78,7 +79,7 @@ if os.path.exists(ortools_libs_dir):
 # Add all Python packages from the project
 a = Analysis(
     ['Run/PuzzleGUI.py'],
-    pathex=['G:\\projets infos\\PuzzleGames'],
+    pathex=[os.getcwd()],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
