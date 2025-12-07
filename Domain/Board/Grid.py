@@ -4,6 +4,7 @@ from typing import TypeVar, Iterable
 
 from bitarray import bitarray
 
+from Domain.Board.Direction import Direction
 from Domain.Board.GridBase import GridBase
 from Domain.Board.Island import Island
 from Domain.Board.Position import Position
@@ -258,6 +259,15 @@ class Grid[T](GridBase[T]):
 
     def edge_right_positions(self) -> list[Position]:
         return [Position(r, self.columns_number - 1) for r in range(self.rows_number)]
+
+    def edge_positions(self, direction: Direction):
+        mapper = {
+            Direction.up(): self.edge_up_positions,
+            Direction.down(): self.edge_down_positions,
+            Direction.left(): self.edge_left_positions,
+            Direction.right(): self.edge_right_positions,
+        }
+        return mapper[direction]()
 
     def edges_positions(self) -> set[Position]:
         return {position for position, _ in self if
