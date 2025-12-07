@@ -31,8 +31,8 @@ class GridPuzzleRegionBorderPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         if self._solution is None:
             return pairs
 
-        min_value = self._solution.min_value()
-        max_value = self._solution.max_value()
+        min_value = int(self._solution.min_value())
+        max_value = int(self._solution.max_value())
 
         for cell_value in range(min_value, max_value + 1):
             for cell_position in [position for position, value in self._solution if value == cell_value]:

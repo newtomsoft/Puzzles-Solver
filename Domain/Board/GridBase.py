@@ -58,12 +58,13 @@ class GridBase[T]:
     def __hash__(self):
         return hash(str(self._matrix))
 
-    def min_value(self):
-        return min(min(self._matrix, key=lambda row: min(row)))
-
-    def max_value(self):
+    def min_value(self) -> float:
         matrice_np = np.array(self._matrix, dtype=float)
-        return np.nanmax(matrice_np)
+        return float(np.nanmin(matrice_np))
+
+    def max_value(self) -> float:
+        matrice_np = np.array(self._matrix, dtype=float)
+        return float(np.nanmax(matrice_np))
 
     @property
     def matrix(self):
