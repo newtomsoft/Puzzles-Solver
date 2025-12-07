@@ -2,12 +2,11 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.RegionsGrid import RegionsGrid
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleDotchiLoopGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+class GridPuzzleDotchiLoopGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     _ = 0
     B = 1
     W = 2

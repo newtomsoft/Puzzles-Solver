@@ -2,13 +2,12 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 _ = MeadowsSolver.empty
 
-class GridPuzzleMeadowsGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+class GridPuzzleMeadowsGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     count = 0
 
     def get_grid(self, url: str):

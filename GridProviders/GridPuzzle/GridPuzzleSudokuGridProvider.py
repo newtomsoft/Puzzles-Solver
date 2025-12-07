@@ -3,12 +3,11 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleSudokuGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleProvider):
+class GridPuzzleSudokuGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

@@ -3,14 +3,13 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProviders.GridProvider import GridProvider
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Domain.Board.Grid import Grid
 from Domain.Board.RegionsGrid import RegionsGrid
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleHeyawakeGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleHeyawakeGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

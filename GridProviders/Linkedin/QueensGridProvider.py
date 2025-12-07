@@ -3,12 +3,11 @@ import re
 
 from playwright.sync_api import BrowserContext
 
-from GridProviders.GridProvider import GridProvider
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Domain.Board.Grid import Grid
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class QueensGridProvider(GridProvider, PlaywrightGridProvider):
+class QueensGridProvider(PlaywrightGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

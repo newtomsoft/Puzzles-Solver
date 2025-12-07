@@ -2,11 +2,10 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class TangoGridProvider(GridProvider, PlaywrightGridProvider):
+class TangoGridProvider(PlaywrightGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

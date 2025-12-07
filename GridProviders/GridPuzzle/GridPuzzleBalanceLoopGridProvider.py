@@ -2,12 +2,11 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleBalanceLoopGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+class GridPuzzleBalanceLoopGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

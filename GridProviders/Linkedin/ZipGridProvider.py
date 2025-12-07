@@ -4,11 +4,10 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class ZipGridProvider(GridProvider, PlaywrightGridProvider):
+class ZipGridProvider(PlaywrightGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
