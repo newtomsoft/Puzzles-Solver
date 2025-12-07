@@ -1,13 +1,12 @@
 ﻿from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProviders.GridProvider import GridProvider
+from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
-from Domain.Board.Grid import Grid
 
 
-class PuzzleBaronVectorsGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
+class PuzzleBaronVectorsGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

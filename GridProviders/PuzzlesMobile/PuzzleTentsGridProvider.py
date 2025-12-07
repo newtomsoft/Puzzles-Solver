@@ -7,7 +7,7 @@ from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileG
 from Domain.Board.Grid import Grid
 
 
-class PuzzleTentsGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleTentsGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

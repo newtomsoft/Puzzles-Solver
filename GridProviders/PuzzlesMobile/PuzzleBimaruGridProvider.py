@@ -3,12 +3,11 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleBimaruGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleBimaruGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
