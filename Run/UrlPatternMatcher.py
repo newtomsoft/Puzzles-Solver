@@ -73,6 +73,7 @@ import Run.Games.ShikakuConfig
 import Run.Games.ShingokiConfig
 import Run.Games.ShirokuroConfig
 import Run.Games.SkyscrapersConfig
+import Run.Games.SlantConfig
 import Run.Games.SnakeConfig
 import Run.Games.StarBattleConfig
 import Run.Games.StarsAndArrowsConfig
@@ -187,6 +188,7 @@ class UrlPatternMatcher:
         Run.Games.ShirokuroConfig.register()
         Run.Games.ShingokiConfig.register()
         Run.Games.SkyscrapersConfig.register()
+        Run.Games.SlantConfig.register()
         Run.Games.SnakeConfig.register()
         Run.Games.StarBattleConfig.register()
         Run.Games.StarsAndArrowsConfig.register()
