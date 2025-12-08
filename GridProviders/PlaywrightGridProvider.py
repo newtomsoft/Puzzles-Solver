@@ -19,6 +19,7 @@ class PlaywrightGridProvider(GridProvider):
         self.record_video = True
         self.email = ''
         self.password = ''
+        self.browser_type = 'chromium'
         self.config = self.get_config()
         self._read_config()
 
@@ -56,11 +57,13 @@ class PlaywrightGridProvider(GridProvider):
         extensions_paths = [os.path.join(self.config_dir_path, x) for x in extensions_paths if x]
         self.extensions_path = ','.join([str(path) if os.path.exists(str(path)) else '' for path in extensions_paths])
         self.email = self.config['DEFAULT']['email']
+        self.email = self.config['DEFAULT']['email']
         self.password = self.config['DEFAULT']['password']
+        self.browser_type = self.config['DEFAULT'].get('browser', 'chromium')
 
     def with_playwright(self, callback, source):
         screen_width, screen_height = self.screen_size()
-        window_width, window_height = 800, 1080
+        window_width, window_height = 900, 1000
         if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):
             self.headless = True
             print('Screen too small, using headless mode')
@@ -76,13 +79,18 @@ class PlaywrightGridProvider(GridProvider):
             launch_args['record_video_dir'] = "videos/"
             launch_args['record_video_size'] = {"width": window_width, "height": window_height}
 
-        launch_args['args'] = [
-            f'--disable-extensions-except={self.extensions_path}',
-            f'--load-extension={self.extensions_path}',
-            '--start-maximized'
-        ]
+        launch_args['args'] = []
+        if self.browser_type == 'chromium':
+            launch_args['args'] = [
+                f'--disable-extensions-except={self.extensions_path}',
+                f'--load-extension={self.extensions_path}',
+                '--start-maximized'
+            ]
 
-        browser_context = playwright.chromium.launch_persistent_context(**launch_args)
+        if self.browser_type == 'firefox':
+             browser_context = playwright.firefox.launch_persistent_context(**launch_args)
+        else:
+             browser_context = playwright.chromium.launch_persistent_context(**launch_args)
         var = callback(browser_context, source)
         return var, browser_context
 
