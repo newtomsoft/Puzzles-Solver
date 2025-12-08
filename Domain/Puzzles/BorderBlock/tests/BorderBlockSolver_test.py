@@ -19,8 +19,6 @@ I = 18
 J = 19
 K = 20
 L = 21
-
-
 # endregion
 
 class BorderBlockSolverTests(TestCase):

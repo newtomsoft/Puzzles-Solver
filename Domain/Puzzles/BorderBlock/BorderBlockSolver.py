@@ -101,6 +101,14 @@ class BorderBlockSolver(GameSolver):
             neighbors_value = [self._grid_z3[neighbor] for neighbor in position.straddled_neighbors() if neighbor in self._input_grid]
             self._solver.add(neighbors_value[0] == neighbors_value[1])
 
+    def _add_not_inside_dot_constraints(self):
+        inside_positions = self._get_inside_positions()
+        for position in inside_positions:
+            v1 = Int(f"v1{position}")
+            v2 = Int(f"v2{position}")
+            for neighbor_value in [self._grid_z3[neighbor] for neighbor in position.straddled_neighbors()]:
+                self._solver.add(Or(neighbor_value == v1, neighbor_value == v2))
+
     def _get_empty_border_positions(self) -> set[Position]:
         first_position = Position(-0.5, -0.5)
         positions = set()
@@ -114,14 +122,6 @@ class BorderBlockSolver(GameSolver):
 
         positions -= set(self._dots)
         return positions
-
-    def _add_not_inside_dot_constraints(self):
-        inside_positions = self._get_inside_positions()
-        for position in inside_positions:
-            v1 = Int(f"v1{position}")
-            v2 = Int(f"v2{position}")
-            for neighbor_value in [self._grid_z3[neighbor] for neighbor in position.straddled_neighbors()]:
-                self._solver.add(Or(neighbor_value == v1, neighbor_value == v2))
 
     def _get_inside_positions(self):
         first_position = Position(-0.5, -0.5)
