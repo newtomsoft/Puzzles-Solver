@@ -48,6 +48,7 @@ import Run.Games.MidLoopConfig
 import Run.Games.MinesweeperConfig
 import Run.Games.MinesweeperMosaicConfig
 import Run.Games.MintonetteConfig
+import Run.Games.MitiConfig
 import Run.Games.MoonsunConfig
 import Run.Games.NanroConfig
 import Run.Games.NeighboursConfig
@@ -160,6 +161,7 @@ class UrlPatternMatcher:
         Run.Games.MinesweeperConfig.register()
         Run.Games.MinesweeperMosaicConfig.register()
         Run.Games.MintonetteConfig.register()
+        Run.Games.MitiConfig.register()
         Run.Games.MoonsunConfig.register()
         Run.Games.NanroConfig.register()
         Run.Games.NeighboursConfig.register()
