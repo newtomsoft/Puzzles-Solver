@@ -1,32 +1,35 @@
-from z3 import Solver, Or, And, Not, If, Sum, sat, Bool, is_true
+from z3 import Solver, Or, And, Not, sat, Bool, is_true
+
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 
 
 class SlantSolver(GameSolver):
+    empty = None
+
     def __init__(self, grid: Grid):
         self.grid = grid
-        # Input grid is clues (N+1 x M+1)
-        # Solution grid is cells (N x M)
         self.rows_number = grid.rows_number - 1
         self.columns_number = grid.columns_number - 1
         self.solver = Solver()
-        self.cells = [[Bool(f'cell_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self.grid_var = Grid([[Bool(f'cell_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self.solution = Grid.empty()
 
     def get_solution(self) -> Grid:
-        self._add_constraints()
+        if not self.solver.assertions():
+            self._add_constraints()
+
+        self.solution = self._ensure_no_loop()
+        return self.solution
+
+    def _ensure_no_loop(self) -> Grid:
         while self.solver.check() == sat:
             model = self.solver.model()
             solution_matrix = [['' for _ in range(self.columns_number)] for _ in range(self.rows_number)]
 
-            # Using simple adjacency list for cycle detection
-            # Nodes are intersection points (r, c) where 0 <= r <= rows, 0 <= c <= cols
             adj = {}
-
             cycle_found = False
 
-            # Helper to find path in current graph
-            # Returns list of nodes [start, ..., end]
             def get_path_bfs(start_node, end_node, graph_adj):
                 queue = [(start_node, [start_node])]
                 visited = {start_node}
@@ -42,8 +45,8 @@ class SlantSolver(GameSolver):
 
             for r in range(self.rows_number):
                 for c in range(self.columns_number):
-                    is_backslash = is_true(model[self.cells[r][c]])
-                    solution_matrix[r][c] = '\\' if is_backslash else '/'
+                    is_backslash = is_true(model[self.grid_var[r][c]])
+                    solution_matrix[r][c] = is_backslash
 
                     if is_backslash:
                         u, v = (r, c), (r+1, c+1)
@@ -57,7 +60,7 @@ class SlantSolver(GameSolver):
                         # Construct blocking clause
                         cycle_constraints = []
                         # Current edge constraint
-                        cycle_constraints.append(self.cells[r][c] == is_backslash)
+                        cycle_constraints.append(self.grid_var[r][c] == is_backslash)
 
                         # Constraints for edges in the path
                         for i in range(len(path) - 1):
@@ -80,7 +83,7 @@ class SlantSolver(GameSolver):
                     # Add edge to graph
                     if u not in adj: adj[u] = []
                     if v not in adj: adj[v] = []
-                    constraint = (self.cells[r][c] == is_backslash)
+                    constraint = (self.grid_var[r][c] == is_backslash)
                     adj[u].append((v, constraint))
                     adj[v].append((u, constraint))
 
@@ -89,7 +92,7 @@ class SlantSolver(GameSolver):
             if not cycle_found:
                 return Grid(solution_matrix)
 
-        return None
+        return Grid.empty()
 
     def _add_constraints(self):
         for r in range(self.grid.rows_number):
@@ -99,20 +102,22 @@ class SlantSolver(GameSolver):
                     clue_val = int(clue)
                     connections = []
 
-                    # (r-1, c-1) connects to (r,c) if \ (True)
                     if r > 0 and c > 0:
-                        connections.append(If(self.cells[r-1][c-1], 1, 0))
-                    # (r-1, c) connects to (r,c) if / (False)
+                        connections.append(self.grid_var[r - 1][c - 1])
                     if r > 0 and c < self.columns_number:
-                        connections.append(If(self.cells[r-1][c], 0, 1))
-                    # (r, c-1) connects to (r,c) if / (False)
+                        connections.append(Not(self.grid_var[r - 1][c]))
                     if r < self.rows_number and c > 0:
-                        connections.append(If(self.cells[r][c-1], 0, 1))
-                    # (r, c) connects to (r,c) if \ (True)
+                        connections.append(Not(self.grid_var[r][c - 1]))
                     if r < self.rows_number and c < self.columns_number:
-                        connections.append(If(self.cells[r][c], 1, 0))
+                        connections.append(self.grid_var[r][c])
 
-                    self.solver.add(Sum(connections) == clue_val)
+                    self.solver.add(sum(connections) == clue_val)
 
     def get_other_solution(self) -> Grid:
+        blocking_clause = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                blocking_clause.append(self.grid_var[r][c] != self.solution[r][c])
+
+        self.solver.add(Or(blocking_clause))
         return self.get_solution()
