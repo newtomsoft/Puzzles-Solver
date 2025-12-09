@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.Kurodoko.KurodokoSolver import KurodokoSolver
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
@@ -16,16 +17,8 @@ class PuzzleKurodokoGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvid
         self.new_game(page, 'div.cell')
         html_page = page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
-
-        # NOTE: Guessing the class name based on pattern.
-        # Nurikabe has 'nurikabe-task-cell', Hitori has 'hitori-task-cell'.
-        # Kurodoko might have 'kurodoko-task-cell' or just 'cell'.
-        # Since 'cell' seems to be the common base, and `PuzzleNurikabeGridProvider` searches for both,
-        # we will assume generic 'cell' works or specific one.
-
         cell_divs = soup.find_all('div', class_='cell')
 
-        # If no cells found, might need to wait longer or check class name.
         if not cell_divs:
              raise ValueError("No cells found. Check selector.")
 
@@ -34,14 +27,9 @@ class PuzzleKurodokoGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvid
         cells_count = len(cell_divs)
 
         if columns_number == 0 or rows_number == 0:
-            # Fallback or error
             raise ValueError(f"Could not determine dimensions. Found {cells_count} cells.")
 
         if columns_number * rows_number != cells_count:
-             # Sometimes there are extra cells or hidden ones?
-             # But let's assume standard grid first.
-             # If mismatch, it might be that we picked up non-grid cells.
-             # We can try to filter by having 'top' and 'left' style.
              filtered_cells = [c for c in cell_divs if 'top:' in c['style'] and 'left:' in c['style']]
              if len(filtered_cells) != cells_count:
                  cell_divs = filtered_cells
@@ -52,7 +40,7 @@ class PuzzleKurodokoGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvid
              if columns_number * rows_number != cells_count:
                  raise ValueError(f"Grid parsing error: {rows_number}x{columns_number} != {cells_count}")
 
-        numbers = [int(inner_text) if (inner_text := cell_div.get_text()) else 0 for cell_div in cell_divs]
+        numbers = [int(inner_text) if (inner_text := cell_div.get_text()) else KurodokoSolver.empty for cell_div in cell_divs]
 
         matrix = []
         for i in range(0, cells_count, columns_number):
