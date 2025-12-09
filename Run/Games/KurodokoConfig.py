@@ -5,4 +5,14 @@ from Run.GameRegistry import GameRegistry
 
 
 def register():
-    GameRegistry.register('kurodoko', KurodokoSolver, PuzzleKurodokoGridProvider, PuzzleKurodokoPlayer)
+    GameRegistry.register(
+        r"https://.*\.puzzle-kurodoko\.com",
+        PuzzleKurodokoGridProvider,
+        PuzzleKurodokoPlayer
+    )(KurodokoSolver)
+
+    GameRegistry.register(
+        r"https://.*\.puzzles-mobile\.com/kurodoko",
+        PuzzleKurodokoGridProvider,
+        PuzzleKurodokoPlayer
+    )(KurodokoSolver)
