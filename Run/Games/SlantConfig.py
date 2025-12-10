@@ -10,3 +10,9 @@ def register():
         PuzzleSlantGridProvider,
         PuzzleSlantPlayer
     )(SlantSolver)
+
+    GameRegistry.register(
+        r"https://.*\.puzzle-slant\.com",
+        PuzzleSlantGridProvider,
+        PuzzleSlantPlayer
+    )(SlantSolver)
