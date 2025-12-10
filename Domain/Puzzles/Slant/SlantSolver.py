@@ -1,8 +1,8 @@
 from z3 import Solver, And, Not, sat, Bool, is_true
 
 from Domain.Board.Grid import Grid
+from Domain.Board.SlantGrid import SlantGrid
 from Domain.Puzzles.GameSolver import GameSolver
-from Domain.Puzzles.Slant.SlantGrid import SlantGrid
 
 
 class SlantSolver(GameSolver):
@@ -24,7 +24,7 @@ class SlantSolver(GameSolver):
         if not self._solver.assertions():
             self._init_solver()
 
-        self._previous_solution = self._ensure_no_loop()
+        self._previous_solution, _ = self._ensure_no_loop()
         return self._previous_solution
 
     def get_other_solution(self) -> SlantGrid:
@@ -38,40 +38,29 @@ class SlantSolver(GameSolver):
         self._solver.add(Not(And(blocking_clause)))
         return self.get_solution()
 
-    def _ensure_no_loop(self) -> SlantGrid:
+    def _ensure_no_loop(self) -> tuple[SlantGrid, int]:
+        attempt_count = 0
         while self._solver.check() == sat:
+            attempt_count += 1
             model = self._solver.model()
-            cycle_found, blocking_constraints, solution_grid = self._find_loop_or_solution(model)
+            current_grid = SlantGrid([[is_true(model[self._grid_z3[r][c]]) for c in range(self._columns_number)] for r in range(self._rows_number)])
 
-            if cycle_found:
-                self._solver.add(Not(And(blocking_constraints)))
-            else:
-                return solution_grid
+            loops = current_grid.get_all_loops()
+            if len(loops) == 0:
+                print ("Solved after", attempt_count, "attempts")
+                return current_grid, attempt_count
 
-        return SlantGrid.empty()
+            for loop in loops:
+                loop_constraint = And([self._grid_z3[position] == current_grid[position] for position in loop])
+                self._solver.add(Not(loop_constraint))
 
-    def _find_loop_or_solution(self, model) -> tuple[bool, list, SlantGrid]:
-        current_grid = SlantGrid([[is_true(model[self._grid_z3[r][c]]) for c in range(self._columns_number)] for r in range(self._rows_number)])
-        path_nodes = current_grid.get_first_cycle_path()
-        if path_nodes:
-            cycle_constraints = []
-
-            for i in range(len(path_nodes) - 1):
-                u = path_nodes[i]
-                v = path_nodes[i+1]
-                r1, c1 = u
-                r2, c2 = v
-                cell_r = min(r1, r2)
-                cell_c = min(c1, c2)
-                cell_z3 = self._grid_z3[cell_r][cell_c]
-                is_backslash_edge = (r1 - r2) == (c1 - c2)
-                cycle_constraints.append(cell_z3 == is_backslash_edge)
-
-            return True, cycle_constraints, SlantGrid.empty()
-
-        return False, [], current_grid
+        return SlantGrid.empty(), attempt_count
 
     def _add_constraints(self):
+        self._add_clues_constraints()
+        self._add_not_minimal_loop_constraint()
+
+    def _add_clues_constraints(self):
         for position, clue in [(position, clue) for position, clue in self._clues_grid if clue != self.empty] :
             connections = []
             if (up_left:=position.up_left) in self._grid_z3:
@@ -84,3 +73,11 @@ class SlantSolver(GameSolver):
                 connections.append(self._grid_z3[position])
 
             self._solver.add(sum(connections) == clue)
+
+    def _add_not_minimal_loop_constraint(self):
+        for position, value in [(position, value) for position, value in self._grid_z3 if position not in self._grid_z3.edge_down_positions() + self._grid_z3.edge_right_positions()]:
+            up_left = self._grid_z3[position] == SlantGrid.slash
+            up_right = self._grid_z3[position.right] == SlantGrid.backslash
+            down_left = self._grid_z3[position.down] == SlantGrid.backslash
+            down_right = self._grid_z3[position.down_right] == SlantGrid.slash
+            self._solver.add(Not(And(up_left, up_right, down_left, down_right)))
