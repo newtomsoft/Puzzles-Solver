@@ -3,8 +3,7 @@ import unittest
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Slant.SlantSolver import SlantSolver
 
-_ = SlantSolver.empty
-
+_ = None
 
 class SlantSolverTests(unittest.TestCase):
     def test_solve_simple(self):
