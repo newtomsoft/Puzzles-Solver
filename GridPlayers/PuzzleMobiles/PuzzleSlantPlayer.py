@@ -10,10 +10,7 @@ class PuzzleSlantPlayer(PuzzlesMobilePlayer):
         cell_elements = page.locator('div.cell')
 
         for position, target_val in solution:
-            r, c = position.r, position.c
-            idx = r * solution.columns_number + c
-
-            # target_val is True for backslash (\), False for slash (/)
+            idx = position.r * solution.columns_number + position.c
             if target_val:
                 cell_elements.nth(idx).click(button="left")
             else:
