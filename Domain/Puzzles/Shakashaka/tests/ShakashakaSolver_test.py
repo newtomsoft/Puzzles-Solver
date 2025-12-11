@@ -3,46 +3,291 @@ import unittest
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
 
+_ = ShakashakaSolver.input_white
+B = ShakashakaSolver.input_black
+
 
 class ShakashakaSolverTests(unittest.TestCase):
-    def test_solve_simple(self):
-        # 2x2 Empty Grid -> All Empty (0,0,0,0) or Diamond (1,2,4,3)
-        grid = Grid([[-1, -1], [-1, -1]])
+    def test_2x2_empty(self):
+        """2x2 Empty Grid -> All Empty (0,0,0,0) or Diamond (1,2,4,3)"""
+        grid = Grid([
+            [_, _],
+            [_, _]
+        ])
+        expected_white = Grid([[0, 0], [0, 0]])
+        expected_diamond = Grid([[1, 2], [4, 3]])
+        expected_solutions = {expected_white, expected_diamond}
+
         solver = ShakashakaSolver(grid)
         solution = solver.get_solution()
+        other_solution = solver.get_other_solution()
+        solutions = {solution, other_solution}
 
-        self.assertIsNotNone(solution)
-        # Check if solution is all zeros OR the diamond
-        is_all_zeros = (solution.matrix == [[0, 0], [0, 0]])
-        is_diamond = (solution.matrix == [[1, 2], [4, 3]])
+        self.assertEqual(expected_solutions, solutions)
 
-        self.assertTrue(is_all_zeros or is_diamond, f"Got unexpected solution: {solution.matrix}")
-
-    def test_solve_impossible_l_shape(self):
-        # 2x2 grid, Top-Left Black (0 clue).
-        # B0 W
-        # W  W
-        # Forces neighbors to be Empty(0) (if triangle disallowed by connectivity).
-        # If neighbors are Empty(0), they form L-shape with Center(1,1).
-        # If Center(1,1) is Empty, L-shape -> Invalid 270 turn at center.
-        # If Center(1,1) is Triangle, it must connect to Neighbors.
-        # But Neighbors are Empty(0). Triangle cannot connect to Empty.
-        # So Triangle at (1,1) is invalid.
-        # So no solution exists.
-        grid = Grid([[0, -1], [-1, -1]])
+    def test_impossible_shape(self):
+        """2x2 grid, Top-Left 0"""
+        grid = Grid([
+            [0, _],
+            [_, _]
+        ])
         solver = ShakashakaSolver(grid)
         solution = solver.get_solution()
+        self.assertEqual(Grid.empty(), solution)
 
-        # Should fail (return 0-filled grid where (0,0) is 0, violating B0=5).
-        # Or return None/Dummy grid.
-        # If it returned a valid solution, (0,0) would be 5.
-        self.assertNotEqual(solution.matrix[0][0], 5)
+    def test_3x3_rising(self):
+        grid = Grid([
+            [2, _, _],
+            [_, _, _],
+            [_, _, 2],
+        ])
 
-    def test_solve_valid_diamond(self):
-        # Force a Diamond using constraints?
-        # B2 at (0,0) ? No.
-        # Maybe define a grid where only Diamond works.
-        pass
+        expected_solution = Grid([
+            [5, 1, 2],
+            [1, 0, 3],
+            [4, 3, 5],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_3x3_descending(self):
+        grid = Grid([
+            [_, _, 2],
+            [_, _, _],
+            [2, _, _],
+        ])
+
+        expected_solution = Grid([
+            [1, 2, 5],
+            [4, 0, 2],
+            [5, 4, 3],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_5x5_2169532(self):
+        grid = Grid([
+            [_, _, _, B, B],
+            [B, _, _, _, _],
+            [_, _, B, _, _],
+            [_, _, _, _, 1],
+            [_, B, _, _, _],
+        ])
+
+        expected_solution = Grid([
+            [0, 1, 2, 5, 5],
+            [5, 4, 3, 0, 0],
+            [1, 2, 5, 0, 0],
+            [4, 3, 1, 2, 5],
+            [0, 5, 4, 3, 0],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_10x10_9853297(self):
+        grid = Grid([
+            [B, _, _, B, _, _, B, _, _, 2],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, B, _, _, B, _, _, _, _],
+            [_, 3, _, _, _, _, 4, _, _, _],
+            [B, _, _, _, _, _, _, _, _, B],
+            [_, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _],
+            [3, _, _, _, B, _, 3, _, _, 3],
+            [_, _, B, _, _, _, _, _, _, _],
+            [_, _, 1, _, _, _, _, _, _, _],
+        ])
+
+        expected_solution = Grid([
+            [5, 1, 2, 5, 1, 2, 5, 1, 2, 5],
+            [1, 0, 3, 0, 4, 3, 1, 0, 0, 2],
+            [4, 3, 5, 1, 2, 5, 4, 0, 0, 3],
+            [0, 5, 1, 0, 0, 2, 5, 4, 3, 0],
+            [5, 1, 0, 0, 0, 3, 1, 2, 0, 5],
+            [1, 0, 0, 0, 3, 1, 0, 3, 1, 2],
+            [4, 0, 0, 3, 0, 4, 3, 1, 0, 3],
+            [5, 4, 3, 0, 5, 0, 5, 4, 3, 5],
+            [1, 2, 5, 0, 1, 2, 1, 2, 1, 2],
+            [4, 3, 5, 0, 4, 3, 4, 3, 4, 3],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_15x15_5164364(self):
+        grid = Grid([
+            [B, _, _, _, _, 2, _, _, B, _, _, B, _, _, _],
+            [_, _, _, _, _, _, _, 1, _, _, _, _, 3, _, _],
+            [_, _, _, _, 3, _, _, _, _, _, _, _, _, _, B],
+            [_, _, _, _, _, _, 4, _, _, _, _, _, _, _, _],
+            [B, _, 1, B, _, _, _, _, _, _, _, _, 4, _, _],
+            [_, _, _, _, B, _, _, _, B, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, B, _, _, B, 0],
+            [_, _, _, B, _, B, _, _, B, _, _, _, B, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, 1, _, _],
+            [2, _, _, _, _, _, _, B, _, _, B, _, _, _, _],
+            [_, _, B, 1, _, B, _, B, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, B, B, B, _, B, B, _, _, _],
+            [_, _, _, _, _, _, _, _, _, B, _, _, _, _, 2],
+            [B, 2, _, _, _, _, _, B, _, _, _, _, _, _, _],
+            [_, _, _, B, _, _, 2, _, _, _, B, 0, _, B, _]
+        ])
+
+        expected_solution = Grid([
+            [5, 1, 2, 1, 2, 5, 0, 0, 5, 1, 2, 5, 0, 1, 2],
+            [0, 4, 3, 4, 3, 1, 2, 5, 0, 4, 0, 2, 5, 4, 3],
+            [1, 2, 0, 0, 5, 4, 3, 0, 1, 2, 4, 3, 1, 2, 5],
+            [4, 3, 0, 0, 1, 2, 5, 1, 0, 3, 1, 2, 4, 0, 2],
+            [5, 0, 5, 5, 4, 3, 1, 0, 3, 1, 0, 3, 5, 4, 3],
+            [1, 2, 1, 2, 5, 1, 0, 3, 5, 4, 3, 1, 2, 0, 0],
+            [4, 3, 4, 3, 0, 4, 3, 0, 0, 0, 5, 4, 3, 5, 5],
+            [1, 2, 0, 5, 0, 5, 1, 2, 5, 1, 2, 0, 5, 0, 0],
+            [4, 0, 2, 0, 1, 2, 4, 3, 0, 4, 3, 0, 5, 0, 0],
+            [5, 4, 3, 0, 4, 3, 0, 5, 1, 2, 5, 1, 2, 0, 0],
+            [0, 0, 5, 5, 0, 5, 0, 5, 4, 3, 0, 4, 3, 1, 2],
+            [1, 2, 0, 1, 2, 0, 5, 5, 5, 0, 5, 5, 0, 4, 3],
+            [4, 3, 1, 0, 3, 1, 2, 0, 0, 5, 0, 0, 1, 2, 5],
+            [5, 5, 4, 3, 1, 0, 3, 5, 1, 2, 0, 0, 4, 3, 0],
+            [0, 0, 0, 5, 4, 3, 5, 0, 4, 3, 5, 5, 0, 5, 0],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_20x20_4144598(self):
+        grid = Grid([
+            [B, B, B, B, B, _, _, 1, _, _, _, _, _, _, _, _, _, _, _, B],
+            [B, _, _, _, B, _, _, _, _, _, _, _, B, _, _, _, _, _, _, _],
+            [B, _, _, _, 0, 0, 2, _, _, _, _, _, _, _, _, _, 0, _, _, 0],
+            [B, _, _, _, B, _, _, _, _, _, _, _, _, _, _, _, 1, _, _, _],
+            [_, _, 2, _, _, _, _, _, _, _, _, _, 3, _, _, _, _, _, _, _],
+            [_, _, _, _, _, B, _, _, 4, _, _, B, _, _, _, _, _, _, _, B],
+            [_, 1, _, _, _, _, _, _, _, _, _, _, _, B, _, _, _, B, _, _],
+            [_, B, _, _, _, _, _, _, _, B, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, B, _, _, _, _, B, _, _, B, _, _, _, _, _, _],
+            [_, _, _, B, _, _, _, B, _, _, 1, _, _, B, B, _, _, _, _, _],
+            [_, _, 2, _, _, _, _, B, _, _, 2, _, _, _, _, _, _, _, _, 1],
+            [_, _, _, _, _, _, _, _, B, 1, _, _, 2, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, B, _, _, B, _, _, B, _],
+            [_, _, _, _, _, _, _, _, B, B, _, _, _, 0, B, _, _, 4, _, _],
+            [B, _, 0, _, _, _, 2, 0, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, B, _, B, _, _, B, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, B, _, _, B, _, _, B, _, _, _, _, _, 2, _, _, _, _],
+            [_, _, B, _, _, _, _, _, _, _, _, B, _, _, 4, _, _, 4, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, B, B],
+            [2, _, _, _, _, 0, _, _, _, 3, _, _, 2, _, _, B, _, _, _, _]
+        ])
+
+        expected_solution = Grid([
+            [5, 5, 5, 5, 5, 0, 0, 5, 0, 0, 1, 2, 0, 0, 1, 2, 0, 1, 2, 5],
+            [5, 0, 0, 0, 5, 0, 0, 1, 2, 1, 0, 3, 5, 1, 0, 3, 0, 4, 3, 0],
+            [5, 0, 0, 0, 5, 5, 5, 4, 3, 4, 3, 1, 2, 4, 3, 0, 5, 0, 0, 5],
+            [5, 0, 0, 0, 5, 0, 1, 2, 1, 2, 1, 0, 3, 1, 2, 0, 5, 1, 2, 0],
+            [1, 2, 5, 1, 2, 0, 4, 3, 4, 3, 4, 3, 5, 4, 0, 2, 0, 4, 3, 0],
+            [4, 3, 0, 4, 3, 5, 1, 2, 5, 1, 2, 5, 0, 0, 4, 0, 2, 0, 0, 5],
+            [0, 5, 0, 1, 2, 1, 0, 0, 2, 4, 3, 1, 2, 5, 0, 4, 3, 5, 1, 2],
+            [0, 5, 1, 0, 3, 4, 0, 0, 3, 5, 0, 4, 3, 0, 1, 2, 1, 2, 4, 3],
+            [1, 2, 4, 3, 0, 5, 4, 3, 0, 0, 5, 0, 0, 5, 4, 3, 4, 3, 0, 0],
+            [4, 3, 0, 5, 1, 2, 0, 5, 0, 0, 5, 1, 2, 5, 5, 0, 1, 2, 0, 0],
+            [0, 0, 5, 1, 0, 0, 2, 5, 0, 0, 5, 4, 3, 0, 0, 1, 0, 0, 2, 5],
+            [0, 0, 1, 0, 0, 0, 0, 2, 5, 5, 1, 2, 5, 0, 0, 4, 0, 0, 3, 0],
+            [1, 2, 4, 0, 0, 0, 0, 3, 0, 0, 4, 3, 5, 0, 0, 5, 4, 3, 5, 0],
+            [4, 3, 0, 4, 0, 0, 3, 0, 5, 5, 1, 2, 0, 5, 5, 1, 2, 5, 1, 2],
+            [5, 0, 5, 0, 4, 3, 5, 5, 0, 1, 0, 0, 2, 0, 0, 4, 0, 2, 4, 3],
+            [1, 2, 0, 5, 0, 5, 0, 0, 5, 4, 0, 0, 3, 1, 2, 0, 4, 0, 2, 0],
+            [4, 3, 0, 5, 1, 2, 5, 1, 2, 5, 4, 3, 1, 0, 3, 5, 0, 4, 0, 2],
+            [1, 2, 5, 1, 0, 3, 1, 0, 0, 2, 0, 5, 4, 3, 5, 1, 2, 5, 4, 3],
+            [4, 0, 2, 4, 3, 0, 4, 0, 0, 3, 1, 2, 0, 1, 2, 4, 0, 2, 5, 5],
+            [5, 4, 3, 0, 0, 5, 0, 4, 3, 5, 4, 3, 5, 4, 3, 5, 4, 3, 0, 0],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_25x25_9641761(self):
+        grid = Grid([
+            [0, _, _, _, B, _, B, _, _, B, B, _, _, B, _, _, _, 2, _, B, _, B, _, _, _],
+            [_, _, _, B, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 1],
+            [_, _, _, _, _, _, _, _, _, _, _, 2, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [B, _, _, 2, _, _, _, _, _, _, _, _, _, B, _, 1, _, _, _, 1, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, 2, B, _, _, _, _, _, _, B, _, _, _, B, B, _, _],
+            [0, _, _, _, _, _, 1, _, _, _, _, _, B, _, _, B, _, _, _, _, _, _, _, B, 0],
+            [B, _, _, 3, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 4, _, _, _, _, 0, _],
+            [B, _, _, _, _, B, _, _, _, _, B, _, _, _, _, _, 1, _, _, _, _, _, _, B, _],
+            [_, B, 2, _, _, _, _, B, _, _, _, _, B, _, _, _, B, _, _, _, 2, _, _, _, _],
+            [_, _, _, _, 4, _, _, _, _, 4, _, _, B, _, _, _, B, _, _, _, _, _, B, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, B, _, B, 1, _, _, _, 2, _, _, _, _, _, _],
+            [_, _, _, _, _, _, B, _, _, _, B, _, _, _, _, _, _, _, _, B, 1, 2, _, _, _],
+            [B, _, _, B, _, _, _, _, _, B, _, _, _, _, _, _, _, _, _, _, _, _, _, _, 0],
+            [_, _, B, _, _, 2, B, _, _, _, _, _, _, _, _, _, _, _, 3, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, B, _, _, _, _, _, _, _, 0, _, B, _, _, B, _, _, _, _],
+            [3, _, _, 4, _, _, _, _, _, _, _, _, _, _, _, _, _, _, B, B, _, _, _, _, _],
+            [_, _, 4, _, _, _, _, _, 3, _, _, _, _, _, _, _, _, _, _, _, _, _, 2, _, _],
+            [_, _, _, _, _, _, _, _, _, 3, _, _, _, _, 4, _, _, B, _, _, _, _, _, _, _],
+            [B, _, _, _, _, _, _, 1, _, _, _, _, _, _, _, _, _, _, _, _, _, B, B, _, _],
+            [_, _, _, _, _, _, _, _, _, _, 1, _, _, _, _, B, 2, _, _, _, _, _, _, _, B],
+            [B, _, _, _, _, _, _, _, _, _, B, _, _, B, _, _, _, B, _, _, 4, _, _, _, 0],
+            [B, _, B, _, 1, _, _, _, _, _, 2, _, _, 0, _, _, _, 0, _, _, _, B, _, _, _],
+            [B, _, B, _, _, 2, _, _, _, _, _, B, B, B, _, _, _, B, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, B, _, _, _, _, _, _, _, B],
+            [_, _, B, _, 2, _, _, _, B, _, _, B, _, _, _, _, _, _, _, 3, _, _, _, _, _]
+        ])
+
+        expected_solution = Grid([
+            [5, 0, 0, 0, 5, 0, 5, 0, 0, 5, 5, 1, 2, 5, 0, 1, 2, 5, 0, 5, 0, 5, 1, 2, 0],
+            [0, 1, 2, 5, 1, 2, 0, 1, 2, 0, 0, 4, 3, 1, 2, 4, 3, 1, 2, 0, 1, 2, 4, 3, 5],
+            [0, 4, 3, 0, 4, 0, 2, 4, 3, 0, 0, 5, 0, 4, 3, 0, 1, 0, 3, 0, 4, 0, 2, 0, 0],
+            [5, 1, 2, 5, 0, 4, 3, 1, 2, 0, 0, 1, 2, 5, 0, 5, 4, 3, 0, 5, 0, 4, 3, 0, 0],
+            [0, 4, 3, 1, 2, 0, 0, 4, 3, 5, 5, 4, 3, 1, 2, 0, 0, 5, 1, 2, 0, 5, 5, 0, 0],
+            [5, 0, 0, 4, 0, 2, 5, 0, 0, 1, 2, 0, 5, 4, 3, 5, 1, 2, 4, 0, 2, 0, 0, 5, 5],
+            [5, 0, 0, 5, 4, 3, 0, 1, 2, 4, 3, 1, 2, 0, 0, 0, 4, 3, 5, 4, 3, 0, 0, 5, 0],
+            [5, 0, 0, 1, 2, 5, 0, 4, 0, 2, 5, 4, 3, 0, 0, 0, 5, 0, 1, 2, 0, 1, 2, 5, 0],
+            [0, 5, 5, 4, 3, 1, 2, 5, 4, 3, 1, 2, 5, 0, 0, 0, 5, 1, 0, 3, 5, 4, 3, 1, 2],
+            [1, 2, 1, 2, 5, 4, 3, 1, 2, 5, 4, 3, 5, 0, 0, 0, 5, 4, 3, 0, 0, 0, 5, 4, 3],
+            [4, 3, 4, 3, 1, 2, 0, 4, 0, 2, 0, 5, 0, 5, 5, 1, 2, 0, 5, 0, 0, 0, 1, 2, 0],
+            [0, 1, 2, 0, 4, 3, 5, 0, 4, 3, 5, 0, 1, 2, 0, 4, 3, 1, 2, 5, 5, 5, 4, 3, 0],
+            [5, 4, 3, 5, 0, 0, 0, 1, 2, 5, 1, 2, 4, 0, 2, 0, 1, 0, 3, 1, 2, 1, 2, 0, 5],
+            [1, 2, 5, 1, 2, 5, 5, 4, 3, 1, 0, 0, 2, 4, 3, 0, 4, 3, 5, 4, 3, 4, 0, 2, 0],
+            [4, 0, 2, 4, 3, 1, 2, 5, 1, 0, 0, 0, 0, 2, 0, 5, 0, 5, 0, 0, 5, 0, 4, 3, 0],
+            [5, 4, 3, 5, 1, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 0, 1, 2, 5, 5, 1, 2, 0, 1, 2],
+            [1, 2, 5, 1, 0, 0, 0, 3, 5, 4, 0, 0, 0, 0, 3, 0, 4, 3, 0, 0, 4, 3, 5, 4, 3],
+            [4, 3, 1, 0, 0, 0, 3, 0, 0, 5, 4, 0, 0, 3, 5, 1, 2, 5, 1, 2, 0, 0, 0, 1, 2],
+            [5, 1, 0, 0, 0, 3, 0, 5, 1, 2, 0, 4, 3, 1, 2, 4, 3, 1, 0, 0, 2, 5, 5, 4, 3],
+            [0, 4, 0, 0, 3, 1, 2, 0, 4, 3, 5, 0, 0, 4, 3, 5, 5, 4, 0, 0, 3, 1, 2, 0, 5],
+            [5, 0, 4, 3, 0, 4, 0, 2, 1, 2, 5, 0, 0, 5, 0, 0, 0, 5, 4, 3, 5, 4, 3, 0, 5],
+            [5, 0, 5, 0, 5, 0, 4, 3, 4, 3, 5, 0, 0, 5, 0, 0, 0, 5, 0, 1, 2, 5, 1, 2, 0],
+            [5, 0, 5, 1, 2, 5, 0, 1, 2, 1, 2, 5, 5, 5, 0, 0, 0, 5, 1, 0, 3, 0, 4, 3, 0],
+            [1, 2, 0, 4, 3, 1, 2, 4, 3, 4, 3, 0, 1, 2, 1, 2, 5, 1, 0, 3, 1, 2, 1, 2, 5],
+            [4, 3, 5, 0, 5, 4, 3, 0, 5, 0, 0, 5, 4, 3, 4, 3, 0, 4, 3, 5, 4, 3, 4, 3, 0],
+        ])
+
+        solver = ShakashakaSolver(grid)
+        solution = solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()

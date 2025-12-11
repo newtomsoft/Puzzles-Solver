@@ -5,4 +5,8 @@ from Run.GameRegistry import GameRegistry
 
 
 def register():
-    GameRegistry.register_game('shakashaka', ShakashakaSolver, PuzzleShakashakaGridProvider, PuzzleShakashakaPlayer)
+    GameRegistry.register(
+        r"https://.*\.puzzle-shakashaka\.com",
+        PuzzleShakashakaGridProvider,
+        PuzzleShakashakaPlayer
+    )(ShakashakaSolver)

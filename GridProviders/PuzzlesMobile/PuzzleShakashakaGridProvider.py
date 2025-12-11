@@ -6,95 +6,57 @@ from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileG
 
 
 class PuzzleShakashakaGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
+    def get_grid(self, url: str) -> Grid:
         return self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
         page = browser.pages[0]
         page.goto(url)
-        # Wait for the game grid to be visible
+        self.new_game(page)
         page.wait_for_selector('div.cell')
 
-        # Puzzles-mobile style scraping
-        # Extract all cells and clues
-        element_data = page.evaluate("""() => {
-            const divs = Array.from(document.querySelectorAll('div.cell'));
-            return divs.map(d => {
-                const rect = d.getBoundingClientRect();
-                const style = window.getComputedStyle(d);
-                return {
-                    text: d.innerText,
-                    class: d.className,
-                    top: parseInt(style.top, 10),
-                    left: parseInt(style.left, 10),
-                    width: rect.width,
-                    height: rect.height,
-                    is_black: d.classList.contains('black') || d.style.backgroundColor === 'black' || d.classList.contains('cell-off') || d.classList.contains('immutable'),
-                    # Number might be in a child span or direct text
-                    number: d.innerText.trim()
-                };
+        cells_data = page.evaluate("""() => {
+            const cells = document.querySelectorAll('#game .board-back > div.cell, #game .board-back > div.shakashaka-task-cell');
+            const data = [];
+            cells.forEach(el => {
+                const style = window.getComputedStyle(el);
+                const topStr = style.top;
+                const leftStr = style.left;
+                if (!topStr || !leftStr || topStr === 'auto' || leftStr === 'auto') return;
+                const top = parseInt(topStr);
+                const left = parseInt(leftStr);
+                if (isNaN(top) || isNaN(left)) return;
+                const row = Math.round((top - 1) / 26);
+                const col = Math.round((left - 1) / 26);
+                let val = -1; // Default white
+                if (el.classList.contains('shakashaka-task-cell')) {
+                    if (el.classList.contains('wall')) {
+                        val = -2; // Black Wall
+                    } else {
+                        const text = el.innerText.trim();
+                        val = text !== "" ? parseInt(text) : -2;
+                    }
+                } else if (el.classList.contains('cell')) {
+                    val = -1;
+                }
+                data.push({r: row, c: col, v: val});
             });
+            return data;
         }""")
 
-        return self._parse_grid_from_element_data(element_data)
+        if not cells_data:
+            raise Exception("No cells found on the page.")
 
-    def _parse_grid_from_element_data(self, element_data):
-        import math
-
-        if not element_data:
-            raise ValueError("No cells found")
-
-        # Determine grid dimensions
-        # Assuming square or rectangular grid
-        # Group by top/left
-
-        # Filter valid cells
-        cells = element_data
-
-        # Coordinates normalization
-        ys = sorted(list(set(c['top'] for c in cells)))
-        xs = sorted(list(set(c['left'] for c in cells)))
-
-        rows = len(ys)
-        cols = len(xs)
-
-        if rows * cols != len(cells):
-            # Maybe some cells are missing or misalignment
-            # Try to map robustly
-            pass
+        max_r = int(max(item['r'] for item in cells_data))
+        max_c = int(max(item['c'] for item in cells_data))
+        rows = max_r + 1
+        cols = max_c + 1
 
         matrix = [[-1 for _ in range(cols)] for _ in range(rows)]
 
-        for c_data in cells:
-            try:
-                r = ys.index(c_data['top'])
-                c = xs.index(c_data['left'])
-            except ValueError:
-                continue # Skip outliers
-
-            # Identify content
-            # 0-4: Numbered Black
-            # -2: Empty Black (No number)
-            # -1: White (Empty)
-
-            # Check for specific classes used in Shakashaka on this site
-            # Usually: 'cell-black' or 'black'
-            # And inner text for number
-
-            text = c_data['number']
-
-            # Heuristic for Black cell
-            is_black = False
-            if 'black' in c_data['class'] or 'immutable' in c_data['class']:
-                is_black = True
-
-            # Check number
-            if text.isdigit():
-                val = int(text)
-                matrix[r][c] = val # Numbered implies Black usually
-            elif is_black:
-                matrix[r][c] = -2 # Black, no number
-            else:
-                matrix[r][c] = -1 # White
+        for item in cells_data:
+            r, c, v = item['r'], item['c'], item['v']
+            if 0 <= r < rows and 0 <= c < cols:
+                matrix[r][c] = v
 
         return Grid(matrix)

@@ -5,7 +5,6 @@ import Run.Games.BalanceLoopConfig
 import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
-import Run.Games.BinairoPlusConfig
 import Run.Games.BorderBlockConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
