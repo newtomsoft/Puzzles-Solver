@@ -5,6 +5,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class ShakashakaSolver(GameSolver):
+    # don't change these values
     input_white = -1
     input_black = -2
     full_white = 0
@@ -21,6 +22,10 @@ class ShakashakaSolver(GameSolver):
         self._init_solver()
 
     def _init_solver(self):
+        # 1: White is BR
+        # 2: White is BL
+        # 3: White is TL
+        # 4: White is TR
         self._grid_vars = Grid([[self._model.NewIntVar(self.full_white, self.full_black, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
@@ -90,6 +95,7 @@ class ShakashakaSolver(GameSolver):
                 self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r][c + 1]], allowed_horizontal)
 
         for r in range(self._rows_number):
+            # Specific constraints for the cell on the right side
             self._model.Add(self._grid_vars[r][self._columns_number - 1] != 1)
             self._model.Add(self._grid_vars[r][self._columns_number - 1] != 4)
             self._model.Add(self._grid_vars[r][0] != 2)
@@ -121,6 +127,12 @@ class ShakashakaSolver(GameSolver):
             self._model.Add(self._grid_vars[0][c] != 3)
             self._model.Add(self._grid_vars[0][c] != 4)
 
+        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
+        # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
+        # Ligne r+1 : [1][0]...[0][3]
+        # (Adapted logic for table constraints below)
+
+        # Pattern 1: (Above=2, Cell=0) => Right=2
         allowed_p1 = []
         for t in range(6):
             for ce in range(6):
@@ -142,6 +154,7 @@ class ShakashakaSolver(GameSolver):
         for r in range(1, self._rows_number):
              self._model.AddAllowedAssignments([self._grid_vars[r-1][self._columns_number-1], self._grid_vars[r][self._columns_number-1]], allowed_p1_edge)
 
+        # Pattern 2: (Above=1, Cell=0) => Left=1
         allowed_p2 = []
         for t in range(6):
             for ce in range(6):
@@ -163,6 +176,7 @@ class ShakashakaSolver(GameSolver):
         for r in range(1, self._rows_number):
             self._model.AddAllowedAssignments([self._grid_vars[r-1][0], self._grid_vars[r][0]], allowed_p2_edge)
 
+        # Pattern 3: (Below=4, Cell=0) => Left=4
         allowed_p3 = []
         for b in range(6):
             for ce in range(6):
@@ -184,6 +198,7 @@ class ShakashakaSolver(GameSolver):
         for r in range(self._rows_number - 1):
             self._model.AddAllowedAssignments([self._grid_vars[r+1][0], self._grid_vars[r][0]], allowed_p3_edge)
 
+        # Pattern 4: (Below=3, Cell=0) => Right=3
         allowed_p4 = []
         for b in range(6):
             for ce in range(6):
@@ -279,6 +294,9 @@ class ShakashakaSolver(GameSolver):
         return b
 
     def _add_rectangularity_constraints(self):
+        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
+        # Ligne r   : [1][0]...[0]   (au moins un 0 entre les deux colonnes)
+        # Ligne r+1 : [4][0]...[0][2]
         for r in range(self._rows_number - 1):
             for c in range(self._columns_number - 1):
                 for e in range(c + 2, self._columns_number):
@@ -294,23 +312,36 @@ class ShakashakaSolver(GameSolver):
                     top_e = self._grid_vars[r][e]
                     bot_e = self._grid_vars[r + 1][e]
 
+                    # Pattern 1
                     b_top_is_1 = self._new_bool_var_domain_check(top_c, [1], f'p1t1_{r}_{c}_{e}')
                     b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [4], f'p1b4_{r}_{c}_{e}')
                     b_bote_is_2 = self._new_bool_var_domain_check(bot_e, [2], f'p1be2_{r}_{c}_{e}')
                     b_tope_is_3 = self._new_bool_var_domain_check(top_e, [3], f'p1te3_{r}_{c}_{e}')
                     clause1 = [b_top_is_1.Not(), b_bot_is_4.Not(), b_bote_is_2.Not(), b_tope_is_3.Not()]
 
+                    # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
+                    # Ligne r   : [1][0]...[0][3] (au moins un 0 entre les deux colonnes)
+                    # Ligne r+1 : [4][0]...[0]
+                    # Pattern 2
                     b_p2_top1 = self._new_bool_var_domain_check(top_c, [1], f'p2t1_{r}_{c}_{e}')
                     b_p2_bot4 = self._new_bool_var_domain_check(bot_c, [4], f'p2b4_{r}_{c}_{e}')
                     b_p2_te3 = self._new_bool_var_domain_check(top_e, [3], f'p2te3_{r}_{c}_{e}')
                     clause2 = [b_p2_top1.Not(), b_p2_bot4.Not(), b_p2_te3.Not()]
 
+                    # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
+                    # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
+                    # Ligne r+1 : [1][0]...[0][3]
+                    # Pattern 3
                     b_p3_top0 = self._new_bool_var_domain_check(top_c, [0], f'p3t0_{r}_{c}_{e}')
                     b_p3_bot1 = self._new_bool_var_domain_check(bot_c, [1], f'p3b1_{r}_{c}_{e}')
                     b_p3_te2 = self._new_bool_var_domain_check(top_e, [2], f'p3te2_{r}_{c}_{e}')
                     b_p3_be3 = self._new_bool_var_domain_check(bot_e, [3], f'p3be3_{r}_{c}_{e}')
                     clause3 = [b_p3_top0.Not(), b_p3_bot1.Not(), b_p3_te2.Not(), b_p3_be3.Not()]
 
+                    # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
+                    # Ligne r   : [4][0]...[0][2] (au moins un 0 entre les deux colonnes)
+                    # Ligne r+1 :    [0]...[0][3]
+                    # Pattern 4
                     b_p4_top4 = self._new_bool_var_domain_check(top_c, [4], f'p4t4_{r}_{c}_{e}')
                     b_p4_bot0 = self._new_bool_var_domain_check(bot_c, [0], f'p4b0_{r}_{c}_{e}')
                     b_p4_te2 = self._new_bool_var_domain_check(top_e, [2], f'p4te2_{r}_{c}_{e}')
@@ -334,6 +365,7 @@ class ShakashakaSolver(GameSolver):
                     self._model.AddBoolOr(clause3)
                     self._model.AddBoolOr(clause4)
 
+        # [4;1] ⇒ à droite [3;2]
         allowed_vpair1 = []
         for t in range(6):
             for b in range(6):
@@ -348,6 +380,7 @@ class ShakashakaSolver(GameSolver):
             for c in range(self._columns_number - 1):
                 self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r+1][c], self._grid_vars[r][c+1], self._grid_vars[r+1][c+1]], allowed_vpair1)
 
+        # [3;2] ⇒ à gauche [4;1]
         allowed_vpair2 = []
         for t in range(6):
             for b in range(6):
