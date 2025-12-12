@@ -5,7 +5,6 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class ShakashakaSolver(GameSolver):
-    # don't change these values
     input_white = -1
     input_black = -2
     full_white = 0
@@ -22,10 +21,6 @@ class ShakashakaSolver(GameSolver):
         self._init_solver()
 
     def _init_solver(self):
-        # 1: White is BR
-        # 2: White is BL
-        # 3: White is TL
-        # 4: White is TR
         self._grid_vars = Grid([[self._model.NewIntVar(self.full_white, self.full_black, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
@@ -74,100 +69,142 @@ class ShakashakaSolver(GameSolver):
             self._model.Add(self._grid_vars[position] != self.full_black)
 
     def _add_triangle_connectivity_constraints(self):
+        allowed_horizontal = []
+        for left in range(6):
+            for right in range(6):
+                valid = True
+                if left == 1 and right not in [0, 2]:
+                    valid = False
+                if left == 4 and right not in [0, 3]:
+                    valid = False
+                if right == 2 and left not in [0, 1]:
+                    valid = False
+                if right == 3 and left not in [0, 4]:
+                    valid = False
+
+                if valid:
+                    allowed_horizontal.append((left, right))
+
         for r in range(self._rows_number):
+            for c in range(self._columns_number - 1):
+                self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r][c + 1]], allowed_horizontal)
+
+        for r in range(self._rows_number):
+            self._model.Add(self._grid_vars[r][self._columns_number - 1] != 1)
+            self._model.Add(self._grid_vars[r][self._columns_number - 1] != 4)
+            self._model.Add(self._grid_vars[r][0] != 2)
+            self._model.Add(self._grid_vars[r][0] != 3)
+
+        allowed_vertical = []
+        for top in range(6):
+            for bottom in range(6):
+                valid = True
+                if top == 1 and bottom not in [0, 4]:
+                    valid = False
+                if top == 2 and bottom not in [0, 3]:
+                    valid = False
+                if bottom == 4 and top not in [0, 1, 2]:
+                    valid = False
+                if bottom == 3 and top not in [0, 1, 2]:
+                    valid = False
+
+                if valid:
+                    allowed_vertical.append((top, bottom))
+
+        for r in range(self._rows_number - 1):
             for c in range(self._columns_number):
-                cell = self._grid_vars[r][c]
+                self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r + 1][c]], allowed_vertical)
 
-                if c + 1 >= self._columns_number:
-                    self._model.Add(cell != 1)
-                    self._model.Add(cell != 4)
-                else:
-                    neighbor = self._grid_vars[r][c + 1]
-                    # Specific constraints for the cell on the right side
-                    # If current cell is 1 (BR), the right neighbor can only be 0 (white) or 2 (BL)
-                    b_is_1 = self._new_bool_var_domain_check(cell, [1], f'is_1_{r}_{c}')
-                    b_valid_right_for_1 = self._new_bool_var_domain_check(neighbor, [0, 2], f'valid_right_for_1_{r}_{c}')
-                    self._model.AddImplication(b_is_1, b_valid_right_for_1)
+        for c in range(self._columns_number):
+            self._model.Add(self._grid_vars[self._rows_number - 1][c] != 1)
+            self._model.Add(self._grid_vars[self._rows_number - 1][c] != 2)
+            self._model.Add(self._grid_vars[0][c] != 3)
+            self._model.Add(self._grid_vars[0][c] != 4)
 
-                    # If current cell is 4 (TR), keep previous allowance: right neighbor in [0, 3]
-                    b_is_4 = self._new_bool_var_domain_check(cell, [4], f'is_4_{r}_{c}')
-                    b_valid_right_for_4 = self._new_bool_var_domain_check(neighbor, [0, 3], f'valid_right_for_4_{r}_{c}')
-                    self._model.AddImplication(b_is_4, b_valid_right_for_4)
+        allowed_p1 = []
+        for t in range(6):
+            for ce in range(6):
+                for ri in range(6):
+                    if t == 2 and ce == 0 and ri != 2:
+                        continue
+                    allowed_p1.append((t, ce, ri))
 
-                if c - 1 < 0:
-                    self._model.Add(cell != 2)
-                    self._model.Add(cell != 3)
-                else:
-                    neighbor = self._grid_vars[r][c - 1]
-                    b_is_2 = self._new_bool_var_domain_check(cell, [2], f'is_2_{r}_{c}')
-                    b_valid_left_for_2 = self._new_bool_var_domain_check(neighbor, [0, 1], f'valid_left_for_2_{r}_{c}')
-                    self._model.AddImplication(b_is_2, b_valid_left_for_2)
+        for r in range(1, self._rows_number):
+            for c in range(self._columns_number - 1):
+                self._model.AddAllowedAssignments([self._grid_vars[r-1][c], self._grid_vars[r][c], self._grid_vars[r][c+1]], allowed_p1)
 
-                    b_is_3 = self._new_bool_var_domain_check(cell, [3], f'is_3_{r}_{c}')
-                    b_valid_left_for_3 = self._new_bool_var_domain_check(neighbor, [0, 4], f'valid_left_for_3_{r}_{c}')
-                    self._model.AddImplication(b_is_3, b_valid_left_for_3)
+        allowed_p1_edge = []
+        for t in range(6):
+            for ce in range(6):
+                if t == 2 and ce == 0:
+                    continue
+                allowed_p1_edge.append((t, ce))
+        for r in range(1, self._rows_number):
+             self._model.AddAllowedAssignments([self._grid_vars[r-1][self._columns_number-1], self._grid_vars[r][self._columns_number-1]], allowed_p1_edge)
 
-                if r + 1 >= self._rows_number:
-                    self._model.Add(cell != 1)
-                    self._model.Add(cell != 2)
-                else:
-                    neighbor = self._grid_vars[r + 1][c]
-                    b_is_1_bottom = self._new_bool_var_domain_check(cell, [1], f'is_1_bottom_{r}_{c}')
-                    b_valid_below_for_1 = self._new_bool_var_domain_check(neighbor, [0, 4], f'valid_below_for_1_{r}_{c}')
-                    self._model.AddImplication(b_is_1_bottom, b_valid_below_for_1)
+        allowed_p2 = []
+        for t in range(6):
+            for ce in range(6):
+                for le in range(6):
+                    if t == 1 and ce == 0 and le != 1:
+                        continue
+                    allowed_p2.append((t, ce, le))
 
-                    b_is_2_bottom = self._new_bool_var_domain_check(cell, [2], f'is_2_bottom_{r}_{c}')
-                    b_valid_below_for_2 = self._new_bool_var_domain_check(neighbor, [0, 3], f'valid_below_for_2_{r}_{c}')
-                    self._model.AddImplication(b_is_2_bottom, b_valid_below_for_2)
+        for r in range(1, self._rows_number):
+            for c in range(1, self._columns_number):
+                self._model.AddAllowedAssignments([self._grid_vars[r-1][c], self._grid_vars[r][c], self._grid_vars[r][c-1]], allowed_p2)
 
-                if r - 1 < 0:
-                    self._model.Add(cell != 3)
-                    self._model.Add(cell != 4)
-                else:
-                    neighbor = self._grid_vars[r - 1][c]
-                    b_needs_top = self._new_bool_var_domain_check(cell, [3, 4], f'needs_top_{r}_{c}')
-                    b_valid_top = self._new_bool_var_domain_check(neighbor, [0, 1, 2], f'valid_top_{r}_{c}')
-                    self._model.AddImplication(b_needs_top, b_valid_top)
+        allowed_p2_edge = []
+        for t in range(6):
+            for ce in range(6):
+                if t == 1 and ce == 0:
+                    continue
+                allowed_p2_edge.append((t, ce))
+        for r in range(1, self._rows_number):
+            self._model.AddAllowedAssignments([self._grid_vars[r-1][0], self._grid_vars[r][0]], allowed_p2_edge)
 
-                if r - 1 >= 0:
-                    above = self._grid_vars[r - 1][c]
-                    b_above_is_2 = self._new_bool_var_domain_check(above, [2], f'above_is_2_{r}_{c}')
-                    b_above_is_1 = self._new_bool_var_domain_check(above, [1], f'above_is_1_{r}_{c}')
-                    b_cell_is_0 = self._new_bool_var_domain_check(cell, [0], f'cell_is_0_{r}_{c}')
+        allowed_p3 = []
+        for b in range(6):
+            for ce in range(6):
+                for le in range(6):
+                    if b == 4 and ce == 0 and le != 4:
+                        continue
+                    allowed_p3.append((b, ce, le))
 
-                    if c + 1 < self._columns_number:
-                        right = self._grid_vars[r][c + 1]
-                        b_right_is_2 = self._new_bool_var_domain_check(right, [2], f'right_is_2_{r}_{c}')
-                        self._model.AddBoolOr([b_above_is_2.Not(), b_cell_is_0.Not(), b_right_is_2])
-                    else:
-                        self._model.AddBoolOr([b_above_is_2.Not(), b_cell_is_0.Not()])
+        for r in range(self._rows_number - 1):
+            for c in range(1, self._columns_number):
+                self._model.AddAllowedAssignments([self._grid_vars[r+1][c], self._grid_vars[r][c], self._grid_vars[r][c-1]], allowed_p3)
 
-                    if c - 1 >= 0:
-                        left = self._grid_vars[r][c - 1]
-                        b_left_is_1 = self._new_bool_var_domain_check(left, [1], f'left_is_1_{r}_{c}')
-                        self._model.AddBoolOr([b_above_is_1.Not(), b_cell_is_0.Not(), b_left_is_1])
-                    else:
-                        self._model.AddBoolOr([b_above_is_1.Not(), b_cell_is_0.Not()])
+        allowed_p3_edge = []
+        for b in range(6):
+            for ce in range(6):
+                if b == 4 and ce == 0:
+                    continue
+                allowed_p3_edge.append((b, ce))
+        for r in range(self._rows_number - 1):
+            self._model.AddAllowedAssignments([self._grid_vars[r+1][0], self._grid_vars[r][0]], allowed_p3_edge)
 
-                if r + 1 < self._rows_number:
-                    below = self._grid_vars[r + 1][c]
-                    b_below_is_4 = self._new_bool_var_domain_check(below, [4], f'below_is_4_{r}_{c}')
-                    b_below_is_3 = self._new_bool_var_domain_check(below, [3], f'below_is_3_{r}_{c}')
-                    b_cell_is_0_b = self._new_bool_var_domain_check(cell, [0], f'cell_is_0_b_{r}_{c}')
+        allowed_p4 = []
+        for b in range(6):
+            for ce in range(6):
+                for ri in range(6):
+                    if b == 3 and ce == 0 and ri != 3:
+                        continue
+                    allowed_p4.append((b, ce, ri))
 
-                    if c - 1 >= 0:
-                        left2 = self._grid_vars[r][c - 1]
-                        b_left_is_4 = self._new_bool_var_domain_check(left2, [4], f'left_is_4_{r}_{c}')
-                        self._model.AddBoolOr([b_below_is_4.Not(), b_cell_is_0_b.Not(), b_left_is_4])
-                    else:
-                        self._model.AddBoolOr([b_below_is_4.Not(), b_cell_is_0_b.Not()])
+        for r in range(self._rows_number - 1):
+            for c in range(self._columns_number - 1):
+                self._model.AddAllowedAssignments([self._grid_vars[r+1][c], self._grid_vars[r][c], self._grid_vars[r][c+1]], allowed_p4)
 
-                    if c + 1 < self._columns_number:
-                        right2 = self._grid_vars[r][c + 1]
-                        b_right_is_3 = self._new_bool_var_domain_check(right2, [3], f'right_is_3_{r}_{c}')
-                        self._model.AddBoolOr([b_below_is_3.Not(), b_cell_is_0_b.Not(), b_right_is_3])
-                    else:
-                        self._model.AddBoolOr([b_below_is_3.Not(), b_cell_is_0_b.Not()])
+        allowed_p4_edge = []
+        for b in range(6):
+            for ce in range(6):
+                if b == 3 and ce == 0:
+                    continue
+                allowed_p4_edge.append((b, ce))
+        for r in range(self._rows_number - 1):
+            self._model.AddAllowedAssignments([self._grid_vars[r+1][self._columns_number-1], self._grid_vars[r][self._columns_number-1]], allowed_p4_edge)
+
 
     def _add_number_constraints(self):
         for position, val in [(pos, val) for pos, val in self._grid if val >= 0]:
@@ -191,214 +228,136 @@ class ShakashakaSolver(GameSolver):
             self._model.Add(sum(neighbors_var) == val)
 
     def _add_vertex_constraints(self):
+        allowed_vertex = []
+        for ul in range(6):
+            for ur in range(6):
+                for dl in range(6):
+                    for dr in range(6):
+                        d_ul = 1 if ul in [2, 4] else 0
+                        d_ur = 1 if ur in [1, 3] else 0
+                        d_dl = 1 if dl in [1, 3] else 0
+                        d_dr = 1 if dr in [2, 4] else 0
+
+                        diag_sum = d_ul + d_ur + d_dl + d_dr
+                        if diag_sum not in [0, 2, 4]:
+                            continue
+
+                        w_ul = 1 if ul in [0, 1] else 0
+                        w_ur = 1 if ur in [0, 2] else 0
+                        w_dl = 1 if dl in [0, 4] else 0
+                        w_dr = 1 if dr in [0, 3] else 0
+
+                        white_sum = w_ul + w_ur + w_dl + w_dr
+                        if white_sum == 3:
+                            continue
+
+                        allowed_vertex.append((ul, ur, dl, dr))
+
+        black_const = self._model.NewConstant(5)
+
+        def get_var(r, c):
+            if 0 <= r < self._rows_number and 0 <= c < self._columns_number:
+                return self._grid_vars[r][c]
+            return black_const
+
         for r in range(self._rows_number + 1):
             for c in range(self._columns_number + 1):
-                self._add_vertex_constraint(r, c)
-
-    def _get_cell_var(self, r, c):
-        if 0 <= r < self._rows_number and 0 <= c < self._columns_number:
-            return self._grid_vars[r][c]
-        return 5
-
-    def _add_vertex_constraint(self, r, c):
-        ul = self._get_cell_var(r - 1, c - 1)
-        ur = self._get_cell_var(r - 1, c)
-        dl = self._get_cell_var(r, c - 1)
-        dr = self._get_cell_var(r, c)
-
-        d_ul = self._new_bool_var_domain_check(ul, [2, 4], f'd_ul_{r}_{c}')
-        d_ur = self._new_bool_var_domain_check(ur, [1, 3], f'd_ur_{r}_{c}')
-        d_dl = self._new_bool_var_domain_check(dl, [1, 3], f'd_dl_{r}_{c}')
-        d_dr = self._new_bool_var_domain_check(dr, [2, 4], f'd_dr_{r}_{c}')
-
-        diag_sum_var = self._model.NewIntVar(0, 4, f'diag_sum_{r}_{c}')
-        self._model.Add(diag_sum_var == sum([d_ul, d_ur, d_dl, d_dr]))
-        self._model.AddAllowedAssignments([diag_sum_var], [(0,), (2,), (4,)])
-
-        w_ul = self._new_bool_var_domain_check(ul, [0, 1], f'w_ul_{r}_{c}')
-        w_ur = self._new_bool_var_domain_check(ur, [0, 2], f'w_ur_{r}_{c}')
-        w_dl = self._new_bool_var_domain_check(dl, [0, 4], f'w_dl_{r}_{c}')
-        w_dr = self._new_bool_var_domain_check(dr, [0, 3], f'w_dr_{r}_{c}')
-
-        white_sum = sum([w_ul, w_ur, w_dl, w_dr])
-        self._model.Add(white_sum != 3)
-
-        white_sum_var = self._model.NewIntVar(0, 4, f'white_sum_{r}_{c}')
-        self._model.Add(white_sum_var == white_sum)
-
-        b_ws2 = self._model.NewBoolVar(f'ws2_{r}_{c}')
-        self._model.Add(white_sum_var >= 2).OnlyEnforceIf(b_ws2)
-        self._model.Add(white_sum_var <= 2).OnlyEnforceIf(b_ws2)
-
-        def both_true_bool(a, b, name_suffix):
-            b_and = self._model.NewBoolVar(f'both_{name_suffix}_{r}_{c}')
-            self._model.Add(a + b >= 2).OnlyEnforceIf(b_and)
-            self._model.Add(a + b <= 2).OnlyEnforceIf(b_and)
-            self._model.Add(a + b <= 1).OnlyEnforceIf(b_and.Not())
-            return b_and
-
-        adj_ul_ur = both_true_bool(w_ul, w_ur, 'ul_ur')
-        adj_ur_dr = both_true_bool(w_ur, w_dr, 'ur_dr')
-        adj_dr_dl = both_true_bool(w_dr, w_dl, 'dr_dl')
-        adj_dl_ul = both_true_bool(w_dl, w_ul, 'dl_ul')
-
-        for idx, adj in enumerate([adj_ul_ur, adj_ur_dr, adj_dr_dl, adj_dl_ul]):
-            forbid = self._model.NewBoolVar(f'forbid_adjL_{idx}_{r}_{c}')
-            self._model.AddImplication(forbid, adj)
-            self._model.AddImplication(forbid, b_ws2)
-            self._model.Add(forbid == 0)
+                vars_list = [
+                    get_var(r - 1, c - 1),
+                    get_var(r - 1, c),
+                    get_var(r, c - 1),
+                    get_var(r, c)
+                ]
+                self._model.AddAllowedAssignments(vars_list, allowed_vertex)
 
     def _new_bool_var_domain_check(self, var, allowed_values, name):
         b = self._model.NewBoolVar(name)
-
         table = []
         for val in range(6):
-            if val in allowed_values:
-                table.append((val, 1))
-            else:
-                table.append((val, 0))
+            table.append((val, 1 if val in allowed_values else 0))
         self._model.AddAllowedAssignments([var, b], table)
         return b
 
     def _add_rectangularity_constraints(self):
-        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
-        # Ligne r   : [1][0]...[0]   (au moins un 0 entre les deux colonnes)
-        # Ligne r+1 : [4][0]...[0][2]
         for r in range(self._rows_number - 1):
-            for c in range(self._columns_number - 1):  # besoin d'au moins une colonne à droite
+            for c in range(self._columns_number - 1):
                 for e in range(c + 2, self._columns_number):
+                    mid = e - 1
+                    if self._grid[r][mid] != self.input_white or self._grid[r + 1][mid] != self.input_white:
+                        break
+
+                    if self._grid[r][e] != self.input_white or self._grid[r + 1][e] != self.input_white:
+                        break
+
                     top_c = self._grid_vars[r][c]
                     bot_c = self._grid_vars[r + 1][c]
-                    bot_e = self._grid_vars[r + 1][e]
                     top_e = self._grid_vars[r][e]
+                    bot_e = self._grid_vars[r + 1][e]
 
-                    b_top_is_1 = self._new_bool_var_domain_check(top_c, [1], f'pat_top1_{r}_{c}_e{e}')
-                    b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [4], f'pat_bot4_{r}_{c}_e{e}')
-                    b_bote_is_2 = self._new_bool_var_domain_check(bot_e, [2], f'pat_bote2_{r}_{c}_e{e}')
-                    b_tope_is_3 = self._new_bool_var_domain_check(top_e, [3], f'pat_tope3_{r}_{c}_e{e}')
+                    b_top_is_1 = self._new_bool_var_domain_check(top_c, [1], f'p1t1_{r}_{c}_{e}')
+                    b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [4], f'p1b4_{r}_{c}_{e}')
+                    b_bote_is_2 = self._new_bool_var_domain_check(bot_e, [2], f'p1be2_{r}_{c}_{e}')
+                    b_tope_is_3 = self._new_bool_var_domain_check(top_e, [3], f'p1te3_{r}_{c}_{e}')
+                    clause1 = [b_top_is_1.Not(), b_bot_is_4.Not(), b_bote_is_2.Not(), b_tope_is_3.Not()]
 
-                    clause = [b_top_is_1.Not(), b_bot_is_4.Not(), b_bote_is_2.Not(), b_tope_is_3.Not()]
+                    b_p2_top1 = self._new_bool_var_domain_check(top_c, [1], f'p2t1_{r}_{c}_{e}')
+                    b_p2_bot4 = self._new_bool_var_domain_check(bot_c, [4], f'p2b4_{r}_{c}_{e}')
+                    b_p2_te3 = self._new_bool_var_domain_check(top_e, [3], f'p2te3_{r}_{c}_{e}')
+                    clause2 = [b_p2_top1.Not(), b_p2_bot4.Not(), b_p2_te3.Not()]
+
+                    b_p3_top0 = self._new_bool_var_domain_check(top_c, [0], f'p3t0_{r}_{c}_{e}')
+                    b_p3_bot1 = self._new_bool_var_domain_check(bot_c, [1], f'p3b1_{r}_{c}_{e}')
+                    b_p3_te2 = self._new_bool_var_domain_check(top_e, [2], f'p3te2_{r}_{c}_{e}')
+                    b_p3_be3 = self._new_bool_var_domain_check(bot_e, [3], f'p3be3_{r}_{c}_{e}')
+                    clause3 = [b_p3_top0.Not(), b_p3_bot1.Not(), b_p3_te2.Not(), b_p3_be3.Not()]
+
+                    b_p4_top4 = self._new_bool_var_domain_check(top_c, [4], f'p4t4_{r}_{c}_{e}')
+                    b_p4_bot0 = self._new_bool_var_domain_check(bot_c, [0], f'p4b0_{r}_{c}_{e}')
+                    b_p4_te2 = self._new_bool_var_domain_check(top_e, [2], f'p4te2_{r}_{c}_{e}')
+                    b_p4_be3 = self._new_bool_var_domain_check(bot_e, [3], f'p4be3_{r}_{c}_{e}')
+                    clause4 = [b_p4_top4.Not(), b_p4_bot0.Not(), b_p4_te2.Not(), b_p4_be3.Not()]
 
                     for k in range(c + 1, e):
                         top_k = self._grid_vars[r][k]
                         bot_k = self._grid_vars[r + 1][k]
-                        b_topk_is_0 = self._new_bool_var_domain_check(top_k, [0], f'pat_top0_{r}_{k}_from{c}_to{e}')
-                        b_botk_is_0 = self._new_bool_var_domain_check(bot_k, [0], f'pat_bot0_{r + 1}_{k}_from{c}_to{e}')
-                        clause.append(b_topk_is_0.Not())
-                        clause.append(b_botk_is_0.Not())
+                        b_topk_0 = self._new_bool_var_domain_check(top_k, [0], f'mid_t0_{r}_{k}')
+                        b_botk_0 = self._new_bool_var_domain_check(bot_k, [0], f'mid_b0_{r}_{k}')
 
-                    self._model.AddBoolOr(clause)
+                        not_mid = [b_topk_0.Not(), b_botk_0.Not()]
+                        clause1.extend(not_mid)
+                        clause2.extend(not_mid)
+                        clause3.extend(not_mid)
+                        clause4.extend(not_mid)
 
-        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
-        # Ligne r   : [1][0]...[0][3] (au moins un 0 entre les deux colonnes)
-        # Ligne r+1 : [4][0]...[0]
+                    self._model.AddBoolOr(clause1)
+                    self._model.AddBoolOr(clause2)
+                    self._model.AddBoolOr(clause3)
+                    self._model.AddBoolOr(clause4)
+
+        allowed_vpair1 = []
+        for t in range(6):
+            for b in range(6):
+                for rt in range(6):
+                    for rb in range(6):
+                        if t == 4 and b == 1:
+                            if rt != 3 or rb != 2:
+                                continue
+                        allowed_vpair1.append((t, b, rt, rb))
+
         for r in range(self._rows_number - 1):
             for c in range(self._columns_number - 1):
-                for e in range(c + 2, self._columns_number):
-                    top_c = self._grid_vars[r][c]
-                    bot_c = self._grid_vars[r + 1][c]
-                    top_e = self._grid_vars[r][e]
+                self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r+1][c], self._grid_vars[r][c+1], self._grid_vars[r+1][c+1]], allowed_vpair1)
 
-                    b_top_is_1 = self._new_bool_var_domain_check(top_c, [1], f'patA_top1_{r}_{c}_e{e}')
-                    b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [4], f'patA_bot4_{r}_{c}_e{e}')
-                    b_tope_is_3 = self._new_bool_var_domain_check(top_e, [3], f'patA_tope3_{r}_{c}_e{e}')
+        allowed_vpair2 = []
+        for t in range(6):
+            for b in range(6):
+                for lt in range(6):
+                    for lb in range(6):
+                        if t == 3 and b == 2:
+                            if lt != 4 or lb != 1:
+                                continue
+                        allowed_vpair2.append((t, b, lt, lb))
 
-                    clause = [b_top_is_1.Not(), b_bot_is_4.Not(), b_tope_is_3.Not()]
-                    for k in range(c + 1, e):
-                        b_topk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r][k], [0], f'patA_top0_{r}_{k}_from{c}_to{e}')
-                        b_botk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r + 1][k], [0], f'patA_bot0_{r + 1}_{k}_from{c}_to{e}')
-                        clause.append(b_topk_is_0.Not())
-                        clause.append(b_botk_is_0.Not())
-                    self._model.AddBoolOr(clause)
-
-        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
-        # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
-        # Ligne r+1 : [1][0]...[0][3]
-        for r in range(self._rows_number - 1):
-            for c in range(self._columns_number - 1):
-                for e in range(c + 2, self._columns_number):
-                    top_c = self._grid_vars[r][c]
-                    bot_c = self._grid_vars[r + 1][c]
-                    top_e = self._grid_vars[r][e]
-                    bot_e = self._grid_vars[r + 1][e]
-
-                    b_topc_is_0 = self._new_bool_var_domain_check(top_c, [0], f'patB_topc0_{r}_{c}_e{e}')
-                    b_botc_is_1 = self._new_bool_var_domain_check(bot_c, [1], f'patB_botc1_{r}_{c}_e{e}')
-                    b_tope_is_2 = self._new_bool_var_domain_check(top_e, [2], f'patB_tope2_{r}_{c}_e{e}')
-                    b_bote_is_3 = self._new_bool_var_domain_check(bot_e, [3], f'patB_bote3_{r}_{c}_e{e}')
-
-                    clause = [b_topc_is_0.Not(), b_botc_is_1.Not(), b_tope_is_2.Not(), b_bote_is_3.Not()]
-                    for k in range(c + 1, e):
-                        b_topk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r][k], [0], f'patB_top0_{r}_{k}_from{c}_to{e}')
-                        b_botk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r + 1][k], [0], f'patB_bot0_{r + 1}_{k}_from{c}_to{e}')
-                        clause.append(b_topk_is_0.Not())
-                        clause.append(b_botk_is_0.Not())
-                    self._model.AddBoolOr(clause)
-
-        # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
-        # Ligne r   : [4][0]...[0][2] (au moins un 0 entre les deux colonnes)
-        # Ligne r+1 :    [0]...[0][3]
-        for r in range(self._rows_number - 1):
-            for c in range(self._columns_number - 1):
-                for e in range(c + 2, self._columns_number):
-                    top_c = self._grid_vars[r][c]
-                    bot_c = self._grid_vars[r + 1][c]
-                    top_e = self._grid_vars[r][e]
-                    bot_e = self._grid_vars[r + 1][e]
-
-                    b_topc_is_4 = self._new_bool_var_domain_check(top_c, [4], f'patC_topc4_{r}_{c}_e{e}')
-                    b_botc_is_0 = self._new_bool_var_domain_check(bot_c, [0], f'patC_botc0_{r}_{c}_e{e}')
-                    b_tope_is_2 = self._new_bool_var_domain_check(top_e, [2], f'patC_tope2_{r}_{c}_e{e}')
-                    b_bote_is_3 = self._new_bool_var_domain_check(bot_e, [3], f'patC_bote3_{r}_{c}_e{e}')
-
-                    clause = [b_topc_is_4.Not(), b_botc_is_0.Not(), b_tope_is_2.Not(), b_bote_is_3.Not()]
-                    for k in range(c + 1, e):
-                        b_topk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r][k], [0], f'patC_top0_{r}_{k}_from{c}_to{e}')
-                        b_botk_is_0 = self._new_bool_var_domain_check(self._grid_vars[r + 1][k], [0], f'patC_bot0_{r + 1}_{k}_from{c}_to{e}')
-                        clause.append(b_topk_is_0.Not())
-                        clause.append(b_botk_is_0.Not())
-                    self._model.AddBoolOr(clause)
-
-        # [4;1] ⇒ à droite [3;2]
-        for r in range(self._rows_number - 1):
-            for c in range(self._columns_number - 1):
-                top = self._grid_vars[r][c]
-                bottom = self._grid_vars[r + 1][c]
-                right = self._grid_vars[r][c + 1]
-                right_bottom = self._grid_vars[r + 1][c + 1]
-
-                b_top_is_4 = self._new_bool_var_domain_check(top, [4], f'vpair_top4_{r}_{c}')
-                b_bot_is_1 = self._new_bool_var_domain_check(bottom, [1], f'vpair_bot1_{r}_{c}')
-
-                b_pair_41 = self._model.NewBoolVar(f'pair41_{r}_{c}')
-                self._model.Add(b_top_is_4 + b_bot_is_1 >= 2).OnlyEnforceIf(b_pair_41)
-                self._model.Add(b_top_is_4 + b_bot_is_1 <= 2).OnlyEnforceIf(b_pair_41)
-                self._model.Add(b_top_is_4 + b_bot_is_1 <= 1).OnlyEnforceIf(b_pair_41.Not())
-
-                b_right_is_3 = self._new_bool_var_domain_check(right, [3], f'vpair_right3_{r}_{c}')
-                b_rb_is_2 = self._new_bool_var_domain_check(right_bottom, [2], f'vpair_rb2_{r}_{c}')
-
-                self._model.AddImplication(b_pair_41, b_right_is_3)
-                self._model.AddImplication(b_pair_41, b_rb_is_2)
-
-        # [3;2] ⇒ à gauche [4;1]
         for r in range(self._rows_number - 1):
             for c in range(1, self._columns_number):
-                top = self._grid_vars[r][c]
-                bottom = self._grid_vars[r + 1][c]
-                left = self._grid_vars[r][c - 1]
-                left_bottom = self._grid_vars[r + 1][c - 1]
-
-                b_top_is_3 = self._new_bool_var_domain_check(top, [3], f'vpair_top3_{r}_{c}')
-                b_bot_is_2 = self._new_bool_var_domain_check(bottom, [2], f'vpair_bot2_{r}_{c}')
-
-                b_pair_32 = self._model.NewBoolVar(f'pair32_{r}_{c}')
-                self._model.Add(b_top_is_3 + b_bot_is_2 >= 2).OnlyEnforceIf(b_pair_32)
-                self._model.Add(b_top_is_3 + b_bot_is_2 <= 2).OnlyEnforceIf(b_pair_32)
-                self._model.Add(b_top_is_3 + b_bot_is_2 <= 1).OnlyEnforceIf(b_pair_32.Not())
-
-                b_left_is_4 = self._new_bool_var_domain_check(left, [4], f'vpair_left4_{r}_{c}')
-                b_lb_is_1 = self._new_bool_var_domain_check(left_bottom, [1], f'vpair_lb1_{r}_{c}')
-
-                self._model.AddImplication(b_pair_32, b_left_is_4)
-                self._model.AddImplication(b_pair_32, b_lb_is_1)
+                self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r+1][c], self._grid_vars[r][c-1], self._grid_vars[r+1][c-1]], allowed_vpair2)
