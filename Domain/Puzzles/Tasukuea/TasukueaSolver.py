@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -21,8 +21,8 @@ class TasukueaSolver(GameSolver):
         self._previous_solution: Grid | None = None
         self._square_selectors = None
         self._selector_areas = None
-        self._coverage = None
-        self._square_bounds = None
+        self._coverage = {}
+        self._square_bounds = []
         self._squares_built = False
 
     def _init_solver(self):
@@ -45,7 +45,9 @@ class TasukueaSolver(GameSolver):
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 break
             proposition_count += 1
-            current_grid = Grid([[bool(self._solver.Value(self._grid_var.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
+            current_grid = Grid([[None] * self._columns_number for _ in range(self._rows_number)])
+            for position, var in self._grid_var:
+                current_grid[position] = bool(self._solver.Value(var))
             white_shapes = current_grid.get_all_shapes(value=False)
             if len(white_shapes) == 1:
                 return current_grid, proposition_count
@@ -98,7 +100,6 @@ class TasukueaSolver(GameSolver):
         self._square_selectors = []  # list[BoolVar]
         self._selector_areas = dict()  # selector -> area
         self._coverage = dict()  # (r,c) -> list[BoolVar]
-        self._square_bounds = []  # list of (selector, r0, c0, size)
 
         for size in range(1, max_size + 1):
             for r0 in range(0, rows - size + 1):
@@ -127,30 +128,27 @@ class TasukueaSolver(GameSolver):
                 c_min, c_max = c0, c0 + sz - 1
                 adjacent_found = False
                 for p in clue_positions:
-                    for nr, nc in ((p.r - 1, p.c), (p.r + 1, p.c), (p.r, p.c - 1), (p.r, p.c + 1)):
-                        if 0 <= nr < rows and 0 <= nc < cols:
-                            if r_min <= nr <= r_max and c_min <= nc <= c_max:
-                                adjacent_found = True
-                                break
+                    for neighbor in self._grid.neighbors_positions(p, mode='orthogonal'):
+                        if r_min <= neighbor.r <= r_max and c_min <= neighbor.c <= c_max:
+                            adjacent_found = True
+                            break
                     if adjacent_found:
                         break
                 if not adjacent_found:
                     self._model.Add(s == 0)
 
         # Non-overlap on cells and coverage completeness
-        for r in range(rows):
-            for c in range(cols):
-                key = (r, c)
-                selectors = self._coverage.get(key, [])
-                var = self._grid_var[Position(r, c)]
-                if selectors:
-                    # If cell is black (True), it must come from a selected square: var => Or(selectors)
-                    self._model.AddBoolOr(selectors + [var.Not()])
-                    # At most one square covers a cell
-                    self._model.AddAtMostOne(selectors)
-                else:
-                    # No square can cover this cell => force white (False)
-                    self._model.Add(var == 0)
+        for position, var in self._grid_var:
+            key = (position.r, position.c)
+            selectors = self._coverage.get(key, [])
+            if selectors:
+                # If cell is black (True), it must come from a selected square: var => Or(selectors)
+                self._model.AddBoolOr(selectors + [var.Not()])
+                # At most one square covers a cell
+                self._model.AddAtMostOne(selectors)
+            else:
+                # No square can cover this cell => force white (False)
+                self._model.Add(var == 0)
 
         # Forbid orthogonal edge-touching between distinct squares (diagonal touching allowed)
         n = len(self._square_bounds)
