@@ -381,7 +381,7 @@ class BalanceLoopSolver(GameSolver):
         # color black
         return [And( segments_length_var[i] != segments_length_var[j], segments_length_var[i] > 0, segments_length_var[j] > 0) for i, j in pairs]
 
-    def _compute_direction_constraints(self, position: Position, direction: Direction) -> ArithRef | None:
+    def _compute_direction_constraints(self, position: Position, direction: Direction) -> 'ArithRef | None':
         positions = [position]
         positions_in_direction = self._clues_grid.all_positions_in_direction(position, direction)
         if len(positions_in_direction) == 0:
