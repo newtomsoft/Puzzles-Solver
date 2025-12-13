@@ -1,6 +1,7 @@
-﻿import unittest
+import unittest
 from unittest import TestCase
 
+from Domain.Board.Grid import Grid
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
@@ -17,7 +18,9 @@ class MidLoopSolverTests(TestCase):
             ' │  ·  │ \n'
             ' └─────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -31,7 +34,9 @@ class MidLoopSolverTests(TestCase):
             ' └──┐  │ \n'
             ' ·  └──┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -45,7 +50,9 @@ class MidLoopSolverTests(TestCase):
             ' │  └──┐ \n'
             ' └─────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -66,7 +73,9 @@ class MidLoopSolverTests(TestCase):
             ' │  ┌──┐  └──┘  │ \n'
             ' └──┘  └────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -88,7 +97,9 @@ class MidLoopSolverTests(TestCase):
             ' │  ┌──┐  └────────┐ \n'
             ' └──┘  └───────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -113,7 +124,9 @@ class MidLoopSolverTests(TestCase):
             ' ┌──┘  └─────┘  ·  ·  │ \n'
             ' └────────────────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -138,7 +151,9 @@ class MidLoopSolverTests(TestCase):
             ' ┌──┘  ·  ·  │  │  ·  └──┐ \n'
             ' └───────────┘  └────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -165,7 +180,9 @@ class MidLoopSolverTests(TestCase):
             ' ┌─────┘  ┌──┐  │  │  ·  ·  │ \n'
             ' └────────┘  └──┘  └────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -197,7 +214,9 @@ class MidLoopSolverTests(TestCase):
             ' └──┐  │  │  │  ┌──┘  ·  ·  │  │  │ \n'
             ' ·  └──┘  └──┘  └───────────┘  └──┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -225,7 +244,9 @@ class MidLoopSolverTests(TestCase):
             ' │  ┌──┐  └────────┐ \n'
             ' └──┘  └───────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -258,7 +279,9 @@ class MidLoopSolverTests(TestCase):
             ' ┌──┘  │  │  ·  ·  └──┐  │  ·  ┌──┘ \n'
             ' └─────┘  └───────────┘  └─────┘  · '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -277,7 +300,9 @@ class MidLoopSolverTests(TestCase):
             31: Position(9.0, 10.5), 32: Position(10.0, 2.0), 33: Position(10.0, 3.0), 34: Position(10.0, 8.0), 35: Position(10.5, 0.0),
             36: Position(11.0, 5.0), 37: Position(11.0, 9.5)
         }
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertNotEqual(IslandGrid.empty(), solution)
         other_solution = game_solver.get_other_solution()
@@ -308,7 +333,9 @@ class MidLoopSolverTests(TestCase):
             ' │  ·  ·  ·  ┌─────┐  │  │  ·  ·  │ \n'
             ' └───────────┘  ·  └──┘  └────────┘ '
         )
-        game_solver = MidLoopSolver(grid_size, circles_positions)
+        grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
+        grid.dots_positions = list(circles_positions.values())
+        game_solver = MidLoopSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
