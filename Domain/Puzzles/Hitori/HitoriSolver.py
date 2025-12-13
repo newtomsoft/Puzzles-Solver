@@ -1,288 +1,192 @@
-﻿from z3 import Solver, Bool, Not, And, Or, Implies, is_true, sat
-
+from ortools.sat.python import cp_model
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
-
 class HitoriSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._grid = grid
-        self._solver = Solver()
-        self._grid_z3 = None
+        self._model = None
+        self._solver = None
+        self._cells = []
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+
+        # Variables: self._cells[r][c] is True if cell is KEPT (White), False if REMOVED (Black/Shaded)
+        self._cells = [[self._model.NewBoolVar(f"cell_{r}_{c}") for c in range(self._grid.columns_number)]
+                       for r in range(self._grid.rows_number)]
+
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if self._model is None:
             self._init_solver()
 
-        solution, _ = self._ensure_all_white_connected()
+        solution = self._ensure_all_white_connected()
         self._previous_solution = solution
         return solution
 
-    def _ensure_all_white_connected(self):
-        proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid.columns_number)] for i in range(self._grid.rows_number)])
-            white_shapes = current_grid.get_all_shapes()
-            if len(white_shapes) == 1:
-                return self.get_solution_grid(current_grid), proposition_count
-
-            biggest_white_shapes = max(white_shapes, key=len)
-            white_shapes.remove(biggest_white_shapes)
-            for white_shape in white_shapes:
-                around_white = ShapeGenerator.around_shape(white_shape)
-                around_white_are_not_all_black_constraint = Not(And([Not(self._grid_z3[position]) for position in around_white if position in self._grid]))
-                self._solver.add(around_white_are_not_all_black_constraint)
-
-        return Grid.empty(), proposition_count
-
     def get_other_solution(self):
-        previous_solution_constraints = []
-        for position, _ in [(position, value) for (position, value) in self._previous_solution if not value]:
-            previous_solution_constraints.append(Not(self._grid_z3[position]))
-        self._solver.add(Not(And(previous_solution_constraints)))
+        if self._previous_solution is None:
+             return self.get_solution()
+
+        # Ban previous solution
+        previous_assignment = []
+        for r in range(self._grid.rows_number):
+            for c in range(self._grid.columns_number):
+                val = self._previous_solution.value(r, c)
+                is_kept = (val is not False)
+                if is_kept:
+                    previous_assignment.append(self._cells[r][c].Not())
+                else:
+                    previous_assignment.append(self._cells[r][c])
+
+        self._model.AddBoolOr(previous_assignment)
 
         return self.get_solution()
 
+    def _ensure_all_white_connected(self):
+        while True:
+            status = self._solver.Solve(self._model)
+            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+                return Grid.empty()
+
+            current_bool_grid = Grid([[self._solver.Value(self._cells[r][c]) == 1
+                                       for c in range(self._grid.columns_number)]
+                                      for r in range(self._grid.rows_number)])
+
+            white_shapes = current_bool_grid.get_all_shapes()
+
+            if len(white_shapes) <= 1:
+                return self.get_solution_grid(current_bool_grid)
+
+            biggest_shape = max(white_shapes, key=len)
+            white_shapes.remove(biggest_shape)
+
+            for small_shape in white_shapes:
+                around_positions = ShapeGenerator.around_shape(small_shape)
+                valid_around = [p for p in around_positions if p in self._grid]
+
+                if valid_around:
+                    self._model.AddBoolOr([self._cells[p.r][p.c] for p in valid_around])
+
     def _add_constraints(self):
-        self._if_unique_in_row_and_column_then_white()
-        self._if_n_same_number_in_row_or_column_then_black_for_n_minus_1()
-        self._white_for_same_number_in_row_and_column_implies_black()
-        self._black_implies_von_neumann_withe()
+        self._add_no_duplicate_constraints()
+        self._add_no_adjacent_black_constraints()
+        self._add_heuristics()
+
+    def _add_no_duplicate_constraints(self):
+        # Rule 1: No number appears more than once in a row or column (unshaded).
+
+        # Rows
+        for r in range(self._grid.rows_number):
+            value_to_cols = {}
+            for c in range(self._grid.columns_number):
+                val = self._grid.value(r, c)
+                if val not in value_to_cols:
+                    value_to_cols[val] = []
+                value_to_cols[val].append(c)
+
+            for val, cols in value_to_cols.items():
+                if len(cols) > 1:
+                    # Optimized: AddAtMostOne
+                    self._model.AddAtMostOne([self._cells[r][c] for c in cols])
+
+        # Columns
+        for c in range(self._grid.columns_number):
+            value_to_rows = {}
+            for r in range(self._grid.rows_number):
+                val = self._grid.value(r, c)
+                if val not in value_to_rows:
+                    value_to_rows[val] = []
+                value_to_rows[val].append(r)
+
+            for val, rows in value_to_rows.items():
+                if len(rows) > 1:
+                    # Optimized: AddAtMostOne
+                    self._model.AddAtMostOne([self._cells[r][c] for r in rows])
+
+    def _add_no_adjacent_black_constraints(self):
+        # Rule 2: Shaded (Black) cells cannot be adjacent horizontally or vertically.
+        # At least one of the two adjacent cells must be White.
+
+        for r in range(self._grid.rows_number):
+            for c in range(self._grid.columns_number):
+                if c + 1 < self._grid.columns_number:
+                    self._model.AddBoolOr([self._cells[r][c], self._cells[r][c+1]])
+                if r + 1 < self._grid.rows_number:
+                    self._model.AddBoolOr([self._cells[r][c], self._cells[r+1][c]])
+
+    def _add_heuristics(self):
         self._if_sandwiched_by_2_same_number_then_white()
         self._if_2_same_number_adjacent_then_others_black()
-        self._if_3_same_number_in_corner_then_black_corner()
-        self._black_x_black_on_border_implies_white_white()
-        self._if_4_same_number_in_square_then_black_in_diagonal()
-        self._3_black_in_von_neumann_implies_last_white()
-        self._diagonal_black_implies_1_white()
-        self._pyramid_black_on_border_implies_top_white()
-        self._if_2_same_number_near_corner_then_white()
-
-    def _black_implies_von_neumann_withe(self):
-        constraints = []
-        for r in range(self._grid.rows_number):
-            for c in range(self._grid.columns_number):
-                if r > 0:
-                    constraints.append(Implies(Not(self._grid_z3.value(r, c)), self._grid_z3.value(r - 1, c)))
-                if r < self._grid.rows_number - 1:
-                    constraints.append(Implies(Not(self._grid_z3.value(r, c)), self._grid_z3.value(r + 1, c)))
-                if c > 0:
-                    constraints.append(Implies(Not(self._grid_z3.value(r, c)), self._grid_z3.value(r, c - 1)))
-                if c < self._grid.columns_number - 1:
-                    constraints.append(Implies(Not(self._grid_z3.value(r, c)), self._grid_z3.value(r, c + 1)))
-                self._solver.add(constraints)
-
-    def _if_n_same_number_in_row_or_column_then_black_for_n_minus_1(self):
-        constraints = []
-        for r0 in range(self._grid.rows_number):
-            for c0 in range(self._grid.columns_number):
-                r1selected = []
-                for r1 in range(self._grid.rows_number):
-                    if self._grid.value(r0, c0) == self._grid.value(r1, c0) and r1 != r0:
-                        r1selected.append(r1)
-                constraints.append(sum([Not(self._grid_z3.value(r, c0)) for r in r1selected]) >= len(r1selected) - 1)
-                c1selected = []
-                for c1 in range(self._grid.columns_number):
-                    if self._grid.value(r0, c0) == self._grid.value(r0, c1) and c1 != c0:
-                        c1selected.append(c1)
-                constraints.append(sum([Not(self._grid_z3.value(r0, c)) for c in c1selected]) >= len(c1selected) - 1)
-        self._solver.add(constraints)
-
-    def _if_unique_in_row_and_column_then_white(self):
-        constraints = []
-        for r0 in range(self._grid.rows_number):
-            for c0 in range(self._grid.columns_number):
-                unique_in_row = all(self._grid.value(r0, c0) != self._grid.value(r0, c1) for c1 in range(self._grid.columns_number) if c1 != c0)
-                unique_in_column = all(self._grid.value(r0, c0) != self._grid.value(r1, c0) for r1 in range(self._grid.rows_number) if r1 != r0)
-                if unique_in_row and unique_in_column:
-                    constraints.append(self._grid_z3.value(r0, c0))
-        self._solver.add(constraints)
-
-    def _white_for_same_number_in_row_and_column_implies_black(self):
-        constraints = []
-        for r0 in range(self._grid.rows_number):
-            for c0 in range(self._grid.columns_number):
-                for r1 in range(self._grid.rows_number):
-                    if self._grid.value(r0, c0) == self._grid.value(r1, c0) and r1 != r0:
-                        constraints.append(Implies(self._grid_z3.value(r0, c0), Not(self._grid_z3.value(r1, c0))))
-                for c1 in range(self._grid.columns_number):
-                    if self._grid.value(r0, c0) == self._grid.value(r0, c1) and c1 != c0:
-                        constraints.append(Implies(self._grid_z3.value(r0, c0), Not(self._grid_z3.value(r0, c1))))
-        self._solver.add(constraints)
-
-    def _if_2_same_number_adjacent_then_others_black(self):
-        constraints = []
-        for r in range(self._grid.rows_number - 1):
-            for c in range(self._grid.columns_number):
-                current_number = self._grid.value(r, c)
-                if self._grid.value(r + 1, c) == current_number:
-                    for r1 in range(self._grid.rows_number):
-                        if r1 != r and r1 != r + 1 and self._grid.value(r1, c) == current_number:
-                            constraints.append(Not(self._grid_z3.value(r1, c)))
-        for r in range(self._grid.rows_number):
-            for c in range(self._grid.columns_number - 1):
-                current_number = self._grid.value(r, c)
-                if self._grid.value(r, c + 1) == current_number:
-                    for c1 in range(self._grid.rows_number):
-                        if c1 != c and c1 != c + 1 and self._grid.value(r, c1) == current_number:
-                            constraints.append(Not(self._grid_z3.value(r, c1)))
-        self._solver.add(constraints)
 
     def _if_sandwiched_by_2_same_number_then_white(self):
-        constraints = []
+        # Heuristic: A B A. If A's are same number, B must be White.
+        # Reason: If B is Black, A(left) and A(right) must be White (Rule 2).
+        # But A and A are duplicates in row. Violation of Rule 1.
+        # So B cannot be Black.
         for r in range(self._grid.rows_number):
             for c in range(self._grid.columns_number):
-                if 0 < r < self._grid.rows_number - 1 and self._grid.value(r - 1, c) == self._grid.value(r + 1, c):
-                    constraints.append(self._grid_z3.value(r, c))
-                if 0 < c < self._grid.columns_number - 1 and self._grid.value(r, c - 1) == self._grid.value(r, c + 1):
-                    constraints.append(self._grid_z3.value(r, c))
-        self._solver.add(constraints)
+                if 0 < r < self._grid.rows_number - 1:
+                    if self._grid.value(r - 1, c) == self._grid.value(r + 1, c):
+                        self._model.Add(self._cells[r][c] == 1)
 
-    def _if_3_same_number_in_corner_then_black_corner(self):
-        constraints = [
-            Not(self._grid_z3.value(0, 0)) if self._grid.value(0, 0) == self._grid.value(0, 1) == self._grid.value(1, 0) else True,
-            Not(self._grid_z3.value(0, self._grid.columns_number - 1)) if self._grid.value(0, self._grid.columns_number - 1) == self._grid.value(0, self._grid.columns_number - 2) == self._grid.value(
-                1, self._grid.columns_number - 1) else True,
-            Not(self._grid_z3.value(self._grid.rows_number - 1, 0)) if self._grid.value(self._grid.rows_number - 1, 0) == self._grid.value(self._grid.rows_number - 1, 1) == self._grid.value(
-                self._grid.rows_number - 2, 0) else True,
-            Not(self._grid_z3.value(self._grid.rows_number - 1, self._grid.columns_number - 1)) if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 1) == self._grid.value(
-                self._grid.rows_number - 2,
-                self._grid.columns_number - 1) == self._grid.value(
-                self._grid.rows_number - 1, self._grid.columns_number - 2) else True
-        ]
-        self._solver.add(constraints)
+                if 0 < c < self._grid.columns_number - 1:
+                    if self._grid.value(r, c - 1) == self._grid.value(r, c + 1):
+                        self._model.Add(self._cells[r][c] == 1)
 
-    def _if_4_same_number_in_square_then_black_in_diagonal(self):
-        square_same_number = []
-        for r in range(self._grid.rows_number - 1):
+    def _if_2_same_number_adjacent_then_others_black(self):
+        # Heuristic: If X X are adjacent.
+        # Then all other X in that row/col must be Black.
+        # Reason: X X adjacent implies at least one is White? No, at least one is Black.
+        # Actually logic:
+        # Case 1: X(1) White, X(2) Black.
+        # Case 2: X(1) Black, X(2) White.
+        # Case 3: X(1) Black, X(2) Black -> Impossible (Rule 2).
+        # So exactly one of them is White, or both are White?
+        # If both White -> Duplicate. Impossible.
+        # So EXACTLY ONE of X(1), X(2) is White.
+        # Since exactly one is White, any OTHER X(k) in that row must be Black,
+        # because if X(k) is White, we have 2 Whites (X(k) and whichever of X(1)/X(2) is White).
+
+        # Rows
+        for r in range(self._grid.rows_number):
             for c in range(self._grid.columns_number - 1):
-                if self._grid.value(r, c) == self._grid.value(r + 1, c) == self._grid.value(r, c + 1) == self._grid.value(r + 1, c + 1):
-                    Or(
-                        And(Not(self._grid_z3.value(r, c)), self._grid_z3.value(r + 1, c), self._grid_z3.value(r, c + 1), Not(self._grid_z3.value(r + 1, c + 1))),
-                        And(self._grid_z3.value(r, c), Not(self._grid_z3.value(r + 1, c)), Not(self._grid_z3.value(r, c + 1)), self._grid_z3.value(r + 1, c + 1)),
-                    )
-        self._solver.add(square_same_number)
+                val = self._grid.value(r, c)
+                if val == self._grid.value(r, c + 1):
+                    # Found pair (c, c+1)
+                    # Constraint: sum(white[c], white[c+1]) == 1 ? Not necessarily.
+                    # Wait, if X X are adjacent. Can both be Black? NO.
+                    # Can both be White? NO.
+                    # So exactly one is White.
+                    # So sum(cells[r][c], cells[r][c+1]) == 1.
+                    # This is a strong constraint itself!
+                    self._model.Add(self._cells[r][c] + self._cells[r][c+1] == 1)
 
-    def _black_x_black_on_border_implies_white_white(self):
-        constraints = []
-        last_row = self._grid.rows_number - 1
-        last_column = self._grid.columns_number - 1
-        for c in range(self._grid.columns_number - 2):
-            constraints.append(Implies(And(Not(self._grid_z3.value(0, c)), Not(self._grid_z3.value(0, c + 2))), self._grid_z3.value(0, c + 1)))
-            constraints.append(Implies(And(Not(self._grid_z3.value(last_row, c)), Not(self._grid_z3.value(last_row, c + 2))), self._grid_z3.value(last_row, c + 1)))
-        for r in range(self._grid.rows_number - 2):
-            constraints.append(Implies(And(Not(self._grid_z3.value(r, 0)), Not(self._grid_z3.value(r + 2, 0))), self._grid_z3.value(r + 1, 0)))
-            constraints.append(Implies(And(Not(self._grid_z3.value(r, last_column)), Not(self._grid_z3.value(r + 2, last_column))), self._grid_z3.value(r + 1, last_column)))
-        self._solver.add(constraints)
+                    # Also force all others to be Black
+                    for c_other in range(self._grid.columns_number):
+                        if c_other != c and c_other != c + 1:
+                            if self._grid.value(r, c_other) == val:
+                                self._model.Add(self._cells[r][c_other] == 0)
 
-    def _3_black_in_von_neumann_implies_last_white(self):
-        constraints = []
-        for r in range(1, self._grid.rows_number - 1):
-            for c in range(1, self._grid.columns_number - 1):
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c - 1)), Not(self._grid_z3.value(r - 1, c)), Not(self._grid_z3.value(r, c + 1))), self._grid_z3.value(r + 1, c)))
-                constraints.append(Implies(And(Not(self._grid_z3.value(r - 1, c)), Not(self._grid_z3.value(r, c + 1)), Not(self._grid_z3.value(r + 1, c))), self._grid_z3.value(r, c - 1)))
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c + 1)), Not(self._grid_z3.value(r + 1, c)), Not(self._grid_z3.value(r, c - 1))), self._grid_z3.value(r - 1, c)))
-                constraints.append(Implies(And(Not(self._grid_z3.value(r + 1, c)), Not(self._grid_z3.value(r, c - 1)), Not(self._grid_z3.value(r - 1, c))), self._grid_z3.value(r, c + 1)))
-        self._solver.add(constraints)
+        # Columns
+        for c in range(self._grid.columns_number):
+            for r in range(self._grid.rows_number - 1):
+                val = self._grid.value(r, c)
+                if val == self._grid.value(r + 1, c):
+                    # Found pair (r, r+1)
+                    self._model.Add(self._cells[r][c] + self._cells[r+1][c] == 1)
 
-    def _diagonal_black_implies_1_white(self):
-        constraints = []
-        min_rows_column_number = min(self._grid.rows_number, self._grid.columns_number)
-        for diagonal_len in range(2, min_rows_column_number - 1):
-            if self._grid.rows_number == self._grid.columns_number >= diagonal_len:
-                constraints.append(sum([self._grid_z3.value(diagonal_len - 1 - x, x) for x in range(diagonal_len - 1)]) < diagonal_len)
-                constraints.append(sum([self._grid_z3.value(diagonal_len - 1 - x, self._grid.columns_number - 1 - x) for x in range(diagonal_len - 1)]) < diagonal_len)
-                constraints.append(sum([self._grid_z3.value(self._grid.rows_number - diagonal_len + x, x) for x in range(diagonal_len - 1)]) < diagonal_len)
-                constraints.append(sum([self._grid_z3.value(self._grid.rows_number - diagonal_len + x, self._grid.columns_number - 1 - x) for x in range(diagonal_len - 1)]) < diagonal_len)
-
-        self._solver.add(constraints)
-
-    def _if_2_same_number_near_corner_then_white(self):
-        self._if_2_same_number_near_corner_touch_border_then_white()
-        self._if_2_same_number_near_corner_near_border_then_white()
-
-    def _if_2_same_number_near_corner_touch_border_then_white(self):
-        constraints = []
-        if self._grid.value(0, 0) == self._grid.value(0, 1):
-            constraints.append(self._grid_z3.value(1, 0))
-        if self._grid.value(0, 0) == self._grid.value(1, 0):
-            constraints.append(self._grid_z3.value(0, 1))
-        if self._grid.value(0, self._grid.columns_number - 1) == self._grid.value(0, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(1, self._grid.columns_number - 1))
-        if self._grid.value(0, self._grid.columns_number - 1) == self._grid.value(1, self._grid.columns_number - 1):
-            constraints.append(self._grid_z3.value(0, self._grid.columns_number - 2))
-        if self._grid.value(self._grid.rows_number - 1, 0) == self._grid.value(self._grid.rows_number - 1, 1):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 2, 0))
-        if self._grid.value(self._grid.rows_number - 1, 0) == self._grid.value(self._grid.rows_number - 2, 0):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 1, 1))
-        if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 1) == self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 2, self._grid.columns_number - 1))
-        if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 1) == self._grid.value(self._grid.rows_number - 2, self._grid.columns_number - 1):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 1, self._grid.columns_number - 2))
-        self._solver.add(constraints)
-
-    def _if_2_same_number_near_corner_near_border_then_white(self):
-        constraints = []
-        if self._grid.value(1, 0) == self._grid.value(1, 1):
-            constraints.append(self._grid_z3.value(0, 1))
-        if self._grid.value(0, 1) == self._grid.value(1, 1):
-            constraints.append(self._grid_z3.value(1, 0))
-        if self._grid.value(1, self._grid.columns_number - 1) == self._grid.value(1, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(0, self._grid.columns_number - 2))
-        if self._grid.value(0, self._grid.columns_number - 2) == self._grid.value(1, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(1, self._grid.columns_number - 1))
-        if self._grid.value(self._grid.rows_number - 2, 0) == self._grid.value(self._grid.rows_number - 2, 1):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 1, 1))
-        if self._grid.value(self._grid.rows_number - 1, 1) == self._grid.value(self._grid.rows_number - 2, 1):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 2, 0))
-        if self._grid.value(self._grid.rows_number - 2, self._grid.columns_number - 1) == self._grid.value(self._grid.rows_number - 2, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 1, self._grid.columns_number - 2))
-        if self._grid.value(self._grid.rows_number - 1, self._grid.columns_number - 2) == self._grid.value(self._grid.rows_number - 2, self._grid.columns_number - 2):
-            constraints.append(self._grid_z3.value(self._grid.rows_number - 2, self._grid.columns_number - 1))
-        self._solver.add(constraints)
-
-    def _pyramid_black_on_border_implies_top_white(self):
-        self._2_levels_pyramid_black_on_border_implies_top_white()
-        self._3_levels_pyramid_black_on_border_implies_top_white()
-
-    def _2_levels_pyramid_black_on_border_implies_top_white(self):
-        constraints = []
-        for r in range(1, self._grid.rows_number - 3):
-            for c, dc in {(0, 1), (self._grid.columns_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r + 2, c))), self._grid_z3.value(r + 1, c + dc)))
-        for c in range(1, self._grid.columns_number - 3):
-            for r, dr in {(0, 1), (self._grid.rows_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r, c + 2))), self._grid_z3.value(r + dr, c + 1)))
-        self._solver.add(constraints)
-
-    def _3_levels_pyramid_black_on_border_implies_top_white(self):
-        constraints = []
-        for r in range(1, self._grid.rows_number - 4):
-            for c, dc in {(0, 1), (self._grid.columns_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r + 4, c)), Not(self._grid_z3.value(r + 1, c + dc)), Not(self._grid_z3.value(r + 3, c + dc))),
-                                                        self._grid_z3.value(r + 2, c + 2 * dc)))
-        for c in range(1, self._grid.columns_number - 4):
-            for r, dr in {(0, 1), (self._grid.rows_number - 1, -1)}:
-                constraints.append(Implies(And(Not(self._grid_z3.value(r, c)), Not(self._grid_z3.value(r, c + 4)), Not(self._grid_z3.value(r + dr, c + 1)), Not(self._grid_z3.value(r + dr, c + 3))),
-                                                        self._grid_z3.value(r + 2 * dr, c + 2)))
-        self._solver.add(constraints)
-
-    def print_proposition(self, proposition_grid: Grid):
-        print("\n".join(" ".join(f'{self._grid.value(r, c)}' if proposition_grid.value(r, c) else "■" for c in range(self._grid.columns_number)) for r in range(self._grid.rows_number)))
+                    for r_other in range(self._grid.rows_number):
+                        if r_other != r and r_other != r + 1:
+                            if self._grid.value(r_other, c) == val:
+                                self._model.Add(self._cells[r_other][c] == 0)
 
     def get_solution_grid(self, proposition_grid: Grid):
-        return Grid([[self._grid.value(r, c) if proposition_grid.value(r, c) else False for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
-
-    @staticmethod
-    def print_dot(proposition_count):
-        print('.', end='')
-        if proposition_count % 100 == 0:
-            print()
+        return Grid([[self._grid.value(r, c) if proposition_grid.value(r, c) else False
+                      for c in range(self._grid.columns_number)]
+                     for r in range(self._grid.rows_number)])
