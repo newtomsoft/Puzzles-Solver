@@ -33,8 +33,8 @@ jobs:
 
       - name: Run Tests
         run: |
-          $env:PYTHONPATH = ".;$env:PYTHONPATH"
-          pytest
+          $env:PYTHONPATH = $env:GITHUB_WORKSPACE
+          python -m pytest
 
       - name: Build Executable
         run: |
@@ -89,8 +89,8 @@ jobs:
 
       - name: Run Tests
         run: |
-          export PYTHONPATH=$PYTHONPATH:.
-          xvfb-run pytest
+          export PYTHONPATH=$GITHUB_WORKSPACE
+          xvfb-run python -m pytest
 
       - name: Build Executable
         run: |
