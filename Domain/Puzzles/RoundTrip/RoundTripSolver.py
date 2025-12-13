@@ -153,7 +153,7 @@ class RoundTripSolver(GameSolver):
                 constraints.append(And(previous_constraint, lens_var[i] == bridges_count))
         self._solver.add(Or(constraints))
 
-    def _compute_len_var(self, position: Position, direction: Direction) -> ArithRef | None:
+    def _compute_len_var(self, position: Position, direction: Direction) -> 'ArithRef | None':
         positions = [position]
         positions_in_direction = self._grid_z3.all_positions_in_direction(position, direction)
         if len(positions_in_direction) == 0:

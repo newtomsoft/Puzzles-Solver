@@ -22,7 +22,7 @@ class NurikabeSolver(GameSolver):
         self._solver = Solver()
         self._grid_z3 = None
 
-    def get_solution(self) -> (Grid, int):
+    def get_solution(self) -> tuple[Grid, int]:
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         # True if a cell is black (river), False if white (island)
         self._add_constraints()

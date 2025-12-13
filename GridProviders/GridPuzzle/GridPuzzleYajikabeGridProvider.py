@@ -38,7 +38,7 @@ class GridPuzzleYajikabeGridProvider(PlaywrightGridProvider, GridPuzzleTagProvid
 
 
     @staticmethod
-    def _get_grid_data(html_page: str) -> tuple[BeautifulSoup, int, int, list[list], ResultSet[PageElement | Tag | NavigableString]]:
+    def _get_grid_data(html_page: str) -> tuple[BeautifulSoup, int, int, list[list], ResultSet]:
         soup = BeautifulSoup(html_page, 'html.parser')
         matrix_cells = soup.find_all('div', class_='cell')
         cells_count = len(matrix_cells)
