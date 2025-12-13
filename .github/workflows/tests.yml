@@ -34,6 +34,8 @@ jobs:
           pip install pytest
 
       - name: Run tests
+        env:
+          PYTHONPATH: .
         run: pytest -q
 
     # Si des tests échouent, le job échoue et bloquera la PR (avec protection de branche)
