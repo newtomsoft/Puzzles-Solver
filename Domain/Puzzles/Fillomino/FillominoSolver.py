@@ -1,172 +1,156 @@
 from ortools.sat.python import cp_model
-
 from Domain.Board.Grid import Grid
-
 
 class FillominoSolver:
     def __init__(self, grid: Grid):
         self.grid = grid
         self.rows = self.grid.rows_number
         self.cols = self.grid.columns_number
+        self.max_val = self.rows * self.cols
         self.model = cp_model.CpModel()
-
-        self.max_cell_var = max([value for _, value in self.grid])
-        self.max_region_size = self.rows * self.cols
-
+        self.solver = cp_model.CpSolver()
         self.cell_vars = {}
-        self.region_id_vars = {}
-        self.is_root = {}
-        self.depth = {}
-        self.parent_choice = {}
+        self._init_solver()
+
+    def _init_solver(self):
+        # Create variables
+        for r in range(self.rows):
+            for c in range(self.cols):
+                self.cell_vars[(r, c)] = self.model.NewIntVar(1, self.max_val, f'cell_{r}_{c}')
+
+        # Initial constraints from grid
+        for r in range(self.rows):
+            for c in range(self.cols):
+                val = self.grid[r][c]
+                if isinstance(val, int) and val > 0:
+                    self.model.Add(self.cell_vars[(r, c)] == val)
 
     def solve(self):
+        iteration = 0
+        while True:
+            iteration += 1
+            status = self.solver.Solve(self.model)
+            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+                return Grid.empty()
+
+            # internal solution grid (integers)
+            current_solution = [[self.solver.Value(self.cell_vars[(r, c)])
+                                 for c in range(self.cols)]
+                                for r in range(self.rows)]
+
+            # Check connectivity and size constraints
+            if self._validate_and_add_constraints(current_solution, iteration):
+                return Grid(current_solution)
+
+    def _validate_and_add_constraints(self, current_solution, iteration):
+        visited = set()
+        all_valid = True
+        cuts_added = 0
+
         for r in range(self.rows):
             for c in range(self.cols):
-                self.cell_vars[(r, c)] = self.model.NewIntVar(1, self.max_cell_var, f'cell_{r}_{c}')
-                self.region_id_vars[(r, c)] = self.model.NewIntVar(0, self.rows * self.cols - 1, f'region_{r}_{c}')
-                self.is_root[(r, c)] = self.model.NewBoolVar(f'is_root_{r}_{c}')
-                self.depth[(r, c)] = self.model.NewIntVar(0, self.max_region_size - 1, f'depth_{r}_{c}')
-                self.parent_choice[(r, c)] = self.model.NewIntVar(0, 4, f'parent_choice_{r}_{c}')
+                if (r, c) in visited:
+                    continue
 
-        self._add_initial_constraints()
-        self._add_adjacency_constraints()
-        self._add_region_size_and_linking_constraints()
-        self._add_connectivity_constraints()
+                # BFS to find connected component of same value
+                value = current_solution[r][c]
+                component = []
+                queue = [(r, c)]
+                visited.add((r, c))
+                component.append((r, c))
 
-        solver = cp_model.CpSolver()
-        status = solver.Solve(self.model)
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            return Grid([[solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
-        else:
-            return Grid.empty()
+                idx = 0
+                while idx < len(component):
+                    curr_r, curr_c = component[idx]
+                    idx += 1
 
-    def _add_initial_constraints(self):
-        for r in range(self.rows):
-            for c in range(self.cols):
-                if isinstance(self.grid[r][c], int) and self.grid[r][c] > 0:
-                    self.model.Add(self.cell_vars[(r, c)] == self.grid[r][c])
+                    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                        nr, nc = curr_r + dr, curr_c + dc
+                        if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                            if (nr, nc) not in visited and current_solution[nr][nc] == value:
+                                visited.add((nr, nc))
+                                component.append((nr, nc))
+                                queue.append((nr, nc))
 
-    def _add_connectivity_constraints(self):
-        for r_idx in range(self.rows):
-            for c_idx in range(self.cols):
-                current_cell_id = r_idx * self.cols + c_idx
+                size = len(component)
 
-                self.model.Add(self.depth[(r_idx, c_idx)] == 0).OnlyEnforceIf(self.is_root[(r_idx, c_idx)])
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] == 4).OnlyEnforceIf(self.is_root[(r_idx, c_idx)])
-                self.model.Add(self.region_id_vars[(r_idx, c_idx)] == current_cell_id).OnlyEnforceIf(self.is_root[(r_idx, c_idx)])
+                if size != value:
+                    all_valid = False
+                    cuts_added += 1
 
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] < 4).OnlyEnforceIf(self.is_root[(r_idx, c_idx)].Not())
-                self.model.Add(self.depth[(r_idx, c_idx)] > 0).OnlyEnforceIf(self.is_root[(r_idx, c_idx)].Not())
+                    if size < value:
+                        # Region is too small, must expand.
+                        # Constraint: (All cells in C are V) => (At least one neighbor is V)
+                        # Equivalent to: OR( cell != V for cell in C ) OR OR( neighbor == V for neighbor in Neighbors )
 
-                cond_parent_up = self.model.NewBoolVar(f'p_up_{r_idx}{c_idx}')
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] == 0).OnlyEnforceIf(cond_parent_up)
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] != 0).OnlyEnforceIf(cond_parent_up.Not())
-                self.model.AddImplication(cond_parent_up, self.is_root[(r_idx, c_idx)].Not())
-                if r_idx > 0:
-                    self.model.Add(self.region_id_vars[(r_idx, c_idx)] == self.region_id_vars[(r_idx - 1, c_idx)]).OnlyEnforceIf(cond_parent_up)
-                    self.model.Add(self.depth[(r_idx, c_idx)] == self.depth[(r_idx - 1, c_idx)] + 1).OnlyEnforceIf(cond_parent_up)
-                    self.model.Add(self.depth[(r_idx, c_idx)] < self.cell_vars[(r_idx, c_idx)]).OnlyEnforceIf(cond_parent_up)
-                else:
-                    self.model.Add(cond_parent_up == 0)
+                        literals = []
 
-                cond_parent_right = self.model.NewBoolVar(f'p_right_{r_idx}{c_idx}')
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] == 1).OnlyEnforceIf(cond_parent_right)
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] != 1).OnlyEnforceIf(cond_parent_right.Not())
-                self.model.AddImplication(cond_parent_right, self.is_root[(r_idx, c_idx)].Not())
-                if c_idx < self.cols - 1:
-                    self.model.Add(self.region_id_vars[(r_idx, c_idx)] == self.region_id_vars[(r_idx, c_idx + 1)]).OnlyEnforceIf(cond_parent_right)
-                    self.model.Add(self.depth[(r_idx, c_idx)] == self.depth[(r_idx, c_idx + 1)] + 1).OnlyEnforceIf(cond_parent_right)
-                    self.model.Add(self.depth[(r_idx, c_idx)] < self.cell_vars[(r_idx, c_idx)]).OnlyEnforceIf(cond_parent_right)
-                else:
-                    self.model.Add(cond_parent_right == 0)
+                        # Part 1: If any cell in Component is NOT V, the condition is satisfied (we abandoned this region hypothesis)
+                        for cr, cc in component:
+                            # We need a bool for x[c] != V
+                            # Alternatively, use x[c] == V implies Neighbor=V
 
-                cond_parent_down = self.model.NewBoolVar(f'p_down_{r_idx}{c_idx}')
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] == 2).OnlyEnforceIf(cond_parent_down)
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] != 2).OnlyEnforceIf(cond_parent_down.Not())
-                self.model.AddImplication(cond_parent_down, self.is_root[(r_idx, c_idx)].Not())
-                if r_idx < self.rows - 1:
-                    self.model.Add(self.region_id_vars[(r_idx, c_idx)] == self.region_id_vars[(r_idx + 1, c_idx)]).OnlyEnforceIf(cond_parent_down)
-                    self.model.Add(self.depth[(r_idx, c_idx)] == self.depth[(r_idx + 1, c_idx)] + 1).OnlyEnforceIf(cond_parent_down)
-                    self.model.Add(self.depth[(r_idx, c_idx)] < self.cell_vars[(r_idx, c_idx)]).OnlyEnforceIf(cond_parent_down)
-                else:
-                    self.model.Add(cond_parent_down == 0)
+                            is_val = self.model.NewBoolVar(f'is_{cr}_{cc}_{value}_iter{iteration}_{cuts_added}')
+                            self.model.Add(self.cell_vars[(cr, cc)] == value).OnlyEnforceIf(is_val)
+                            self.model.Add(self.cell_vars[(cr, cc)] != value).OnlyEnforceIf(is_val.Not())
+                            # We want NOT is_val to be in the OR clause
+                            literals.append(is_val.Not())
 
-                cond_parent_left = self.model.NewBoolVar(f'p_left_{r_idx}{c_idx}')
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] == 3).OnlyEnforceIf(cond_parent_left)
-                self.model.Add(self.parent_choice[(r_idx, c_idx)] != 3).OnlyEnforceIf(cond_parent_left.Not())
-                self.model.AddImplication(cond_parent_left, self.is_root[(r_idx, c_idx)].Not())
-                if c_idx > 0:
-                    self.model.Add(self.region_id_vars[(r_idx, c_idx)] == self.region_id_vars[(r_idx, c_idx - 1)]).OnlyEnforceIf(cond_parent_left)
-                    self.model.Add(self.depth[(r_idx, c_idx)] == self.depth[(r_idx, c_idx - 1)] + 1).OnlyEnforceIf(cond_parent_left)
-                    self.model.Add(self.depth[(r_idx, c_idx)] < self.cell_vars[(r_idx, c_idx)]).OnlyEnforceIf(cond_parent_left)
-                else:
-                    self.model.Add(cond_parent_left == 0)
-        for pr_root_check in range(self.rows):
-            for pc_root_check in range(self.cols):
-                k_root_idx_check = pr_root_check * self.cols + pc_root_check
+                        # Part 2: Neighbors
+                        potential_neighbors = set()
+                        for cr, cc in component:
+                            for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                                nr, nc = cr + dr, cc + dc
+                                if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                                    if (nr, nc) not in component:
+                                        potential_neighbors.add((nr, nc))
 
-                is_k_root_id_used_by_any_cell = self.model.NewBoolVar(f'k_used_{k_root_idx_check}')
-                reified_literals_for_k_used = []
-                for r_cell_idx in range(self.rows):
-                    for c_cell_idx in range(self.cols):
-                        b_cell_uses_k = self.model.NewBoolVar(f'b_cell_{r_cell_idx}{c_cell_idx}_uses_k_{k_root_idx_check}')
-                        self.model.Add(self.region_id_vars[(r_cell_idx, c_cell_idx)] == k_root_idx_check).OnlyEnforceIf(b_cell_uses_k)
-                        self.model.Add(self.region_id_vars[(r_cell_idx, c_cell_idx)] != k_root_idx_check).OnlyEnforceIf(b_cell_uses_k.Not())
-                        reified_literals_for_k_used.append(b_cell_uses_k)
+                        for nr, nc in potential_neighbors:
+                            is_neighbor_val = self.model.NewBoolVar(f'is_n_{nr}_{nc}_{value}_iter{iteration}_{cuts_added}')
+                            self.model.Add(self.cell_vars[(nr, nc)] == value).OnlyEnforceIf(is_neighbor_val)
+                            self.model.Add(self.cell_vars[(nr, nc)] != value).OnlyEnforceIf(is_neighbor_val.Not())
+                            literals.append(is_neighbor_val)
 
-                self.model.AddBoolOr(reified_literals_for_k_used).OnlyEnforceIf(is_k_root_id_used_by_any_cell)
-                all_reified_false = [b.Not() for b in reified_literals_for_k_used]
-                self.model.AddBoolAnd(all_reified_false).OnlyEnforceIf(is_k_root_id_used_by_any_cell.Not())
+                        self.model.AddBoolOr(literals)
 
-                self.model.AddImplication(is_k_root_id_used_by_any_cell, self.is_root[(pr_root_check, pc_root_check)])
+                    else: # size > value
+                        # Region is too big. Break connectivity.
+                        internal_edges = []
+                        comp_set = set(component)
+                        for cr, cc in component:
+                            for dr, dc in [(1, 0), (0, 1)]:
+                                nr, nc = cr + dr, cc + dc
+                                if (nr, nc) in comp_set:
+                                    internal_edges.append(((cr, cc), (nr, nc)))
 
-    def _add_region_size_and_linking_constraints(self):
-        self.actual_region_sizes = [self.model.NewIntVar(0, self.max_region_size, f'ars_{k}') for k in range(self.rows * self.cols)]
-        for k_root_idx in range(self.rows * self.cols):
-            pr = k_root_idx // self.cols
-            pc = k_root_idx % self.cols
+                        edge_bools = []
+                        cell_is_val_vars = {}
 
-            is_cell_member_of_k_bools = []
-            for r_cell in range(self.rows):
-                for c_cell in range(self.cols):
-                    b_is_member = self.model.NewBoolVar(f'is_cell_{r_cell}{c_cell}_in_region_{pr}{pc}')
-                    self.model.Add(self.region_id_vars[(r_cell, c_cell)] == k_root_idx).OnlyEnforceIf(b_is_member)
-                    self.model.Add(self.region_id_vars[(r_cell, c_cell)] != k_root_idx).OnlyEnforceIf(b_is_member.Not())
-                    is_cell_member_of_k_bools.append(b_is_member)
+                        for (u, v) in internal_edges:
+                            ur, uc = u
+                            vr, vc = v
 
-            current_sum_of_members = self.model.NewIntVar(0, self.max_region_size, f'sum_members_{pr}{pc}')
-            self.model.Add(current_sum_of_members == sum(is_cell_member_of_k_bools))
+                            if u not in cell_is_val_vars:
+                                b_u = self.model.NewBoolVar(f'is_{ur}_{uc}_{value}_iter{iteration}_{cuts_added}')
+                                self.model.Add(self.cell_vars[(ur, uc)] == value).OnlyEnforceIf(b_u)
+                                self.model.Add(self.cell_vars[(ur, uc)] != value).OnlyEnforceIf(b_u.Not())
+                                cell_is_val_vars[u] = b_u
 
-            self.model.Add(self.actual_region_sizes[k_root_idx] == current_sum_of_members).OnlyEnforceIf(self.is_root[(pr, pc)])
-            self.model.Add(self.actual_region_sizes[k_root_idx] == 0).OnlyEnforceIf(self.is_root[(pr, pc)].Not())
-        for r in range(self.rows):
-            for c in range(self.cols):
-                self.model.AddElement(self.region_id_vars[(r, c)], self.actual_region_sizes, self.cell_vars[(r, c)])
+                            if v not in cell_is_val_vars:
+                                b_v = self.model.NewBoolVar(f'is_{vr}_{vc}_{value}_iter{iteration}_{cuts_added}')
+                                self.model.Add(self.cell_vars[(vr, vc)] == value).OnlyEnforceIf(b_v)
+                                self.model.Add(self.cell_vars[(vr, vc)] != value).OnlyEnforceIf(b_v.Not())
+                                cell_is_val_vars[v] = b_v
 
-    def _add_adjacency_constraints(self):
-        for r in range(self.rows):
-            for c in range(self.cols):
-                if c + 1 < self.cols:
-                    r1, c1, r2, c2 = r, c, r, c + 1
-                    b_region_eq_h = self.model.NewBoolVar(f'b_region_eq_h_{r1}{c1}')
-                    self.model.Add(self.region_id_vars[(r1, c1)] == self.region_id_vars[(r2, c2)]).OnlyEnforceIf(b_region_eq_h)
-                    self.model.Add(self.region_id_vars[(r1, c1)] != self.region_id_vars[(r2, c2)]).OnlyEnforceIf(b_region_eq_h.Not())
+                            b_u = cell_is_val_vars[u]
+                            b_v = cell_is_val_vars[v]
 
-                    b_cell_eq_h = self.model.NewBoolVar(f'b_cell_eq_h_{r1}{c1}')
-                    self.model.Add(self.cell_vars[(r1, c1)] == self.cell_vars[(r2, c2)]).OnlyEnforceIf(b_cell_eq_h)
-                    self.model.Add(self.cell_vars[(r1, c1)] != self.cell_vars[(r2, c2)]).OnlyEnforceIf(b_cell_eq_h.Not())
+                            b_edge = self.model.NewBoolVar(f'edge_{ur}_{uc}_{vr}_{vc}_iter{iteration}_{cuts_added}')
+                            self.model.AddBoolAnd([b_u, b_v]).OnlyEnforceIf(b_edge)
+                            self.model.AddBoolOr([b_u.Not(), b_v.Not()]).OnlyEnforceIf(b_edge.Not())
+                            edge_bools.append(b_edge)
 
-                    self.model.AddImplication(b_region_eq_h, b_cell_eq_h)
-                    self.model.AddImplication(b_cell_eq_h, b_region_eq_h)
-                if r + 1 < self.rows:
-                    r1, c1, r2, c2 = r, c, r + 1, c
-                    b_region_eq_v = self.model.NewBoolVar(f'b_region_eq_v_{r1}{c1}')
-                    self.model.Add(self.region_id_vars[(r1, c1)] == self.region_id_vars[(r2, c2)]).OnlyEnforceIf(b_region_eq_v)
-                    self.model.Add(self.region_id_vars[(r1, c1)] != self.region_id_vars[(r2, c2)]).OnlyEnforceIf(b_region_eq_v.Not())
+                        if internal_edges:
+                            self.model.Add(sum(edge_bools) <= len(internal_edges) - 1)
 
-                    b_cell_eq_v = self.model.NewBoolVar(f'b_cell_eq_v_{r1}{c1}')
-                    self.model.Add(self.cell_vars[(r1, c1)] == self.cell_vars[(r2, c2)]).OnlyEnforceIf(b_cell_eq_v)
-                    self.model.Add(self.cell_vars[(r1, c1)] != self.cell_vars[(r2, c2)]).OnlyEnforceIf(b_cell_eq_v.Not())
-
-                    self.model.AddImplication(b_region_eq_v, b_cell_eq_v)
-                    self.model.AddImplication(b_cell_eq_v, b_region_eq_v)
+        return all_valid
