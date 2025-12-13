@@ -13,7 +13,7 @@ class FillominoSolverTest(unittest.TestCase):
             [_, _]
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
     def test_simple_3x3(self):
@@ -28,7 +28,7 @@ class FillominoSolverTest(unittest.TestCase):
             [1, 3, 2]
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
     def test_simple_5x5_(self):
@@ -47,10 +47,10 @@ class FillominoSolverTest(unittest.TestCase):
             [9, 9, 9, 7, 7],
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_5x5_evil(self):  # 40sec
+    def test_5x5_evil(self):
         grid = Grid([
             [4, _, 3, _, _],
             [_, _, 4, 3, _],
@@ -67,10 +67,10 @@ class FillominoSolverTest(unittest.TestCase):
             [5, 5, 4, 4, 7],
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_6x6_evil(self):  # 55 sec
+    def test_6x6_evil(self):
         grid = Grid([
             [9, _, _, _, 3, _],
             [_, _, _, 2, _, 3],
@@ -88,10 +88,10 @@ class FillominoSolverTest(unittest.TestCase):
             [1, 5, 7, 7, 7, 1],
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_7x7_evil(self):  # 2mn45
+    def test_7x7_evil(self):
         grid = Grid([
             [5, _, _, 2, 2, _, 1],
             [_, 2, _, _, _, _, 9],
@@ -111,10 +111,10 @@ class FillominoSolverTest(unittest.TestCase):
             [1, 3, 2, 2, 7, 4, 4]
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_8x8_evil(self):  # 13mn
+    def test_8x8_evil(self):
         grid = Grid([
             [2, _, 8, _, 8, _, _, 8],
             [_, _, 9, 3, 3, _, 3, _],
@@ -136,10 +136,10 @@ class FillominoSolverTest(unittest.TestCase):
             [2, 3, 2, 2, 9, 2, 2, 3]
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
-    def test_9x9_evil(self):  # 13mn
+    def test_9x9_evil(self):
         grid = Grid([
             [6, _, _, _, _, 2, _, _, _],
             [6, _, _, 3, _, 9, _, 1, _],
@@ -163,7 +163,7 @@ class FillominoSolverTest(unittest.TestCase):
             [4, 4, 2, 2, 8, 8, 8, 8, 1]
         ])
         solver = FillominoSolver(grid)
-        solution = solver.solve()
+        solution = solver.get_solution()
         self.assertEqual(expected_solution, solution)
 
 
