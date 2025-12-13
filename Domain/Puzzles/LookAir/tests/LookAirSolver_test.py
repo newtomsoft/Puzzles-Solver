@@ -380,6 +380,6 @@ class LookAirSolverTests(TestCase):
         ])
         self.assertEqual(expected_solution, solution)
 
-        
+
 if __name__ == '__main__':
     unittest.main()
