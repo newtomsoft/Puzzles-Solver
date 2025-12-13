@@ -231,3 +231,7 @@ class ShakashakaSolverTests(unittest.TestCase):
         self.assertEqual(expected_solution, solution)
         other_solution = solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+
+if __name__ == '__main__':
+    unittest.main()
