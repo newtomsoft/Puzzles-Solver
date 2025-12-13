@@ -33,6 +33,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          $env:PYTHONPATH = ".;$env:PYTHONPATH"
           pytest
 
       - name: Build Executable
@@ -88,6 +89,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          export PYTHONPATH=$PYTHONPATH:.
           xvfb-run pytest
 
       - name: Build Executable
