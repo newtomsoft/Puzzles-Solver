@@ -69,10 +69,10 @@ class YajilinSolver(GameSolver):
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 for position, value in [(position, value) for position, value in self.input_grid if value != '']:
-                    self._island_grid.set_value(position, value)
+                    self._island_grid[position] = value
                 for position, var in self._black_cells_z3.items():
                     if is_true(model.eval(var)):
-                        self._island_grid.set_value(position, '■')
+                        self._island_grid[position] = '■'
 
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count

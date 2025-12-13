@@ -24,7 +24,25 @@ class KakurasuSolver(GameSolver):
         return self._compute_solution()
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        if self._solver.check() == unsat:
+            return Grid.empty()
+
+        model = self._solver.model()
+        from z3 import Or, is_true
+        current_solution_constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                val = is_true(model.eval(self._grid_z3[r][c]))
+                if val:
+                    current_solution_constraints.append(self._grid_z3[r][c] == False)
+                else:
+                    current_solution_constraints.append(self._grid_z3[r][c] == True)
+
+        self._solver.add(Or(*current_solution_constraints))
+        if self._solver.check() == unsat:
+            return Grid.empty()
+
+        return self._compute_solution()
 
     def _compute_solution(self):
         model = self._solver.model()

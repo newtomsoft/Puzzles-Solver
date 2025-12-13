@@ -50,7 +50,28 @@ class DominosaSolver(GameSolver):
         return solution_grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        status = self._solver.Solve(self._model)
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            constraints = []
+            for (value0, value1), (pos0_vars, pos1_vars) in self._dominoes_positions.items():
+                r0_var, c0_var = pos0_vars
+                r1_var, c1_var = pos1_vars
+                current_r0 = self._solver.Value(r0_var)
+                current_c0 = self._solver.Value(c0_var)
+                current_r1 = self._solver.Value(r1_var)
+                current_c1 = self._solver.Value(c1_var)
+                constraints.append(r0_var != current_r0)
+                constraints.append(c0_var != current_c0)
+                constraints.append(r1_var != current_r1)
+                constraints.append(c1_var != current_c1)
+
+            self._model.Add(sum(constraints) > 0)
+
+            status = self._solver.Solve(self._model)
+            if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+                 return self.get_solution()
+
+        return Grid.empty()
 
     def _add_constraints(self):
         self._dominoes_constraints()

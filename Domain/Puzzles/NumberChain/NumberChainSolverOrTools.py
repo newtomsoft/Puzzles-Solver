@@ -87,7 +87,7 @@ class NumberChainSolver(GameSolver):
 
             # Check connectivity/path shape with existing utilities
             attempt_bool = Grid([[matrix_number[i][j] > 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
-            attempt_bool.set_value(self._end_position, 2)
+            attempt_bool[self._end_position] = 2
             linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(
                 attempt_bool, {1: self._start_position, 2: self._end_position}
             )

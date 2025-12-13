@@ -38,7 +38,26 @@ class StarBattleSolver(GameSolver):
         return grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                 val = self._solver.Value(self._grid_vars[r][c])
+                 if val == 1:
+                     constraints.append(self._grid_vars[r][c].Not())
+                 else:
+                     constraints.append(self._grid_vars[r][c])
+
+        self._model.Add(sum(constraints) > 0)
+
+        self._status = self._solver.Solve(self._model)
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        grid = Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return grid
 
     def queen(self, position):
         return self._grid_vars[position.r][position.c]

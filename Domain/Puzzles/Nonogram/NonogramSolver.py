@@ -32,6 +32,22 @@ class NonogramSolver:
 
         return self._compute_solution()
 
+    def get_other_solution(self) -> Grid:
+        if self._solver.check() != sat:
+            return Grid.empty()
+
+        model = self._solver.model()
+        constraints = []
+        for i_row in range(self.rows_number):
+            row_value = model[self._rows_z3[i_row]].as_long()
+            constraints.append(self._rows_z3[i_row] != row_value)
+        self._solver.add(Or(constraints))
+
+        if self._solver.check() != sat:
+            return Grid.empty()
+
+        return self._compute_solution()
+
     def _compute_solution(self):
         model = self._solver.model()
         solution = []

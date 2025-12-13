@@ -129,8 +129,8 @@ class NumberChainGenerator:
         while not is_single_path:
             single_path_tries += 1
             self.grid = self._generate_as_grid()
-            self.grid.set_value(Position(0, 0), 1)
-            self.grid.set_value(Position(self.row_number - 1, self.row_number - 1), 2)
+            self.grid[Position(0, 0)] = 1
+            self.grid[Position(self.row_number - 1, self.row_number - 1)] = 2
             has_multy_path = LinearPathGrid.has_multy_path(self.grid, Position(0, 0), Position(self.row_number - 1, self.row_number - 1))
             if not has_multy_path:
                 is_single_path = True
@@ -146,21 +146,21 @@ class NumberChainGenerator:
         return False
 
     def _fill_path(self):
-        self.grid.set_value(Position(0, 0), 1)
-        self.grid.set_value(Position(self.row_number - 1, self.column_number - 1), self.path_length)
+        self.grid[Position(0, 0)] = 1
+        self.grid[Position(self.row_number - 1, self.column_number - 1)] = self.path_length
         random.shuffle(self.values_to_fill)
         for i, candidate_to_fill in enumerate(self.values_to_fill):
             position = self.grid_path.path[i + 1]
-            self.grid.set_value(position, candidate_to_fill)
+            self.grid[position] = candidate_to_fill
 
     def _fill_grid_except_path(self):
         first_step_filled_positions = []
         for position in [p for p, _ in self.grid if p not in self.grid_path.path and not any([neighbor in self.grid_path.path for neighbor in p.neighbors()])]:
-            self.grid.set_value(position, random.choice(self.values_to_fill))
+            self.grid[position] = random.choice(self.values_to_fill)
             first_step_filled_positions.append(position)
         positions_to_fill = [position for position, _ in self.grid if position not in self.grid_path.path and position not in first_step_filled_positions]
         for position in positions_to_fill:
-            self.grid.set_value(position, random.choice(self.values_to_fill))
+            self.grid[position] = random.choice(self.values_to_fill)
 
     def _is_single_solution(self):
         game_solver = NumberChainSolver(self.grid)

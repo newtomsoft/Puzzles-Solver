@@ -25,6 +25,14 @@ class Grid[T](GridBase[T]):
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
 
+    def __setitem__(self, key, value):
+        if isinstance(key, Position):
+            self._matrix[key.r][key.c] = value
+        elif isinstance(key, tuple):
+            self._matrix[key[0]][key[1]] = value
+        else:
+            self._matrix[key] = value
+
     def __repr__(self) -> str:
         if self.is_empty():
             return 'Grid.empty()'

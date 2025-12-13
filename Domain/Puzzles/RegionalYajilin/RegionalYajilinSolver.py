@@ -69,7 +69,7 @@ class RegionalYajilinSolver(GameSolver):
             if len(connected_positions) == 1:
                 for position, var in self._black_cells_vars.items():
                     if solver.BooleanValue(var):
-                        self._island_grid.set_value(position, '■')
+                        self._island_grid[position] = '■'
 
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count

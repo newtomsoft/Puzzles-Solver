@@ -8,12 +8,12 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class AkariSolver(GameSolver):
-    def __init__(self, data_game: dict[str, Any]):
-        self._data_game = data_game
-        self.rows_number = self._data_game['rows_number']
-        self.columns_number = self._data_game['columns_number']
-        self._black_cells = {Position(r, c) for r, c in self._data_game['black_cells']}
-        self._number_constraints = {Position(r, c): v for (r, c), v in self._data_game['number_constraints'].items()}
+    def __init__(self, grid: Grid):
+        self._grid = grid
+        self.rows_number = self._grid.rows_number
+        self.columns_number = self._grid.columns_number
+        self._black_cells = {position for position, value in self._grid if value >= -2 and value != -1}
+        self._number_constraints = {position: value for position, value in self._grid if value >= 0}
 
         if self.rows_number < 7 or self.columns_number < 7:
             raise ValueError("Akari grid must be at least 7x7")
@@ -31,7 +31,18 @@ class AkariSolver(GameSolver):
         return self._compute_solution()
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        if self._solver.check() == sat:
+            model = self._solver.model()
+            or_list = []
+            for position, var in self._bulbs_z3:
+                if is_true(model.eval(var)):
+                    or_list.append(var == False)
+                else:
+                    or_list.append(var == True)
+            self._solver.add(Or(*or_list))
+            if self._solver.check() == sat:
+                return self._compute_solution()
+        return Grid.empty()
 
     def _compute_solution(self) -> Grid:
         model = self._solver.model()
