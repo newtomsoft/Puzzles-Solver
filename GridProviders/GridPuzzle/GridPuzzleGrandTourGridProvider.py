@@ -35,7 +35,7 @@ class GridPuzzleGrandTourGridProvider(GridPuzzleProvider, PlaywrightGridProvider
                 position_bridges_count[position.right] = 1
             island = Island(position, bridge_down_count + bridge_right_count, position_bridges_count)
             island.set_bridges_count_according_to_directions_bridges()
-            grid.set_value(position, island)
+            grid[position] = island
 
         return grid
 

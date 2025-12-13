@@ -32,7 +32,21 @@ class TapaSolver(GameSolver):
         return solution
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        if self._solver.check() == sat:
+            model = self._solver.model()
+            current_solution_constraints = []
+            for r in range(self._grid_z3.rows_number):
+                for c in range(self._grid_z3.columns_number):
+                    val = is_true(model.eval(self._grid_z3[r][c]))
+                    if val:
+                        current_solution_constraints.append(self._grid_z3[r][c] == False)
+                    else:
+                        current_solution_constraints.append(self._grid_z3[r][c] == True)
+            self._solver.add(Or(*current_solution_constraints))
+
+            solution, _ = self._ensure_all_black_connected()
+            return solution
+        return Grid.empty()
 
     def _init_borders_white(self):
         self._solver.add([Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])

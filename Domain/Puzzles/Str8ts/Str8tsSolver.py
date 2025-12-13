@@ -20,7 +20,7 @@ class Str8tsSolver:
     def _get_blank_grid(self):
         blank_grid = Grid([[False for c in range(self._columns_number)] for r in range(self._rows_number)])
         for position, value in [(position, value) for position, value in self._numbers_grid if value == 0 and self._blacks_grid[position] == False]:
-            blank_grid.set_value(position, True)
+            blank_grid[position] = True
         return blank_grid
 
     def get_solution(self) -> (Grid, Grid):

@@ -34,7 +34,28 @@ class NorinoriSolver(GameSolver):
         return grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+             return Grid.empty()
+
+        current_solution_constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                val = solver.Value(self.domino_part(Position(r, c)))
+                if val == 1:
+                     current_solution_constraints.append(self.domino_part(Position(r, c)).Not())
+                else:
+                     current_solution_constraints.append(self.domino_part(Position(r, c)))
+
+        self._model.Add(sum(current_solution_constraints) > 0)
+
+        status = solver.Solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return Grid.empty()
+
+        grid = Grid([[solver.Value(self.domino_part(Position(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return grid
 
     def domino_part(self, position: Position):
         return self._grid_vars[position]

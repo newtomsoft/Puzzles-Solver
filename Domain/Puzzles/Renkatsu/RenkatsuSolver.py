@@ -190,6 +190,6 @@ class RenkatsuSolver(GameSolver):
                 new_value_by_old_value[old_value] = current_value
                 new_value = current_value
                 current_value += 1
-            new_grid.set_value(position, new_value)
+            new_grid[position] = new_value
 
         return new_grid

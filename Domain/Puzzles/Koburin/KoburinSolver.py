@@ -79,10 +79,10 @@ class KoburinSolver(GameSolver):
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 for position, value in [(position, value) for position, value in self.input_grid if value >= 0]:
-                    self._island_grid.set_value(position, value)
+                    self._island_grid[position] = value
                 for position, var in self._black_cells_z3.items():
                     if self._solver.Value(var) == 1:
-                        self._island_grid.set_value(position, '■')
+                        self._island_grid[position] = '■'
 
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count

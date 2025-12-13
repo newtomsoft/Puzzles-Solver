@@ -80,6 +80,23 @@ class PipesWrapSolver(PipesSolver):
     def _add_edges_constraints(self, position):
         pass  # no edges constraints in PipesWrap
 
+    def get_other_solution(self):
+        if self._previous_solution is None:
+             return GridBase.empty()
+
+        constraints = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pipe = self._previous_solution[Position(r, c)]
+                for direction in [Direction.up(), Direction.down(), Direction.left(), Direction.right()]:
+                    is_connected = direction in pipe.get_connected_to()
+                    constraints.append(self._grid_vars[Position(r, c)][direction] != is_connected)
+
+        self._model.Add(sum(constraints) > 0)
+
+        solution, _ = self.get_solution_when_all_pipes_connected()
+        return solution
+
     def _add_connected_constraints(self):
         for position, value in self._grid_vars:
             position_up = self._grid_vars.neighbor_up(position)

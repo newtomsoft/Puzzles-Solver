@@ -29,7 +29,23 @@ class KakuroSolver(GameSolver):
         return solution_grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                if self._grid_vars[r][c] is not None:
+                     val = self._solver.Value(self._grid_vars[r][c])
+                     constraints.append(self._grid_vars[r][c] != val)
+
+        self._model.Add(sum(constraints) > 0)
+
+        self._status = self._solver.Solve(self._model)
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        return self._create_solution_grid()
 
     def _create_solution_grid(self) -> Grid:
         return Grid([[self._solver.Value(self._grid_vars[r][c]) if self._grid_vars[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])

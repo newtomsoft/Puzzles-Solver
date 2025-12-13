@@ -117,12 +117,12 @@ class TentaiShowSolver(GameSolver):
             if int(current_position.r) == current_position.r and int(current_position.c) == current_position.c:
                 current_position = Position(int(current_position.r), int(current_position.c))
                 self._model.Add(self._grid_vars[current_position] == circle_value)
-                self._grid.set_value(current_position, circle_value)
+                self._grid[current_position] = circle_value
                 continue
             positions = self._grid.straddled_neighbors_positions(current_position)
             for position in positions:
                 self._model.Add(self._grid_vars[position] == circle_value)
-                self._grid.set_value(position, circle_value)
+                self._grid[position] = circle_value
 
     def _add_symmetry_constraints(self):
         for position, value in self._grid:

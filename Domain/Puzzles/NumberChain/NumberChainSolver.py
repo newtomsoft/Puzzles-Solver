@@ -36,7 +36,7 @@ class NumberChainSolver(GameSolver):
             matrix_number = [[(model.eval(self._grid_z3.value(i, j))).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)]
             attempt = Grid(matrix_number)
             attempt_bool = Grid([[True if matrix_number[i][j] > 0 else False for j in range(self.columns_number)] for i in range(self.rows_number)])
-            attempt_bool.set_value(self._end_position, 2)
+            attempt_bool[self._end_position] = 2
             linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(attempt_bool, {1: self._start_position, 2: self._end_position})
             if linear_path_grid == Grid.empty():
                 self._solver.add(Not(And([self._grid_z3[position] == value for position, value in attempt if value > 0])))

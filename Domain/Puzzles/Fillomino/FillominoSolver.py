@@ -33,12 +33,30 @@ class FillominoSolver:
         self._add_region_size_and_linking_constraints()
         self._add_connectivity_constraints()
 
-        solver = cp_model.CpSolver()
-        status = solver.Solve(self.model)
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            return Grid([[solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+        self.solver = cp_model.CpSolver()
+        self.status = self.solver.Solve(self.model)
+        if self.status == cp_model.OPTIMAL or self.status == cp_model.FEASIBLE:
+            return Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
         else:
             return Grid.empty()
+
+    def get_other_solution(self) -> Grid:
+        if self.status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        constraints = []
+        for r in range(self.rows):
+            for c in range(self.cols):
+                 val = self.solver.Value(self.cell_vars[(r, c)])
+                 constraints.append(self.cell_vars[(r, c)] != val)
+
+        self.model.Add(sum(constraints) > 0)
+
+        self.status = self.solver.Solve(self.model)
+        if self.status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        return Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
 
     def _add_initial_constraints(self):
         for r in range(self.rows):

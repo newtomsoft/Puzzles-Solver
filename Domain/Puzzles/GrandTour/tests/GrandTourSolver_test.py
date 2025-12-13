@@ -70,8 +70,8 @@ class GrandTourSolverTests(TestCase):
         island21.set_bridge_to_position(Position(3, 1), 1)
         island21.set_bridges_count_according_to_directions_bridges()
 
-        grid.set_value(Position(1, 1), island11)
-        grid.set_value(Position(2, 1), island21)
+        grid[Position(1, 1)] = island11
+        grid[Position(2, 1)] = island21
 
         expected_solution_str = (
             ' ┌──┐  ┌──┐ \n'
@@ -99,8 +99,8 @@ class GrandTourSolverTests(TestCase):
         island20 = Island(Position(2, 0), 1)
         island20.set_bridge_to_position(Position(2, 1), 1)
         island20.set_bridges_count_according_to_directions_bridges()
-        grid.set_value(Position(1, 1), island11)
-        grid.set_value(Position(2, 0), island20)
+        grid[Position(1, 1)] = island11
+        grid[Position(2, 0)] = island20
 
         expected_solution_str = (
             ' ┌────────┐ \n'
@@ -129,8 +129,8 @@ class GrandTourSolverTests(TestCase):
         island22 = Island(Position(2, 2), 1)
         island22.set_bridge_to_position(Position(2, 3), 1)
         island22.set_bridges_count_according_to_directions_bridges()
-        grid.set_value(Position(1, 0), island10)
-        grid.set_value(Position(2, 2), island22)
+        grid[Position(1, 0)] = island10
+        grid[Position(2, 2)] = island22
 
         expected_solution_str = (
             ' ┌────────┐ \n'
@@ -179,14 +179,14 @@ class GrandTourSolverTests(TestCase):
         island53 = Island(Position(5, 3), 1)
         island53.set_bridge_to_position(Position(5, 4), 1)
         island53.set_bridges_count_according_to_directions_bridges()
-        grid.set_value(Position(0, 1), island01)
-        grid.set_value(Position(1, 0), island10)
-        grid.set_value(Position(2, 3), island23)
-        grid.set_value(Position(2, 4), island24)
-        grid.set_value(Position(3, 1), island31)
-        grid.set_value(Position(3, 3), island33)
-        grid.set_value(Position(4, 3), island43)
-        grid.set_value(Position(5, 3), island53)
+        grid[Position(0, 1)] = island01
+        grid[Position(1, 0)] = island10
+        grid[Position(2, 3)] = island23
+        grid[Position(2, 4)] = island24
+        grid[Position(3, 1)] = island31
+        grid[Position(3, 3)] = island33
+        grid[Position(4, 3)] = island43
+        grid[Position(5, 3)] = island53
 
         expected_solution_str = (
           ' ┌──────────────┐ \n'
