@@ -1,4 +1,4 @@
-﻿from z3 import *
+from z3 import *
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -8,9 +8,9 @@ from Domain.Board.Position import Position
 
 
 class MidLoopSolver:
-    def __init__(self, grid_size: tuple[int, int], dots_positions: dict[int, Position]):
-        self._input_grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
-        self.dots_positions = dots_positions
+    def __init__(self, input_grid: Grid):
+        self._input_grid = input_grid
+        self.dots_positions = input_grid.dots_positions
         self._island_grid: IslandGrid | None = None
         self.rows_number = self._input_grid.rows_number
         self.columns_number = self._input_grid.columns_number
@@ -97,15 +97,15 @@ class MidLoopSolver:
                 self._solver.add(And(direction_bridges >= 0, direction_bridges <= 1))
 
     def _add_minimal_edge_segments_constraints(self):
-        for dot_position in [position for position in self.dots_positions.values()
+        for dot_position in [position for position in self.dots_positions
                              if self._input_grid.is_position_in_edge_up(position) or self._input_grid.is_position_in_edge_down(position)]:
             self._add_minimal_horizontal_segments_constraints(dot_position)
-        for dot_position in [position for position in self.dots_positions.values()
+        for dot_position in [position for position in self.dots_positions
                              if self._input_grid.is_position_in_edge_left(position) or self._input_grid.is_position_in_edge_right(position)]:
             self._add_minimal_vertical_segments_constraints(dot_position)
 
     def _add_minimal_inside_segments_constraints(self):
-        for dot_position in [position for position in self.dots_positions.values()
+        for dot_position in [position for position in self.dots_positions
                              if not self._input_grid.is_position_in_edge_up(position) and not self._input_grid.is_position_in_edge_down(position)
                                 and not self._input_grid.is_position_in_edge_left(position) and not self._input_grid.is_position_in_edge_right(position)]:
             self._add_minimal_segment_constraints(dot_position)
@@ -151,7 +151,7 @@ class MidLoopSolver:
         ])
 
     def _add_symmetry_constraints(self):
-        for dot_position in self.dots_positions.values():
+        for dot_position in self.dots_positions:
             if not dot_position.is_on_row():
                 self._add_must_symetry_vertical_segment_constraint(dot_position)
             if not dot_position.is_on_column():
