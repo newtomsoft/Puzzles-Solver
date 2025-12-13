@@ -35,6 +35,8 @@ jobs:
           pip install pytest
 
       - name: Run tests
-        run: pytest -q
+        run: |
+          export PYTHONPATH=$GITHUB_WORKSPACE
+          python -m pytest -q
 
     # Si des tests échouent, le job échoue et bloquera la PR (avec protection de branche)
