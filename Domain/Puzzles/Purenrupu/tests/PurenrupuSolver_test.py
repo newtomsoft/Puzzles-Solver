@@ -19,10 +19,10 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌────────┐    \n'
+            ' ┌────────┐  · \n'
             ' └─────┐  └──┐ \n'
-            '    ┌──┘     │ \n'
-            ' ┌──┘        │ \n'
+            ' ·  ┌──┘  ·  │ \n'
+            ' ┌──┘  ·  ·  │ \n'
             ' └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
@@ -42,12 +42,12 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌──┐     ┌─────┐ \n'
-            ' │  │     │  ┌──┘ \n'
-            ' │  └─────┘  │    \n'
-            ' │           └──┐ \n'
+            ' ┌──┐  ·  ┌─────┐ \n'
+            ' │  │  ·  │  ┌──┘ \n'
+            ' │  └─────┘  │  · \n'
+            ' │  ·  ·  ·  └──┐ \n'
             ' └──┐  ┌─────┐  │ \n'
-            '    └──┘     └──┘ '
+            ' ·  └──┘  ·  └──┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -67,13 +67,13 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-           ' ┌─────────────────┐ \n'
-           ' │  ┌─────┐     ┌──┘ \n'
-           ' │  │     └─────┘    \n'
-           ' │  └──┐        ┌──┐ \n'
-           ' │     │     ┌──┘  │ \n'
-           ' │     └─────┘     │ \n'
-           ' └─────────────────┘ '
+            ' ┌─────────────────┐ \n'
+            ' │  ┌─────┐  ·  ┌──┘ \n'
+            ' │  │  ·  └─────┘  · \n'
+            ' │  └──┐  ·  ·  ┌──┐ \n'
+            ' │  ·  │  ·  ┌──┘  │ \n'
+            ' │  ·  └─────┘  ·  │ \n'
+            ' └─────────────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -94,14 +94,14 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-           ' ┌─────┐  ┌──┐     ┌──┐ \n'
-           ' │     │  │  └──┐  │  │ \n'
-           ' └──┐  └──┘     └──┘  │ \n'
-           ' ┌──┘     ┌─────┐     │ \n'
-           ' │     ┌──┘     │     │ \n'
-           ' │  ┌──┘     ┌──┘  ┌──┘ \n'
-           ' │  │     ┌──┘     └──┐ \n'
-           ' └──┘     └───────────┘ '
+            ' ┌─────┐  ┌──┐  ·  ┌──┐ \n'
+            ' │  ·  │  │  └──┐  │  │ \n'
+            ' └──┐  └──┘  ·  └──┘  │ \n'
+            ' ┌──┘  ·  ┌─────┐  ·  │ \n'
+            ' │  ·  ┌──┘  ·  │  ·  │ \n'
+            ' │  ┌──┘  ·  ┌──┘  ┌──┘ \n'
+            ' │  │  ·  ┌──┘  ·  └──┐ \n'
+            ' └──┘  ·  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -122,14 +122,14 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-            ' ┌─────┐  ┌──┐     ┌──┐ \n'
-            ' │     │  │  └──┐  │  │ \n'
-            ' └──┐  └──┘     └──┘  │ \n'
-            ' ┌──┘     ┌─────┐     │ \n'
-            ' │     ┌──┘     │     │ \n'
-            ' │  ┌──┘     ┌──┘  ┌──┘ \n'
-            ' │  │     ┌──┘     └──┐ \n'
-            ' └──┘     └───────────┘ '
+            ' ┌─────┐  ┌──┐  ·  ┌──┐ \n'
+            ' │  ·  │  │  └──┐  │  │ \n'
+            ' └──┐  └──┘  ·  └──┘  │ \n'
+            ' ┌──┘  ·  ┌─────┐  ·  │ \n'
+            ' │  ·  ┌──┘  ·  │  ·  │ \n'
+            ' │  ┌──┘  ·  ┌──┘  ┌──┘ \n'
+            ' │  │  ·  ┌──┘  ·  └──┐ \n'
+            ' └──┘  ·  └───────────┘ '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -152,16 +152,16 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-           '    ┌─────┐     ┌─────┐  ┌──┐ \n'
-           ' ┌──┘  ┌──┘     │     └──┘  │ \n'
-           ' │     │     ┌──┘  ┌──┐     │ \n'
-           ' │  ┌──┘     │     │  └──┐  │ \n'
-           ' │  │     ┌──┘  ┌──┘     │  │ \n'
-           ' │  └──┐  └──┐  └──┐     └──┘ \n'
-           ' │     │     └──┐  └─────┐    \n'
-           ' └──┐  └──┐     │        └──┐ \n'
-           ' ┌──┘     └─────┘  ┌──┐  ┌──┘ \n'
-           ' └─────────────────┘  └──┘    '
+            ' ·  ┌─────┐  ·  ┌─────┐  ┌──┐ \n'
+            ' ┌──┘  ┌──┘  ·  │  ·  └──┘  │ \n'
+            ' │  ·  │  ·  ┌──┘  ┌──┐  ·  │ \n'
+            ' │  ┌──┘  ·  │  ·  │  └──┐  │ \n'
+            ' │  │  ·  ┌──┘  ┌──┘  ·  │  │ \n'
+            ' │  └──┐  └──┐  └──┐  ·  └──┘ \n'
+            ' │  ·  │  ·  └──┐  └─────┐  · \n'
+            ' └──┐  └──┐  ·  │  ·  ·  └──┐ \n'
+            ' ┌──┘  ·  └─────┘  ┌──┐  ┌──┘ \n'
+            ' └─────────────────┘  └──┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -186,18 +186,18 @@ class PurenrupuSolverTests(TestCase):
         game_solver = PurenrupuSolver(grid)
         solution = game_solver.get_solution()
         expected_solution_string = (
-           ' ┌────────┐     ┌─────┐  ┌─────┐    \n'
-           ' └──┐  ┌──┘     └──┐  └──┘     └──┐ \n'
-           '    │  │  ┌────────┘     ┌──┐     │ \n'
-           ' ┌──┘  └──┘        ┌─────┘  │     │ \n'
-           ' └─────┐     ┌──┐  └──┐     │  ┌──┘ \n'
-           ' ┌─────┘  ┌──┘  │     └──┐  └──┘    \n'
-           ' └──┐     │     │        │     ┌──┐ \n'
-           '    └──┐  └──┐  └─────┐  └──┐  │  │ \n'
-           ' ┌─────┘     └──┐     │     └──┘  │ \n'
-           ' │     ┌──┐     └──┐  └──┐        │ \n'
-           ' └──┐  │  └──┐     └──┐  └──┐  ┌──┘ \n'
-           '    └──┘     └────────┘     └──┘    '
+            ' ┌────────┐  ·  ┌─────┐  ┌─────┐  · \n'
+            ' └──┐  ┌──┘  ·  └──┐  └──┘  ·  └──┐ \n'
+            ' ·  │  │  ┌────────┘  ·  ┌──┐  ·  │ \n'
+            ' ┌──┘  └──┘  ·  ·  ┌─────┘  │  ·  │ \n'
+            ' └─────┐  ·  ┌──┐  └──┐  ·  │  ┌──┘ \n'
+            ' ┌─────┘  ┌──┘  │  ·  └──┐  └──┘  · \n'
+            ' └──┐  ·  │  ·  │  ·  ·  │  ·  ┌──┐ \n'
+            ' ·  └──┐  └──┐  └─────┐  └──┐  │  │ \n'
+            ' ┌─────┘  ·  └──┐  ·  │  ·  └──┘  │ \n'
+            ' │  ·  ┌──┐  ·  └──┐  └──┐  ·  ·  │ \n'
+            ' └──┐  │  └──┐  ·  └──┐  └──┐  ┌──┘ \n'
+            ' ·  └──┘  ·  └────────┘  ·  └──┘  · '
         )
         self.assertEqual(expected_solution_string, str(solution))
         other_solution = game_solver.get_other_solution()
