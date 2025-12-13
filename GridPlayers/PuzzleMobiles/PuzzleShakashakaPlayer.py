@@ -1,7 +1,7 @@
 from time import sleep
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
+from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaCellType
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
@@ -14,16 +14,16 @@ class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
         w = box["width"]
         h = box["height"]
 
-        for position, value in [(pos, val) for pos, val in solution if val not in {ShakashakaSolver.full_black, ShakashakaSolver.full_white}]:
+        for position, value in [(pos, val) for pos, val in solution if val not in {ShakashakaCellType.BLACK_FULL, ShakashakaCellType.WHITE_FULL}]:
             idx = position.r * solution.columns_number + position.c
             cell = cells.nth(idx)
-            if value == 1:
+            if value == ShakashakaCellType.WHITE_BR:
                 cell.click(position={"x": w * 0.15, "y": h * 0.15})
                 continue
-            if value == 2:
+            if value == ShakashakaCellType.WHITE_BL:
                 cell.click(position={"x": w * 0.85, "y": h * 0.15})
                 continue
-            if value == 3:
+            if value == ShakashakaCellType.WHITE_TL:
                 cell.click(position={"x": w * 0.85, "y": h * 0.85})
                 continue
             cell.click(position={"x": w * 0.15, "y": h * 0.85})

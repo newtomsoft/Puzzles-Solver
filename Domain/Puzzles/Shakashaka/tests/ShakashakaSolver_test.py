@@ -1,10 +1,17 @@
 import unittest
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
+from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver, ShakashakaCellType
 
 _ = ShakashakaSolver.input_white
 B = ShakashakaSolver.input_black
+
+wf = ShakashakaCellType.WHITE_FULL
+tl = ShakashakaCellType.WHITE_TL
+tr = ShakashakaCellType.WHITE_TR
+bl = ShakashakaCellType.WHITE_BL
+br = ShakashakaCellType.WHITE_BR
+bf = ShakashakaCellType.BLACK_FULL
 
 
 class ShakashakaSolverTests(unittest.TestCase):
@@ -14,8 +21,8 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, _],
             [_, _]
         ])
-        expected_white = Grid([[0, 0], [0, 0]])
-        expected_diamond = Grid([[1, 2], [4, 3]])
+        expected_white = Grid([[wf, wf], [wf, wf]])
+        expected_diamond = Grid([[br, bl], [tr, tl]])
         expected_solutions = {expected_white, expected_diamond}
 
         solver = ShakashakaSolver(grid)
@@ -43,9 +50,9 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [5, 1, 2],
-            [1, 0, 3],
-            [4, 3, 5],
+            [bf, br, bl],
+            [br, wf, tl],
+            [tr, tl, bf],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -62,9 +69,9 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [1, 2, 5],
-            [4, 0, 2],
-            [5, 4, 3],
+            [br, bl, bf],
+            [tr, wf, bl],
+            [bf, tr, tl],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -83,11 +90,11 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [0, 1, 2, 5, 5],
-            [5, 4, 3, 0, 0],
-            [1, 2, 5, 0, 0],
-            [4, 3, 1, 2, 5],
-            [0, 5, 4, 3, 0],
+            [wf, br, bl, bf, bf],
+            [bf, tr, tl, wf, wf],
+            [br, bl, bf, wf, wf],
+            [tr, tl, br, bl, bf],
+            [wf, bf, tr, tl, wf],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -111,16 +118,16 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [5, 1, 2, 5, 1, 2, 5, 1, 2, 5],
-            [1, 0, 3, 0, 4, 3, 1, 0, 0, 2],
-            [4, 3, 5, 1, 2, 5, 4, 0, 0, 3],
-            [0, 5, 1, 0, 0, 2, 5, 4, 3, 0],
-            [5, 1, 0, 0, 0, 3, 1, 2, 0, 5],
-            [1, 0, 0, 0, 3, 1, 0, 3, 1, 2],
-            [4, 0, 0, 3, 0, 4, 3, 1, 0, 3],
-            [5, 4, 3, 0, 5, 0, 5, 4, 3, 5],
-            [1, 2, 5, 0, 1, 2, 1, 2, 1, 2],
-            [4, 3, 5, 0, 4, 3, 4, 3, 4, 3],
+            [bf, br, bl, bf, br, bl, bf, br, bl, bf],
+            [br, wf, tl, wf, tr, tl, br, wf, wf, bl],
+            [tr, tl, bf, br, bl, bf, tr, wf, wf, tl],
+            [wf, bf, br, wf, wf, bl, bf, tr, tl, wf],
+            [bf, br, wf, wf, wf, tl, br, bl, wf, bf],
+            [br, wf, wf, wf, tl, br, wf, tl, br, bl],
+            [tr, wf, wf, tl, wf, tr, tl, br, wf, tl],
+            [bf, tr, tl, wf, bf, wf, bf, tr, tl, bf],
+            [br, bl, bf, wf, br, bl, br, bl, br, bl],
+            [tr, tl, bf, wf, tr, tl, tr, tl, tr, tl],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -149,21 +156,21 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [5, 1, 2, 1, 2, 5, 0, 0, 5, 1, 2, 5, 0, 1, 2],
-            [0, 4, 3, 4, 3, 1, 2, 5, 0, 4, 0, 2, 5, 4, 3],
-            [1, 2, 0, 0, 5, 4, 3, 0, 1, 2, 4, 3, 1, 2, 5],
-            [4, 3, 0, 0, 1, 2, 5, 1, 0, 3, 1, 2, 4, 0, 2],
-            [5, 0, 5, 5, 4, 3, 1, 0, 3, 1, 0, 3, 5, 4, 3],
-            [1, 2, 1, 2, 5, 1, 0, 3, 5, 4, 3, 1, 2, 0, 0],
-            [4, 3, 4, 3, 0, 4, 3, 0, 0, 0, 5, 4, 3, 5, 5],
-            [1, 2, 0, 5, 0, 5, 1, 2, 5, 1, 2, 0, 5, 0, 0],
-            [4, 0, 2, 0, 1, 2, 4, 3, 0, 4, 3, 0, 5, 0, 0],
-            [5, 4, 3, 0, 4, 3, 0, 5, 1, 2, 5, 1, 2, 0, 0],
-            [0, 0, 5, 5, 0, 5, 0, 5, 4, 3, 0, 4, 3, 1, 2],
-            [1, 2, 0, 1, 2, 0, 5, 5, 5, 0, 5, 5, 0, 4, 3],
-            [4, 3, 1, 0, 3, 1, 2, 0, 0, 5, 0, 0, 1, 2, 5],
-            [5, 5, 4, 3, 1, 0, 3, 5, 1, 2, 0, 0, 4, 3, 0],
-            [0, 0, 0, 5, 4, 3, 5, 0, 4, 3, 5, 5, 0, 5, 0],
+            [bf, br, bl, br, bl, bf, wf, wf, bf, br, bl, bf, wf, br, bl],
+            [wf, tr, tl, tr, tl, br, bl, bf, wf, tr, wf, bl, bf, tr, tl],
+            [br, bl, wf, wf, bf, tr, tl, wf, br, bl, tr, tl, br, bl, bf],
+            [tr, tl, wf, wf, br, bl, bf, br, wf, tl, br, bl, tr, wf, bl],
+            [bf, wf, bf, bf, tr, tl, br, wf, tl, br, wf, tl, bf, tr, tl],
+            [br, bl, br, bl, bf, br, wf, tl, bf, tr, tl, br, bl, wf, wf],
+            [tr, tl, tr, tl, wf, tr, tl, wf, wf, wf, bf, tr, tl, bf, bf],
+            [br, bl, wf, bf, wf, bf, br, bl, bf, br, bl, wf, bf, wf, wf],
+            [tr, wf, bl, wf, br, bl, tr, tl, wf, tr, tl, wf, bf, wf, wf],
+            [bf, tr, tl, wf, tr, tl, wf, bf, br, bl, bf, br, bl, wf, wf],
+            [wf, wf, bf, bf, wf, bf, wf, bf, tr, tl, wf, tr, tl, br, bl],
+            [br, bl, wf, br, bl, wf, bf, bf, bf, wf, bf, bf, wf, tr, tl],
+            [tr, tl, br, wf, tl, br, bl, wf, wf, bf, wf, wf, br, bl, bf],
+            [bf, bf, tr, tl, br, wf, tl, bf, br, bl, wf, wf, tr, tl, wf],
+            [wf, wf, wf, bf, tr, tl, bf, wf, tr, tl, bf, bf, wf, bf, wf],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -197,26 +204,26 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [5, 5, 5, 5, 5, 0, 0, 5, 0, 0, 1, 2, 0, 0, 1, 2, 0, 1, 2, 5],
-            [5, 0, 0, 0, 5, 0, 0, 1, 2, 1, 0, 3, 5, 1, 0, 3, 0, 4, 3, 0],
-            [5, 0, 0, 0, 5, 5, 5, 4, 3, 4, 3, 1, 2, 4, 3, 0, 5, 0, 0, 5],
-            [5, 0, 0, 0, 5, 0, 1, 2, 1, 2, 1, 0, 3, 1, 2, 0, 5, 1, 2, 0],
-            [1, 2, 5, 1, 2, 0, 4, 3, 4, 3, 4, 3, 5, 4, 0, 2, 0, 4, 3, 0],
-            [4, 3, 0, 4, 3, 5, 1, 2, 5, 1, 2, 5, 0, 0, 4, 0, 2, 0, 0, 5],
-            [0, 5, 0, 1, 2, 1, 0, 0, 2, 4, 3, 1, 2, 5, 0, 4, 3, 5, 1, 2],
-            [0, 5, 1, 0, 3, 4, 0, 0, 3, 5, 0, 4, 3, 0, 1, 2, 1, 2, 4, 3],
-            [1, 2, 4, 3, 0, 5, 4, 3, 0, 0, 5, 0, 0, 5, 4, 3, 4, 3, 0, 0],
-            [4, 3, 0, 5, 1, 2, 0, 5, 0, 0, 5, 1, 2, 5, 5, 0, 1, 2, 0, 0],
-            [0, 0, 5, 1, 0, 0, 2, 5, 0, 0, 5, 4, 3, 0, 0, 1, 0, 0, 2, 5],
-            [0, 0, 1, 0, 0, 0, 0, 2, 5, 5, 1, 2, 5, 0, 0, 4, 0, 0, 3, 0],
-            [1, 2, 4, 0, 0, 0, 0, 3, 0, 0, 4, 3, 5, 0, 0, 5, 4, 3, 5, 0],
-            [4, 3, 0, 4, 0, 0, 3, 0, 5, 5, 1, 2, 0, 5, 5, 1, 2, 5, 1, 2],
-            [5, 0, 5, 0, 4, 3, 5, 5, 0, 1, 0, 0, 2, 0, 0, 4, 0, 2, 4, 3],
-            [1, 2, 0, 5, 0, 5, 0, 0, 5, 4, 0, 0, 3, 1, 2, 0, 4, 0, 2, 0],
-            [4, 3, 0, 5, 1, 2, 5, 1, 2, 5, 4, 3, 1, 0, 3, 5, 0, 4, 0, 2],
-            [1, 2, 5, 1, 0, 3, 1, 0, 0, 2, 0, 5, 4, 3, 5, 1, 2, 5, 4, 3],
-            [4, 0, 2, 4, 3, 0, 4, 0, 0, 3, 1, 2, 0, 1, 2, 4, 0, 2, 5, 5],
-            [5, 4, 3, 0, 0, 5, 0, 4, 3, 5, 4, 3, 5, 4, 3, 5, 4, 3, 0, 0],
+            [bf, bf, bf, bf, bf, wf, wf, bf, wf, wf, br, bl, wf, wf, br, bl, wf, br, bl, bf],
+            [bf, wf, wf, wf, bf, wf, wf, br, bl, br, wf, tl, bf, br, wf, tl, wf, tr, tl, wf],
+            [bf, wf, wf, wf, bf, bf, bf, tr, tl, tr, tl, br, bl, tr, tl, wf, bf, wf, wf, bf],
+            [bf, wf, wf, wf, bf, wf, br, bl, br, bl, br, wf, tl, br, bl, wf, bf, br, bl, wf],
+            [br, bl, bf, br, bl, wf, tr, tl, tr, tl, tr, tl, bf, tr, wf, bl, wf, tr, tl, wf],
+            [tr, tl, wf, tr, tl, bf, br, bl, bf, br, bl, bf, wf, wf, tr, wf, bl, wf, wf, bf],
+            [wf, bf, wf, br, bl, br, wf, wf, bl, tr, tl, br, bl, bf, wf, tr, tl, bf, br, bl],
+            [wf, bf, br, wf, tl, tr, wf, wf, tl, bf, wf, tr, tl, wf, br, bl, br, bl, tr, tl],
+            [br, bl, tr, tl, wf, bf, tr, tl, wf, wf, bf, wf, wf, bf, tr, tl, tr, tl, wf, wf],
+            [tr, tl, wf, bf, br, bl, wf, bf, wf, wf, bf, br, bl, bf, bf, wf, br, bl, wf, wf],
+            [wf, wf, bf, br, wf, wf, bl, bf, wf, wf, bf, tr, tl, wf, wf, br, wf, wf, bl, bf],
+            [wf, wf, br, wf, wf, wf, wf, bl, bf, bf, br, bl, bf, wf, wf, tr, wf, wf, tl, wf],
+            [br, bl, tr, wf, wf, wf, wf, tl, wf, wf, tr, tl, bf, wf, wf, bf, tr, tl, bf, wf],
+            [tr, tl, wf, tr, wf, wf, tl, wf, bf, bf, br, bl, wf, bf, bf, br, bl, bf, br, bl],
+            [bf, wf, bf, wf, tr, tl, bf, bf, wf, br, wf, wf, bl, wf, wf, tr, wf, bl, tr, tl],
+            [br, bl, wf, bf, wf, bf, wf, wf, bf, tr, wf, wf, tl, br, bl, wf, tr, wf, bl, wf],
+            [tr, tl, wf, bf, br, bl, bf, br, bl, bf, tr, tl, br, wf, tl, bf, wf, tr, wf, bl],
+            [br, bl, bf, br, wf, tl, br, wf, wf, bl, wf, bf, tr, tl, bf, br, bl, bf, tr, tl],
+            [tr, wf, bl, tr, tl, wf, tr, wf, wf, tl, br, bl, wf, br, bl, tr, wf, bl, bf, bf],
+            [bf, tr, tl, wf, wf, bf, wf, tr, tl, bf, tr, tl, bf, tr, tl, bf, tr, tl, wf, wf],
         ])
 
         solver = ShakashakaSolver(grid)
@@ -255,31 +262,31 @@ class ShakashakaSolverTests(unittest.TestCase):
         ])
 
         expected_solution = Grid([
-            [5, 0, 0, 0, 5, 0, 5, 0, 0, 5, 5, 1, 2, 5, 0, 1, 2, 5, 0, 5, 0, 5, 1, 2, 0],
-            [0, 1, 2, 5, 1, 2, 0, 1, 2, 0, 0, 4, 3, 1, 2, 4, 3, 1, 2, 0, 1, 2, 4, 3, 5],
-            [0, 4, 3, 0, 4, 0, 2, 4, 3, 0, 0, 5, 0, 4, 3, 0, 1, 0, 3, 0, 4, 0, 2, 0, 0],
-            [5, 1, 2, 5, 0, 4, 3, 1, 2, 0, 0, 1, 2, 5, 0, 5, 4, 3, 0, 5, 0, 4, 3, 0, 0],
-            [0, 4, 3, 1, 2, 0, 0, 4, 3, 5, 5, 4, 3, 1, 2, 0, 0, 5, 1, 2, 0, 5, 5, 0, 0],
-            [5, 0, 0, 4, 0, 2, 5, 0, 0, 1, 2, 0, 5, 4, 3, 5, 1, 2, 4, 0, 2, 0, 0, 5, 5],
-            [5, 0, 0, 5, 4, 3, 0, 1, 2, 4, 3, 1, 2, 0, 0, 0, 4, 3, 5, 4, 3, 0, 0, 5, 0],
-            [5, 0, 0, 1, 2, 5, 0, 4, 0, 2, 5, 4, 3, 0, 0, 0, 5, 0, 1, 2, 0, 1, 2, 5, 0],
-            [0, 5, 5, 4, 3, 1, 2, 5, 4, 3, 1, 2, 5, 0, 0, 0, 5, 1, 0, 3, 5, 4, 3, 1, 2],
-            [1, 2, 1, 2, 5, 4, 3, 1, 2, 5, 4, 3, 5, 0, 0, 0, 5, 4, 3, 0, 0, 0, 5, 4, 3],
-            [4, 3, 4, 3, 1, 2, 0, 4, 0, 2, 0, 5, 0, 5, 5, 1, 2, 0, 5, 0, 0, 0, 1, 2, 0],
-            [0, 1, 2, 0, 4, 3, 5, 0, 4, 3, 5, 0, 1, 2, 0, 4, 3, 1, 2, 5, 5, 5, 4, 3, 0],
-            [5, 4, 3, 5, 0, 0, 0, 1, 2, 5, 1, 2, 4, 0, 2, 0, 1, 0, 3, 1, 2, 1, 2, 0, 5],
-            [1, 2, 5, 1, 2, 5, 5, 4, 3, 1, 0, 0, 2, 4, 3, 0, 4, 3, 5, 4, 3, 4, 0, 2, 0],
-            [4, 0, 2, 4, 3, 1, 2, 5, 1, 0, 0, 0, 0, 2, 0, 5, 0, 5, 0, 0, 5, 0, 4, 3, 0],
-            [5, 4, 3, 5, 1, 0, 0, 2, 4, 0, 0, 0, 0, 0, 2, 0, 1, 2, 5, 5, 1, 2, 0, 1, 2],
-            [1, 2, 5, 1, 0, 0, 0, 3, 5, 4, 0, 0, 0, 0, 3, 0, 4, 3, 0, 0, 4, 3, 5, 4, 3],
-            [4, 3, 1, 0, 0, 0, 3, 0, 0, 5, 4, 0, 0, 3, 5, 1, 2, 5, 1, 2, 0, 0, 0, 1, 2],
-            [5, 1, 0, 0, 0, 3, 0, 5, 1, 2, 0, 4, 3, 1, 2, 4, 3, 1, 0, 0, 2, 5, 5, 4, 3],
-            [0, 4, 0, 0, 3, 1, 2, 0, 4, 3, 5, 0, 0, 4, 3, 5, 5, 4, 0, 0, 3, 1, 2, 0, 5],
-            [5, 0, 4, 3, 0, 4, 0, 2, 1, 2, 5, 0, 0, 5, 0, 0, 0, 5, 4, 3, 5, 4, 3, 0, 5],
-            [5, 0, 5, 0, 5, 0, 4, 3, 4, 3, 5, 0, 0, 5, 0, 0, 0, 5, 0, 1, 2, 5, 1, 2, 0],
-            [5, 0, 5, 1, 2, 5, 0, 1, 2, 1, 2, 5, 5, 5, 0, 0, 0, 5, 1, 0, 3, 0, 4, 3, 0],
-            [1, 2, 0, 4, 3, 1, 2, 4, 3, 4, 3, 0, 1, 2, 1, 2, 5, 1, 0, 3, 1, 2, 1, 2, 5],
-            [4, 3, 5, 0, 5, 4, 3, 0, 5, 0, 0, 5, 4, 3, 4, 3, 0, 4, 3, 5, 4, 3, 4, 3, 0],
+            [bf, wf, wf, wf, bf, wf, bf, wf, wf, bf, bf, br, bl, bf, wf, br, bl, bf, wf, bf, wf, bf, br, bl, wf],
+            [wf, br, bl, bf, br, bl, wf, br, bl, wf, wf, tr, tl, br, bl, tr, tl, br, bl, wf, br, bl, tr, tl, bf],
+            [wf, tr, tl, wf, tr, wf, bl, tr, tl, wf, wf, bf, wf, tr, tl, wf, br, wf, tl, wf, tr, wf, bl, wf, wf],
+            [bf, br, bl, bf, wf, tr, tl, br, bl, wf, wf, br, bl, bf, wf, bf, tr, tl, wf, bf, wf, tr, tl, wf, wf],
+            [wf, tr, tl, br, bl, wf, wf, tr, tl, bf, bf, tr, tl, br, bl, wf, wf, bf, br, bl, wf, bf, bf, wf, wf],
+            [bf, wf, wf, tr, wf, bl, bf, wf, wf, br, bl, wf, bf, tr, tl, bf, br, bl, tr, wf, bl, wf, wf, bf, bf],
+            [bf, wf, wf, bf, tr, tl, wf, br, bl, tr, tl, br, bl, wf, wf, wf, tr, tl, bf, tr, tl, wf, wf, bf, wf],
+            [bf, wf, wf, br, bl, bf, wf, tr, wf, bl, bf, tr, tl, wf, wf, wf, bf, wf, br, bl, wf, br, bl, bf, wf],
+            [wf, bf, bf, tr, tl, br, bl, bf, tr, tl, br, bl, bf, wf, wf, wf, bf, br, wf, tl, bf, tr, tl, br, bl],
+            [br, bl, br, bl, bf, tr, tl, br, bl, bf, tr, tl, bf, wf, wf, wf, bf, tr, tl, wf, wf, wf, bf, tr, tl],
+            [tr, tl, tr, tl, br, bl, wf, tr, wf, bl, wf, bf, wf, bf, bf, br, bl, wf, bf, wf, wf, wf, br, bl, wf],
+            [wf, br, bl, wf, tr, tl, bf, wf, tr, tl, bf, wf, br, bl, wf, tr, tl, br, bl, bf, bf, bf, tr, tl, wf],
+            [bf, tr, tl, bf, wf, wf, wf, br, bl, bf, br, bl, tr, wf, bl, wf, br, wf, tl, br, bl, br, bl, wf, bf],
+            [br, bl, bf, br, bl, bf, bf, tr, tl, br, wf, wf, bl, tr, tl, wf, tr, tl, bf, tr, tl, tr, wf, bl, wf],
+            [tr, wf, bl, tr, tl, br, bl, bf, br, wf, wf, wf, wf, bl, wf, bf, wf, bf, wf, wf, bf, wf, tr, tl, wf],
+            [bf, tr, tl, bf, br, wf, wf, bl, tr, wf, wf, wf, wf, wf, bl, wf, br, bl, bf, bf, br, bl, wf, br, bl],
+            [br, bl, bf, br, wf, wf, wf, tl, bf, tr, wf, wf, wf, wf, tl, wf, tr, tl, wf, wf, tr, tl, bf, tr, tl],
+            [tr, tl, br, wf, wf, wf, tl, wf, wf, bf, tr, wf, wf, tl, bf, br, bl, bf, br, bl, wf, wf, wf, br, bl],
+            [bf, br, wf, wf, wf, tl, wf, bf, br, bl, wf, tr, tl, br, bl, tr, tl, br, wf, wf, bl, bf, bf, tr, tl],
+            [wf, tr, wf, wf, tl, br, bl, wf, tr, tl, bf, wf, wf, tr, tl, bf, bf, tr, wf, wf, tl, br, bl, wf, bf],
+            [bf, wf, tr, tl, wf, tr, wf, bl, br, bl, bf, wf, wf, bf, wf, wf, wf, bf, tr, tl, bf, tr, tl, wf, bf],
+            [bf, wf, bf, wf, bf, wf, tr, tl, tr, tl, bf, wf, wf, bf, wf, wf, wf, bf, wf, br, bl, bf, br, bl, wf],
+            [bf, wf, bf, br, bl, bf, wf, br, bl, br, bl, bf, bf, bf, wf, wf, wf, bf, br, wf, tl, wf, tr, tl, wf],
+            [br, bl, wf, tr, tl, br, bl, tr, tl, tr, tl, wf, br, bl, br, bl, bf, br, wf, tl, br, bl, br, bl, bf],
+            [tr, tl, bf, wf, bf, tr, tl, wf, bf, wf, wf, bf, tr, tl, tr, tl, wf, tr, tl, bf, tr, tl, tr, tl, wf],
         ])
 
         solver = ShakashakaSolver(grid)

@@ -1,15 +1,24 @@
+from enum import IntEnum
+
 from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
 
 
+class ShakashakaCellType(IntEnum):
+    WHITE_FULL = 0
+    WHITE_BR = 1
+    WHITE_BL = 2
+    WHITE_TL = 3
+    WHITE_TR = 4
+    BLACK_FULL = 5
+
+
 class ShakashakaSolver(GameSolver):
     # don't change these values
     input_white = -1
     input_black = -2
-    full_white = 0
-    full_black = 5
 
     def __init__(self, grid: Grid):
         self._grid = grid
@@ -22,11 +31,8 @@ class ShakashakaSolver(GameSolver):
         self._init_solver()
 
     def _init_solver(self):
-        # 1: White is BR
-        # 2: White is BL
-        # 3: White is TL
-        # 4: White is TR
-        self._grid_vars = Grid([[self._model.NewIntVar(self.full_white, self.full_black, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._grid_vars = Grid([[self._model.NewIntVar(ShakashakaCellType.WHITE_FULL, ShakashakaCellType.BLACK_FULL, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in
+                                range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -55,7 +61,7 @@ class ShakashakaSolver(GameSolver):
             row = []
             for c in range(self._columns_number):
                 val = self._solver.Value(self._grid_vars[r][c])
-                row.append(int(val))
+                row.append(ShakashakaCellType(int(val)))
             solution_matrix.append(row)
         return Grid(solution_matrix)
 
@@ -69,22 +75,22 @@ class ShakashakaSolver(GameSolver):
     def _add_fixed_cell_constraints(self):
         for position, val in self._grid:
             if val != self.input_white:
-                self._model.Add(self._grid_vars[position] == self.full_black)
+                self._model.Add(self._grid_vars[position] == ShakashakaCellType.BLACK_FULL)
                 continue
-            self._model.Add(self._grid_vars[position] != self.full_black)
+            self._model.Add(self._grid_vars[position] != ShakashakaCellType.BLACK_FULL)
 
     def _add_triangle_connectivity_constraints(self):
         allowed_horizontal = []
         for left in range(6):
             for right in range(6):
                 valid = True
-                if left == 1 and right not in [0, 2]:
+                if left == ShakashakaCellType.WHITE_BR and right not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BL]:
                     valid = False
-                if left == 4 and right not in [0, 3]:
+                if left == ShakashakaCellType.WHITE_TR and right not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TL]:
                     valid = False
-                if right == 2 and left not in [0, 1]:
+                if right == ShakashakaCellType.WHITE_BL and left not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BR]:
                     valid = False
-                if right == 3 and left not in [0, 4]:
+                if right == ShakashakaCellType.WHITE_TL and left not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TR]:
                     valid = False
 
                 if valid:
@@ -96,22 +102,22 @@ class ShakashakaSolver(GameSolver):
 
         for r in range(self._rows_number):
             # Specific constraints for the cell on the right side
-            self._model.Add(self._grid_vars[r][self._columns_number - 1] != 1)
-            self._model.Add(self._grid_vars[r][self._columns_number - 1] != 4)
-            self._model.Add(self._grid_vars[r][0] != 2)
-            self._model.Add(self._grid_vars[r][0] != 3)
+            self._model.Add(self._grid_vars[r][self._columns_number - 1] != ShakashakaCellType.WHITE_BR)
+            self._model.Add(self._grid_vars[r][self._columns_number - 1] != ShakashakaCellType.WHITE_TR)
+            self._model.Add(self._grid_vars[r][0] != ShakashakaCellType.WHITE_BL)
+            self._model.Add(self._grid_vars[r][0] != ShakashakaCellType.WHITE_TL)
 
         allowed_vertical = []
         for top in range(6):
             for bottom in range(6):
                 valid = True
-                if top == 1 and bottom not in [0, 4]:
+                if top == ShakashakaCellType.WHITE_BR and bottom not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TR]:
                     valid = False
-                if top == 2 and bottom not in [0, 3]:
+                if top == ShakashakaCellType.WHITE_BL and bottom not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TL]:
                     valid = False
-                if bottom == 4 and top not in [0, 1, 2]:
+                if bottom == ShakashakaCellType.WHITE_TR and top not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BR, ShakashakaCellType.WHITE_BL]:
                     valid = False
-                if bottom == 3 and top not in [0, 1, 2]:
+                if bottom == ShakashakaCellType.WHITE_TL and top not in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BR, ShakashakaCellType.WHITE_BL]:
                     valid = False
 
                 if valid:
@@ -122,10 +128,10 @@ class ShakashakaSolver(GameSolver):
                 self._model.AddAllowedAssignments([self._grid_vars[r][c], self._grid_vars[r + 1][c]], allowed_vertical)
 
         for c in range(self._columns_number):
-            self._model.Add(self._grid_vars[self._rows_number - 1][c] != 1)
-            self._model.Add(self._grid_vars[self._rows_number - 1][c] != 2)
-            self._model.Add(self._grid_vars[0][c] != 3)
-            self._model.Add(self._grid_vars[0][c] != 4)
+            self._model.Add(self._grid_vars[self._rows_number - 1][c] != ShakashakaCellType.WHITE_BR)
+            self._model.Add(self._grid_vars[self._rows_number - 1][c] != ShakashakaCellType.WHITE_BL)
+            self._model.Add(self._grid_vars[0][c] != ShakashakaCellType.WHITE_TL)
+            self._model.Add(self._grid_vars[0][c] != ShakashakaCellType.WHITE_TR)
 
         # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
         # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
@@ -137,7 +143,7 @@ class ShakashakaSolver(GameSolver):
         for t in range(6):
             for ce in range(6):
                 for ri in range(6):
-                    if t == 2 and ce == 0 and ri != 2:
+                    if t == ShakashakaCellType.WHITE_BL and ce == ShakashakaCellType.WHITE_FULL and ri != ShakashakaCellType.WHITE_BL:
                         continue
                     allowed_p1.append((t, ce, ri))
 
@@ -148,7 +154,7 @@ class ShakashakaSolver(GameSolver):
         allowed_p1_edge = []
         for t in range(6):
             for ce in range(6):
-                if t == 2 and ce == 0:
+                if t == ShakashakaCellType.WHITE_BL and ce == ShakashakaCellType.WHITE_FULL:
                     continue
                 allowed_p1_edge.append((t, ce))
         for r in range(1, self._rows_number):
@@ -159,7 +165,7 @@ class ShakashakaSolver(GameSolver):
         for t in range(6):
             for ce in range(6):
                 for le in range(6):
-                    if t == 1 and ce == 0 and le != 1:
+                    if t == ShakashakaCellType.WHITE_BR and ce == ShakashakaCellType.WHITE_FULL and le != ShakashakaCellType.WHITE_BR:
                         continue
                     allowed_p2.append((t, ce, le))
 
@@ -170,7 +176,7 @@ class ShakashakaSolver(GameSolver):
         allowed_p2_edge = []
         for t in range(6):
             for ce in range(6):
-                if t == 1 and ce == 0:
+                if t == ShakashakaCellType.WHITE_BR and ce == ShakashakaCellType.WHITE_FULL:
                     continue
                 allowed_p2_edge.append((t, ce))
         for r in range(1, self._rows_number):
@@ -181,7 +187,7 @@ class ShakashakaSolver(GameSolver):
         for b in range(6):
             for ce in range(6):
                 for le in range(6):
-                    if b == 4 and ce == 0 and le != 4:
+                    if b == ShakashakaCellType.WHITE_TR and ce == ShakashakaCellType.WHITE_FULL and le != ShakashakaCellType.WHITE_TR:
                         continue
                     allowed_p3.append((b, ce, le))
 
@@ -192,7 +198,7 @@ class ShakashakaSolver(GameSolver):
         allowed_p3_edge = []
         for b in range(6):
             for ce in range(6):
-                if b == 4 and ce == 0:
+                if b == ShakashakaCellType.WHITE_TR and ce == ShakashakaCellType.WHITE_FULL:
                     continue
                 allowed_p3_edge.append((b, ce))
         for r in range(self._rows_number - 1):
@@ -203,7 +209,7 @@ class ShakashakaSolver(GameSolver):
         for b in range(6):
             for ce in range(6):
                 for ri in range(6):
-                    if b == 3 and ce == 0 and ri != 3:
+                    if b == ShakashakaCellType.WHITE_TL and ce == ShakashakaCellType.WHITE_FULL and ri != ShakashakaCellType.WHITE_TL:
                         continue
                     allowed_p4.append((b, ce, ri))
 
@@ -214,7 +220,7 @@ class ShakashakaSolver(GameSolver):
         allowed_p4_edge = []
         for b in range(6):
             for ce in range(6):
-                if b == 3 and ce == 0:
+                if b == ShakashakaCellType.WHITE_TL and ce == ShakashakaCellType.WHITE_FULL:
                     continue
                 allowed_p4_edge.append((b, ce))
         for r in range(self._rows_number - 1):
@@ -230,14 +236,14 @@ class ShakashakaSolver(GameSolver):
                 is_3 = self._model.NewBoolVar(f'is_3_{neighbor_position}')
                 is_4 = self._model.NewBoolVar(f'is_4_{neighbor_position}')
                 neighbor_var = self._grid_vars[neighbor_position]
-                self._model.Add(neighbor_var == 1).OnlyEnforceIf(is_1)
-                self._model.Add(neighbor_var != 1).OnlyEnforceIf(is_1.Not())
-                self._model.Add(neighbor_var == 2).OnlyEnforceIf(is_2)
-                self._model.Add(neighbor_var != 2).OnlyEnforceIf(is_2.Not())
-                self._model.Add(neighbor_var == 3).OnlyEnforceIf(is_3)
-                self._model.Add(neighbor_var != 3).OnlyEnforceIf(is_3.Not())
-                self._model.Add(neighbor_var == 4).OnlyEnforceIf(is_4)
-                self._model.Add(neighbor_var != 4).OnlyEnforceIf(is_4.Not())
+                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_BR).OnlyEnforceIf(is_1)
+                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_BR).OnlyEnforceIf(is_1.Not())
+                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_BL).OnlyEnforceIf(is_2)
+                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_BL).OnlyEnforceIf(is_2.Not())
+                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_TL).OnlyEnforceIf(is_3)
+                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_TL).OnlyEnforceIf(is_3.Not())
+                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_TR).OnlyEnforceIf(is_4)
+                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_TR).OnlyEnforceIf(is_4.Not())
                 neighbors_var.append(sum([is_1, is_2, is_3, is_4]))
 
             self._model.Add(sum(neighbors_var) == val)
@@ -248,19 +254,19 @@ class ShakashakaSolver(GameSolver):
             for ur in range(6):
                 for dl in range(6):
                     for dr in range(6):
-                        d_ul = 1 if ul in [2, 4] else 0
-                        d_ur = 1 if ur in [1, 3] else 0
-                        d_dl = 1 if dl in [1, 3] else 0
-                        d_dr = 1 if dr in [2, 4] else 0
+                        d_ul = 1 if ul in [ShakashakaCellType.WHITE_BL, ShakashakaCellType.WHITE_TR] else 0
+                        d_ur = 1 if ur in [ShakashakaCellType.WHITE_BR, ShakashakaCellType.WHITE_TL] else 0
+                        d_dl = 1 if dl in [ShakashakaCellType.WHITE_BR, ShakashakaCellType.WHITE_TL] else 0
+                        d_dr = 1 if dr in [ShakashakaCellType.WHITE_BL, ShakashakaCellType.WHITE_TR] else 0
 
                         diag_sum = d_ul + d_ur + d_dl + d_dr
                         if diag_sum not in [0, 2, 4]:
                             continue
 
-                        w_ul = 1 if ul in [0, 1] else 0
-                        w_ur = 1 if ur in [0, 2] else 0
-                        w_dl = 1 if dl in [0, 4] else 0
-                        w_dr = 1 if dr in [0, 3] else 0
+                        w_ul = 1 if ul in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BR] else 0
+                        w_ur = 1 if ur in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_BL] else 0
+                        w_dl = 1 if dl in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TR] else 0
+                        w_dr = 1 if dr in [ShakashakaCellType.WHITE_FULL, ShakashakaCellType.WHITE_TL] else 0
 
                         white_sum = w_ul + w_ur + w_dl + w_dr
                         if white_sum == 3:
@@ -313,46 +319,46 @@ class ShakashakaSolver(GameSolver):
                     bot_e = self._grid_vars[r + 1][e]
 
                     # Pattern 1
-                    b_top_is_1 = self._new_bool_var_domain_check(top_c, [1], f'p1t1_{r}_{c}_{e}')
-                    b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [4], f'p1b4_{r}_{c}_{e}')
-                    b_bote_is_2 = self._new_bool_var_domain_check(bot_e, [2], f'p1be2_{r}_{c}_{e}')
-                    b_tope_is_3 = self._new_bool_var_domain_check(top_e, [3], f'p1te3_{r}_{c}_{e}')
+                    b_top_is_1 = self._new_bool_var_domain_check(top_c, [ShakashakaCellType.WHITE_BR], f'p1t1_{r}_{c}_{e}')
+                    b_bot_is_4 = self._new_bool_var_domain_check(bot_c, [ShakashakaCellType.WHITE_TR], f'p1b4_{r}_{c}_{e}')
+                    b_bote_is_2 = self._new_bool_var_domain_check(bot_e, [ShakashakaCellType.WHITE_BL], f'p1be2_{r}_{c}_{e}')
+                    b_tope_is_3 = self._new_bool_var_domain_check(top_e, [ShakashakaCellType.WHITE_TL], f'p1te3_{r}_{c}_{e}')
                     clause1 = [b_top_is_1.Not(), b_bot_is_4.Not(), b_bote_is_2.Not(), b_tope_is_3.Not()]
 
                     # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
                     # Ligne r   : [1][0]...[0][3] (au moins un 0 entre les deux colonnes)
                     # Ligne r+1 : [4][0]...[0]
                     # Pattern 2
-                    b_p2_top1 = self._new_bool_var_domain_check(top_c, [1], f'p2t1_{r}_{c}_{e}')
-                    b_p2_bot4 = self._new_bool_var_domain_check(bot_c, [4], f'p2b4_{r}_{c}_{e}')
-                    b_p2_te3 = self._new_bool_var_domain_check(top_e, [3], f'p2te3_{r}_{c}_{e}')
+                    b_p2_top1 = self._new_bool_var_domain_check(top_c, [ShakashakaCellType.WHITE_BR], f'p2t1_{r}_{c}_{e}')
+                    b_p2_bot4 = self._new_bool_var_domain_check(bot_c, [ShakashakaCellType.WHITE_TR], f'p2b4_{r}_{c}_{e}')
+                    b_p2_te3 = self._new_bool_var_domain_check(top_e, [ShakashakaCellType.WHITE_TL], f'p2te3_{r}_{c}_{e}')
                     clause2 = [b_p2_top1.Not(), b_p2_bot4.Not(), b_p2_te3.Not()]
 
                     # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
                     # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
                     # Ligne r+1 : [1][0]...[0][3]
                     # Pattern 3
-                    b_p3_top0 = self._new_bool_var_domain_check(top_c, [0], f'p3t0_{r}_{c}_{e}')
-                    b_p3_bot1 = self._new_bool_var_domain_check(bot_c, [1], f'p3b1_{r}_{c}_{e}')
-                    b_p3_te2 = self._new_bool_var_domain_check(top_e, [2], f'p3te2_{r}_{c}_{e}')
-                    b_p3_be3 = self._new_bool_var_domain_check(bot_e, [3], f'p3be3_{r}_{c}_{e}')
+                    b_p3_top0 = self._new_bool_var_domain_check(top_c, [ShakashakaCellType.WHITE_FULL], f'p3t0_{r}_{c}_{e}')
+                    b_p3_bot1 = self._new_bool_var_domain_check(bot_c, [ShakashakaCellType.WHITE_BR], f'p3b1_{r}_{c}_{e}')
+                    b_p3_te2 = self._new_bool_var_domain_check(top_e, [ShakashakaCellType.WHITE_BL], f'p3te2_{r}_{c}_{e}')
+                    b_p3_be3 = self._new_bool_var_domain_check(bot_e, [ShakashakaCellType.WHITE_TL], f'p3be3_{r}_{c}_{e}')
                     clause3 = [b_p3_top0.Not(), b_p3_bot1.Not(), b_p3_te2.Not(), b_p3_be3.Not()]
 
                     # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
                     # Ligne r   : [4][0]...[0][2] (au moins un 0 entre les deux colonnes)
                     # Ligne r+1 :    [0]...[0][3]
                     # Pattern 4
-                    b_p4_top4 = self._new_bool_var_domain_check(top_c, [4], f'p4t4_{r}_{c}_{e}')
-                    b_p4_bot0 = self._new_bool_var_domain_check(bot_c, [0], f'p4b0_{r}_{c}_{e}')
-                    b_p4_te2 = self._new_bool_var_domain_check(top_e, [2], f'p4te2_{r}_{c}_{e}')
-                    b_p4_be3 = self._new_bool_var_domain_check(bot_e, [3], f'p4be3_{r}_{c}_{e}')
+                    b_p4_top4 = self._new_bool_var_domain_check(top_c, [ShakashakaCellType.WHITE_TR], f'p4t4_{r}_{c}_{e}')
+                    b_p4_bot0 = self._new_bool_var_domain_check(bot_c, [ShakashakaCellType.WHITE_FULL], f'p4b0_{r}_{c}_{e}')
+                    b_p4_te2 = self._new_bool_var_domain_check(top_e, [ShakashakaCellType.WHITE_BL], f'p4te2_{r}_{c}_{e}')
+                    b_p4_be3 = self._new_bool_var_domain_check(bot_e, [ShakashakaCellType.WHITE_TL], f'p4be3_{r}_{c}_{e}')
                     clause4 = [b_p4_top4.Not(), b_p4_bot0.Not(), b_p4_te2.Not(), b_p4_be3.Not()]
 
                     for k in range(c + 1, e):
                         top_k = self._grid_vars[r][k]
                         bot_k = self._grid_vars[r + 1][k]
-                        b_topk_0 = self._new_bool_var_domain_check(top_k, [0], f'mid_t0_{r}_{k}')
-                        b_botk_0 = self._new_bool_var_domain_check(bot_k, [0], f'mid_b0_{r}_{k}')
+                        b_topk_0 = self._new_bool_var_domain_check(top_k, [ShakashakaCellType.WHITE_FULL], f'mid_t0_{r}_{k}')
+                        b_botk_0 = self._new_bool_var_domain_check(bot_k, [ShakashakaCellType.WHITE_FULL], f'mid_b0_{r}_{k}')
 
                         not_mid = [b_topk_0.Not(), b_botk_0.Not()]
                         clause1.extend(not_mid)
@@ -371,8 +377,8 @@ class ShakashakaSolver(GameSolver):
             for b in range(6):
                 for rt in range(6):
                     for rb in range(6):
-                        if t == 4 and b == 1:
-                            if rt != 3 or rb != 2:
+                        if t == ShakashakaCellType.WHITE_TR and b == ShakashakaCellType.WHITE_BR:
+                            if rt != ShakashakaCellType.WHITE_TL or rb != ShakashakaCellType.WHITE_BL:
                                 continue
                         allowed_vpair1.append((t, b, rt, rb))
 
@@ -386,8 +392,8 @@ class ShakashakaSolver(GameSolver):
             for b in range(6):
                 for lt in range(6):
                     for lb in range(6):
-                        if t == 3 and b == 2:
-                            if lt != 4 or lb != 1:
+                        if t == ShakashakaCellType.WHITE_TL and b == ShakashakaCellType.WHITE_BL:
+                            if lt != ShakashakaCellType.WHITE_TR or lb != ShakashakaCellType.WHITE_BR:
                                 continue
                         allowed_vpair2.append((t, b, lt, lb))
 
