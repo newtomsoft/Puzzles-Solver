@@ -44,10 +44,8 @@ class DominosaSolver(GameSolver):
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
         for _, positions in dominoes_positions.items():
-            direction01 = positions[0].direction_to(positions[1])
-            direction10 = positions[1].direction_to(positions[0])
-            solution_grid.set_value(positions[0], direction01)
-            solution_grid.set_value(positions[1], direction10)
+            solution_grid[positions[0]] = positions[0].direction_to(positions[1])
+            solution_grid[positions[1]] = positions[1].direction_to(positions[0])
 
         return solution_grid
 
