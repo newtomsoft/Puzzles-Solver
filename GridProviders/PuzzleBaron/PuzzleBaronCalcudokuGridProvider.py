@@ -4,15 +4,14 @@ import re
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProviders.GridProvider import GridProvider
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Board.RegionsGrid import RegionsGrid
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 
 
-class PuzzleBaronCalcudokuGridProvider(GridProvider, PlaywrightGridProvider, PuzzleBaronGridProvider):
+class PuzzleBaronCalcudokuGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

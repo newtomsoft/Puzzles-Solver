@@ -8,12 +8,11 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.Position import Position
 from Domain.Puzzles.Kanjo.KanjoSolver import KanjoSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleKanjoGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+class GridPuzzleKanjoGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

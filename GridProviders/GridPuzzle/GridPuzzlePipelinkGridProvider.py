@@ -4,12 +4,11 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.Position import Position
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzlePipelinkGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+class GridPuzzlePipelinkGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

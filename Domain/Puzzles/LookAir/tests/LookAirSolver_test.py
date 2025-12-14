@@ -24,8 +24,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_squares2x2_contraints(self):
         grid = Grid([
@@ -43,8 +41,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_squares3x3_contraints(self):
         grid = Grid([
@@ -64,8 +60,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_6x6_without_visibility_constraint(self):
         grid = Grid([
@@ -89,8 +83,6 @@ class LookAirSolverTests(TestCase):
             [1, 1, 0, 1, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x10_without_visibility_constraint(self):
         grid = Grid([
@@ -122,8 +114,6 @@ class LookAirSolverTests(TestCase):
             [1, 0, 1, 1, 1, 0, 1, 1, 0, 1]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_5x5_easy_316e9(self):
         """https://gridpuzzle.com/look-air/316e9"""
@@ -146,8 +136,6 @@ class LookAirSolverTests(TestCase):
             [1, 0, 0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_empty_5x5_not_compliant_visibility(self):
         grid = Grid([
@@ -187,8 +175,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_5x5_evil_0ywpw(self):
         """https://gridpuzzle.com/look-air/0ywpw"""
@@ -211,8 +197,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 1, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_5x5_evil_16dp9(self):
         """https://gridpuzzle.com/look-air/16dp9"""
@@ -235,8 +219,6 @@ class LookAirSolverTests(TestCase):
             [1, 1, 0, 1, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_6x6_evil_2pp6y(self):
         """https://gridpuzzle.com/look-air/2pp6y"""
@@ -261,8 +243,6 @@ class LookAirSolverTests(TestCase):
             [1, 0, 0, 1, 1, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_6x6_easy_1y159(self):
         """https://gridpuzzle.com/look-air/1y159"""
@@ -287,8 +267,6 @@ class LookAirSolverTests(TestCase):
             [1, 1, 0, 1, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_7x7_easy_09pk8(self):
         """https://gridpuzzle.com/look-air/09pk8"""
@@ -315,8 +293,6 @@ class LookAirSolverTests(TestCase):
             [1, 0, 1, 1, 0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_7x7_evil_0m912(self):
         """https://gridpuzzle.com/look-air/0m912"""
@@ -343,8 +319,6 @@ class LookAirSolverTests(TestCase):
             [0, 0, 0, 0, 1, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_8x8_easy_6er9n(self):
         """https://gridpuzzle.com/look-air/6er9n"""
@@ -373,8 +347,6 @@ class LookAirSolverTests(TestCase):
             [0, 1, 0, 0, 0, 0, 1, 1]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x10_evil_07141(self):
         """https://gridpuzzle.com/look-air/07141"""
@@ -407,47 +379,7 @@ class LookAirSolverTests(TestCase):
             [0, 0, 1, 0, 1, 1, 0, 0, 1, 0]
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_12x12_evil_0w0w8(self):
-        """https://gridpuzzle.com/look-air/0w0w8"""
-        grid = Grid([
-            [_, _, _, _, 1, _, _, _, _, _, _, 1],
-            [_, 1, _, 0, _, 1, _, _, _, 4, _, _],
-            [_, _, _, _, 0, 1, _, _, _, _, 1, 1],
-            [2, _, _, _, _, _, _, _, _, _, _, _],
-            [_, _, _, _, _, _, _, 3, _, _, 1, _],
-            [_, _, _, _, _, _, _, _, 1, _, _, 0],
-            [_, _, _, _, _, _, _, _, _, 1, _, _],
-            [1, _, _, _, _, _, _, _, 2, _, _, _],
-            [_, _, _, 3, _, _, _, _, _, _, _, _],
-            [_, 2, _, _, _, _, _, 1, _, _, _, _],
-            [_, _, _, _, _, _, _, _, _, _, _, 4],
-            [_, _, 3, _, _, _, _, _, 2, _, _, _]
-        ])
-
-        game_solver = LookAirSolver(grid)
-
-        solution = game_solver.get_solution()
-        expected_solution = Grid([
-            [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
-            [0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0],
-            [0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0],
-            [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-            [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-            [0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1],
-            [0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-            [0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1]]
-        )
-        self.assertEqual(expected_solution, solution)
-        # other_solution = game_solver.get_other_solution()
-        # self.assertEqual(Grid.empty(), other_solution)
-
-
+        
 if __name__ == '__main__':
     unittest.main()

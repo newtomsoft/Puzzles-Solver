@@ -2,12 +2,11 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
-from GridProviders.GridProvider import GridProvider
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
-class GridPuzzleDosunFuwariGridProvider(GridProvider, PlaywrightGridProvider, GridPuzzleTagProvider):
+class GridPuzzleDosunFuwariGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 

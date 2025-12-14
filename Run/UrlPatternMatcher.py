@@ -5,7 +5,6 @@ import Run.Games.BalanceLoopConfig
 import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
-import Run.Games.BinairoPlusConfig
 import Run.Games.BorderBlockConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
@@ -38,6 +37,7 @@ import Run.Games.KenKenConfig
 import Run.Games.KillerSudokuConfig
 import Run.Games.KoburinConfig
 import Run.Games.KonarupuConfig
+import Run.Games.KurodokoConfig
 import Run.Games.KuroshiroConfig
 import Run.Games.LinesweeperConfig
 import Run.Games.LitsConfig
@@ -48,6 +48,7 @@ import Run.Games.MidLoopConfig
 import Run.Games.MinesweeperConfig
 import Run.Games.MinesweeperMosaicConfig
 import Run.Games.MintonetteConfig
+import Run.Games.MitiConfig
 import Run.Games.MoonsunConfig
 import Run.Games.NanroConfig
 import Run.Games.NeighboursConfig
@@ -67,9 +68,12 @@ import Run.Games.RenkatsuConfig
 import Run.Games.RenzokuConfig
 import Run.Games.RoundTripConfig
 import Run.Games.SeeThroughConfig
+import Run.Games.ShakashakaConfig
 import Run.Games.ShikakuConfig
 import Run.Games.ShingokiConfig
+import Run.Games.ShirokuroConfig
 import Run.Games.SkyscrapersConfig
+import Run.Games.SlantConfig
 import Run.Games.SnakeConfig
 import Run.Games.StarBattleConfig
 import Run.Games.StarsAndArrowsConfig
@@ -149,6 +153,7 @@ class UrlPatternMatcher:
         Run.Games.KillerSudokuConfig.register()
         Run.Games.KoburinConfig.register()
         Run.Games.KonarupuConfig.register()
+        Run.Games.KurodokoConfig.register()
         Run.Games.KuroshiroConfig.register()
         Run.Games.LinesweeperConfig.register()
         Run.Games.LitsConfig.register()
@@ -159,6 +164,7 @@ class UrlPatternMatcher:
         Run.Games.MinesweeperConfig.register()
         Run.Games.MinesweeperMosaicConfig.register()
         Run.Games.MintonetteConfig.register()
+        Run.Games.MitiConfig.register()
         Run.Games.MoonsunConfig.register()
         Run.Games.NanroConfig.register()
         Run.Games.NeighboursConfig.register()
@@ -178,9 +184,12 @@ class UrlPatternMatcher:
         Run.Games.RenzokuConfig.register()
         Run.Games.RoundTripConfig.register()
         Run.Games.SeeThroughConfig.register()
+        Run.Games.ShakashakaConfig.register()
         Run.Games.ShikakuConfig.register()
+        Run.Games.ShirokuroConfig.register()
         Run.Games.ShingokiConfig.register()
         Run.Games.SkyscrapersConfig.register()
+        Run.Games.SlantConfig.register()
         Run.Games.SnakeConfig.register()
         Run.Games.StarBattleConfig.register()
         Run.Games.StarsAndArrowsConfig.register()

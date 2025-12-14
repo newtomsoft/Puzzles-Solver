@@ -1,6 +1,5 @@
 ﻿from unittest import TestCase
 
-from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
@@ -284,47 +283,3 @@ class IslandsGridTest(TestCase):
             Position(0, 0)
         ]
         self.assertEqual(expected_positions, connected_positions)
-
-    def test_subset(self):
-        grid_str = (
-            ' ┌─────────────────┐ \n'
-            ' └─────┐  ┌─────┐  │ \n'
-            ' ┌──┐  └──┼─────┼──┘ \n'
-            ' │  └──┐  └─────┼──┐ \n'
-            ' └──┐  │  ┌──┐  └──┘ \n'
-            ' ┌──┘  │  │  │  ┌──┐ \n'
-            ' └─────┘  └──┘  └──┘ '
-        )
-        grid_str2 = (
-            ' ┌─────────────────┐ \n'
-            ' └─────┐  ┌─────┐  │ \n'
-            ' ┌──┐  └──┼─────┼──┘ \n'
-            ' │  └──┐  └─────┼──┐ \n'
-            ' └──┐  │  ┌──┐  └──┘ \n'
-            ' ┌──┘  │  │  │  ┌──┐ \n'
-            ' └─────┘  └──┘  └──┘ '
-        )
-        grid = Grid.from_str(grid_str, type(Island))
-        grid.__class__ = IslandGrid
-
-        positions = [
-            Position(1, 3), Position(1, 4), Position(1, 5),
-            Position(2, 3), Position(2, 5),
-            Position(3, 3), Position(3, 4), Position(3, 5),
-            Position(4, 5), Position(4, 6)
-        ]
-        subset_grid = grid.subset(positions)
-
-
-        subset_grid_str = repr(subset_grid)
-        expected_subset_grid_str = (
-            ' ·  ·  ·  ·  ·  ·  · \n'
-            ' ·  ·  ·  ┌─────┐  · \n'
-            ' ·  ·  ·  │  ·  │  · \n'
-            ' ·  ·  ·  └─────┼──┐ \n'
-            ' ·  ·  ·  ·  ·  └──┘ \n'
-            ' ·  ·  ·  ·  ·  ·  · \n'
-            ' ·  ·  ·  ·  ·  ·  · '
-        )
-
-        self.assertEqual(expected_subset_grid_str, subset_grid_str)

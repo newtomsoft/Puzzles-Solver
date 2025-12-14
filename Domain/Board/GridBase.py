@@ -31,6 +31,14 @@ class GridBase[T]:
             return self._matrix[key[0]][key[1]]
         return self._matrix[key]
 
+    def __setitem__(self, key, value):
+        if isinstance(key, Position):
+            self._matrix[key.r][key.c] = value
+        elif isinstance(key, tuple):
+            self._matrix[key[0]][key[1]] = value
+        else:
+            self._matrix[key] = value
+
     def __eq__(self, other):
         if not issubclass(type(other), GridBase):
             return False
@@ -58,12 +66,13 @@ class GridBase[T]:
     def __hash__(self):
         return hash(str(self._matrix))
 
-    def min_value(self):
-        return min(min(self._matrix, key=lambda row: min(row)))
-
-    def max_value(self):
+    def min_value(self) -> float:
         matrice_np = np.array(self._matrix, dtype=float)
-        return np.nanmax(matrice_np)
+        return float(np.nanmin(matrice_np))
+
+    def max_value(self) -> float:
+        matrice_np = np.array(self._matrix, dtype=float)
+        return float(np.nanmax(matrice_np))
 
     @property
     def matrix(self):

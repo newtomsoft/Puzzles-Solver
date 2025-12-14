@@ -1,16 +1,65 @@
-﻿/GridProviders/Linkedin/QueensGridProvider.ini
-/GridProviders/Chromium/user/
-*/__pycache__/
-/.idea
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+.pytest_cache/
+.benchmarks/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+.venv*/
+venv/
+ENV/
+env/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+/GridProviders/Linkedin/QueensGridProvider.ini
+/GridProviders/Linkedin/ZipGridProvider.ini
+/GridProviders/Browsers/Chromium/user/
+/GridProviders/Browsers/Chromium/extensions/
+/GridProviders/Browsers/Chromium/
+/GridProviders/Browsers/Firefox/user/
+/GridProviders/Browsers/Firefox/
+/Run/videos/
+/videos/
+*.ini
+
+# Chrome Extension
 /ChromeExtension/.idea/
 /ChromeExtension/node_modules/
 /ChromeExtension/node_modules/.package-lock.json
 /ChromeExtension/src/toto.html
-/GridProviders/Chromium/
-/GridProviders/Linkedin/ZipGridProvider.ini
-/Run/videos/
-__init__.py
-/videos/
+
+# C#
 /CSharp/.idea/
-__pycache__/
-*.py[cod]
+/CSharp/bin/
+/CSharp/obj/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# PyInstaller
+/build/
+/dist/

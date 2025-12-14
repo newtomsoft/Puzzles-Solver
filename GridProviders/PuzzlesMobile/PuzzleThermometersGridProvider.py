@@ -9,7 +9,7 @@ from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileG
 from Domain.Board.Grid import Grid
 
 
-class PuzzleThermometersGridProvider(GridProvider, PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleThermometersGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str) -> tuple[any, BrowserContext]:
         return self.with_playwright(self.scrap_grid, url)
 

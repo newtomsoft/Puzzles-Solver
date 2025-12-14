@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, Bool, is_true, Implies, Or, sat
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -7,20 +7,21 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class LookAirSolver(GameSolver):
+
     def __init__(self, grid: Grid):
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
-        self._grid_z3: Grid = Grid.empty()
-        self._solver = Solver()
+        self._grid_vars: Grid | None = None
+        self._model = cp_model.CpModel()
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"cell_{r}-{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_vars = Grid([[self._model.NewBoolVar(f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if self._grid_vars is None:
             self._init_solver()
 
         solution, _ = self._ensure_squares_visibility()
@@ -28,27 +29,49 @@ class LookAirSolver(GameSolver):
 
     def _ensure_squares_visibility(self) -> tuple[Grid, int]:
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            proposition = Grid([[1 if is_true(model.eval(self._grid_z3.value(i, j))) else 0 for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = self._compute_solution()
 
-            impossible_segments = self._impossible_segments(proposition)
+        while not solution.is_empty():
+            proposition_count += 1
+
+            impossible_segments = self._impossible_segments(solution)
             if len(impossible_segments) == 0:
-                self._previous_solution = proposition
-                return proposition, proposition_count
+                return solution, proposition_count
 
             for positions in impossible_segments:
-                self._solver.add(Not(And([self._grid_z3[position] == (proposition[position] == 1) for position in positions])))
+                literals = []
+                for position in positions:
+                    literals.append(self._grid_vars[position].Not()) if solution[position] == 1 else literals.append(self._grid_vars[position])
+                self._model.AddBoolOr(literals)
+
+            solution = self._compute_solution()
 
         return Grid.empty(), proposition_count
 
-    def get_other_solution(self):
-        constraints = []
-        for position, value in self._previous_solution:
-            constraints.append(self._grid_z3[position] if value else Not(self._grid_z3[position]))
-        self._solver.add(Not(And(constraints)))
-        return self.get_solution()
+    def get_other_solution(self) -> Grid:
+        if self._previous_solution is None or self._previous_solution.is_empty():
+            return Grid.empty()
+
+        literals = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                if self._previous_solution[r][c] == 1:
+                    literals.append(self._grid_vars[Position(r, c)].Not())
+                else:
+                    literals.append(self._grid_vars[Position(r, c)])
+        self._model.AddBoolOr(literals)
+
+        solution, _ = self._ensure_squares_visibility()
+        return solution
+
+    def _compute_solution(self) -> Grid:
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return Grid.empty()
+
+        self._previous_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        return self._previous_solution
 
     def _add_constraints(self):
         self._add_neighbors_constraints()
@@ -57,37 +80,71 @@ class LookAirSolver(GameSolver):
     def _add_neighbors_constraints(self):
         for position, number in [(position, value) for position, value in self._grid if value >= 0]:
             concerned_positions = list(self._grid.neighbors_positions(position)) + [position]
-            self._solver.add(sum([self._grid_z3[position] for position in concerned_positions]) == number)
+            self._model.Add(sum([self._grid_vars[position] for position in concerned_positions]) == number)
 
     def _add_all_shapes_are_squares_constraints(self):
-        for comparison_offset in range(1, self._rows_number - 1):  # no test if grid is fully filled
-            for position, _ in self._grid_z3:
-                self._add_square_constraint(position, comparison_offset)
+        # Variables pour représenter les coins supérieurs gauches des carrés
+        # squares[r][c][s] = 1 si il y a un carré de taille (s+1)x(s+1) commençant en (r,c)
+        squares = {}
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                for s in range(min(self._rows_number, self._columns_number)):
+                    if r + s < self._rows_number and c + s < self._columns_number:
+                        squares[(r, c, s)] = self._model.NewBoolVar(f'square_{r}_{c}_{s}')
 
-    def _add_square_constraint(self, position: Position, comparison_offset: int):
-        for comparison_direction in [Direction.down(), Direction.right()]:
-            max_position = position.after(comparison_direction, comparison_offset)
-            if max_position not in self._grid_z3:
-                continue
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                # Liste des carrés qui pourraient contenir ce pixel
+                squares_containing_pixel = []
+                for sr in range(self._rows_number):
+                    for sc in range(self._columns_number):
+                        for size in range(min(self._rows_number, self._columns_number)):
+                            if (sr, sc, size) in squares:
+                                # Vérifier si (r,c) est dans le carré (sr,sc,size)
+                                if sr <= r <= sr + size and sc <= c <= sc + size:
+                                    squares_containing_pixel.append(squares[(sr, sc, size)])
 
-            to_fill_direction = Direction.down() if comparison_direction == Direction.right() else Direction.right()
+                # Si cell_values[(r, c)] = 1, le pixel doit appartenir à exactement un carré
+                # Si cell_values[(r, c)] = 0, le pixel ne doit appartenir à aucun carré
+                self._model.Add(sum(squares_containing_pixel) == self._grid_vars[Position(r, c)])
 
-            comparison_positions = position.all_positions_and_bounds_between(max_position)
-            values_filled = []
-            for fill_offset in [fill_offset for fill_offset in range(-comparison_offset, comparison_offset + 1) if
-                                fill_offset != 0 and position.after(to_fill_direction, fill_offset) in self._grid_z3]:
-                values_filled.append(And([self._grid_z3[position.after(to_fill_direction, fill_offset)] for position in comparison_positions]))
+        # Contrainte : les carrés ne doivent pas être adjacents
+        # Deux carrés sont adjacents s'ils se touchent horizontalement ou verticalement
+        for r1 in range(self._rows_number):
+            for c1 in range(self._columns_number):
+                for s1 in range(min(self._rows_number, self._columns_number)):
+                    if (r1, c1, s1) in squares:
+                        for r2 in range(self._rows_number):
+                            for c2 in range(self._columns_number):
+                                for s2 in range(min(self._rows_number, self._columns_number)):
+                                    if (r2, c2, s2) in squares and (r1, c1, s1) != (r2, c2, s2):
+                                        # Vérifier si les carrés sont adjacents
+                                        # Carré 1: (r1,c1) à (r1+s1, c1+s1)
+                                        # Carré 2: (r2,c2) à (r2+s2, c2+s2)
 
-            if len(values_filled) >= 1:
-                offset = 0
-                positions_filled_constraint = []
-                while offset + comparison_offset <= len(values_filled):
-                    selected_values_filled = values_filled[offset:offset + comparison_offset]
-                    positions_filled_constraint.append(And(selected_values_filled))
-                    offset += 1
+                                        # Calculer les bords des carrés
+                                        r1_min, r1_max = r1, r1 + s1
+                                        c1_min, c1_max = c1, c1 + s1
+                                        r2_min, r2_max = r2, r2 + s2
+                                        c2_min, c2_max = c2, c2 + s2
 
-                implies = Implies(And([self._grid_z3[position] for position in comparison_positions]), Or(positions_filled_constraint))
-                self._solver.add(implies)
+                                        # Vérifier l'adjacence (distance de 1 dans une direction)
+                                        adjacent = False
+                                        # Adjacence horizontale
+                                        if (r1_min <= r2_max and r2_min <= r1_max and
+                                                (c1_max + 1 == c2_min or c2_max + 1 == c1_min)):
+                                            adjacent = True
+                                        # Adjacence verticale
+                                        elif (c1_min <= c2_max and c2_min <= c1_max and
+                                              (r1_max + 1 == r2_min or r2_max + 1 == r1_min)):
+                                            adjacent = True
+
+                                        if adjacent:
+                                            # Les carrés ne peuvent pas être tous les deux présents
+                                            self._model.AddBoolOr([
+                                                squares[(r1, c1, s1)].Not(),
+                                                squares[(r2, c2, s2)].Not()
+                                            ])
 
     def _impossible_segments(self, proposition: Grid) -> list[list[Position]]:
         segments: list[list[Position]] = []
@@ -164,3 +221,13 @@ class LookAirSolver(GameSolver):
             return positions[end_index + 1] if end_index < len(positions) - 1 else positions[end_index]
 
         return None
+
+    @staticmethod
+    def are_adjacent(rect1: tuple[int, int, int, int], rect2: tuple[int, int, int, int]) -> bool:
+        r1_min, c1_min, r1_max, c1_max = rect1
+        r2_min, c2_min, r2_max, c2_max = rect2
+        return (
+                (r1_min <= r2_max and r2_min <= r1_max and (c1_max + 1 == c2_min or c2_max + 1 == c1_min))
+                or
+                (c1_min <= c2_max and c2_min <= c1_max and (r1_max + 1 == r2_min or r2_max + 1 == r1_min))
+        )

@@ -15,12 +15,12 @@ class Position:
             return [self.up, self.up_left, self.left, self.down_left, self.down, self.down_right, self.right, self.up_right]
         raise ValueError(f"Unknown mode {mode}")
 
-    def straddled_neighbors(self) -> set['Position']:
+    def straddled_neighbors(self) -> list['Position']:
         r_floor = math.floor(self.r)
         c_floor = math.floor(self.c)
         r_ceil = math.ceil(self.r)
         c_ceil = math.ceil(self.c)
-        return {Position(r_floor, c_floor), Position(r_floor, c_ceil), Position(r_ceil, c_floor), Position(r_ceil, c_ceil)}
+        return [Position(r_floor, c_floor), Position(r_floor, c_ceil), Position(r_ceil, c_ceil), Position(r_ceil, c_floor)]
 
     def direction_to(self, other: 'Position') -> Direction:
         if other is None or self == other:
