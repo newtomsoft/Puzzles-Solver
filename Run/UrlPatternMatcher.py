@@ -6,6 +6,7 @@ import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
 import Run.Games.BorderBlockConfig
+import Run.Games.ChessRangerConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
 import Run.Games.CountryRoadConfig
@@ -122,6 +123,7 @@ class UrlPatternMatcher:
         Run.Games.BinairoPlusConfig.register()
         Run.Games.BinairoPlusConfig.register()
         Run.Games.BorderBlockConfig.register()
+        Run.Games.ChessRangerConfig.register()
         Run.Games.ChoconaConfig.register()
         Run.Games.CloudsConfig.register()
         Run.Games.CountryRoadConfig.register()
