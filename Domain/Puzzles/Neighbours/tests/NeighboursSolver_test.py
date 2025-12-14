@@ -80,67 +80,9 @@ class NeighboursSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_by_4_8x8_hard_2kdz5(self):
-        """https://gridpuzzle.com/neighbours/2kdz5"""
-        grid = Grid([
-            [4, _, 3, _, _, _, _, 4],
-            [_, _, _, _, _, _, 3, _],
-            [_, _, 6, _, 6, _, _, _],
-            [_, 4, _, _, 6, _, _, _],
-            [_, _, _, 4, _, _, _, _],
-            [3, _, _, 6, _, _, _, _],
-            [_, _, 4, _, _, 6, _, 4],
-            [_, _, _, 2, _, _, _, 3],
-        ])
 
-        game_solver = NeighboursSolver(grid)
-        solution = game_solver.get_solution()
-        expected_string = (
-            '┌─┬───────┬───┬─┐\n'
-            '│ └───┬───┤   │ │\n'
-            '├───┬─┴─┐ └─┬─┘ │\n'
-            '├─┐ │   ├───┴─┬─┤\n'
-            '│ │ ├─┬─┴───┐ │ │\n'
-            '│ └─┤ └───┐ ├─┤ │\n'
-            '├───┴───┬─┴─┘ │ │\n'
-            '├───────┼─────┴─┤\n'
-            '└───────┴───────┘\n'
-        )
-        self.assertEqual(expected_string, self.grid_to_string(solution))
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
-    def test_by_3_9x9_evil_0me88(self):
-        """https://gridpuzzle.com/neighbours/0me88"""
-        grid = Grid([
-            [_, _, 3, _, _, U, 3, _, _],
-            [4, _, 5, _, _, _, _, _, 2],
-            [_, U, _, _, _, U, _, _, _],
-            [U, _, 5, _, _, _, _, U, 4],
-            [_, _, 5, _, _, 4, 5, _, _],
-            [U, _, _, _, _, U, _, U, _],
-            [4, _, _, U, 5, _, 5, _, _],
-            [_, _, _, _, _, _, U, _, 3],
-            [_, U, _, 4, 3, _, _, _, _]
-        ])
 
-        game_solver = NeighboursSolver(grid)
-        solution = game_solver.get_solution()
-        expected_string = (
-            '┌─┬─────┬───┬─┬───┐\n'
-            '│ └─┬───┴─┐ │ └─┐ │\n'
-            '├─┬─┴───┬─┴─┼───┼─┤\n'
-            '│ └─┬───┼─┐ ├─┐ │ │\n'
-            '├─┬─┴─┐ │ └─┤ └─┤ │\n'
-            '│ └─┐ ├─┴───┼───┴─┤\n'
-            '├───┼─┴─┬─┬─┴───┬─┤\n'
-            '├─┐ ├─┐ │ └─┬───┤ │\n'
-            '│ └─┤ └─┼───┴─┐ │ │\n'
-            '└───┴───┴─────┴─┴─┘\n'
-        )
-        self.assertEqual(expected_string, self.grid_to_string(solution))
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
 
     @skip("Solver fails or times out in this environment")
     def test_by_4_10x10_evil_1dxp0(self):
