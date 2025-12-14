@@ -9,11 +9,15 @@ from Domain.Board.Position import Position
 
 class MidLoopSolver:
     def __init__(self, input_grid: Grid):
-        self._input_grid = input_grid
-        self.dots_positions = input_grid.dots_positions
+        self.rows_number = input_grid.rows_number // 2
+        self.columns_number = input_grid.columns_number // 2
+        self.dots_positions = []
+        for position, value in input_grid:
+            if value:
+                self.dots_positions.append(Position(position.r / 2, position.c / 2))
+
+        self._input_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
         self._island_grid: IslandGrid | None = None
-        self.rows_number = self._input_grid.rows_number
-        self.columns_number = self._input_grid.columns_number
         self.init_island_grid()
         self._solver = Solver()
         self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
@@ -21,7 +25,7 @@ class MidLoopSolver:
 
     def init_island_grid(self):
         self._island_grid = IslandGrid(
-            [[Island(Position(r, c), 2) for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
+            [[Island(Position(r, c), 2) for c in range(self.columns_number)] for r in range(self.rows_number)])
 
     def _init_solver(self):
         self._island_bridges_z3 = {
