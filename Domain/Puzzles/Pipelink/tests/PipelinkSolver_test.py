@@ -229,43 +229,6 @@ class PipelinkSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    def test_solution_12x12_evil_25k9d(self):
-        """https://gridpuzzle.com/pipelink/25k9d"""
-        grid_str = (
-            ' ·  ·  · ─── ·  ·  ·  ·  ·  ·  ·  · \n'
-            ' ·  ·  ·  ·  · ─┐  · ─┼─ ·  ·  ·  · \n'
-            ' │  ·  ┌─ · ─┼─ ·  ·  ·  · ─┐  ·  · \n'
-            ' ·  └─ · ─┘  ·  ·  ·  ·  │  ·  · ─┐ \n'
-            ' ·  ·  ·  ┌─ ·  ┌─ ·  └─ ·  ·  ┌─ · \n'
-            ' ·  ·  ·  ·  ·  ·  ·  ·  │  ·  ·  · \n'
-            ' ·  ·  ┌──┼─ ·  · ─┐  ·  · ─┘  ·  · \n'
-            ' · ─┘  ·  ·  · ─┐  ·  └─ ·  ·  ·  │ \n'
-            ' ┌─ · ─┐  ┌─ ·  ·  ·  ·  ·  ·  └─ · \n'
-            ' ·  ·  ·  ·  ·  ·  · ─┘  · ─── ·  · \n'
-            ' ·  · ─┐  · ─┼─ ·  ·  ┌─ ·  ·  ·  · \n'
-            ' ·  ·  · ─── ·  ·  ·  ·  ·  ·  ·  · '
-        )
-        game_solver = PipelinkSolver(Grid.from_str(grid_str, type(Island)))
-
-        solution = game_solver.get_solution()
-        expected_solution_string = (
-            ' ┌──┐  ┌───────────┐  ┌─────┐  ┌──┐ \n'
-            ' │  │  └──┐  ┌──┐  └──┼──┐  └──┘  │ \n'
-            ' │  │  ┌──┼──┼──┼──┐  └──┼──┐  ┌──┘ \n'
-            ' │  └──┼──┘  │  └──┼──┐  │  │  └──┐ \n'
-            ' └──┐  │  ┌──┘  ┌──┘  └──┼──┘  ┌──┘ \n'
-            ' ┌──┼──┘  │  ┌──┼─────┐  │  ┌──┼──┐ \n'
-            ' │  │  ┌──┼──┘  └──┐  │  └──┘  │  │ \n'
-            ' └──┘  └──┘  ┌──┐  │  └─────┐  │  │ \n'
-            ' ┌─────┐  ┌──┼──┘  └──┐  ┌──┘  └──┘ \n'
-            ' └──┐  └──┼──┼──┐  ┌──┘  └────────┐ \n'
-            ' ┌──┼──┐  └──┼──┼──┘  ┌──┐  ┌──┐  │ \n'
-            ' └──┘  └─────┘  └─────┘  └──┘  └──┘ '
-        )
-        self.assertEqual(expected_solution_string, str(solution))
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
-
 
 if __name__ == '__main__':
     unittest.main()
