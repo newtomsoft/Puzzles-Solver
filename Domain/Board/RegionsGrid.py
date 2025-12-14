@@ -1,37 +1,35 @@
-from typing import List, Set
-
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 
 
 class RegionsGrid(Grid):
-    def __init__(self, matrix: List[List[Set]]):
+    def __init__(self, matrix: list[list[set]]):
         super().__init__(matrix)
-        self._matrix = self._compute_regions_grid()
+        self._matrix = self._compute_regions_grid().matrix
 
-    @staticmethod
-    def from_grid(grid: Grid):
-        return RegionsGrid(grid.matrix)
+    @classmethod
+    def from_grid(cls, grid: Grid):
+        return cls(grid.matrix)
 
-    def _compute_regions_grid(self):
+    def _compute_regions_grid(self) -> Grid:
         cells_number = self.rows_number * self.columns_number
         while True:
             visited_regions = set()
             regions_count = 0
-            matrix = [[None for _ in range(self.columns_number)] for _ in range(self.rows_number)]
+            grid = Grid([[None for _ in range(self.columns_number)] for _ in range(self.rows_number)])
             for position, _ in self:
                 if position in visited_regions:
                     continue
                 regions_count += 1
                 region = self._depth_first_search_regions(position)
-                for rr, cc in region:
-                    matrix[rr][cc] = regions_count
+                for current_position in region:
+                    grid[current_position] = regions_count
                 visited_regions.update(region)
             if len(visited_regions) == cells_number:
                 break
-        return matrix
+        return grid
 
-    def _depth_first_search_regions(self, current_position: Position, visited=None):
+    def _depth_first_search_regions(self, current_position: Position, visited=None) -> set[Position]:
         if visited is None:
             visited = set()
         if current_position in visited:
