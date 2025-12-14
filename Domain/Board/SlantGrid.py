@@ -56,12 +56,12 @@ class SlantGrid(Grid):
     def get_all_loops(self) -> list[list[Position]]:
         ds = {}
         def find(i):
-            path = []
+            path_nodes = []
             root = i
             while ds.get(root, root) != root:
-                path.append(root)
+                path_nodes.append(root)
                 root = ds[root]
-            for node in path:
+            for node in path_nodes:
                 ds[node] = root
             return root
 
