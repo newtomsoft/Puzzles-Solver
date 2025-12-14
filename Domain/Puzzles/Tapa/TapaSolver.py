@@ -17,6 +17,7 @@ class TapaSolver(GameSolver):
             raise ValueError("The grid must contain at least one list number")
         self._solver = Solver()
         self._grid_z3: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         #  True for black, False for white
@@ -29,24 +30,28 @@ class TapaSolver(GameSolver):
         self._no_black_square()
 
         solution, _ = self._ensure_all_black_connected()
+        self._previous_solution = solution
         return solution
 
     def get_other_solution(self) -> Grid:
-        if self._solver.check() == sat:
-            model = self._solver.model()
-            current_solution_constraints = []
-            for r in range(self._grid_z3.rows_number):
-                for c in range(self._grid_z3.columns_number):
-                    val = is_true(model.eval(self._grid_z3[r][c]))
-                    if val:
-                        current_solution_constraints.append(self._grid_z3[r][c] == False)
-                    else:
-                        current_solution_constraints.append(self._grid_z3[r][c] == True)
-            self._solver.add(Or(*current_solution_constraints))
+        if self._previous_solution is None:
+            return self.get_solution()
 
-            solution, _ = self._ensure_all_black_connected()
-            return solution
-        return Grid.empty()
+        current_solution_constraints = []
+        for r in range(self._previous_solution.rows_number):
+            for c in range(self._previous_solution.columns_number):
+                val = self._previous_solution[r][c]
+                # Map back to z3 grid coordinates which are offset by 1
+                z3_r, z3_c = r + 1, c + 1
+                if val:
+                    current_solution_constraints.append(self._grid_z3[z3_r][z3_c] == False)
+                else:
+                    current_solution_constraints.append(self._grid_z3[z3_r][z3_c] == True)
+        self._solver.add(Or(*current_solution_constraints))
+
+        solution, _ = self._ensure_all_black_connected()
+        self._previous_solution = solution
+        return solution
 
     def _init_borders_white(self):
         self._solver.add([Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])

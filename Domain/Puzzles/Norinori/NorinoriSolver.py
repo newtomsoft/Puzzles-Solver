@@ -19,6 +19,7 @@ class NorinoriSolver(GameSolver):
             raise ValueError("The grid must have at least 2 regions")
         self._model = cp_model.CpModel()
         self._grid_vars: Grid = Grid.empty()
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._grid_vars = Grid([[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -31,18 +32,17 @@ class NorinoriSolver(GameSolver):
             return Grid.empty()
 
         grid = Grid([[solver.Value(self.domino_part(Position(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def get_other_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
-        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-             return Grid.empty()
+        if self._previous_solution is None:
+             return self.get_solution()
 
         current_solution_constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                val = solver.Value(self.domino_part(Position(r, c)))
+                val = self._previous_solution[r][c]
                 if val == 1:
                      current_solution_constraints.append(self.domino_part(Position(r, c)).Not())
                 else:
@@ -50,11 +50,13 @@ class NorinoriSolver(GameSolver):
 
         self._model.Add(sum(current_solution_constraints) > 0)
 
+        solver = cp_model.CpSolver()
         status = solver.Solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
         grid = Grid([[solver.Value(self.domino_part(Position(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def domino_part(self, position: Position):

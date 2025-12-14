@@ -17,6 +17,7 @@ class SumpleteSolver(GameSolver):
         self._column_sums = [self._grid.value(r, -1) for r in range(self.rows_number)]
         self._solver = Solver()
         self._grid_z3 = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> (Grid | None, int):
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
@@ -25,17 +26,18 @@ class SumpleteSolver(GameSolver):
             return None
         model = self._solver.model()
         grid = Grid([[model.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def get_other_solution(self) -> Grid:
-        if self._solver.check() == unsat:
-            return Grid.empty()
-        model = self._solver.model()
-        from z3 import Or, is_true
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        from z3 import Or
         current_solution_constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                val = is_true(model.eval(self._grid_z3.value(r, c)))
+                val = self._previous_solution[r][c]
                 if val:
                     current_solution_constraints.append(self._grid_z3.value(r, c) == False)
                 else:
@@ -45,6 +47,7 @@ class SumpleteSolver(GameSolver):
             return Grid.empty()
         model = self._solver.model()
         grid = Grid([[model.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def _add_constraints(self):

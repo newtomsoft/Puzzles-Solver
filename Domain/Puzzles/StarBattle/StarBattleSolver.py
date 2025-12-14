@@ -24,6 +24,7 @@ class StarBattleSolver(GameSolver):
         self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid | None:
         self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
@@ -35,16 +36,17 @@ class StarBattleSolver(GameSolver):
             return None
 
         grid = Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def get_other_solution(self) -> Grid:
-        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            return Grid.empty()
+        if self._previous_solution is None:
+            return self.get_solution()
 
         constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                 val = self._solver.Value(self._grid_vars[r][c])
+                 val = self._previous_solution[r][c]
                  if val == 1:
                      constraints.append(self._grid_vars[r][c].Not())
                  else:
@@ -57,6 +59,7 @@ class StarBattleSolver(GameSolver):
             return Grid.empty()
 
         grid = Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = grid
         return grid
 
     def queen(self, position):

@@ -15,6 +15,7 @@ class KakuroSolver(GameSolver):
         self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._grid_vars = [[self._model.NewIntVar(1, 9, f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
@@ -25,18 +26,18 @@ class KakuroSolver(GameSolver):
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
 
-        solution_grid = self._create_solution_grid()
-        return solution_grid
+        self._previous_solution = self._create_solution_grid()
+        return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            return Grid.empty()
+        if self._previous_solution is None:
+            return self.get_solution()
 
         constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._grid_vars[r][c] is not None:
-                     val = self._solver.Value(self._grid_vars[r][c])
+                     val = self._previous_solution[r][c]
                      constraints.append(self._grid_vars[r][c] != val)
 
         self._model.Add(sum(constraints) > 0)
@@ -45,7 +46,8 @@ class KakuroSolver(GameSolver):
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
 
-        return self._create_solution_grid()
+        self._previous_solution = self._create_solution_grid()
+        return self._previous_solution
 
     def _create_solution_grid(self) -> Grid:
         return Grid([[self._solver.Value(self._grid_vars[r][c]) if self._grid_vars[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])

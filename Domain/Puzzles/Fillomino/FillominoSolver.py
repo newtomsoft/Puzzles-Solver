@@ -18,6 +18,7 @@ class FillominoSolver:
         self.is_root = {}
         self.depth = {}
         self.parent_choice = {}
+        self._previous_solution: Grid | None = None
 
     def solve(self):
         for r in range(self.rows):
@@ -36,18 +37,19 @@ class FillominoSolver:
         self.solver = cp_model.CpSolver()
         self.status = self.solver.Solve(self.model)
         if self.status == cp_model.OPTIMAL or self.status == cp_model.FEASIBLE:
-            return Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+            self._previous_solution = Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+            return self._previous_solution
         else:
             return Grid.empty()
 
     def get_other_solution(self) -> Grid:
-        if self.status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            return Grid.empty()
+        if self._previous_solution is None:
+            return self.solve()
 
         constraints = []
         for r in range(self.rows):
             for c in range(self.cols):
-                 val = self.solver.Value(self.cell_vars[(r, c)])
+                 val = self._previous_solution[r][c]
                  constraints.append(self.cell_vars[(r, c)] != val)
 
         self.model.Add(sum(constraints) > 0)
@@ -56,7 +58,8 @@ class FillominoSolver:
         if self.status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
 
-        return Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+        self._previous_solution = Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+        return self._previous_solution
 
     def _add_initial_constraints(self):
         for r in range(self.rows):

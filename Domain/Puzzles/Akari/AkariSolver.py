@@ -20,6 +20,7 @@ class AkariSolver(GameSolver):
         self._solver = Solver()
         self._illuminated_z3: Grid = Grid.empty()
         self._bulbs_z3: Grid = Grid.empty()
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._bulbs_z3 = Grid([[Bool(f'bulb_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -28,20 +29,24 @@ class AkariSolver(GameSolver):
         if not self._solver.check() == sat:
             return Grid.empty()
 
-        return self._compute_solution()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
 
     def get_other_solution(self) -> Grid:
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        or_list = []
+        for position, var in self._bulbs_z3:
+            if self._previous_solution[position] == 1:
+                or_list.append(var == False)
+            else:
+                or_list.append(var == True)
+        self._solver.add(Or(*or_list))
+
         if self._solver.check() == sat:
-            model = self._solver.model()
-            or_list = []
-            for position, var in self._bulbs_z3:
-                if is_true(model.eval(var)):
-                    or_list.append(var == False)
-                else:
-                    or_list.append(var == True)
-            self._solver.add(Or(*or_list))
-            if self._solver.check() == sat:
-                return self._compute_solution()
+            self._previous_solution = self._compute_solution()
+            return self._previous_solution
         return Grid.empty()
 
     def _compute_solution(self) -> Grid:

@@ -14,6 +14,7 @@ class KakurasuSolver(GameSolver):
             raise ValueError("Kakurasu grid must at least 4x4")
         self._solver = Solver()
         self._grid_z3: list[list[Bool]] = [[]]
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._grid_z3: list[list[Bool]] = [[Bool(f"matrix_{r}{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
@@ -21,18 +22,18 @@ class KakurasuSolver(GameSolver):
         if self._solver.check() == unsat:
             return Grid.empty()
 
-        return self._compute_solution()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        if self._solver.check() == unsat:
-            return Grid.empty()
+        if self._previous_solution is None:
+            return self.get_solution()
 
-        model = self._solver.model()
-        from z3 import Or, is_true
+        from z3 import Or
         current_solution_constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                val = is_true(model.eval(self._grid_z3[r][c]))
+                val = self._previous_solution[r][c]
                 if val:
                     current_solution_constraints.append(self._grid_z3[r][c] == False)
                 else:
@@ -42,7 +43,8 @@ class KakurasuSolver(GameSolver):
         if self._solver.check() == unsat:
             return Grid.empty()
 
-        return self._compute_solution()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
 
     def _compute_solution(self):
         model = self._solver.model()

@@ -21,6 +21,7 @@ class NonogramSolver:
         self._solver = None
         self._rows_z3: list = []
         self._columns_z3: list = []
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._rows_z3: list = [BitVec(f"row_{r}", self.columns_number) for r in range(self.rows_number)]
@@ -30,23 +31,30 @@ class NonogramSolver:
         if self._solver.check() != sat:
             return Grid.empty()
 
-        return self._compute_solution()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
 
     def get_other_solution(self) -> Grid:
-        if self._solver.check() != sat:
-            return Grid.empty()
+        if self._previous_solution is None:
+            return self.get_solution()
 
-        model = self._solver.model()
         constraints = []
         for i_row in range(self.rows_number):
-            row_value = model[self._rows_z3[i_row]].as_long()
+            # Calculate integer value from the previous solution's row
+            row_list = [self._previous_solution[i_row][j] for j in range(self.columns_number)]
+            row_value = 0
+            for j in range(self.columns_number):
+                if row_list[j] == 1:
+                    row_value |= (1 << (self.columns_number - 1 - j))
+
             constraints.append(self._rows_z3[i_row] != row_value)
         self._solver.add(Or(constraints))
 
         if self._solver.check() != sat:
             return Grid.empty()
 
-        return self._compute_solution()
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
 
     def _compute_solution(self):
         model = self._solver.model()

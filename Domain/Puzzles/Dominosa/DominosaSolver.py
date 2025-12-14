@@ -31,6 +31,7 @@ class DominosaSolver(GameSolver):
             for value1 in range(self.min_number_on_domino, value0 + 1)
         }
         self._possibles_neighbors: dict[tuple[int, int], set[tuple[int, int]]] = {}
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
         self._add_constraints()
@@ -47,29 +48,40 @@ class DominosaSolver(GameSolver):
             solution_grid[positions[0]] = positions[0].direction_to(positions[1])
             solution_grid[positions[1]] = positions[1].direction_to(positions[0])
 
+        self._previous_solution = solution_grid
         return solution_grid
 
     def get_other_solution(self) -> Grid:
+        if self._previous_solution is None:
+             return self.get_solution()
+
+        constraints = []
+        for (value0, value1), (pos0_vars, pos1_vars) in self._dominoes_positions.items():
+            r0_var, c0_var = pos0_vars
+            r1_var, c1_var = pos1_vars
+            current_r0 = self._solver.Value(r0_var)
+            current_c0 = self._solver.Value(c0_var)
+            current_r1 = self._solver.Value(r1_var)
+            current_c1 = self._solver.Value(c1_var)
+            constraints.append(r0_var != current_r0)
+            constraints.append(c0_var != current_c0)
+            constraints.append(r1_var != current_r1)
+            constraints.append(c1_var != current_c1)
+
+        self._model.Add(sum(constraints) > 0)
+
         status = self._solver.Solve(self._model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            constraints = []
-            for (value0, value1), (pos0_vars, pos1_vars) in self._dominoes_positions.items():
-                r0_var, c0_var = pos0_vars
-                r1_var, c1_var = pos1_vars
-                current_r0 = self._solver.Value(r0_var)
-                current_c0 = self._solver.Value(c0_var)
-                current_r1 = self._solver.Value(r1_var)
-                current_c1 = self._solver.Value(c1_var)
-                constraints.append(r0_var != current_r0)
-                constraints.append(c0_var != current_c0)
-                constraints.append(r1_var != current_r1)
-                constraints.append(c1_var != current_c1)
-
-            self._model.Add(sum(constraints) > 0)
-
-            status = self._solver.Solve(self._model)
-            if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-                 return self.get_solution()
+             dominoes_positions = {
+                (value0, value1): [Position(self._solver.Value(r), self._solver.Value(c)) for r, c in positions]
+                for (value0, value1), positions in self._dominoes_positions.items()
+            }
+             solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
+             for _, positions in dominoes_positions.items():
+                solution_grid[positions[0]] = positions[0].direction_to(positions[1])
+                solution_grid[positions[1]] = positions[1].direction_to(positions[0])
+             self._previous_solution = solution_grid
+             return solution_grid
 
         return Grid.empty()
 
