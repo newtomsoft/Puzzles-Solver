@@ -1,4 +1,4 @@
-from ortools.sat.python import cp_model
+﻿from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
