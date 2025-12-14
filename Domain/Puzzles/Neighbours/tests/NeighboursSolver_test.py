@@ -43,12 +43,12 @@ class NeighboursSolverTests(TestCase):
         game_solver = NeighboursSolver(grid)
         solution = game_solver.get_solution()
         expected_string = (
-            '┌───┬─┬─┬─┐\b'
-            '├─┐ │ │ │ │\b'
-            '│ │ │ │ │ │\b'
-            '│ │ │ │ │ │\b'
-            '│ └─┤ │ │ │\b'
-            '└───┴─┴─┴─┘\b'
+            '┌───┬─┬─┬─┐\n'
+            '├─┐ │ │ │ │\n'
+            '│ │ │ │ │ │\n'
+            '│ │ │ │ │ │\n'
+            '│ └─┤ │ │ │\n'
+            '└───┴─┴─┴─┘\n'
         )
         self.assertEqual(expected_string, self.grid_to_string(solution))
         other_solution = game_solver.get_other_solution()
@@ -68,13 +68,13 @@ class NeighboursSolverTests(TestCase):
         game_solver = NeighboursSolver(grid)
         solution = game_solver.get_solution()
         expected_string = (
-            '┌─────┬─┬───┐\b'
-            '├─┬─┐ │ │   │\b'
-            '│ │ ├─┘ ├───┤\b'
-            '│ │ └─┬─┘ ┌─┤\b'
-            '│ ├───┼───┤ │\b'
-            '├─┘ ┌─┘ ┌─┘ │\b'
-            '└───┴───┴───┘\b'
+            '┌─────┬─┬───┐\n'
+            '├─┬─┐ │ │   │\n'
+            '│ │ ├─┘ ├───┤\n'
+            '│ │ └─┬─┘ ┌─┤\n'
+            '│ ├───┼───┤ │\n'
+            '├─┘ ┌─┘ ┌─┘ │\n'
+            '└───┴───┴───┘\n'
         )
         self.assertEqual(expected_string, self.grid_to_string(solution))
         other_solution = game_solver.get_other_solution()
@@ -96,15 +96,15 @@ class NeighboursSolverTests(TestCase):
         game_solver = NeighboursSolver(grid)
         solution = game_solver.get_solution()
         expected_string = (
-            '┌─┬───────┬───┬─┐\b'
-            '│ └───┬───┤   │ │\b'
-            '├───┬─┴─┐ └─┬─┘ │\b'
-            '├─┐ │   ├───┴─┬─┤\b'
-            '│ │ ├─┬─┴───┐ │ │\b'
-            '│ └─┤ └───┐ ├─┤ │\b'
-            '├───┴───┬─┴─┘ │ │\b'
-            '├───────┼─────┴─┤\b'
-            '└───────┴───────┘\b'
+            '┌─┬───────┬───┬─┐\n'
+            '│ └───┬───┤   │ │\n'
+            '├───┬─┴─┐ └─┬─┘ │\n'
+            '├─┐ │   ├───┴─┬─┤\n'
+            '│ │ ├─┬─┴───┐ │ │\n'
+            '│ └─┤ └───┐ ├─┤ │\n'
+            '├───┴───┬─┴─┘ │ │\n'
+            '├───────┼─────┴─┤\n'
+            '└───────┴───────┘\n'
         )
         self.assertEqual(expected_string, self.grid_to_string(solution))
         other_solution = game_solver.get_other_solution()
@@ -127,16 +127,16 @@ class NeighboursSolverTests(TestCase):
         game_solver = NeighboursSolver(grid)
         solution = game_solver.get_solution()
         expected_string = (
-            '┌─┬─────┬───┬─┬───┐\b'
-            '│ └─┬───┴─┐ │ └─┐ │\b'
-            '├─┬─┴───┬─┴─┼───┼─┤\b'
-            '│ └─┬───┼─┐ ├─┐ │ │\b'
-            '├─┬─┴─┐ │ └─┤ └─┤ │\b'
-            '│ └─┐ ├─┴───┼───┴─┤\b'
-            '├───┼─┴─┬─┬─┴───┬─┤\b'
-            '├─┐ ├─┐ │ └─┬───┤ │\b'
-            '│ └─┤ └─┼───┴─┐ │ │\b'
-            '└───┴───┴─────┴─┴─┘\b'
+            '┌─┬─────┬───┬─┬───┐\n'
+            '│ └─┬───┴─┐ │ └─┐ │\n'
+            '├─┬─┴───┬─┴─┼───┼─┤\n'
+            '│ └─┬───┼─┐ ├─┐ │ │\n'
+            '├─┬─┴─┐ │ └─┤ └─┤ │\n'
+            '│ └─┐ ├─┴───┼───┴─┤\n'
+            '├───┼─┴─┬─┬─┴───┬─┤\n'
+            '├─┐ ├─┐ │ └─┬───┤ │\n'
+            '│ └─┤ └─┼───┴─┐ │ │\n'
+            '└───┴───┴─────┴─┴─┘\n'
         )
         self.assertEqual(expected_string, self.grid_to_string(solution))
         other_solution = game_solver.get_other_solution()
@@ -161,17 +161,17 @@ class NeighboursSolverTests(TestCase):
         game_solver = NeighboursSolver(grid)
         solution = game_solver.get_solution()
         expected_string = (
-            '┌───┬───────┬───────┐\b'
-            '│   ├─┬─────┼───┬───┤\b'
-            '├───┤ └─┐ ┌─┤   │   │\b'
-            '│   ├─┐ ├─┘ └─┬─┼───┤\b'
-            '├───┤ ├─┴─────┤ └─┐ │\b'
-            '│   │ └─┬───┬─┼─┐ │ │\b'
-            '├───┴─┬─┴─┐ │ │ └─┴─┤\b'
-            '├───┐ │   │ │ ├─────┤\b'
-            '├─┐ └─┼───┼─┤ │ ┌───┤\b'
-            '│ └───┤   │ └─┴─┤   │\b'
-            '└─────┴───┴─────┴───┘\b'
+            '┌───┬───────┬───────┐\n'
+            '│   ├─┬─────┼───┬───┤\n'
+            '├───┤ └─┐ ┌─┤   │   │\n'
+            '│   ├─┐ ├─┘ └─┬─┼───┤\n'
+            '├───┤ ├─┴─────┤ └─┐ │\n'
+            '│   │ └─┬───┬─┼─┐ │ │\n'
+            '├───┴─┬─┴─┐ │ │ └─┴─┤\n'
+            '├───┐ │   │ │ ├─────┤\n'
+            '├─┐ └─┼───┼─┤ │ ┌───┤\n'
+            '│ └───┤   │ └─┴─┤   │\n'
+            '└─────┴───┴─────┴───┘\n'
         )
         self.assertEqual(expected_string, self.grid_to_string(solution))
         other_solution = game_solver.get_other_solution()
