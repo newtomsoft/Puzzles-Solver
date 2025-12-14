@@ -34,7 +34,22 @@ class FillominoSolver(GameSolver):
         return Grid.empty()
 
     def get_other_solution(self) -> Grid:
-        pass
+        if self._previous_solution.is_empty():
+            return Grid.empty()
+
+        literals = []
+        for r in range(self.rows):
+            for c in range(self.cols):
+                val = self._previous_solution[r][c]
+                # Create a boolean variable that is true if the cell is different from previous value
+                is_diff = self.model.NewBoolVar(f'diff_{r}_{c}_sol')
+                self.model.Add(self.cell_vars[(r, c)] != val).OnlyEnforceIf(is_diff)
+                self.model.Add(self.cell_vars[(r, c)] == val).OnlyEnforceIf(is_diff.Not())
+                literals.append(is_diff)
+
+        self.model.AddBoolOr(literals)
+
+        return self.get_solution()
 
     def _validate_and_add_constraints(self, current_solution: Grid, iteration: int):
         visited = set()
