@@ -48,7 +48,7 @@ class KakuroSolver(GameSolver):
             sums = [self._grid[r][c][1] if self._grid[r][c] != 0 and self._grid[r][c][1] != 0 else None for r in range(self.rows_number)]
             self._add_segment_constraints_to_model(sums, self.rows_number, get_cell=lambda idx: self._grid_vars[idx][c])
 
-    def _add_segment_constraints_to_model(self, sums: list[int], dimension_size: int, get_cell: 'callable'):
+    def _add_segment_constraints_to_model(self, sums: list[int], dimension_size: int, get_cell: callable):
         if all(current_sum is None for current_sum in sums):
             return
 
@@ -73,7 +73,7 @@ class KakuroSolver(GameSolver):
             if idx == dimension_size - 1:
                 self._add_segment_constraint(segment_start_idx, idx + 1, current_sum, get_cell)
 
-    def _add_segment_constraint(self, start_idx: int, end_idx: int, target_sum: int, get_cell: 'callable'):
+    def _add_segment_constraint(self, start_idx: int, end_idx: int, target_sum: int, get_cell: callable):
         segment_cells = [cell for i in range(start_idx, end_idx) if (cell := get_cell(i)) is not None]
 
         if not segment_cells:
