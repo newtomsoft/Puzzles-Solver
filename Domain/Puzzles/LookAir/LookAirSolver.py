@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -49,7 +49,20 @@ class LookAirSolver(GameSolver):
         return Grid.empty(), proposition_count
 
     def get_other_solution(self) -> Grid:
-        pass
+        if self._previous_solution is None or self._previous_solution.is_empty():
+            return Grid.empty()
+
+        literals = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                if self._previous_solution[r][c] == 1:
+                    literals.append(self._grid_vars[Position(r, c)].Not())
+                else:
+                    literals.append(self._grid_vars[Position(r, c)])
+        self._model.AddBoolOr(literals)
+
+        solution, _ = self._ensure_squares_visibility()
+        return solution
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
