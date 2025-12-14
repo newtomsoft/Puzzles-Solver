@@ -6,7 +6,7 @@ from playwright.sync_api import BrowserContext
 from Domain.Board.Grid import Grid
 from Domain.Board.Pipe import Pipe
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzlePipesGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

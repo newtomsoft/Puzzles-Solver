@@ -1,12 +1,12 @@
-from typing import Any
 import math
+from typing import Any
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Domain.Board.Grid import Grid
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleThermometersGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
