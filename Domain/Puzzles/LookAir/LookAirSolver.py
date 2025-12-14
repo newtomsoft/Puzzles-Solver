@@ -49,7 +49,20 @@ class LookAirSolver(GameSolver):
         return Grid.empty(), proposition_count
 
     def get_other_solution(self) -> Grid:
-        pass
+        if self._previous_solution is None or self._previous_solution.is_empty():
+            return Grid.empty()
+
+        literals = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                if self._previous_solution[r][c] == 1:
+                    literals.append(self._grid_vars[Position(r, c)].Not())
+                else:
+                    literals.append(self._grid_vars[Position(r, c)])
+        self._model.AddBoolOr(literals)
+
+        solution, _ = self._ensure_squares_visibility()
+        return solution
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
@@ -208,3 +221,13 @@ class LookAirSolver(GameSolver):
             return positions[end_index + 1] if end_index < len(positions) - 1 else positions[end_index]
 
         return None
+
+    @staticmethod
+    def are_adjacent(rect1: tuple[int, int, int, int], rect2: tuple[int, int, int, int]) -> bool:
+        r1_min, c1_min, r1_max, c1_max = rect1
+        r2_min, c2_min, r2_max, c2_max = rect2
+        return (
+                (r1_min <= r2_max and r2_min <= r1_max and (c1_max + 1 == c2_min or c2_max + 1 == c1_min))
+                or
+                (c1_min <= c2_max and c2_min <= c1_max and (r1_max + 1 == r2_min or r2_max + 1 == r1_min))
+        )

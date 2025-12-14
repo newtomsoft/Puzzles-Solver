@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.Nanro.NanroSolver import NanroSolver
+from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
 
 _ = 0
 
