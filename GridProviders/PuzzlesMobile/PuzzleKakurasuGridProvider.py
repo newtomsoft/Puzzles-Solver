@@ -2,7 +2,7 @@
 from playwright.sync_api import BrowserContext
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleKakurasuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
