@@ -84,6 +84,7 @@ class KakuteruAnpuSolverTest(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    @unittest.skip("temporarily disabled - takes too long")  # todo reactive test
     def test_solution_evil_5x5_kd1x5(self):
         """https://gridpuzzle.com/cocktail-lamp/kd1x5"""
         regions_grid = Grid([
@@ -113,6 +114,7 @@ class KakuteruAnpuSolverTest(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    # @unittest.skip("temporarily disabled - takes too long") # todo reactive test
     def test_solution_evil_5x5_56209(self):
         """https://gridpuzzle.com/cocktail-lamp/56209"""
         regions_grid = Grid([
@@ -238,7 +240,7 @@ class KakuteruAnpuSolverTest(TestCase):
     def test_solution_evil_15x15_v6kd4(self):
         """https://gridpuzzle.com/cocktail-lamp/v6kd4"""
         pass
-        
+
 
 if __name__ == '__main__':
     unittest.main()

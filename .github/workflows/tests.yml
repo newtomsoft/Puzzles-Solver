@@ -47,6 +47,6 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
-          python -m pytest -q --testmon
+          python -m pytest -v --testmon
 
     # Si des tests échouent, le job échoue et bloquera la PR (avec protection de branche)
