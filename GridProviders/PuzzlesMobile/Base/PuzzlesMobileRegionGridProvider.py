@@ -1,23 +1,15 @@
 ﻿import math
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from bs4.element import AttributeValueList
 
 from Domain.Board.RegionsGrid import RegionsGrid
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
-
-    def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.pages[0]
-        page.goto(url)
-        page.wait_for_selector('div.cell')
-        PuzzlesMobileGridProvider.new_game(page)
-        html_page = page.content()
+class PuzzlesMobileRegionGridProvider(PuzzlesMobileGridProvider):
+    @staticmethod
+    def _scrap_region_grid(html_page: str):
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
         matrix_cells = [cell_div for cell_div in cell_divs if 'selectable' in cell_div.get('class', [])]
@@ -30,7 +22,7 @@ class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProv
         for i, cell in enumerate(matrix_cells):
             row = i // column_count
             col = i % column_count
-            cell_classes = cell.get('class', [])
+            cell_classes = cell.get('class', AttributeValueList([]))
             if row == 0:
                 cell_classes.append('bt')
             if row == row_count - 1:
@@ -44,13 +36,4 @@ class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProv
 
         regions_grid = RegionsGrid(open_matrix)
 
-        puzzle_info_text = self.get_puzzle_info_text(soup)
-        puzzle_info_text_left = puzzle_info_text.split('★')[0]
-        if puzzle_info_text_left.isdigit():
-            stars_count_by_region_column_row = int(puzzle_info_text_left)
-        elif '/' in puzzle_info_text_left:
-            stars_count_by_region_column_row = int(puzzle_info_text_left.split('/')[1])
-        else:
-            Warning(f"Can't parse regions connections from {puzzle_info_text_left} force to 1")
-            stars_count_by_region_column_row = 1
-        return regions_grid, stars_count_by_region_column_row
+        return regions_grid
