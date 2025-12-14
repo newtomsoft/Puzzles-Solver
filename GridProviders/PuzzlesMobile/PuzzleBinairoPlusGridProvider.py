@@ -13,7 +13,7 @@ class PuzzleBinairoPlusGridProvider(PlaywrightGridProvider, PuzzlesMobileGridPro
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url) -> (Grid, dict[str, list[Tuple[Position, Position]]]):
+    def scrap_grid(self, browser: BrowserContext, url) -> tuple[Grid, dict[str, list[Tuple[Position, Position]]]]:
         page = browser.pages[0]
         page.goto(url)
         self.new_game(page, 'div.cell')

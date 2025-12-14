@@ -45,13 +45,13 @@ class NumberChainGenerator:
         raise Exception(f"Impossible de générer une grille avec les contraintes données. Dernière erreur: {str(last_exception)}")
 
     def _try_generate_path(self):
-        grid = [[0 for _ in range(self.row_number)] for _ in range(self.row_number)]
+        matrix = [[0 for _ in range(self.row_number)] for _ in range(self.row_number)]
 
         current_pos = Position(0, 0)
         target_pos = Position(self.row_number - 1, self.row_number - 1)
 
         path = [current_pos]
-        grid[current_pos.r][current_pos.c] = 1
+        matrix[current_pos.r][current_pos.c] = 1
 
         preferred_directions = [2, 3]
 
@@ -77,7 +77,7 @@ class NumberChainGenerator:
                 direction = self.directions[dir_idx]
                 new_pos = current_pos.after(direction)
 
-                if self.row_number > new_pos.r >= 0 == grid[new_pos.r][new_pos.c] and 0 <= new_pos.c < self.row_number:
+                if self.row_number > new_pos.r >= 0 == matrix[new_pos.r][new_pos.c] and 0 <= new_pos.c < self.row_number:
                     if must_go_toward_target:
                         new_dist = abs(new_pos.r - target_pos.r) + abs(new_pos.c - target_pos.c)
                         if new_dist >= manhattan_dist:
@@ -91,7 +91,7 @@ class NumberChainGenerator:
             chosen_direction = random.choice(valid_directions)
             current_pos = current_pos.after(chosen_direction)
             path.append(current_pos)
-            grid[current_pos.r][current_pos.c] = 1
+            matrix[current_pos.r][current_pos.c] = 1
 
         if current_pos != target_pos:
             while current_pos != target_pos:
@@ -112,12 +112,12 @@ class NumberChainGenerator:
 
                 current_pos = current_pos.add(best_direction)
                 path.append(current_pos)
-                grid[current_pos.row][current_pos.col] = 1
+                matrix[current_pos.row][current_pos.col] = 1
 
         if len(path) != self.path_length:
             raise Exception(f"Chemin généré de longueur {len(path)}, mais {self.path_length} demandé")
 
-        return grid
+        return matrix
 
     def _generate_as_grid(self):
         grid_data = self._generate_path()
@@ -149,8 +149,8 @@ class NumberChainGenerator:
         self.grid.set_value(Position(0, 0), 1)
         self.grid.set_value(Position(self.row_number - 1, self.column_number - 1), self.path_length)
         random.shuffle(self.values_to_fill)
-        for i, candidate_to_fill in enumerate(self.values_to_fill):
-            position = self.grid_path.path[i + 1]
+        for idx, candidate_to_fill in enumerate(self.values_to_fill):
+            position = self.grid_path.path[idx + 1]
             self.grid.set_value(position, candidate_to_fill)
 
     def _fill_grid_except_path(self):
