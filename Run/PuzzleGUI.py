@@ -3,9 +3,10 @@ import sys
 import threading
 import time
 import tkinter as tk
-from tkinter import scrolledtext, messagebox
+from tkinter import messagebox, scrolledtext
 
-# Ensure project root and Run directory are in path
+from Domain.Board.Grid import Grid
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 
@@ -14,11 +15,12 @@ if parent_dir not in sys.path:
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from Domain.Board.Grid import Grid
+
 try:
     from Run.GameComponentFactory import GameComponentFactory
 except ImportError:
     from GameComponentFactory import GameComponentFactory
+
 
 class TextRedirector(object):
     def __init__(self, widget, tag="stdout"):
@@ -26,12 +28,6 @@ class TextRedirector(object):
         self.tag = tag
 
     def write(self, text):
-        # Update GUI in a thread-safe way?
-        # Strictly speaking, Tkinter widgets should be updated from the main thread.
-        # However, .insert often works from threads in simple cases,
-        # but the correct way is root.after or event generation.
-        # We will use a simple check or try to schedule it.
-        # For this implementation, we'll try direct access, if it fails we'll need a queue.
         try:
             self.widget.configure(state="normal")
             self.widget.insert("end", text, (self.tag,))
@@ -43,6 +39,7 @@ class TextRedirector(object):
 
     def flush(self):
         pass
+
 
 class PuzzleGUI:
     def __init__(self, root_window):
@@ -74,20 +71,29 @@ class PuzzleGUI:
         options_frame.pack(pady=5)
 
         self.record_video_var = tk.BooleanVar(value=False)
-        tk.Checkbutton(options_frame, text="Enregistrer vidéo", variable=self.record_video_var).pack(side="left", padx=10)
+        tk.Checkbutton(options_frame, text="Enregistrer vidéo", variable=self.record_video_var).pack(
+            side="left", padx=10
+        )
 
         # Action Buttons
         action_frame = tk.Frame(root)
         action_frame.pack(pady=10)
 
-        self.run_btn = tk.Button(action_frame, text="Start Solver", command=self.start_solver, bg="green", fg="white", font=("Arial", 12, "bold"))
+        self.run_btn = tk.Button(
+            action_frame,
+            text="Start Solver",
+            command=self.start_solver,
+            bg="green",
+            fg="white",
+            font=("Arial", 12, "bold"),
+        )
         self.run_btn.pack(side="left", padx=10)
 
         tk.Button(action_frame, text="Clear Log", command=self.clear_log).pack(side="left", padx=10)
 
         # Log Area
-        self.log_area = scrolledtext.ScrolledText(root, state='disabled', font=("Consolas", 10))
-        self.log_area.pack(expand=True, fill='both', padx=10, pady=10)
+        self.log_area = scrolledtext.ScrolledText(root, state="disabled", font=("Consolas", 10))
+        self.log_area.pack(expand=True, fill="both", padx=10, pady=10)
 
         # Redirect stdout/stderr
         self.original_stdout = sys.stdout
@@ -119,7 +125,7 @@ class PuzzleGUI:
         try:
             # Set video recording preference via environment variable
             os.environ["PLAYWRIGHT_RECORD_VIDEO"] = "True" if self.record_video_var.get() else "False"
-            
+
             print(f"Starting solver for: {url}")
 
             # Map short names to full URLs
@@ -153,29 +159,31 @@ class PuzzleGUI:
         except Exception as e:
             print(f"Error: {e}")
             import traceback
+
             traceback.print_exc()
         finally:
             # Schedule button reset on main thread
             self.root.after(0, lambda: self.run_btn.config(state="normal", text="Start Solver"))
 
+
 if __name__ == "__main__":
     # Fix for frozen executable looking for browsers in internal dir
-    if getattr(sys, 'frozen', False):
-        local_app_data = os.environ.get('LOCALAPPDATA')
+    if getattr(sys, "frozen", False):
+        local_app_data = os.environ.get("LOCALAPPDATA")
         if local_app_data:
-            playwright_path = os.path.join(local_app_data, 'ms-playwright')
+            playwright_path = os.path.join(local_app_data, "ms-playwright")
             if os.path.exists(playwright_path):
-                os.environ['PLAYWRIGHT_BROWSERS_PATH'] = playwright_path
+                os.environ["PLAYWRIGHT_BROWSERS_PATH"] = playwright_path
                 print(f"Playwright browsers path forced to: {playwright_path}")
 
     root = tk.Tk()
     app = PuzzleGUI(root)
-    
-    # Close splash screen if bundled
+
     try:
         import pyi_splash
+
         pyi_splash.close()
     except ImportError:
         pass
-        
+
     root.mainloop()
