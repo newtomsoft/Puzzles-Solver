@@ -47,7 +47,7 @@ class KenKenSolver(GameSolver):
                  raise ValueError(f"No operation defined for region at {top_left}")
 
             # Match number then optional operator
-            match = re.match(r"^(\d+)([\+\-x÷]?)$", s_val)
+            match = re.match(r"^(\d+)([+\-x÷]?)$", s_val)
             if not match:
                 raise ValueError(f"Invalid operation format '{s_val}' at {top_left}")
 
