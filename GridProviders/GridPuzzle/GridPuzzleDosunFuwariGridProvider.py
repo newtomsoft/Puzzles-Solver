@@ -13,8 +13,8 @@ class GridPuzzleDosunFuwariGridProvider(PlaywrightGridProvider, GridPuzzleTagPro
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url, '.col-lg-12.col-md-12.col-12')
         soup, row_count, column_count, _, matrix_cells = self._get_grid_data(html_page)
-        bounded_matrix = self.make_bounded_matrix(row_count, column_count, matrix_cells)
-        region_grid = RegionsGrid(bounded_matrix)
+        opened_grid = self.make_opened_grid(row_count, column_count, matrix_cells)
+        region_grid = RegionsGrid.from_opened_grid(opened_grid)
         for i, cell in enumerate(matrix_cells):
             classes = cell.get('class')
             if not 'black-bg' in classes:

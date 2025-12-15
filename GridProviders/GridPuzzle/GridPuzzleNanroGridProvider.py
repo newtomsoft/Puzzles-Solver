@@ -20,8 +20,6 @@ class GridPuzzleNanroGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider)
             if text:
                 matrix[row][col] = int(text)
 
-        bounded_matrix = self.make_bounded_matrix(row_count, column_count, matrix_cells)
+        opened_grid = self.make_opened_grid(row_count, column_count, matrix_cells)
 
-        return Grid(matrix), RegionsGrid(bounded_matrix)
-
-
+        return Grid(matrix), RegionsGrid.from_opened_grid(opened_grid)

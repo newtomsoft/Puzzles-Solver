@@ -14,4 +14,4 @@ class PuzzleHeyawakePlayer(PuzzlesMobilePlayer):
 
         sleep(2)
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

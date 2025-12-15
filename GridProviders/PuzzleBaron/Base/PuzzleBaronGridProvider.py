@@ -10,3 +10,4 @@ class PuzzleBaronGridProvider:
             page.wait_for_selector(selector_to_wait)
         div_to_view = page.query_selector('#container')
         div_to_view.scroll_into_view_if_needed()
+

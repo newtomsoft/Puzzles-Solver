@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
+from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 
 
 class PuzzleBaronNumberLinksGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):

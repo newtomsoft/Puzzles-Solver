@@ -12,7 +12,7 @@ class RegionsGridTests(unittest.TestCase):
             [set(), set()],
         ])
 
-        regions = RegionsGrid.from_grid(openings_grid)
+        regions = RegionsGrid.from_opened_grid(openings_grid)
 
         expected = Grid([
             [1, 2],
@@ -25,7 +25,7 @@ class RegionsGridTests(unittest.TestCase):
             [{Direction.right()}, {Direction.left()}, set()],
         ])
 
-        regions = RegionsGrid.from_grid(openings_grid)
+        regions = RegionsGrid.from_opened_grid(openings_grid)
 
         expected = Grid([
             [1, 1, 2],
@@ -39,7 +39,7 @@ class RegionsGridTests(unittest.TestCase):
             [{Direction.right()}, {Direction.left(), Direction.right()}, {Direction.left(), Direction.up()}],
         ])
 
-        regions = RegionsGrid.from_grid(openings_grid)
+        regions = RegionsGrid.from_opened_grid(openings_grid)
 
         expected = Grid([
             [1, 1, 2],
@@ -54,7 +54,7 @@ class RegionsGridTests(unittest.TestCase):
             [{Direction.up(), Direction.down()}, {Direction.right(), Direction.up()}, {Direction.up(), Direction.left()}],
             [{Direction.right(), Direction.up()}, {Direction.left(), Direction.right()}, {Direction.left()}],
         ])
-        regions = RegionsGrid.from_grid(openings_grid)
+        regions = RegionsGrid.from_opened_grid(openings_grid)
 
         expected = Grid([
             [1, 2, 2],
@@ -69,7 +69,7 @@ class RegionsGridTests(unittest.TestCase):
             [{Direction.up(), Direction.down()}, {Direction.right(), Direction.down()}, {Direction.left(), Direction.down()}],
             [{Direction.up()}, {Direction.up(), Direction.right()}, {Direction.left(), Direction.up()}],
         ])
-        regions = RegionsGrid.from_grid(openings_grid)
+        regions = RegionsGrid.from_opened_grid(openings_grid)
 
         expected = Grid([
             [1, 1, 1],

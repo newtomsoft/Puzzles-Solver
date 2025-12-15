@@ -14,4 +14,4 @@ class PuzzleSudokuPlayer(PuzzlesMobilePlayer):
                 page.keyboard.press(str(value))
         sleep(2)
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

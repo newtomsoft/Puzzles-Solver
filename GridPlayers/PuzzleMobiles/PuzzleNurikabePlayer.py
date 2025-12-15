@@ -18,4 +18,4 @@ class PuzzleNurikabePlayer(PuzzlesMobilePlayer):
 
         sleep(1)
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

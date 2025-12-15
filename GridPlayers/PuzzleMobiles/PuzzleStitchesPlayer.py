@@ -20,4 +20,4 @@ class PuzzleStitchesPlayer(PuzzlesMobilePlayer):
                 page.mouse.down()
                 page.mouse.up()
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

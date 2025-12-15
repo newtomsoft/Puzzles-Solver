@@ -7,9 +7,9 @@ from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 
 
 class JigsawSudokuSolver(SudokuBaseSolver, GameSolver):
-    def __init__(self, grid: Grid, regions: List[List[Position]]):
+    def __init__(self, grid: Grid, regions_grid: Grid):
         super().__init__(grid)
-        self._regions = regions
+        self._regions = regions_grid.get_regions().values()
         if len(self._regions) != self.rows_number:
             raise ValueError("The grid must have the same number of regions as rows/column")
         if not self._are_regions_cells_count_compliant():

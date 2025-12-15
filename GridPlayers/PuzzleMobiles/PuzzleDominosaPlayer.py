@@ -22,4 +22,4 @@ class PuzzleDominosaPlayer(PuzzlesMobilePlayer):
                 page.mouse.up()
         sleep(2)
         self.submit_score(page)
-        sleep(60)
+        sleep(3)
