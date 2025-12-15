@@ -3,6 +3,8 @@
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
@@ -26,7 +28,7 @@ class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProv
         column_count = row_count
         borders_dict = {'br': 'right', 'bl': 'left', 'bt': 'top', 'bb': 'bottom'}
         opens = {'right', 'left', 'top', 'bottom'}
-        open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
+        open_grid = Grid([[set() for _ in range(column_count)] for _ in range(row_count)])
         for i, cell in enumerate(matrix_cells):
             row = i // column_count
             col = i % column_count
@@ -40,9 +42,9 @@ class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProv
             if col == column_count - 1:
                 cell_classes.append('br')
             cell_borders = {borders_dict[cls] for cls in cell_classes if cls in borders_dict.keys()}
-            open_matrix[row][col] = opens - cell_borders
+            open_grid[Position(row, col)] = opens - cell_borders
 
-        regions_grid = RegionsGrid(open_matrix)
+        regions_grid = RegionsGrid.from_grid(open_grid)
 
         puzzle_info_text = self.get_puzzle_info_text(soup)
         puzzle_info_text_left = puzzle_info_text.split('★')[0]
