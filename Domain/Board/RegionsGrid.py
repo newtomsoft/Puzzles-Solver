@@ -1,27 +1,33 @@
+from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 
 
 class RegionsGrid(Grid):
-    def __init__(self, matrix: list[list[set]]):
-        super().__init__(matrix)
-        self._matrix = self._compute_regions_grid().matrix
+    directions_map = {
+        'right': Direction.right(),
+        'left': Direction.left(),
+        'bottom': Direction.down(),
+        'top': Direction.up()
+    }
 
     @classmethod
     def from_grid(cls, grid: Grid):
+        grid = cls._compute_regions_grid(grid)
         return cls(grid.matrix)
 
-    def _compute_regions_grid(self) -> Grid:
-        cells_number = self.rows_number * self.columns_number
+    @classmethod
+    def _compute_regions_grid(cls, input_grid: Grid) -> Grid:
+        cells_number = input_grid.rows_number * input_grid.columns_number
         while True:
             visited_regions = set()
             regions_count = 0
-            grid = Grid([[None for _ in range(self.columns_number)] for _ in range(self.rows_number)])
-            for position, _ in self:
+            grid = Grid([[None for _ in range(input_grid.columns_number)] for _ in range(input_grid.rows_number)])
+            for position, _ in input_grid:
                 if position in visited_regions:
                     continue
                 regions_count += 1
-                region = self._depth_first_search_regions(position)
+                region = cls._depth_first_search_regions(input_grid, position)
                 for current_position in region:
                     grid[current_position] = regions_count
                 visited_regions.update(region)
@@ -29,22 +35,16 @@ class RegionsGrid(Grid):
                 break
         return grid
 
-    def _depth_first_search_regions(self, current_position: Position, visited=None) -> set[Position]:
-        if visited is None:
-            visited = set()
-        if current_position in visited:
-            return visited
-        visited.add(current_position)
+    @classmethod
+    def _depth_first_search_regions(cls, grid: Grid, position: Position, visited=None) -> set[Position]:
+        if visited is None: visited = set()
+        if position in visited: return visited
 
-        positions = {
-            'right': Position(0, 1),
-            'left': Position(0, -1),
-            'bottom': Position(1, 0),
-            'top': Position(-1, 0)
-        }
-        opened_on = self[current_position]
-        for new_position in [current_position + positions[position] for position in positions if position in opened_on and current_position + positions[position] in self]:
-            new_visited = self._depth_first_search_regions(new_position, visited)
+        visited.add(position)
+        opened_on = grid[position]
+        for new_position in [position.after(cls.directions_map[dirct]) for dirct in cls.directions_map if dirct in opened_on and position.after(cls.directions_map[dirct]) in grid]:
+            new_visited = cls._depth_first_search_regions(grid, new_position, visited)
             if new_visited != visited:
                 return new_visited
+
         return visited
