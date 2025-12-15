@@ -1,4 +1,6 @@
-﻿import math
+import math
+import re
+from collections import defaultdict
 
 from z3 import Solver, Not, And, unsat, Or, Int, Distinct, Abs
 
@@ -8,14 +10,56 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KenKenSolver(GameSolver):
-    def __init__(self, regions_operators_results: list[tuple[list[Position], str, int]]):
-        self._regions_operators_results = regions_operators_results
-        self.rows_number, self.columns_number = self._get_rows_columns_number()
+    def __init__(self, regions_grid: Grid, operations_grid: Grid):
+        self.rows_number = regions_grid.rows_number
+        self.columns_number = regions_grid.columns_number
         if self.rows_number != self.columns_number:
             raise ValueError("KenKen grid must be square")
+        if operations_grid.rows_number != self.rows_number or operations_grid.columns_number != self.columns_number:
+            raise ValueError("Regions grid and operations grid must have the same dimensions")
+
+        self._regions_operators_results = self._parse_grids(regions_grid, operations_grid)
         self._grid_z3 = None
         self._solver = Solver()
         self._previous_solution: Grid | None = None
+
+    def _parse_grids(self, regions_grid: Grid, operations_grid: Grid) -> list[tuple[list[Position], str, int]]:
+        regions_map = defaultdict(list)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                region_id = regions_grid[r][c]
+                regions_map[region_id].append(Position(r, c))
+
+        results = []
+        for positions in regions_map.values():
+            top_left = sorted(positions, key=lambda p: (p.r, p.c))[0]
+            op_value = operations_grid[top_left]
+
+            if op_value is None:
+                # If no operation is present at the top-left, we assume it's just a number
+                # which implies a sum constraint (or equality for single cell)
+                # However, usually we expect a value. If it's completely missing, that's an issue.
+                # But let's look at the regex handling.
+                pass
+
+            s_val = str(op_value).strip()
+            if not s_val:
+                 raise ValueError(f"No operation defined for region at {top_left}")
+
+            # Match number then optional operator
+            match = re.match(r"^(\d+)([\+\-x÷]?)$", s_val)
+            if not match:
+                raise ValueError(f"Invalid operation format '{s_val}' at {top_left}")
+
+            result_num = int(match.group(1))
+            operator = match.group(2)
+
+            if not operator:
+                operator = '+'
+
+            results.append((positions, operator, result_num))
+
+        return results
 
     def get_solution(self) -> Grid:
         self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
@@ -81,11 +125,3 @@ class KenKenSolver(GameSolver):
                 raise ValueError("Subtraction can only be applied to two positions")
             constraint = Abs(self._grid_z3[region[0]] - self._grid_z3[region[1]]) == result
             self._solver.add(constraint)
-
-    def _get_rows_columns_number(self) -> tuple[int, int]:
-        all_positions = [pos for sublist, _, _ in self._regions_operators_results for pos in sublist]
-        min_r = min(pos.r for pos in all_positions)
-        max_r = max(pos.r for pos in all_positions)
-        min_c = min(pos.c for pos in all_positions)
-        max_c = max(pos.c for pos in all_positions)
-        return max_r - min_r + 1, max_c - min_c + 1
