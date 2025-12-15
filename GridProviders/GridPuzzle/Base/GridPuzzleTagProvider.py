@@ -1,10 +1,12 @@
 ﻿import math
 
 from bs4 import BeautifulSoup, ResultSet, Tag
-from bs4.element import NavigableString, PageElement
+from bs4.element import AttributeValueList, NavigableString, PageElement
 from playwright.sync_api import BrowserContext
 
+from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 
 
@@ -118,32 +120,3 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 except (ValueError, AttributeError):
                     result.append(None)
         return result
-
-    @staticmethod
-    def make_bounded_matrix(row_count, column_count, matrix_cells):
-        opens = {'right', 'left', 'top', 'bottom'}
-        bounded_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
-        cell_borders = [[set() for _ in range(column_count)] for _ in range(row_count)]
-        for i, cell in enumerate(matrix_cells):
-            row = i // column_count
-            col = i % column_count
-            cell_border_right, cell_border_bottom = [cls for cls in cell.get('class', []) if 'border' in cls][0].split('_')[1:3]
-            if row == 0:
-                cell_borders[row][col].add('top')
-            if row == row_count - 1:
-                cell_borders[row][col].add('bottom')
-            if col == 0:
-                cell_borders[row][col].add('top')
-            if col == column_count - 1:
-                cell_borders[row][col].add('right')
-            if cell_border_right == '1':
-                cell_borders[row][col].add('right')
-                if col != column_count - 1:
-                    cell_borders[row][col + 1].add('left')
-            if cell_border_bottom == '1':
-                cell_borders[row][col].add('bottom')
-                if row != row_count - 1:
-                    cell_borders[row + 1][col].add('top')
-
-            bounded_matrix[row][col] = opens - cell_borders[row][col]
-        return bounded_matrix

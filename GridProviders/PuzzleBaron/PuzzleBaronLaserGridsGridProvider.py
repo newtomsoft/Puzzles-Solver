@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup, Tag
 from playwright.sync_api import BrowserContext
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
+from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 
 
 class PuzzleBaronLaserGridsGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):

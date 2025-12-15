@@ -13,4 +13,4 @@ class PuzzleStarBattlePlayer(PuzzlesMobilePlayer):
                 cells.nth(index).click()
         sleep(2)
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

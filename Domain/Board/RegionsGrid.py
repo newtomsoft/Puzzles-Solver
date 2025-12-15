@@ -5,7 +5,7 @@ from Domain.Board.Position import Position
 
 class RegionsGrid(Grid):
     @classmethod
-    def from_grid(cls, grid: Grid):
+    def from_opened_grid(cls, grid: Grid):
         grid = cls._compute_regions_grid(grid)
         return cls(grid.matrix)
 

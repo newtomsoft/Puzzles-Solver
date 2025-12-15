@@ -13,4 +13,4 @@ class PuzzleNonogramsPlayer(PuzzlesMobilePlayer):
                 cells[index].click()
 
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

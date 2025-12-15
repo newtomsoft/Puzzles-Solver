@@ -17,8 +17,8 @@ class GridPuzzleFrom1ToXGridProvider(PlaywrightGridProvider, GridPuzzleTagProvid
         left = [self.extract_value('vl', row_count, soup) for row_count in range(1, row_count + 1)]
         up = [self.extract_value('ht', column_count, soup) for column_count in range(1, column_count + 1)]
 
-        bounded_matrix = self.make_bounded_matrix(row_count, column_count, matrix_cells)
-        region_grid = RegionsGrid(bounded_matrix)
+        opened_grid = self.make_opened_grid(row_count, column_count, matrix_cells)
+        region_grid = RegionsGrid.from_opened_grid(opened_grid)
 
         for i, cell in enumerate(matrix_cells):
             row = i // column_count

@@ -3,12 +3,11 @@
 from bs4 import BeautifulSoup, Tag
 from playwright.sync_api import BrowserContext
 
-from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzleBaron.PuzzleBaronGridProvider import PuzzleBaronGridProvider
+from GridProviders.PuzzleBaron.Base.PuzzleBaronRegionGridProvider import PuzzleBaronRegionGridProvider
 
 
-class PuzzleBaronStarBattleGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
+class PuzzleBaronStarBattleGridProvider(PlaywrightGridProvider, PuzzleBaronRegionGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
@@ -25,27 +24,10 @@ class PuzzleBaronStarBattleGridProvider(PlaywrightGridProvider, PuzzleBaronGridP
         if rows_count * columns_count != cells_count:
             raise ValueError("The grid must be square")
 
-        regions_grid = self._get_regions_grid(rows_count, grid_box_divs)
+        regions_grid = self._get_regions_grid(rows_count, columns_count, grid_box_divs)
         stars_number = self._get_stars_number(soup)
 
         return regions_grid, stars_number
-
-    @staticmethod
-    def _get_regions_grid(column_count, cells: list[Tag]) -> RegionsGrid:
-        row_count = column_count
-        open_matrix = PuzzleBaronStarBattleGridProvider._build_open_borders_matrix(row_count, column_count, cells)
-        return RegionsGrid(open_matrix)
-
-    @staticmethod
-    def _build_open_borders_matrix(row_count, column_count, cells: list[Tag]) -> list[list[set]]:
-        open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
-        for i, cell in enumerate(cells):
-            row = i // column_count
-            col = i % column_count
-            open_borders = PuzzleBaronStarBattleGridProvider._get_open_borders(cell)
-            open_matrix[row][col] = open_borders
-
-        return open_matrix
 
     @staticmethod
     def _get_open_borders(cell: Tag) -> set[str]:

@@ -17,4 +17,4 @@ class PuzzleKakuroPlayer(PuzzlesMobilePlayer):
                 page.keyboard.press(str(value))
 
         self.submit_score(page)
-        sleep(60)
+        sleep(3)

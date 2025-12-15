@@ -3,6 +3,9 @@
 from bs4 import BeautifulSoup
 from bs4.element import AttributeValueList
 
+from Domain.Board.Direction import Direction
+from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
@@ -16,24 +19,19 @@ class PuzzlesMobileRegionGridProvider(PuzzlesMobileGridProvider):
         cells_count = len(matrix_cells)
         row_count = int(math.sqrt(cells_count))
         column_count = row_count
-        borders_dict = {'br': 'right', 'bl': 'left', 'bt': 'top', 'bb': 'bottom'}
-        opens = {'right', 'left', 'top', 'bottom'}
-        open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
+        borders_dict = {'br': Direction.right(), 'bl': Direction.left(), 'bt': Direction.up(), 'bb': Direction.down()}
+        all_borders = set(Direction.orthogonal_directions())
+        opened_grid = Grid([[set() for _ in range(column_count)] for _ in range(row_count)])
         for i, cell in enumerate(matrix_cells):
-            row = i // column_count
-            col = i % column_count
-            cell_classes = cell.get('class', AttributeValueList([]))
-            if row == 0:
-                cell_classes.append('bt')
-            if row == row_count - 1:
-                cell_classes.append('bb')
-            if col == 0:
-                cell_classes.append('bl')
-            if col == column_count - 1:
-                cell_classes.append('br')
-            cell_borders = {borders_dict[cls] for cls in cell_classes if cls in borders_dict.keys()}
-            open_matrix[row][col] = opens - cell_borders
+            position = Position(*divmod(i, column_count))
+            classes = cell.get('class', AttributeValueList([]))
+            closed_borders = (
+                    {borders_dict[cls] for cls in classes if cls in borders_dict}
+                    | ({Direction.up()} if position in opened_grid.edge_up_positions() else set())
+                    | ({Direction.down()} if position in opened_grid.edge_down_positions() else set())
+                    | ({Direction.left()} if position in opened_grid.edge_left_positions() else set())
+                    | ({Direction.right()} if position in opened_grid.edge_right_positions() else set())
+            )
+            opened_grid[position] = all_borders - closed_borders
 
-        regions_grid = RegionsGrid(open_matrix)
-
-        return regions_grid
+        return RegionsGrid.from_opened_grid(opened_grid)
