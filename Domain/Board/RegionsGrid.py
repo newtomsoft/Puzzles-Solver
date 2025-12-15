@@ -4,13 +4,6 @@ from Domain.Board.Position import Position
 
 
 class RegionsGrid(Grid):
-    directions_map = {
-        'right': Direction.right(),
-        'left': Direction.left(),
-        'bottom': Direction.down(),
-        'top': Direction.up()
-    }
-
     @classmethod
     def from_grid(cls, grid: Grid):
         grid = cls._compute_regions_grid(grid)
@@ -42,7 +35,7 @@ class RegionsGrid(Grid):
 
         visited.add(position)
         opened_on = grid[position]
-        for new_position in [position.after(cls.directions_map[dirct]) for dirct in cls.directions_map if dirct in opened_on and position.after(cls.directions_map[dirct]) in grid]:
+        for new_position in [position.after(dirct) for dirct in Direction.orthogonal_directions() if dirct in opened_on and position.after(dirct) in grid]:
             new_visited = cls._depth_first_search_regions(grid, new_position, visited)
             if new_visited != visited:
                 return new_visited
