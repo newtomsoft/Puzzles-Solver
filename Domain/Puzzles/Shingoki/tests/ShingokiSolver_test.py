@@ -464,12 +464,5 @@ class ShingokiSolverTests(TestCase):
         self.assertEqual(Grid.empty(), other_solution)
 
 
-
-    # @unittest.skip('This test is too slow (around 10 seconds)')
-
-    # @unittest.skip('This test is too slow (around 21 seconds)')
-
-
-
 if __name__ == '__main__':
     unittest.main()

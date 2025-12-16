@@ -1,9 +1,10 @@
 ﻿from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from Domain.Board.Grid import Grid
+from GridProviders.GridProvider import GridProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from Domain.Board.Grid import Grid
 
 
 class PuzzleYinYangGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

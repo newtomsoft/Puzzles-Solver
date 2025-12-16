@@ -23,13 +23,13 @@ class Str8tsSolver:
             blank_grid.set_value(position, True)
         return blank_grid
 
-    def get_solution(self) -> tuple[Grid, Grid]:
+    def get_solution(self) -> (Grid, Grid):
         self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._blank_grid
 
-    def get_other_solution(self) -> tuple[Grid, Grid]:
+    def get_other_solution(self) -> (Grid, Grid):
         self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution if value > 0])))
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._blank_grid

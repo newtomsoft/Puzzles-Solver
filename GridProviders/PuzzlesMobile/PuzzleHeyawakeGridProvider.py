@@ -23,6 +23,7 @@ class PuzzleHeyawakeGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGrid
 
         cells_divs = soup.find_all('div', class_='cell')
         matrix_cells = [cell_div for cell_div in cells_divs if 'selectable' in cell_div.get('class', [])]
+        numbers_divs = soup.find_all('div', class_='number')
         numbers_str = [text if (text := cell_div.text) else -1 for cell_div in matrix_cells]
         cells_count = len(matrix_cells)
         side = int(math.sqrt(cells_count))

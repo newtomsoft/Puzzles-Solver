@@ -23,7 +23,7 @@ class PipesGrid(Grid[Pipe]):
             visited_flat.update(visited_in_this_pass)
         return visited_list, is_loop
 
-    def _depth_first_search_pipes_and_is_loop(self, position: Position, visited_positions=None, forbidden_direction=None) -> tuple[set[Position], bool]:
+    def _depth_first_search_pipes_and_is_loop(self, position: Position, visited_positions=None, forbidden_direction=None) -> (set[Position], bool):
         if visited_positions is None:
             visited_positions = set()
         if position in visited_positions:

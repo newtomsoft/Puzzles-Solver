@@ -14,7 +14,7 @@ class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
         blocks = []
 
         def get_block(start_pos):
-            result_block = []
+            block = []
             stack = [start_pos]
 
             while stack:
@@ -23,7 +23,7 @@ class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
                     continue
 
                 visited.add(pos)
-                result_block.append(pos)
+                block.append(pos)
 
                 # Vérifier les 4 voisins adjacents (haut, bas, gauche, droite)
                 for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -31,7 +31,7 @@ class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
                     if neighbor in true_positions and neighbor not in visited:
                         stack.append(neighbor)
 
-            return result_block
+            return block
 
         # Identifier tous les blocs
         for position in true_positions:

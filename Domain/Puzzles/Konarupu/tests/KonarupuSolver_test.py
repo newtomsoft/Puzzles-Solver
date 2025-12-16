@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from Domain.Board.Grid import Grid
 from Domain.Board.IslandsGrid import IslandGrid
-from Domain.Puzzles.Konarupu.KonarupuSolver import KonarupuSolver
+from Puzzles.Konarupu.KonarupuSolver import KonarupuSolver
 
 _ = ''
 

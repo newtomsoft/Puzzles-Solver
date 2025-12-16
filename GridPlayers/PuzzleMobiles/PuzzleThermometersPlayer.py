@@ -16,11 +16,11 @@ class PuzzleThermometersPlayer(PuzzlesMobilePlayer):
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             box = matrix_cells[index].bounding_box()
-            if value == Direction.down():
+            if value == Direction._DOWN:
                 page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'])
                 page.mouse.down()
                 page.mouse.up()
-            elif value == Direction.right():
+            elif value == Direction._RIGHT:
                 page.mouse.move(box['x'] + box['width'], box['y'] + box['height'] // 2)
                 page.mouse.down()
                 page.mouse.up()

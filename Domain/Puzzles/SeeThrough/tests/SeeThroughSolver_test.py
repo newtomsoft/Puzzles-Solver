@@ -16,7 +16,7 @@ class SeeThroughSolverTests(TestCase):
 
         expected_solution_str = (
             ' ┌─────┐ \n'
-            ' │  ·  │ \n'
+            ' │     │ \n'
             ' └─────┘ '
         )
 
@@ -137,7 +137,7 @@ class SeeThroughSolverTests(TestCase):
         expected_solution_str = (
             ' ┌──┬────────┐ \n'
             ' │  └─────┐  │ \n'
-            ' │  ·  ┌──┘  │ \n'
+            ' │     ┌──┘  │ \n'
             ' │  ╷  ╵  ╶──┤ \n'
             ' └──┴────────┘ '
         )
@@ -161,7 +161,7 @@ class SeeThroughSolverTests(TestCase):
             ' ┌──────────────┐ \n'
             ' │  ╷  ╷  ╶─────┤ \n'
             ' ├──┤  └──┐  ╶──┤ \n'
-            ' │  ╵  ·  │  ╷  │ \n'
+            ' │  ╵     │  ╷  │ \n'
             ' │  ╶──┬──┘  ╵  │ \n'
             ' └─────┴────────┘ '
         )
@@ -184,10 +184,10 @@ class SeeThroughSolverTests(TestCase):
 
         expected_solution_str = (
             ' ┌──────────────┐ \n'
-            ' │  ·  ╶──╴  ┌──┤ \n'
-            ' │  ·  ·  ╶──┘  │ \n'
-            ' │  ·  ╶──╴  ╶──┤ \n'
-            ' │  ·  ╶─────╴  │ \n'
+            ' │     ╶──╴  ┌──┤ \n'
+            ' │        ╶──┘  │ \n'
+            ' │     ╶──╴  ╶──┤ \n'
+            ' │     ╶─────╴  │ \n'
             ' └──────────────┘ '
         )
 
@@ -209,10 +209,10 @@ class SeeThroughSolverTests(TestCase):
 
         expected_solution_str = (
             ' ┌────────┬─────┐ \n'
-            ' │  ·  ╷  │  ╶──┤ \n'
-            ' │  ·  ╵  └──╴  │ \n'
-            ' │  ·  ·  ╷  ·  │ \n'
-            ' │  ·  ·  │  ╷  │ \n'
+            ' │     ╷  │  ╶──┤ \n'
+            ' │     ╵  └──╴  │ \n'
+            ' │        ╷     │ \n'
+            ' │        │  ╷  │ \n'
             ' └────────┴──┴──┘ '
         )
 
@@ -234,10 +234,10 @@ class SeeThroughSolverTests(TestCase):
 
         expected_solution_str = (
             ' ┌──────────────┐ \n'
-            ' ├──┐  ·  ·  ╶──┤ \n'
-            ' │  ╵  ·  ╶─────┤ \n'
-            ' │  ╷  ·  ╶──╴  │ \n'
-            ' ├──┴──╴  ·  ·  │ \n'
+            ' ├──┐        ╶──┤ \n'
+            ' │  ╵     ╶─────┤ \n'
+            ' │  ╷     ╶──╴  │ \n'
+            ' ├──┴──╴        │ \n'
             ' └──────────────┘ '
         )
 

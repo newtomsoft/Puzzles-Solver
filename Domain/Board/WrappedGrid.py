@@ -193,7 +193,7 @@ class WrappedGrid(GridBase[T], Generic[T]):
         return True
 
     @classmethod
-    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> tuple['Grid', Position]:
+    def from_positions(cls, positions: Iterable[Position], set_value=True, unset_value=False) -> ('Grid', Position):
         min_r = min(position.r for position in positions)
         max_r = max(position.r for position in positions)
         min_c = min(position.c for position in positions)

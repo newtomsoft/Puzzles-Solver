@@ -84,11 +84,11 @@ class TentsSolver(GameSolver):
     def _add_id_over_tree_constraint(self):
         trees_positions = [position for position, value in self._grid if value == self._tree_value]
         trees_count = len(trees_positions)
-        for idx, tree_position in enumerate([position for position, value in self._grid if value != self._tree_value]):
+        for id, tree_position in enumerate([position for position, value in self._grid if value != self._tree_value]):
             self._solver.add(self._grid_z3[tree_position] >= 0)
             self._solver.add(self._grid_z3[tree_position] <= trees_count)
-        for idx, tree_position in enumerate(trees_positions):
-            self._solver.add(self._grid_z3[tree_position] == idx + 1)
+        for id, tree_position in enumerate(trees_positions):
+            self._solver.add(self._grid_z3[tree_position] == id + 1)
 
     def _add_one_tent_for_each_tree_constraint(self):
         for position in [position for position, value in self._grid if value == self._tree_value]:

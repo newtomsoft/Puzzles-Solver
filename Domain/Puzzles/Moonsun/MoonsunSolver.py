@@ -131,7 +131,7 @@ class MoonsunSolver(GameSolver):
             region_edges_positions = [position for position in ShapeGenerator.edges(region_positions) if position in self._island_bridges_z3]
             out_directions = []
             for pos in region_edges_positions:
-                out_directions += [self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions() if pos.after(direction) not in region_positions and pos.after(direction) in self._island_bridges_z3]
+                out_directions += [self._island_bridges_z3[pos][dir] for dir in Direction.orthogonal_directions() if pos.after(dir) not in region_positions and pos.after(dir) in self._island_bridges_z3]
             self._model.Add(sum(out_directions) == 2)  # 1 for in and 1 for out
 
     def _add_all_regions_crossed_constraints(self):

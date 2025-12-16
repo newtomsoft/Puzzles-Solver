@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
+from Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
 
 _ = None
 
@@ -176,7 +176,7 @@ class KakuteruAnpuSolverTest(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("temporarily disabled - takes too long")
+    # @unittest.skip("temporarily disabled - takes too long")
     def test_solution_evil_15x15_mkkjw(self):
         """https://gridpuzzle.com/cocktail-lamp/mkkjw"""
         regions_grid = Grid([

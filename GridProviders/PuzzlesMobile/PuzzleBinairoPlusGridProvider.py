@@ -6,14 +6,14 @@ from playwright.sync_api import BrowserContext
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleBinairoPlusGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url) -> tuple[Grid, dict[str, list[Tuple[Position, Position]]]]:
+    def scrap_grid(self, browser: BrowserContext, url) -> (Grid, dict[str, list[Tuple[Position, Position]]]):
         page = browser.pages[0]
         page.goto(url)
         self.new_game(page, 'div.cell')

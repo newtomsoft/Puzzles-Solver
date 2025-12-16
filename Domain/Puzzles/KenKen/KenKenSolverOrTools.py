@@ -17,7 +17,7 @@ class KenKenSolverOrTools(GameSolver):
         self._model = cp_model.CpModel()
         self._previous_solution = None
 
-    def get_solution(self) -> tuple[Grid | None, int]:
+    def get_solution(self) -> (Grid | None, int):
         self._grid_vars = Grid([[self._model.NewIntVar(1, self.rows_number, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         return self._compute_solution()
@@ -92,7 +92,7 @@ class KenKenSolverOrTools(GameSolver):
 
                 self._model.Add(case1 + case2 == 1)
 
-    def _get_rows_columns_number(self) -> tuple[int, int]:
+    def _get_rows_columns_number(self) -> (int, int):
         all_positions = [pos for sublist, _, _ in self._regions_operators_results for pos in sublist]
         min_r = min(pos.r for pos in all_positions)
         max_r = max(pos.r for pos in all_positions)

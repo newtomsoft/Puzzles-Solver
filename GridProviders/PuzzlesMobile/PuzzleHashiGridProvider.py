@@ -5,7 +5,7 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.Position import Position
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleHashiGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

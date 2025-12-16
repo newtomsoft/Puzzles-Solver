@@ -27,10 +27,10 @@ class TextRedirector(object):
         self.widget = widget
         self.tag = tag
 
-    def write(self, text):
+    def write(self, str):
         try:
             self.widget.configure(state="normal")
-            self.widget.insert("end", text, (self.tag,))
+            self.widget.insert("end", str, (self.tag,))
             self.widget.see("end")
             self.widget.configure(state="disabled")
         except RuntimeError:
@@ -42,8 +42,8 @@ class TextRedirector(object):
 
 
 class PuzzleGUI:
-    def __init__(self, root_window):
-        self.root = root_window
+    def __init__(self, root):
+        self.root = root
         self.root.title("Puzzle Solver Launcher")
         self.root.geometry("900x700")
 
@@ -51,7 +51,7 @@ class PuzzleGUI:
         os.environ["PUZZLE_SOLVER_GUI_MODE"] = "1"
 
         # URL Input
-        input_frame = tk.Frame(root_window)
+        input_frame = tk.Frame(root)
         input_frame.pack(pady=10, fill="x", padx=10)
 
         tk.Label(input_frame, text="Game URL:").pack(side="left")

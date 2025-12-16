@@ -18,7 +18,7 @@ class SumpleteSolver(GameSolver):
         self._solver = Solver()
         self._grid_z3 = None
 
-    def get_solution(self) -> tuple[Grid | None, int]:
+    def get_solution(self) -> (Grid | None, int):
         self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
         if self._solver.check() == unsat:

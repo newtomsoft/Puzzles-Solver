@@ -1,19 +1,51 @@
-﻿from bs4 import ResultSet, Tag
+﻿import math
+
+from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
+from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.Base.PuzzlesMobileRegionGridProvider import PuzzlesMobileRegionGridProvider
+from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleStitchesGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGridProvider):
+class PuzzleStitchesGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     def get_grid(self, url: str):
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_new_html_page(browser, url)
-        regions_grid = self._scrap_region_grid(html_page)
-        cell_divs, row_count, soup = self._scrap_grid_data(html_page)
-        dots_by_column_row = self.clues_by_column_row(cell_divs, row_count)
+        page = browser.pages[0]
+        page.goto(url)
+        self.new_game(page)
+        html_page = page.content()
+        soup = BeautifulSoup(html_page, 'html.parser')
+        cell_divs = soup.find_all('div', class_='cell')
+        matrix_cells = [cell_div for cell_div in cell_divs if 'selectable' in cell_div.get('class', [])]
+        cells_count = len(matrix_cells)
+        row_count = int(math.sqrt(cells_count))
+        column_count = row_count
+        borders_dict = {'br': 'right', 'bl': 'left', 'bt': 'top', 'bb': 'bottom'}
+        opens = {'right', 'left', 'top', 'bottom'}
+        open_matrix = [[set() for _ in range(column_count)] for _ in range(row_count)]
+        for i, cell in enumerate(matrix_cells):
+            row = i // column_count
+            col = i % column_count
+            cell_classes = cell.get('class', [])
+            if row == 0:
+                cell_classes.append('bt')
+            if row == row_count - 1:
+                cell_classes.append('bb')
+            if col == 0:
+                cell_classes.append('bl')
+            if col == column_count - 1:
+                cell_classes.append('br')
+            cell_borders = {borders_dict[cls] for cls in cell_classes if cls in borders_dict.keys()}
+            open_matrix[row][col] = opens - cell_borders
+
+        regions_grid = RegionsGrid(open_matrix)
+
+        task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
+        dots = [int(cell_div.text) for cell_div in task_cells]
+        dots_by_column_row = {'column': dots[:row_count], 'row': dots[row_count:]}
 
         puzzle_info_text = self.get_puzzle_info_text(soup)
         puzzle_info_text_left = puzzle_info_text.split('÷')[0]
@@ -26,10 +58,3 @@ class PuzzleStitchesGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGrid
             regions_connections = 1
 
         return regions_grid, dots_by_column_row, regions_connections
-
-    @staticmethod
-    def clues_by_column_row(cell_divs: ResultSet[Tag], row_count: int) -> dict[str, list[int]]:
-        task_cells = [cell_div for cell_div in cell_divs if 'task' in cell_div.get('class', [])]
-        dots = [int(cell_div.text) for cell_div in task_cells]
-        dots_by_column_row = {'column': dots[:row_count], 'row': dots[row_count:]}
-        return dots_by_column_row
