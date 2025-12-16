@@ -1,6 +1,6 @@
 ﻿import math
 
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
@@ -9,15 +9,15 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.number')
-        numbers_divs = page.query_selector_all('div.number')
-        numbers_str = [inner_text if (inner_text := number_div.inner_text()) else SudokuBaseSolver.empty for number_div in numbers_divs]
+        await page.goto(url)
+        await self.new_game(page, 'div.number')
+        numbers_divs = await page.query_selector_all('div.number')
+        numbers_str = [inner_text if (inner_text := await number_div.inner_text()) else SudokuBaseSolver.empty for number_div in numbers_divs]
         cells_count = len(numbers_str)
         side = int(math.sqrt(cells_count))
         conversion_base = side + 1
