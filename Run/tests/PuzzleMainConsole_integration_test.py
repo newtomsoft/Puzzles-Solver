@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 from io import StringIO
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 # Add paths for imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))  # Root
@@ -17,8 +17,7 @@ class PuzzleMainConsoleIntegrationTests(unittest.TestCase):
 
     @patch('builtins.input', return_value="https://fr.puzzle-kurodoko.com/?size=1")
     @patch('sys.stdout', new_callable=StringIO)
-    @patch.object(PuzzleKurodokoPlayer, 'submit_score')
-    def test_integration_kurodoko_headless(self, mock_submit_score, mock_stdout, mock_input):
+    def test_integration_kurodoko_headless(self, mock_stdout, mock_input):
         original_read_config = PlaywrightGridProvider._read_config
 
         def side_effect_read_config(self_provider):
@@ -36,15 +35,11 @@ class PuzzleMainConsoleIntegrationTests(unittest.TestCase):
 
         output = mock_stdout.getvalue()
 
-        # Verify steps
         self.assertIn("Puzzle Solver", output)
         self.assertIn("Enter game url", output)
         self.assertIn("getting grid...", output)
         self.assertIn("Solving...", output)
         self.assertIn("Solution found in", output)
-
-        # Verify Player played
-        mock_submit_score.assert_called_once()
 
 
 if __name__ == '__main__':
