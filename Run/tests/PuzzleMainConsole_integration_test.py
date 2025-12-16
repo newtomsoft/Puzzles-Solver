@@ -15,14 +15,18 @@ from Run.PuzzleMainConsole import PuzzleMainConsole
 
 class PuzzleMainConsoleIntegrationTests(unittest.TestCase):
 
-    @patch('builtins.input', return_value="https://fr.puzzle-kurodoko.com/?size=1")
+    @patch('GridPlayers.PuzzleMobiles.PuzzleKurodokoPlayer.sleep', return_value=None)  # Mock sleep to speed up test execution
     @patch('sys.stdout', new_callable=StringIO)
-    def test_integration_kurodoko_headless(self, mock_stdout, mock_input):
+    @patch('builtins.input', return_value="https://fr.puzzle-kurodoko.com/?size=1")
+    def test_integration_kurodoko_headless(self, mock_input, mock_stdout, mock_sleep):
+        # Ensure mock parameters are used to satisfy IDE warnings (they're needed for the @patch decorators)
+        assert mock_input is not None
+        assert mock_sleep is not None
         original_read_config = PlaywrightGridProvider._read_config
 
         def side_effect_read_config(self_provider):
             original_read_config(self_provider)
-            self_provider.headless = False
+            self_provider.headless = True
             print(f"Forced headless mode for test: {self_provider.headless}")
 
         with patch.object(PlaywrightGridProvider, '_read_config', side_effect=side_effect_read_config, autospec=True):
