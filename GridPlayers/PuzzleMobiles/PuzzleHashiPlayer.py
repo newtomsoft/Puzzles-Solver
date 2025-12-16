@@ -6,21 +6,21 @@ from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleHashiPlayer(PuzzlesMobilePlayer):
-    def play(self, solution: IslandGrid):
+    async def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         cells = page.locator(".bridges-task-cell")
         for index, island in enumerate(solution.islands.values()):
-            box = cells.nth(index).bounding_box()
+            box = await cells.nth(index).bounding_box()
             for direction, (position, value) in island.direction_position_bridges.items():
                 if direction == Direction.down():
-                    page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'] + 5)
+                    await page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'] + 5)
                     for _ in range(value):
-                        page.mouse.down()
-                        page.mouse.up()
+                        await page.mouse.down()
+                        await page.mouse.up()
                 elif direction == Direction.right():
-                    page.mouse.move(box['x'] + box['width'] + 5, box['y'] + box['height'] // 2)
+                    await page.mouse.move(box['x'] + box['width'] + 5, box['y'] + box['height'] // 2)
                     for _ in range(value):
-                        page.mouse.down()
-                        page.mouse.up()
-        self.submit_score(page)
+                        await page.mouse.down()
+                        await page.mouse.up()
+        await self.submit_score(page)
         sleep(3)
