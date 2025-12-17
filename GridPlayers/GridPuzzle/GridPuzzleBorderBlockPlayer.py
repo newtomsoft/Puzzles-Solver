@@ -1,4 +1,4 @@
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridPlayers.GridPuzzle.Base.GridPuzzleRegionBorderPlayer import GridPuzzleRegionBorderPlayer
