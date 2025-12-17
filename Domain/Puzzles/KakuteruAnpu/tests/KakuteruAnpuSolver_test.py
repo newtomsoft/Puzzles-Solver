@@ -2,7 +2,7 @@
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid
-from Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
+from Domain.Puzzles.KakuteruAnpu.KakuteruAnpuSolver import KakuteruAnpuSolver
 
 _ = None
 
