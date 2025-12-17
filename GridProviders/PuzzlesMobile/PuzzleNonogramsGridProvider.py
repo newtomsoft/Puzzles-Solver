@@ -5,7 +5,7 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
-class PuzzleNonogramGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
+class PuzzleNonogramsGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
     async def get_grid(self, url: str):
         return await self.with_playwright(self.scrap_grid, url)
 
