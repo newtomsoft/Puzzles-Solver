@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
@@ -15,4 +15,4 @@ class PuzzleBinairoPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
             else:
                 await cells.nth(index).click()
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)

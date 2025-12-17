@@ -2,7 +2,7 @@ import math
 from typing import Any
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -10,14 +10,14 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleThermometersGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str) -> tuple[Any, BrowserContext]:
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str) -> tuple[Any, BrowserContext]:
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page)
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page)
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_='cell')
         matrix_cells = sorted(

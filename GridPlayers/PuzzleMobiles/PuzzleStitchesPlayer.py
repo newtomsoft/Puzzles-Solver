@@ -1,23 +1,23 @@
-﻿from time import sleep
+﻿import asyncio
 
 from Domain.Board.Direction import Direction
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleStitchesPlayer(PuzzlesMobilePlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
-            box = cells.nth(index).bounding_box()
+            box = await cells.nth(index).bounding_box()
             if value == Direction.down():
-                page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'])
-                page.mouse.down()
-                page.mouse.up()
+                await page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'])
+                await page.mouse.down()
+                await page.mouse.up()
             elif value == Direction.right():
-                page.mouse.move(box['x'] + box['width'], box['y'] + box['height'] // 2)
-                page.mouse.down()
-                page.mouse.up()
-        self.submit_score(page)
-        sleep(3)
+                await page.mouse.move(box['x'] + box['width'], box['y'] + box['height'] // 2)
+                await page.mouse.down()
+                await page.mouse.up()
+        await self.submit_score(page)
+        await asyncio.sleep(3)

@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
@@ -17,4 +17,4 @@ class PuzzleSlantPlayer(PuzzlesMobilePlayer):
                 await cell_elements.nth(idx).click(button="right")
 
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)

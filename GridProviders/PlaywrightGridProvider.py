@@ -16,6 +16,7 @@ class PlaywrightGridProvider(GridProvider):
         self.extensions_path = ''
         self.user_data_path = ''
         self.headless = True
+        self.force_headless_if_screen_too_small = True
         self.record_video = True
         self.email = ''
         self.password = ''
@@ -66,7 +67,7 @@ class PlaywrightGridProvider(GridProvider):
         screen_width, screen_height = self.screen_size()
         window_width, window_height = 900, 1000
         if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):
-            self.headless = True
+            self.headless = False
             print('Screen too small, using headless mode')
 
         playwright = await async_playwright().start()

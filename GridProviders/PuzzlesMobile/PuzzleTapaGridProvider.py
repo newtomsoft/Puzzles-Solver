@@ -15,7 +15,7 @@ class PuzzleTapaGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url):
-        page = self.browser.pages[0]
+        page = browser.pages[0]
         await page.goto(url)
         await self.new_game(page, 'div.tapa-task-cell')
         html_page = await page.content()

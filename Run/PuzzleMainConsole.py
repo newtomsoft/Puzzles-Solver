@@ -1,4 +1,6 @@
-﻿import time
+﻿import asyncio
+import time
+import inspect
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -7,7 +9,7 @@ from GameComponentFactory import GameComponentFactory
 
 class PuzzleMainConsole:
     @staticmethod
-    def main():
+    async def main():
         print("Puzzle Solver")
         print("Enter game url")
         url = input()
@@ -21,11 +23,17 @@ class PuzzleMainConsole:
                 url = "https://www.linkedin.com/games/tango"
 
         game_component_factory = GameComponentFactory()
-        game_solver, data_game, game_player = game_component_factory.create_components_from_url(url)
+        game_solver, data_game, game_player, playwright = await game_component_factory.create_components_from_url(url)
         solution = PuzzleMainConsole.run_solver(game_solver, data_game)
 
         if game_player is not None and solution != Grid.empty():
-            game_player.play(solution)
+            if inspect.iscoroutinefunction(game_player.play):
+                await game_player.play(solution)
+            else:
+                game_player.play(solution)
+
+        if playwright:
+            await playwright.stop()
 
 
     @staticmethod
@@ -54,4 +62,4 @@ class PuzzleMainConsole:
 
 
 if __name__ == '__main__':
-    PuzzleMainConsole.main()
+    asyncio.run(PuzzleMainConsole.main())

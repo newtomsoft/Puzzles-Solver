@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
@@ -20,6 +20,6 @@ class PuzzleShikakuPlayer(PuzzlesMobilePlayer):
             await page.mouse.move(bounding_box_down_right['x'] + bounding_box_down_right['width'] / 2, bounding_box_down_right['y'] + bounding_box_down_right['height'] / 2)
             await page.mouse.up()
 
-        sleep(2)
+        await asyncio.sleep(2)
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)

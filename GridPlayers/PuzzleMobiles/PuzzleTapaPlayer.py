@@ -1,4 +1,4 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
@@ -13,4 +13,4 @@ class PuzzleTapaPlayer(PuzzlesMobilePlayer):
                 await cells[index].click()
 
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)

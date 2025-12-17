@@ -1,4 +1,4 @@
-﻿from time import sleep
+﻿import asyncio
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
@@ -23,4 +23,4 @@ class PuzzleHashiPlayer(PuzzlesMobilePlayer):
                         await page.mouse.down()
                         await page.mouse.up()
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)

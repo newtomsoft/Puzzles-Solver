@@ -1,8 +1,8 @@
 ﻿import math
 from urllib.parse import urlparse
 
-from bs4 import ResultSet, Tag, BeautifulSoup
-from playwright.async_api import Page, BrowserContext
+from bs4 import BeautifulSoup, ResultSet, Tag
+from playwright.async_api import BrowserContext, Page
 
 
 class PuzzlesMobileGridProvider:
@@ -36,5 +36,13 @@ class PuzzlesMobileGridProvider:
             return
         new_game_button = page.locator("#btnNew")
         if (await new_game_button.count()) > 0:
+            consent_dialog = page.locator("#snigel-cmp-framework")
+            if await consent_dialog.count() > 0 and await (accept_button := page.locator("#accept-choices")).count() > 0:
+                await accept_button.click()
+
+            agree_button = page.get_by_role("button", name="AGREE", exact=True)
+            if await agree_button.count() > 0:
+                await agree_button.first.click()
+
             await new_game_button.click()
             await page.wait_for_selector(selector_to_waite)

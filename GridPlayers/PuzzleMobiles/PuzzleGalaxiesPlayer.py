@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 
 from playwright.async_api import BrowserContext
 
@@ -21,7 +21,7 @@ class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
         await self._draw_regions(cells, page, different_neighbors_positions)
 
         await self.submit_score(page)
-        sleep(5)
+        await asyncio.sleep(5)
 
     async def _draw_regions(self, cells, page, pairs_positions: list[tuple[Position, Position]]):
         for position0, position1 in pairs_positions:

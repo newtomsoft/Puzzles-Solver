@@ -1,3 +1,4 @@
+import inspect
 import os
 import sys
 import threading
@@ -154,7 +155,10 @@ class PuzzleGUI:
                     print(solution)
                     if game_player:
                         print("Playing solution in browser...")
-                        await game_player.play(solution)
+                        if inspect.iscoroutinefunction(game_player.play):
+                            await game_player.play(solution)
+                        else:
+                            game_player.play(solution)
                         print("Execution complete.")
                         # Close the browser context and playwright after playing
                         if hasattr(game_player, 'browser') and game_player.browser:
@@ -167,9 +171,8 @@ class PuzzleGUI:
                     if playwright:
                         await playwright.stop()
 
-            # Run the async code in a separate thread to avoid blocking the GUI
-            import threading
-            threading.Thread(target=lambda: asyncio.run(async_main()), daemon=True).start()
+            # Run the async code directly in this thread
+            asyncio.run(async_main())
 
         except Exception as e:
             print(f"Error: {e}")

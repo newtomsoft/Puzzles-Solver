@@ -1,8 +1,8 @@
-﻿import datetime
+﻿import asyncio
+import datetime
 import os
 from abc import abstractmethod
 from dataclasses import dataclass
-from time import sleep
 from typing import Protocol
 
 from moviepy import VideoFileClip
@@ -136,7 +136,7 @@ class PlaywrightPlayer(GridPlayer):
         if page.video is None:
             return None, None
 
-        viewport_size = await page.viewport_size
+        viewport_size = page.viewport_size
         x1 = 0
         y1 = 0
         x2 = viewport_size['width']
@@ -178,5 +178,5 @@ class PlaywrightPlayer(GridPlayer):
         os.remove(input_video_path)
 
     async def close(self, delay_sec: int = 3):
-        sleep(delay_sec)
+        await asyncio.sleep(delay_sec)
         await self.browser.close()

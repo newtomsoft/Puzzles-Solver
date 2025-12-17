@@ -1,4 +1,4 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
@@ -12,6 +12,6 @@ class PuzzleSudokuPlayer(PuzzlesMobilePlayer):
             if value:
                 await cells.nth(index).click()
                 await page.keyboard.press(str(value))
-        sleep(2)
+        await asyncio.sleep(2)
         await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(3)
