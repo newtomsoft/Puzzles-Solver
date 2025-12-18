@@ -12,12 +12,29 @@ class GridPuzzleProvider:
         page = browser.pages[0]
         await page.set_viewport_size({"width": 685, "height": 900})
         await page.goto(url)
+
+        if "Just a moment..." in await page.title():
+            await GridPuzzleProvider._handle_cloudflare_challenge(page)
+
         html_page = await page.content()
         if not board_selector:
             return html_page
         div_to_view = await page.query_selector(board_selector)
         await div_to_view.scroll_into_view_if_needed()
         return html_page
+
+    @staticmethod
+    async def _handle_cloudflare_challenge(page: Page):
+        try:
+            iframe = await page.wait_for_selector("iframe[src*='challenges.cloudflare.com']", timeout=10000)
+            if iframe:
+                frame = await iframe.content_frame()
+                checkbox = await frame.wait_for_selector("input[type='checkbox']", timeout=10000)
+                if checkbox:
+                    await checkbox.click()
+                    await page.wait_for_load_state("networkidle")
+        except Exception:
+            pass
 
     @staticmethod
     def make_opened_grid(row_count, column_count, matrix_cells) -> Grid:
