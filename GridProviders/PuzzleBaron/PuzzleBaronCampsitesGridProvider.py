@@ -1,5 +1,5 @@
 ﻿from bs4 import BeautifulSoup, Tag
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -8,14 +8,14 @@ from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGr
 
 ###### TODO: Implement the PuzzleBaronCampsitesGridProvider class ######
 class PuzzleBaronCampsitesGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.gridbox')
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page, 'div.gridbox')
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cells: list[Tag] = list(soup.find_all('div', class_='gridbox'))
         trees = [-1 if 'marked3' in cell_div.get('class', []) else 0 for cell_div in cells]

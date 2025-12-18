@@ -1,16 +1,16 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class PuzzleBaronCalcudokuPlayer(PlaywrightPlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
-        grid_box_divs = page.query_selector_all('div.gridbox')
+        grid_box_divs = await page.query_selector_all('div.gridbox')
 
         for position, digit in solution:
             index = solution.get_index_from_position(position)
-            grid_box_divs[index].click()
-            page.keyboard.press(str(digit))
+            await grid_box_divs[index].click()
+            await page.keyboard.press(str(digit))
 
-        sleep(20)
+        await asyncio.sleep(20)

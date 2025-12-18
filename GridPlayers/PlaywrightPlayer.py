@@ -1,13 +1,13 @@
-﻿import datetime
+﻿import asyncio
+import datetime
 import os
 from abc import abstractmethod
 from dataclasses import dataclass
-from time import sleep
 from typing import Protocol
 
 from moviepy import VideoFileClip
-from playwright.sync_api import BrowserContext, Mouse, Video
-from playwright.sync_api import ElementHandle, Page
+from playwright.async_api import BrowserContext, Mouse, Video
+from playwright.async_api import ElementHandle, Page
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -67,48 +67,48 @@ class PlaywrightPlayer(GridPlayer):
         self.browser = browser
 
     @abstractmethod
-    def play(self, solution):
+    async def play(self, solution):
         pass
 
     @classmethod
-    def mouse_move(cls, mouse: Mouse, solution: Grid, position: Position, cell_divs: list[ElementHandle], steps=1):
+    async def mouse_move(cls, mouse: Mouse, solution: Grid, position: Position, cell_divs: list[ElementHandle], steps=1):
         index = solution.get_index_from_position(position)
-        bounding_box = cell_divs[index].bounding_box()
+        bounding_box = await cell_divs[index].bounding_box()
         x = bounding_box['x'] + bounding_box['width'] / 2
         y = bounding_box['y'] + bounding_box['height'] / 2
-        mouse.move(x, y, steps=steps)
+        await mouse.move(x, y, steps=steps)
 
     @classmethod
-    def mouse_click_on_position(cls, mouse: Mouse, solution: Grid, position: Position, cells_divs: list[ElementHandle]):
+    async def mouse_click_on_position(cls, mouse: Mouse, solution: Grid, position: Position, cells_divs: list[ElementHandle]):
         index = solution.get_index_from_position(position)
-        bounding_box = cells_divs[index].bounding_box()
+        bounding_box = await cells_divs[index].bounding_box()
         x = bounding_box['x'] + bounding_box['width'] / 2
         y = bounding_box['y'] + bounding_box['height'] / 2
-        mouse.click(x, y)
+        await mouse.click(x, y)
 
     @classmethod
-    def mouse_down(cls, mouse):
-        mouse.down()
+    async def mouse_down(cls, mouse):
+        await mouse.down()
 
     @classmethod
-    def mouse_up(cls, mouse):
-        mouse.up()
+    async def mouse_up(cls, mouse):
+        await mouse.up()
 
     @classmethod
-    def mouse_click(cls, page):
-        page.mouse.down()
-        page.mouse.up()
+    async def mouse_click(cls, page):
+        await page.mouse.down()
+        await page.mouse.up()
 
     @classmethod
-    def drag_n_drop(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, cell_divs: list[ElementHandle]):
-        cls.mouse_move(mouse, solution, start_position, cell_divs)
-        cls.mouse_down(mouse)
-        cls.mouse_move(mouse, solution, end_position, cell_divs, steps=int(end_position.distance(start_position)))
-        cls.mouse_up(mouse)
+    async def drag_n_drop(cls, mouse: Mouse, solution: Grid, start_position: Position, end_position: Position, cell_divs: list[ElementHandle]):
+        await cls.mouse_move(mouse, solution, start_position, cell_divs)
+        await cls.mouse_down(mouse)
+        await cls.mouse_move(mouse, solution, end_position, cell_divs, steps=int(end_position.distance(start_position)))
+        await cls.mouse_up(mouse)
 
-    def _get_canvas_data(self, columns_number, rows_number):
+    async def _get_canvas_data(self, columns_number, rows_number):
         page = self.browser.pages[0]
-        bounded_box = page.locator("canvas").bounding_box()
+        bounded_box = await page.locator("canvas").bounding_box()
         x0 = bounded_box['x'] + self.board_margin
         y0 = bounded_box['y'] + self.board_margin
         width = bounded_box['width']
@@ -118,12 +118,12 @@ class PlaywrightPlayer(GridPlayer):
         return cell_height, cell_width, page, x0, y0
 
     @classmethod
-    def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[Video, Rectangle] | tuple[None, None]:
+    async def _get_data_video(cls, frame, selector, page: Page, x_offset: int, y_offset: int, width_offset: int, height_offset: int) -> tuple[Video, Rectangle] | tuple[None, None]:
         if page.video is None:
             return None, None
-        
-        game_board_wrapper = frame.wait_for_selector(selector)
-        bounding_box = game_board_wrapper.bounding_box()
+
+        game_board_wrapper = await frame.wait_for_selector(selector)
+        bounding_box = await game_board_wrapper.bounding_box()
         x1 = int(bounding_box['x']) - x_offset
         y1 = int(bounding_box['y']) - y_offset
         x2 = int(bounding_box['width']) + x1 + x_offset + width_offset
@@ -132,10 +132,10 @@ class PlaywrightPlayer(GridPlayer):
         return page.video, rectangle
 
     @classmethod
-    def _get_data_video_viewport(cls, page: Page) -> tuple[Video, Rectangle] | tuple[None, None]:
+    async def _get_data_video_viewport(cls, page: Page) -> tuple[Video, Rectangle] | tuple[None, None]:
         if page.video is None:
             return None, None
-        
+
         viewport_size = page.viewport_size
         x1 = 0
         y1 = 0
@@ -177,6 +177,6 @@ class PlaywrightPlayer(GridPlayer):
         cropped_clip.close()
         os.remove(input_video_path)
 
-    def close(self, delay_sec: int = 3):
-        sleep(delay_sec)
-        self.browser.close()
+    async def close(self, delay_sec: int = 3):
+        await asyncio.sleep(delay_sec)
+        await self.browser.close()

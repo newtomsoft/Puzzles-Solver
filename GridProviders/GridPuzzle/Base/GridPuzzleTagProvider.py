@@ -1,8 +1,8 @@
-﻿import math
+import math
 
 from bs4 import BeautifulSoup, ResultSet, Tag
 from bs4.element import AttributeValueList, NavigableString, PageElement
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -34,8 +34,8 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
         grid = Grid(matrix)
         return grid
 
-    def scrap_grid_left_up(self, browser: BrowserContext, url) -> tuple[Grid, list, list]:
-        html_page = self.get_html(browser, url)
+    async def scrap_grid_left_up(self, browser: BrowserContext, url) -> tuple[Grid, list, list]:
+        html_page = await self.get_html(browser, url)
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
 
         grid = self.make_grid(column_count, matrix, matrix_cells)

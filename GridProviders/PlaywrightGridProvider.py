@@ -4,7 +4,7 @@ import os
 import tkinter as tk
 from abc import abstractmethod
 
-from playwright.sync_api import BrowserContext, sync_playwright
+from playwright.async_api import BrowserContext, async_playwright
 
 from GridProviders.GridProvider import GridProvider
 
@@ -16,6 +16,7 @@ class PlaywrightGridProvider(GridProvider):
         self.extensions_path = ''
         self.user_data_path = ''
         self.headless = True
+        self.force_headless_if_screen_too_small = True
         self.record_video = True
         self.email = ''
         self.password = ''
@@ -23,11 +24,12 @@ class PlaywrightGridProvider(GridProvider):
         self.config = self.get_config()
         self._read_config()
 
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        grid_data, browser_context, playwright = await self.with_playwright(self.scrap_grid, url)
+        return grid_data, browser_context, playwright
 
     @abstractmethod
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         pass
 
     def get_config(self):
@@ -61,38 +63,42 @@ class PlaywrightGridProvider(GridProvider):
         self.password = self.config['DEFAULT']['password']
         self.browser_type = self.config['DEFAULT'].get('browser', 'chromium')
 
-    def with_playwright(self, callback, source):
+    async def with_playwright(self, callback, source):
         screen_width, screen_height = self.screen_size()
         window_width, window_height = 900, 1000
         if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):
-            self.headless = True
+            self.headless = False
             print('Screen too small, using headless mode')
 
-        playwright = sync_playwright().start()
+        playwright = await async_playwright().start()
+        try:
+            launch_args = {
+                'user_data_dir': self.user_data_path,
+                'viewport': {"width": window_width, "height": window_height},
+                'headless': self.headless,
+            }
+            if self.record_video:
+                launch_args['record_video_dir'] = "videos/"
+                launch_args['record_video_size'] = {"width": window_width, "height": window_height}
 
-        launch_args = {
-            'user_data_dir': self.user_data_path,
-            'viewport': {"width": window_width, "height": window_height},
-            'headless': self.headless,
-        }
-        if self.record_video:
-            launch_args['record_video_dir'] = "videos/"
-            launch_args['record_video_size'] = {"width": window_width, "height": window_height}
+            launch_args['args'] = []
+            if self.browser_type == 'chromium':
+                launch_args['args'] = [
+                    f'--disable-extensions-except={self.extensions_path}',
+                    f'--load-extension={self.extensions_path}',
+                    '--start-maximized'
+                ]
 
-        launch_args['args'] = []
-        if self.browser_type == 'chromium':
-            launch_args['args'] = [
-                f'--disable-extensions-except={self.extensions_path}',
-                f'--load-extension={self.extensions_path}',
-                '--start-maximized'
-            ]
+            if self.browser_type == 'firefox':
+                browser_context = await playwright.firefox.launch_persistent_context(**launch_args)
+            else:
+                browser_context = await playwright.chromium.launch_persistent_context(**launch_args)
 
-        if self.browser_type == 'firefox':
-             browser_context = playwright.firefox.launch_persistent_context(**launch_args)
-        else:
-             browser_context = playwright.chromium.launch_persistent_context(**launch_args)
-        var = callback(browser_context, source)
-        return var, browser_context
+            var = await callback(browser_context, source)
+            return var, browser_context, playwright
+        except Exception as e:
+            await playwright.stop()
+            raise
 
     @staticmethod
     def screen_size() -> tuple[int, int]:
