@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import FrozenSet, Generator, TypeVar, Iterable, Any
+from typing import Any, FrozenSet, Generator, Iterable, TypeVar
 
 import numpy as np
 from bitarray import bitarray
@@ -411,10 +411,10 @@ class GridBase[T]:
 
     def find_different_neighbors_positions(self) -> list[tuple[Position, Position]]:
         pairs: list[tuple[Position, Position]] = list()
-        min_value = self.min_value()
-        max_value = self.max_value()
+        min_value = round(self.min_value())
+        max_value = round(self.max_value())
 
-        for cell_value in range(min_value, max_value + 1):
+        for cell_value in range(min_value, int(max_value + 1)):
             for cell_position in [position for position, value in self if value == cell_value]:
                 for neighbor_position in self.neighbors_positions(cell_position):
                     neighbor_value = self[neighbor_position]
