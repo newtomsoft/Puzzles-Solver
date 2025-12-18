@@ -24,12 +24,17 @@ class PuzzleMainConsole:
                 url = "https://www.linkedin.com/games/tango"
 
         game_component_factory = GameComponentFactory()
-        game_solver, data_game, game_player, playwright = await game_component_factory.create_components_from_url(url)
+        game_solver, data_game, game_player, browser_context, playwright = await game_component_factory.create_components_from_url(url)
+        
         solution = PuzzleMainConsole.run_solver(game_solver, data_game)
 
         if game_player is not None and solution != Grid.empty():
             await game_player.play(solution)
 
+        # Properly cleanup browser context before stopping playwright to avoid event loop errors
+        if browser_context is not None:
+            await browser_context.close()
+        
         if playwright:
             await playwright.stop()
 
