@@ -1,0 +1,58 @@
+name: 'Install Dependencies'
+description: 'Installs Python dependencies and Playwright with caching'
+inputs:
+  python-version:
+    description: 'Python version to use'
+    default: '3.12'
+  extra-deps:
+    description: 'Extra pip packages to install'
+    default: ''
+  cache-playwright:
+    description: 'Enable Playwright browser caching'
+    default: 'true'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install pytest pytest-timeout pytest-github-actions-annotate-failures
+        if [ -n "${{ inputs.extra-deps }}" ]; then
+          pip install ${{ inputs.extra-deps }}
+        fi
+
+    - name: Get Playwright Version
+      if: inputs.cache-playwright == 'true'
+      id: playwright-version
+      shell: bash
+      run: |
+        echo "version=$(python -c 'import playwright; print(playwright.__version__)')" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright Browsers
+      if: inputs.cache-playwright == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/ms-playwright
+          C:\Users\runneradmin\AppData\Local\ms-playwright
+        key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+
+    - name: Install Playwright Browsers
+      shell: bash
+      run: |
+        playwright install chromium
+
+    - name: Install Playwright System Dependencies
+      shell: bash
+      if: runner.os == 'Linux'
+      run: |
+        sudo playwright install-deps
