@@ -1,5 +1,5 @@
 ﻿from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -7,14 +7,14 @@ from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGr
 
 
 class PuzzleBaronVectorsGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.gridbox')
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page, 'div.gridbox')
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_box_divs = soup.find_all('div', class_='gridbox')
         numbers = [int(text) if ((text := number_div.get_text()) != '') else '' for number_div in grid_box_divs]

@@ -1,6 +1,6 @@
-﻿import math
+import math
 
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -8,14 +8,14 @@ from Utils.utils import is_perfect_square
 
 
 class EscapeSudokuGridProvider(PlaywrightGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        page.wait_for_selector('div.game-boxes')
-        slot_divs = page.query_selector_all('div.slot')
+        await page.goto(url)
+        await page.wait_for_selector('div.game-boxes')
+        slot_divs = await page.query_selector_all('div.slot')
         cells_count = len(slot_divs)
         matrix_size = int(math.sqrt(cells_count))
         if is_perfect_square(matrix_size):

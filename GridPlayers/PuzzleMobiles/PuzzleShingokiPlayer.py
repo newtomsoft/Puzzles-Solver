@@ -1,4 +1,4 @@
-﻿from time import sleep
+﻿import asyncio
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
@@ -6,7 +6,7 @@ from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
-    def play(self, solution: IslandGrid):
+    async def play(self, solution: IslandGrid):
         page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")
         verticals = page.locator(".loop-vertical")
@@ -14,14 +14,14 @@ class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
             index_horizontal = island.position.r * (solution.columns_number - 1) + island.position.c
             index_vertical = island.position.r * solution.columns_number + island.position.c
             if Direction.right() in island.direction_position_bridges:
-                box = horizontals.nth(index_horizontal).bounding_box()
-                page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
-                page.mouse.down()
-                page.mouse.up()
+                box = await horizontals.nth(index_horizontal).bounding_box()
+                await page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
+                await page.mouse.down()
+                await page.mouse.up()
             if Direction.down() in island.direction_position_bridges:
-                box = verticals.nth(index_vertical).bounding_box()
-                page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
-                page.mouse.down()
-                page.mouse.up()
-        self.submit_score(page)
-        sleep(3)
+                box = await verticals.nth(index_vertical).bounding_box()
+                await page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
+                await page.mouse.down()
+                await page.mouse.up()
+        await self.submit_score(page)
+        await asyncio.sleep(3)

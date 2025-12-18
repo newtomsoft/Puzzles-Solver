@@ -1,4 +1,4 @@
-﻿from playwright.sync_api import BrowserContext
+﻿from playwright.async_api import BrowserContext
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -9,11 +9,11 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzlePipelinkGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_html(browser, url)
+    async def scrap_grid(self, browser: BrowserContext, url):
+        html_page = await self.get_html(browser, url)
         pqq_string_list, matrix_size = self._get_canvas_data(html_page)
         matrix = [[self.to_island(r, c, pqq_string_list[r * matrix_size + c]) for c in range(matrix_size)] for r in range(matrix_size)]
         grid = Grid(matrix)

@@ -1,8 +1,8 @@
-﻿import base64
+import base64
 import re
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
@@ -12,12 +12,12 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleGrandTourGridProvider(GridPuzzleProvider, PlaywrightGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_html(browser, url)
-        qv_string_list, qh_string_list, size = self._get_canvas_data(html_page)
+    async def scrap_grid(self, browser: BrowserContext, url):
+        html_page = await self.get_html(browser, url)
+        qv_string_list, qh_string_list, size = await self._get_canvas_data(html_page)
         grid_v = Grid([[bool(int(qv_string_list[i * (size + 1) + j])) for j in range(size + 1)] for i in range(size)])
         grid_h = Grid([[bool(int(qh_string_list[i * size + j])) for j in range(size)] for i in range(size + 1)])
         grid_size = size + 1

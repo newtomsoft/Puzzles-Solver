@@ -1,7 +1,7 @@
 ﻿import math
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -9,14 +9,14 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileRegionGridProvider import Puz
 
 
 class PuzzleJigsawSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.selectable')
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page, 'div.selectable')
+        html_page = await page.content()
 
         regions_grid = self._scrap_region_grid(html_page)
 

@@ -7,5 +7,5 @@ class GridPlayer(ABC):
         self.browser_context = browser_context
 
     @abstractmethod
-    def play(self, solution):
+    async def play(self, solution):
         pass
