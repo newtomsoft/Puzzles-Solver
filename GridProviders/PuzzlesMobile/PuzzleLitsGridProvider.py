@@ -9,4 +9,9 @@ class PuzzleLitsGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGridProv
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url):
-        return await self._scrap_region_grid(browser, url)
+        page = browser.pages[0]
+        await page.goto(url)
+        await page.wait_for_selector('div.cell')
+        await PuzzlesMobileRegionGridProvider.new_game(page)
+        html_page = await page.content()
+        return self._scrap_region_grid(html_page)

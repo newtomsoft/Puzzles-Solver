@@ -10,8 +10,8 @@ import pytest
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Run.PuzzleMainConsole import PuzzleMainConsole
 
 TEST_CASES = [
@@ -32,7 +32,7 @@ TEST_CASES = [
     ("lits", "https://fr.puzzle-lits.com/"),
     ("masyu", "https://fr.puzzle-masyu.com/"),
     ("minesweeper", "https://fr.puzzle-minesweeper.com/minesweeper-5x5-easy/"),
-    ("mosaic", "https://fr.puzzle-minesweeper.com/mosaic-5x5-easy/"),
+    ("minesweeper mosaic", "https://fr.puzzle-minesweeper.com/mosaic-5x5-easy/"),
     ("nonograms", "https://fr.puzzle-nonograms.com/"),
     ("norinori", "https://fr.puzzle-norinori.com/"),
     ("nurikabe", "https://fr.puzzle-nurikabe.com/"),

@@ -1,10 +1,11 @@
 ﻿import asyncio
-import time
 import inspect
+import time
+
+from GameComponentFactory import GameComponentFactory
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
-from GameComponentFactory import GameComponentFactory
 
 
 class PuzzleMainConsole:
@@ -27,10 +28,7 @@ class PuzzleMainConsole:
         solution = PuzzleMainConsole.run_solver(game_solver, data_game)
 
         if game_player is not None and solution != Grid.empty():
-            if inspect.iscoroutinefunction(game_player.play):
-                await game_player.play(solution)
-            else:
-                game_player.play(solution)
+            await game_player.play(solution)
 
         if playwright:
             await playwright.stop()
@@ -57,8 +55,7 @@ class PuzzleMainConsole:
             print(f"Solution found in {execution_time:.2f} seconds")
             print(solution)
         else:
-            print(f"No solution found")
-
+            print("No solution found")
 
 
 if __name__ == '__main__':

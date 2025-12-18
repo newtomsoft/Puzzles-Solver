@@ -124,12 +124,10 @@ class PuzzleGUI:
 
     def run_logic(self, url):
         try:
-            # Set video recording preference via environment variable
             os.environ["PLAYWRIGHT_RECORD_VIDEO"] = "True" if self.record_video_var.get() else "False"
 
             print(f"Starting solver for: {url}")
 
-            # Map short names to full URLs
             if url == "queens":
                 url = "https://www.linkedin.com/games/queens"
             elif url == "zip":
@@ -158,9 +156,8 @@ class PuzzleGUI:
                         if inspect.iscoroutinefunction(game_player.play):
                             await game_player.play(solution)
                         else:
-                            game_player.play(solution)
+                            await game_player.play(solution)
                         print("Execution complete.")
-                        # Close the browser context and playwright after playing
                         if hasattr(game_player, 'browser') and game_player.browser:
                             await game_player.browser.close()
                         if playwright:
