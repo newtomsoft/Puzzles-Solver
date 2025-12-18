@@ -6,7 +6,7 @@ from Run.GameRegistry import GameRegistry
 
 def register():
     GameRegistry.register(
-        r"https://.*\.puzzle-minesweeper\.com/.*mosaic", 
-        PuzzleMinesweeperMosaicGridProvider, 
+        r"https://(?:.*\.)?puzzle-minesweeper\.com/.*mosaic",
+        PuzzleMinesweeperMosaicGridProvider,
         PuzzleMinesweeperMosaicPlayer
     )(MinesweeperMosaicSolver)

@@ -31,18 +31,37 @@ class PuzzlesMobileGridProvider:
 
     @staticmethod
     async def new_game(page: Page, selector_to_waite='div.cell'):
+        await PuzzlesMobileGridProvider._handle_consent_modals(page)
+
+
+        await PuzzlesMobileGridProvider._update_robot_value(page)
+
         url_object = urlparse(page.url)
         if 'specid=' in url_object.query:
             return
+
         new_game_button = page.locator("#btnNew")
-        if (await new_game_button.count()) > 0:
-            consent_dialog = page.locator("#snigel-cmp-framework")
-            if await consent_dialog.count() > 0 and await (accept_button := page.locator("#accept-choices")).count() > 0:
-                await accept_button.click()
+        await new_game_button.click(force=True)
+        await page.wait_for_selector(selector_to_waite)
 
-            agree_button = page.get_by_role("button", name="AGREE", exact=True)
-            if await agree_button.count() > 0:
-                await agree_button.first.click()
+        await PuzzlesMobileGridProvider._handle_consent_modals(page)
 
-            await new_game_button.click()
-            await page.wait_for_selector(selector_to_waite)
+    @staticmethod
+    async def _update_robot_value(page: Page):
+        await page.evaluate("""() => {
+            const robot = document.getElementById('robot');
+            if (robot) {
+                robot.value = '1';
+            }
+        }""")
+
+    @staticmethod
+    async def _handle_consent_modals(page: Page):
+        await page.add_style_tag(content="""
+            #qc-cmp2-container, #snigel-cmp-framework, .robot-animation, #robot, .fc-ab-root {
+                display: none !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                z-index: -10000 !important;
+            }
+        """)

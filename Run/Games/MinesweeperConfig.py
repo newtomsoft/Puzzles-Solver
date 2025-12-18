@@ -8,13 +8,13 @@ from Run.GameRegistry import GameRegistry
 
 def register():
     GameRegistry.register(
-        r"https://.*\.puzzle-minesweeper\.com", 
-        PuzzleMinesweeperMosaicGridProvider, 
+        r"https://(?!.*mosaic)(?:.*\.)?puzzle-minesweeper\.com(?:/.*)?",
+        PuzzleMinesweeperMosaicGridProvider,
         PuzzleMinesweeperPlayer
     )(MinesweeperSolver)
 
     GameRegistry.register(
-        r"https://.*gridpuzzle\.com/minesweeper", 
-        GridPuzzleMinesweeperGridProvider, 
+        r"https://.*gridpuzzle\.com/minesweeper",
+        GridPuzzleMinesweeperGridProvider,
         GridPuzzleMinesweeperPlayer
     )(MinesweeperSolver)
