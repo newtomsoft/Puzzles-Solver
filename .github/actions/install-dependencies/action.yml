@@ -55,4 +55,4 @@ runs:
       shell: bash
       if: runner.os == 'Linux'
       run: |
-        sudo playwright install-deps
+        sudo env "PATH=$PATH" playwright install-deps
