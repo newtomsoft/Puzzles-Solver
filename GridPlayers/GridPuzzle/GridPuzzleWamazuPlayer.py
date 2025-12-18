@@ -7,23 +7,23 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 class GridPuzzleWamazuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
     game_name = "wamazu"
 
-    def play(self, solution: IslandGrid):
-        cell_height, cell_width, page, x0, y0 = self._get_canvas_data(solution.columns_number, solution.rows_number)
-        video, rectangle = self._get_data_video_viewport(page)
+    async def play(self, solution: IslandGrid):
+        cell_height, cell_width, page, x0, y0 = await self._get_canvas_data(solution.columns_number, solution.rows_number)
+        video, rectangle = await self._get_data_video_viewport(page)
 
-        self._draw_paths(cell_height, cell_width, page, solution, x0, y0)
+        await self._draw_paths(cell_height, cell_width, page, solution, x0, y0)
 
-        self.close()
+        await self.close()
         self._process_video(video, rectangle)
 
-    def _draw_paths(self, cell_height, cell_width, page, solution, x0, y0):
+    async def _draw_paths(self, cell_height, cell_width, page, solution, x0, y0):
         start_positions = self._get_circles_starts(solution)
         for start_position in start_positions:
             connected_positions = self._get_connected_positions_from_position(solution, start_position)
             for index, position in enumerate(connected_positions[:-1]):
                 next_position = connected_positions[index + 1]
                 direction = position.direction_to(next_position)
-                self._trace_direction_from_position(position, direction, page, cell_width, cell_height, x0, y0)
+                await self._trace_direction_from_position(position, direction, page, cell_width, cell_height, x0, y0)
 
     def _get_circles_starts(self, solution: IslandGrid) -> set[Position]:
         circles_positions = self._get_circles_positions(solution)

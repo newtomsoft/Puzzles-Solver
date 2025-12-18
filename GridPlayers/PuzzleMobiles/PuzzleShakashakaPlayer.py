@@ -1,4 +1,4 @@
-from time import sleep
+import asyncio
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaCellType
@@ -6,11 +6,11 @@ from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
-    def play(self, solution: Grid):
+    async def play(self, solution: Grid):
         page = self.browser.pages[0]
 
         cells = page.locator('div.cell, div.shakashaka-task-cell')
-        box = cells.nth(0).bounding_box()
+        box = await cells.nth(0).bounding_box()
         w = box["width"]
         h = box["height"]
 
@@ -18,15 +18,15 @@ class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
             idx = position.r * solution.columns_number + position.c
             cell = cells.nth(idx)
             if value == ShakashakaCellType.WHITE_BR:
-                cell.click(position={"x": w * 0.15, "y": h * 0.15})
+                await cell.click(position={"x": w * 0.15, "y": h * 0.15})
                 continue
             if value == ShakashakaCellType.WHITE_BL:
-                cell.click(position={"x": w * 0.85, "y": h * 0.15})
+                await cell.click(position={"x": w * 0.85, "y": h * 0.15})
                 continue
             if value == ShakashakaCellType.WHITE_TL:
-                cell.click(position={"x": w * 0.85, "y": h * 0.85})
+                await cell.click(position={"x": w * 0.85, "y": h * 0.85})
                 continue
-            cell.click(position={"x": w * 0.15, "y": h * 0.85})
+            await cell.click(position={"x": w * 0.15, "y": h * 0.85})
 
-        self.submit_score(page)
-        sleep(3)
+        await self.submit_score(page)
+        await asyncio.sleep(3)

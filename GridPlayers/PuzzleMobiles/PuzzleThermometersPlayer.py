@@ -1,28 +1,30 @@
-﻿from time import sleep
+﻿import asyncio
 
-from Domain.Board.Direction import Direction
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleThermometersPlayer(PuzzlesMobilePlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
-        cells = page.locator(".cell:not(.task)")
-        cells_all = cells.all()
-        matrix_cells = sorted(
-            [cell_div for cell_div in cells_all if 'selectable' in cell_div.get_attribute('class')],
-            key=lambda div: (int(div.get_attribute('style').split('top:')[1].split('px')[0]), int(div.get_attribute('style').split('left:')[1].split('px')[0]))
-        )
-        for position, value in solution:
+        sorted_cells = await self._get_cells_sorted_by_position(page)
+
+        for position in (position for position, value in solution if value):
             index = position.r * solution.columns_number + position.c
-            box = matrix_cells[index].bounding_box()
-            if value == Direction.down():
-                page.mouse.move(box['x'] + box['width'] // 2, box['y'] + box['height'])
-                page.mouse.down()
-                page.mouse.up()
-            elif value == Direction.right():
-                page.mouse.move(box['x'] + box['width'], box['y'] + box['height'] // 2)
-                page.mouse.down()
-                page.mouse.up()
-        self.submit_score(page)
-        sleep(3)
+            await sorted_cells[index].click()
+
+        await self.submit_score(page)
+        await asyncio.sleep(3)
+
+    @staticmethod
+    async def _get_cells_sorted_by_position(page):
+        all_cells = await page.query_selector_all(".cell.selectable:not(.task)")
+        styles = await asyncio.gather(*[cell.get_attribute('style') for cell in all_cells])
+
+        cells_with_pos = []
+        for i, style in enumerate(styles):
+            top = int(style.split('top:')[1].split('px')[0])
+            left = int(style.split('left:')[1].split('px')[0])
+            cells_with_pos.append((all_cells[i], top, left))
+
+        cells_with_pos.sort(key=lambda x: (x[1], x[2]))
+        return [cell for cell, _, _ in cells_with_pos]

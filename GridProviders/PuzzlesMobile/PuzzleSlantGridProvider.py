@@ -1,6 +1,6 @@
 import math
 
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Slant.SlantSolver import SlantSolver
@@ -9,15 +9,15 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleSlantGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.cell')
+        await page.goto(url)
+        await self.new_game(page, 'div.cell')
 
-        element_data = page.evaluate("""() => {
+        element_data = await page.evaluate("""() => {
             const divs = Array.from(document.querySelectorAll('div.cell, div.immutable, div.clue, div[class*="number"], div.task'));
             return divs.map(d => {
                 const rect = d.getBoundingClientRect();

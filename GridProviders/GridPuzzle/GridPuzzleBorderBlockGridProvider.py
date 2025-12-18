@@ -1,4 +1,4 @@
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -7,12 +7,12 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleBorderBlockGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
-    def get_grid(self, url: str) -> tuple[Grid, list[Position]]:
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str) -> tuple[Grid, list[Position]]:
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url: str) -> tuple[Grid, list[Position]]:
+    async def scrap_grid(self, browser: BrowserContext, url: str) -> tuple[Grid, list[Position]]:
         page = browser.pages[0]
-        page.goto(url)
+        await page.goto(url)
 
         data = page.evaluate("""() => {
             const gplData = {};

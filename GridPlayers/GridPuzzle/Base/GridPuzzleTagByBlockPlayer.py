@@ -2,11 +2,11 @@
 
 
 class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
-        video, rectangle = self._get_data_video_viewport(page)
+        video, rectangle = await self._get_data_video_viewport(page)
 
-        cells = page.query_selector_all("div.g_cell")
+        cells = await page.query_selector_all("div.g_cell")
 
         true_positions = {position for position, value in solution if value}
 
@@ -43,7 +43,7 @@ class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
         for block in blocks:
             for position in block:
                 index = position.r * solution.columns_number + position.c
-                cells[index].click()
+                await cells[index].click()
 
-        self.close()
+        await self.close()
         self._process_video(video, rectangle, 0)

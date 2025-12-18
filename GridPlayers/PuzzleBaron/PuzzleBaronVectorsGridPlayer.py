@@ -1,4 +1,4 @@
-﻿from time import sleep
+﻿import asyncio
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
@@ -6,10 +6,13 @@ from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
 
 
 class PuzzleBaronVectorsPlayer(PlaywrightPlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
-        grid_box_divs = page.query_selector_all('div.gridbox')
-        numbers = [int(inner_text) if (inner_text := number_div.inner_text()) else 0 for number_div in grid_box_divs]
+        grid_box_divs = await page.query_selector_all('div.gridbox')
+        numbers = []
+        for number_div in grid_box_divs:
+            inner_text = await number_div.inner_text()
+            numbers.append(int(inner_text) if inner_text else 0)
 
         for start_position, value in solution:
             if numbers[solution.get_index_from_position(start_position)] == 0:
@@ -20,6 +23,6 @@ class PuzzleBaronVectorsPlayer(PlaywrightPlayer):
                     end_position = end_position.after(direction)
                 end_position = end_position.before(direction)
                 if end_position != start_position:
-                    self.drag_n_drop(page.mouse, solution, start_position, end_position, grid_box_divs)
+                    await self.drag_n_drop(page.mouse, solution, start_position, end_position, grid_box_divs)
 
-        sleep(6)
+        await asyncio.sleep(6)

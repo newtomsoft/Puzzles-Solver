@@ -1,19 +1,19 @@
 ﻿from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleKakurasuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.cell')
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page, 'div.cell')
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         counters_side = soup.find('div', class_='side-counters')
         numbers_side = self._get_numbers(counters_side)

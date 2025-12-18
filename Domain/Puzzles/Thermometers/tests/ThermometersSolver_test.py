@@ -6,8 +6,6 @@ from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 
 
 class ThermometersSolverTests(TestCase):
-
-
     def test_solution_grid_not_a_square(self):
         grid = Grid([
             [0, 1, 1, 1],

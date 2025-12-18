@@ -1,21 +1,23 @@
 ﻿import math
 
 from bs4 import BeautifulSoup, Tag
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGridProvider
+from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import (
+    PuzzleBaronGridProvider,
+)
 
 
 class PuzzleBaronLaserGridsGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
+        await page.goto(url)
         self.new_game(page, 'div.gridbox')
-        html_page = page.content()
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_box_divs = soup.find_all('div', class_='gridbox')
         cells: list[Tag] = list(soup.find_all('div', class_='gridbox'))
