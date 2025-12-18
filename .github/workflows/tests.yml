@@ -1,6 +1,7 @@
 ﻿name: tests
 
 on:
+  workflow_dispatch:
   push:
 
 concurrency:
@@ -49,5 +50,3 @@ jobs:
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
           python -m pytest -v --testmon --ignore-glob='*long_test.py' --timeout=10
-
-    # Si des tests échouent, le job échoue et bloquera la PR (avec protection de branche)
