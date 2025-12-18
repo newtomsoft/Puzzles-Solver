@@ -151,15 +151,9 @@ class ThermometersSolver(GameSolver):
             self._add_thermometer_constraint(positions)
 
     def _add_thermometer_constraint(self, positions):
-        # In a thermometer, if a cell is filled, all previous cells (closer to the bulb) must be filled.
-        # Implies: positions[i] (filled) => positions[i-1] (filled)
-        # Or: positions[i-1] >= positions[i]
         for i in range(1, len(positions)):
             prev_pos = positions[i-1]
             curr_pos = positions[i]
-            # If current is true, previous must be true.
-            # If previous is false, current must be false.
-            # So prev >= curr
             self._model.Add(self._grid_ortools[prev_pos] >= self._grid_ortools[curr_pos])
 
     def _compute_thermometers_positions(self):
