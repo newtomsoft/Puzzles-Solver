@@ -28,7 +28,7 @@ class SumpleteSolver(GameSolver):
         return grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        raise NotImplementedError("This method is not yet implemented")
 
     def _add_constraints(self):
         self._add_constraint_sums_by_rows()

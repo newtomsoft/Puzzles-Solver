@@ -3,6 +3,8 @@ import unittest
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Detour.DetourSolver import DetourSolver
 
+_ = DetourSolver.empty
+
 
 class DetourSolverLongTests(unittest.TestCase):
 
