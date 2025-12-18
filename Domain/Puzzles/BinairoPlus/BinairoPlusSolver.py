@@ -1,6 +1,6 @@
 ﻿from typing import Tuple
 
-from z3 import Solver, Bool, Not, And, unsat, is_true
+from z3 import And, Bool, Not, Solver, is_true, unsat
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -29,7 +29,7 @@ class BinairoPlusSolver(GameSolver):
         return self._compute_solution()
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        raise NotImplementedError("This method is not yet implemented")
 
     def _compute_solution(self) -> Grid:
         model = self._solver.model()

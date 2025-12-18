@@ -1,6 +1,6 @@
 ﻿from collections import defaultdict
 from itertools import combinations
-from typing import TypeVar, Iterable
+from typing import Iterable, TypeVar
 
 from bitarray import bitarray
 
@@ -52,7 +52,7 @@ class Grid[T](GridBase[T]):
             return None
         if is_integer(grid_element.strip()):
             return int(grid_element)
-        if element_type == type(Island):
+        if element_type is type(Island):
             return Island.from_str(Position(row, column), grid_element)
         raise ValueError(f"Unsupported element type: {element_type}")
 

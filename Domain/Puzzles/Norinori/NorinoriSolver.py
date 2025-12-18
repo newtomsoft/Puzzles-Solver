@@ -34,7 +34,7 @@ class NorinoriSolver(GameSolver):
         return grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplemented("This method is not yet implemented")
+        raise NotImplementedError("This method is not yet implemented")
 
     def domino_part(self, position: Position):
         return self._grid_vars[position]
