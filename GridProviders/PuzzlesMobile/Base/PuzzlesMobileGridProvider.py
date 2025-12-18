@@ -32,8 +32,6 @@ class PuzzlesMobileGridProvider:
     @staticmethod
     async def new_game(page: Page, selector_to_waite='div.cell'):
         await PuzzlesMobileGridProvider._handle_consent_modals(page)
-
-
         await PuzzlesMobileGridProvider._update_robot_value(page)
 
         url_object = urlparse(page.url)
@@ -58,7 +56,7 @@ class PuzzlesMobileGridProvider:
     @staticmethod
     async def _handle_consent_modals(page: Page):
         await page.add_style_tag(content="""
-            #qc-cmp2-container, #snigel-cmp-framework, .robot-animation, #robot, .fc-ab-root {
+            #qc-cmp2-container, #snigel-cmp-framework, .snigel-cmp-framework, .robot-animation, #robot, .fc-ab-root {
                 display: none !important;
                 visibility: hidden !important;
                 pointer-events: none !important;
