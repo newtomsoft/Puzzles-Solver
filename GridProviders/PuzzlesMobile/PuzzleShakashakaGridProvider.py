@@ -1,4 +1,4 @@
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
@@ -6,16 +6,16 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleShakashakaGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str) -> Grid:
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str) -> Grid:
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
+    async def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page)
-        page.wait_for_selector('div.cell')
+        await page.goto(url)
+        await self.new_game(page)
+        await page.wait_for_selector('div.cell')
 
-        cells_data = page.evaluate("""() => {
+        cells_data = await page.evaluate("""() => {
             const cells = document.querySelectorAll('#game .board-back > div.cell, #game .board-back > div.shakashaka-task-cell');
             const data = [];
             cells.forEach(el => {

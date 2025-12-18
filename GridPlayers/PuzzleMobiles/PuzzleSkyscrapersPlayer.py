@@ -1,19 +1,19 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleSkyScrapersPlayer(PuzzlesMobilePlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task)")
 
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:
-                cells.nth(index).click()
-                page.keyboard.press(str(value))
+                await cells.nth(index).click()
+                await page.keyboard.press(str(value))
 
-        sleep(2)
-        self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(2)
+        await self.submit_score(page)
+        await asyncio.sleep(3)

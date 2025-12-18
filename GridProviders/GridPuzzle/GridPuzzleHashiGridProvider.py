@@ -1,7 +1,7 @@
 import math
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
@@ -9,11 +9,11 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleHashiGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_html(browser, url, '.hashi_grid')
+    async def scrap_grid(self, browser: BrowserContext, url):
+        html_page = await self.get_html(browser, url, '.hashi_grid')
         matrix = self._get_grid_data(html_page)
         return Grid(matrix)
 

@@ -1,21 +1,21 @@
 ﻿import re
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext, Page
+from playwright.async_api import BrowserContext, Page
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class VingtMinutesKemaruGridProvider(PlaywrightGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page)
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page)
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cells = soup.find_all('g', class_='grid-cell')
         matrix_cells = [cell for cell in cells]
@@ -68,9 +68,8 @@ class VingtMinutesKemaruGridProvider(PlaywrightGridProvider):
         return grid_numbers, regions_grid
 
     @staticmethod
-    def new_game(page: Page, selector_to_waite='grid-cell'):
+    async def new_game(page: Page, selector_to_waite='grid-cell'):
         new_game_button = page.locator('[data-test-id="action-button-start-puzzle"]')
-        if new_game_button.count() > 0:
-            new_game_button.click()
-            page.wait_for_selector(selector_to_waite)
-
+        if await new_game_button.count() > 0:
+            await new_game_button.click()
+            await page.wait_for_selector(selector_to_waite)

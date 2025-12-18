@@ -1,4 +1,4 @@
-﻿from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -7,12 +7,12 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleGalaxiesGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
-        html_page = self.get_html(browser, url)
-        pqq_string_list, original_matrix_size = self._get_canvas_data(html_page)
+    async def scrap_grid(self, browser: BrowserContext, url):
+        html_page = await self.get_html(browser, url)
+        pqq_string_list, original_matrix_size = await self._get_canvas_data(html_page)
         large_size = original_matrix_size * 2 - 1
         large_matrix = [[int(pqq_string_list[i * large_size + j]) for j in range(large_size)] for i in range(large_size)]
         large_grid = Grid(large_matrix)

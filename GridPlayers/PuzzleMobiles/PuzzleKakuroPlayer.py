@@ -1,11 +1,11 @@
-﻿from time import sleep
+﻿import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleKakuroPlayer(PuzzlesMobilePlayer):
-    def play(self, solution):
+    async def play(self, solution):
         solution = Grid([line + [0] for line in solution.matrix])
         page = self.browser.pages[0]
         cells = page.locator(".cell")
@@ -13,8 +13,8 @@ class PuzzleKakuroPlayer(PuzzlesMobilePlayer):
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:
-                cells.nth(index).click()
-                page.keyboard.press(str(value))
+                await cells.nth(index).click()
+                await page.keyboard.press(str(value))
 
-        self.submit_score(page)
-        sleep(3)
+        await self.submit_score(page)
+        await asyncio.sleep(3)

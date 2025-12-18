@@ -1,5 +1,5 @@
 ﻿from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
@@ -8,14 +8,14 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleBimaruGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page)
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page)
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cell_divs = soup.find_all('div', class_=['cell'])
         grid_cell_divs = [cell_div for cell_div in cell_divs if 'task' not in cell_div.get('class', []) and 'ship' not in cell_div.get('class', [])]

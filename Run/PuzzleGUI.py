@@ -1,3 +1,4 @@
+import inspect
 import os
 import sys
 import threading
@@ -136,25 +137,42 @@ class PuzzleGUI:
             elif url == "tango":
                 url = "https://www.linkedin.com/games/tango"
 
-            factory = GameComponentFactory()
-            game_solver_class, data_game, game_player = factory.create_components_from_url(url)
+            import asyncio
 
-            print("Components created. Solving...")
-            solver_instance = factory.create_solver(game_solver_class, data_game)
+            async def async_main():
+                factory = GameComponentFactory()
+                game_solver_class, data_game, game_player, playwright = await factory.create_components_from_url(url)
 
-            start_time = time.time()
-            solution = solver_instance.get_solution()
-            end_time = time.time()
+                print("Components created. Solving...")
+                solver_instance = factory.create_solver(game_solver_class, data_game)
 
-            if solution != Grid.empty():
-                print(f"Solution found in {end_time - start_time:.2f} seconds")
-                print(solution)
-                if game_player:
-                    print("Playing solution in browser...")
-                    game_player.play(solution)
-                    print("Execution complete.")
-            else:
-                print("No solution found.")
+                start_time = time.time()
+                solution = solver_instance.get_solution()
+                end_time = time.time()
+
+                if solution != Grid.empty():
+                    print(f"Solution found in {end_time - start_time:.2f} seconds")
+                    print(solution)
+                    if game_player:
+                        print("Playing solution in browser...")
+                        if inspect.iscoroutinefunction(game_player.play):
+                            await game_player.play(solution)
+                        else:
+                            game_player.play(solution)
+                        print("Execution complete.")
+                        # Close the browser context and playwright after playing
+                        if hasattr(game_player, 'browser') and game_player.browser:
+                            await game_player.browser.close()
+                        if playwright:
+                            await playwright.stop()
+                else:
+                    print("No solution found.")
+                    # Close the browser context and playwright even if no solution
+                    if playwright:
+                        await playwright.stop()
+
+            # Run the async code directly in this thread
+            asyncio.run(async_main())
 
         except Exception as e:
             print(f"Error: {e}")

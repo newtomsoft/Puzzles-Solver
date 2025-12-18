@@ -2,7 +2,7 @@
 from typing import Dict, Tuple, List
 
 from bs4 import BeautifulSoup
-from playwright.sync_api import BrowserContext
+from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -11,14 +11,14 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleKillerSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str):
-        return self.with_playwright(self.scrap_grid, url)
+    async def get_grid(self, url: str):
+        return await self.with_playwright(self.scrap_grid, url)
 
-    def scrap_grid(self, browser: BrowserContext, url):
+    async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        page.goto(url)
-        self.new_game(page, 'div.selectable')
-        html_page = page.content()
+        await page.goto(url)
+        await self.new_game(page, 'div.selectable')
+        html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         cells_divs = soup.find_all('div', class_='cell')
         matrix_cells = [cell_div for cell_div in cells_divs if 'selectable' in cell_div.get('class', [])]

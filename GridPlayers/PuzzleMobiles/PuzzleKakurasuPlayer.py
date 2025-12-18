@@ -1,16 +1,16 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleKakurasuPlayer(PuzzlesMobilePlayer):
-    def play(self, solution):
+    async def play(self, solution):
         page = self.browser.pages[0]
-        cells = page.query_selector_all("div.cell.selectable")
+        cells = await page.query_selector_all("div.cell.selectable")
         for position, value in solution:
             index = position.r * solution.columns_number + position.c
             if value:
-                cells[index].click()
+                await cells[index].click()
 
-        self.submit_score(page)
-        sleep(3)
+        await self.submit_score(page)
+        await asyncio.sleep(3)
