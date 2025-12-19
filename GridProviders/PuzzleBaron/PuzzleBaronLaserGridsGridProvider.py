@@ -16,7 +16,7 @@ class PuzzleBaronLaserGridsGridProvider(PlaywrightGridProvider, PuzzleBaronGridP
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         await page.goto(url)
-        self.new_game(page, 'div.gridbox')
+        await self.new_game(page, 'div.gridbox')
         html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
         grid_box_divs = soup.find_all('div', class_='gridbox')
