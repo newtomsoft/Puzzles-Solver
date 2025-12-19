@@ -18,10 +18,12 @@ class VuqqNetwalkGridProvider(PlaywrightGridProvider):
             page = await browser.new_page()
 
         await page.goto(url)
-        await page.wait_for_load_state('networkidle')
+        # await page.wait_for_load_state('networkidle') # Flaky
+        await page.wait_for_selector('.grid')
+        await page.wait_for_selector('.grid__cell')
 
         # Locate the grid cells
-        cells = await page.locator('.grid .grid__cell').all()
+        cells = await page.locator('.grid__cell').all()
 
         # Determine grid size (assuming square grid for now based on Vuqq's "size" param)
         # But we can infer it from the number of cells

@@ -76,6 +76,7 @@ class PlaywrightGridProvider(GridProvider):
                 'user_data_dir': self.user_data_path,
                 'viewport': {"width": window_width, "height": window_height},
                 'headless': self.headless,
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             }
             if self.record_video:
                 launch_args['record_video_dir'] = "videos/"

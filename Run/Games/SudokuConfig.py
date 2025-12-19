@@ -30,7 +30,7 @@ def register():
     from GridPlayers.Vuqq.VuqqSudokuPlayer import VuqqSudokuPlayer
 
     GameRegistry.register(
-        r"https://vuqq\.com/.*/sudoku.*",
+        r"https://vuqq\.com/.*sudoku.*",
         VuqqSudokuGridProvider,
         VuqqSudokuPlayer
     )(SudokuSolver)

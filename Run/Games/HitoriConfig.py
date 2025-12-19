@@ -14,7 +14,7 @@ def register():
     )(HitoriSolver)
 
     GameRegistry.register(
-        r"https://vuqq\.com/.*/hitori/.*",
+        r"https://vuqq\.com/.*hitori/.*",
         VuqqHitoriGridProvider,
         VuqqHitoriPlayer
     )(HitoriSolver)

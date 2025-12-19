@@ -3,20 +3,23 @@ import os
 import sys
 import time
 from io import StringIO
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
-
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Run.PuzzleMainConsole import PuzzleMainConsole
-
-sys.modules["tkinter"] = MagicMock()
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from Run.PuzzleMainConsole import PuzzleMainConsole
+
 TEST_CASES = [
-    ("skyscrapers", "https://vuqq.com/en/skyscrapers/"),
+    ("skyscrapers", "https://vuqq.com/skyscrapers/"),
+    ("akari", "https://vuqq.com/akari/"),
+    ("netwalk", "https://vuqq.com/netwalk/"),
+    ("sudoku", "https://vuqq.com/sudoku/"),
+    ("hitori", "https://vuqq.com/hitori/"),
+    ("tents", "https://vuqq.com/tents-and-trees/"),
 ]
 
 

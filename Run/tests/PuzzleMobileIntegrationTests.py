@@ -7,7 +7,6 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-# Add paths for imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 

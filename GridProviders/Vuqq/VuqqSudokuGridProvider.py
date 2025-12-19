@@ -15,7 +15,8 @@ class VuqqSudokuGridProvider(PlaywrightGridProvider):
             page = await browser.new_page()
 
         await page.goto(url)
-        await page.wait_for_load_state('networkidle')
+        # await page.wait_for_load_state('networkidle')
+        await page.wait_for_selector('.grid')
         await page.wait_for_selector('.grid__cell')
 
         # Wait for the grid to be populated (sometimes there's a delay)
@@ -29,7 +30,7 @@ class VuqqSudokuGridProvider(PlaywrightGridProvider):
         if len(cells) != 81:
             raise Exception(f"Expected 81 cells, found {len(cells)}")
 
-        matrix = [[0] * 9 for _ in range(9)]
+        matrix = [[-1] * 9 for _ in range(9)]
 
         for i, cell in enumerate(cells):
             row = i // 9
@@ -43,8 +44,8 @@ class VuqqSudokuGridProvider(PlaywrightGridProvider):
                 if text.isdigit():
                     matrix[row][col] = int(text)
                 else:
-                    matrix[row][col] = 0
+                    matrix[row][col] = -1
             else:
-                matrix[row][col] = 0
+                matrix[row][col] = -1
 
         return Grid(matrix)

@@ -14,7 +14,7 @@ def register():
     )(PipesSolver)
 
     GameRegistry.register(
-        r"https://vuqq\.com/.*/netwalk/.*",
+        r"https://vuqq\.com/.*netwalk/.*",
         VuqqNetwalkGridProvider,
         VuqqNetwalkPlayer
     )(PipesSolver)
