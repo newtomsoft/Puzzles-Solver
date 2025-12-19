@@ -17,6 +17,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))) 
 
 TEST_CASES = [
     ("skyscrapers", "https://vuqq.com/en/skyscrapers/"),
+    ("akari", "https://vuqq.com/fr/akari/"),
 ]
 
 
