@@ -6,6 +6,10 @@ on:
     branches:
       - main
       - 'releases/*'
+      
+concurrency:
+  group: ci-resource-lock-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   qodana:
