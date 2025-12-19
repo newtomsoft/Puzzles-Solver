@@ -10,8 +10,8 @@ on:
       - 'release/*'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-resource-lock-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   run-integration-tests:
@@ -28,5 +28,9 @@ jobs:
       - name: Run integration tests (headless)
         env:
           PYTHONPATH: ${{ github.workspace }}
+          TEST_PATTERN: "IntegrationTests"
         run: |
-          python -m pytest -v Run/tests/PuzzleMobileIntegrationTests.py --timeout=60
+          for file in Run/tests/*${TEST_PATTERN}.py; do
+            echo "Running tests in $file"
+            python -m pytest -v "$file" --timeout=60
+          done
