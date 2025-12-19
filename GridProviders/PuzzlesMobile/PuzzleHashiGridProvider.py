@@ -13,8 +13,7 @@ class PuzzleHashiGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider)
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.pages[0]
-        await page.goto(url, wait_until='domcontentloaded')
+        page = await self.open_page(browser, url)
         await self.new_game(page, 'div.bridges-task-cell')
         html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')

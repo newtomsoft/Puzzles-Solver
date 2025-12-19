@@ -13,8 +13,7 @@ class PuzzleMinesweeperMosaicGridProvider(PlaywrightGridProvider, PuzzlesMobileG
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url):
-        page = browser.pages[0]
-        await page.goto(url, wait_until='domcontentloaded')
+        page = await self.open_page(browser, url)
         await self.new_game(page, 'div.cell')
         numbers_divs = await page.query_selector_all('div.number')
         numbers = [int(inner_text) if (inner_text := await number_div.inner_text()) else MinesweeperSolver.empty for number_div in numbers_divs]

@@ -7,9 +7,14 @@ from playwright.async_api import BrowserContext, Page
 
 class PuzzlesMobileGridProvider:
     @staticmethod
-    async def get_new_html_page(browser: BrowserContext, url) -> str:
+    async def open_page(browser: BrowserContext, url) -> Page:
         page = browser.pages[0]
         await page.goto(url, wait_until='domcontentloaded')
+        return page
+
+    @staticmethod
+    async def get_new_html_page(browser: BrowserContext, url) -> str:
+        page = await PuzzlesMobileGridProvider.open_page(browser, url)
         await PuzzlesMobileGridProvider.new_game(page)
         html_page = await page.content()
         return html_page
