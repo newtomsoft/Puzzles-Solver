@@ -1,6 +1,6 @@
 from typing import Any
 
-from z3 import Bool, Solver, sat, is_true, Not, Implies, Or
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -17,107 +17,98 @@ class AkariSolver(GameSolver):
 
         if self.rows_number < 7 or self.columns_number < 7:
             raise ValueError("Akari grid must be at least 7x7")
-        self._solver = Solver()
-        self._illuminated_z3: Grid = Grid.empty()
-        self._bulbs_z3: Grid = Grid.empty()
+
+        self._solver = cp_model.CpSolver()
+        self._model = cp_model.CpModel()
+        self._bulbs_vars = None
 
     def get_solution(self) -> Grid:
-        self._bulbs_z3 = Grid([[Bool(f'bulb_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._illuminated_z3 = Grid([[Bool(f'illuminated_{r}_{c}') for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._add_constraints()
-        if not self._solver.check() == sat:
-            return Grid.empty()
+        self._model = cp_model.CpModel()
+        self._bulbs_vars = Grid([[self._model.NewBoolVar(f'bulb_{r}_{c}') if Position(r, c) not in self._black_cells else None
+                                  for c in range(self.columns_number)]
+                                 for r in range(self.rows_number)])
 
-        return self._compute_solution()
+        self._add_constraints()
+
+        status = self._solver.Solve(self._model)
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            return self._compute_solution()
+
+        return Grid.empty()
 
     def get_other_solution(self) -> Grid:
         raise NotImplementedError("This method is not yet implemented")
 
     def _compute_solution(self) -> Grid:
-        model = self._solver.model()
-        solution_grid = Grid([[None] * self.columns_number for _ in range(self.rows_number)])
-        for position, var in self._bulbs_z3:
-            solution_grid[position] = 1 if is_true(model.eval(var)) else 0
+        solution_grid = Grid([[0] * self.columns_number for _ in range(self.rows_number)])
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                p = Position(r, c)
+                if p not in self._black_cells:
+                     if self._solver.BooleanValue(self._bulbs_vars[p]):
+                          solution_grid[p] = 1
+                     else:
+                          solution_grid[p] = 0
+                else:
+                    solution_grid[p] = 0
         return solution_grid
 
     def _add_constraints(self):
-        self._add_numbers_constraints()
-        self._add_black_cells_constraints()
-        self._add_light_constraints()
-        self._add_bulbs_constraints()
+        # 1. Number constraints
+        for pos, number in self._number_constraints.items():
+            neighbors = [n for n in self._bulbs_vars.neighbors_positions(pos) if n not in self._black_cells]
+            self._model.Add(sum(self._bulbs_vars[n] for n in neighbors) == number)
 
-    def _add_numbers_constraints(self):
-        for position, number in self._number_constraints.items():
-            adjacent_bulbs = [self._bulbs_z3[neighbor] for neighbor in self._bulbs_z3.neighbors_positions(position) if neighbor not in self._black_cells]
-            constraint = sum([adjacent_bulb for adjacent_bulb in adjacent_bulbs]) == number
-            self._solver.add(constraint)
+        # Precompute segments
+        # Horizontal segments
+        h_segments = []
+        cell_to_h_segment = {}
+        for r in range(self.rows_number):
+            current_segment = []
+            for c in range(self.columns_number):
+                p = Position(r, c)
+                if p in self._black_cells:
+                    if current_segment:
+                        h_segments.append(current_segment)
+                        current_segment = []
+                else:
+                    current_segment.append(p)
+            if current_segment:
+                h_segments.append(current_segment)
 
-    def _add_black_cells_constraints(self):
-        for position in self._black_cells:
-            self._solver.add(Not(self._bulbs_z3[position]))
-            self._solver.add(Not(self._illuminated_z3[position]))
+        for seg in h_segments:
+            # Constraint: At most one bulb per segment
+            self._model.Add(sum(self._bulbs_vars[p] for p in seg) <= 1)
+            for p in seg:
+                cell_to_h_segment[p] = seg
 
-    def _add_light_constraints(self):
-        for position, bulb_var in self._bulbs_z3:
-            if position in self._black_cells:
-                continue
-            light_constraints = [bulb_var]
+        # Vertical segments
+        v_segments = []
+        cell_to_v_segment = {}
+        for c in range(self.columns_number):
+            current_segment = []
+            for r in range(self.rows_number):
+                p = Position(r, c)
+                if p in self._black_cells:
+                    if current_segment:
+                        v_segments.append(current_segment)
+                        current_segment = []
+                else:
+                    current_segment.append(p)
+            if current_segment:
+                v_segments.append(current_segment)
 
-            # Up
-            current = self._bulbs_z3.neighbor_up(position)
-            while current and current not in self._black_cells:
-                light_constraints.append(self._bulbs_z3[current])
-                current = self._bulbs_z3.neighbor_up(current)
+        for seg in v_segments:
+             self._model.Add(sum(self._bulbs_vars[p] for p in seg) <= 1)
+             for p in seg:
+                 cell_to_v_segment[p] = seg
 
-            # Down
-            current = self._bulbs_z3.neighbor_down(position)
-            while current and current not in self._black_cells:
-                light_constraints.append(self._bulbs_z3[current])
-                current = self._bulbs_z3.neighbor_down(current)
-
-            # Left
-            current = self._bulbs_z3.neighbor_left(position)
-            while current and current not in self._black_cells:
-                light_constraints.append(self._bulbs_z3[current])
-                current = self._bulbs_z3.neighbor_left(current)
-
-            # Right
-            current = self._bulbs_z3.neighbor_right(position)
-            while current and current not in self._black_cells:
-                light_constraints.append(self._bulbs_z3[current])
-                current = self._bulbs_z3.neighbor_right(current)
-
-            constraint = self._illuminated_z3[position] == Or(light_constraints)
-            self._solver.add(constraint)
-            self._solver.add(self._illuminated_z3[position])
-
-    def _add_bulbs_constraints(self):
-        for position, bulb_var in self._bulbs_z3:
-            if position not in self._black_cells:
-                constraints = []
-
-                # Up
-                current = self._bulbs_z3.neighbor_up(position)
-                while current and current not in self._black_cells:
-                    constraints.append(Implies(bulb_var, Not(self._bulbs_z3[current])))
-                    current = self._bulbs_z3.neighbor_up(current)
-
-                # Down
-                current = self._bulbs_z3.neighbor_down(position)
-                while current and current not in self._black_cells:
-                    constraints.append(Implies(bulb_var, Not(self._bulbs_z3[current])))
-                    current = self._bulbs_z3.neighbor_down(current)
-
-                # Left
-                current = self._bulbs_z3.neighbor_left(position)
-                while current and current not in self._black_cells:
-                    constraints.append(Implies(bulb_var, Not(self._bulbs_z3[current])))
-                    current = self._bulbs_z3.neighbor_left(current)
-
-                # Right
-                current = self._bulbs_z3.neighbor_right(position)
-                while current and current not in self._black_cells:
-                    constraints.append(Implies(bulb_var, Not(self._bulbs_z3[current])))
-                    current = self._bulbs_z3.neighbor_right(current)
-
-                self._solver.add(constraints)
+        # 3. Coverage: Every white cell must be illuminated
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                p = Position(r, c)
+                if p not in self._black_cells:
+                    h_seg = cell_to_h_segment.get(p, [])
+                    v_seg = cell_to_v_segment.get(p, [])
+                    relevant_positions = set(h_seg) | set(v_seg)
+                    self._model.Add(sum(self._bulbs_vars[rp] for rp in relevant_positions) >= 1)
