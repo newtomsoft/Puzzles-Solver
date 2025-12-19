@@ -26,3 +26,11 @@ def register():
             GridPuzzleSudokuPlayer
         )(SudokuSolver)
 
+    from GridProviders.Vuqq.VuqqSudokuGridProvider import VuqqSudokuGridProvider
+    from GridPlayers.Vuqq.VuqqSudokuPlayer import VuqqSudokuPlayer
+
+    GameRegistry.register(
+        r"https://vuqq\.com/.*/sudoku.*",
+        VuqqSudokuGridProvider,
+        VuqqSudokuPlayer
+    )(SudokuSolver)
