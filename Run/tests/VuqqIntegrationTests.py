@@ -3,28 +3,28 @@ import os
 import sys
 import time
 from io import StringIO
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-
-# Mock tkinter before importing modules that use it
-sys.modules["tkinter"] = MagicMock()
-
-# Add paths for imports
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Run.PuzzleMainConsole import PuzzleMainConsole
 
+sys.modules["tkinter"] = MagicMock()
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
+
 TEST_CASES = [
-    ("vuqq-skyscrapers", "https://vuqq.com/en/skyscrapers/"),
+    ("skyscrapers", "https://vuqq.com/en/skyscrapers/"),
 ]
+
 
 @pytest.fixture(autouse=True)
 def run_around_tests():
     yield
     time.sleep(2)
+
 
 @pytest.mark.parametrize("puzzle_name, url", TEST_CASES)
 def test_integration_headless(puzzle_name, url):
