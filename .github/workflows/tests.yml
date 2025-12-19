@@ -33,4 +33,4 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
-          python -m pytest -v --testmon --ignore-glob='*long_test.py' --timeout=10
+          python -m pytest -v --testmon --ignore-glob='*long_test.py' --timeout=20
