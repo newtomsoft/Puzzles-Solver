@@ -1,6 +1,7 @@
 from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 from Utils.ShapeGenerator import ShapeGenerator
 
@@ -27,11 +28,7 @@ class HitoriSolver(GameSolver):
              return self.get_solution()
 
         previous_black_cells = [pos for pos, val in self._previous_solution if not val]
-        if previous_black_cells:
-             # At least one of these must be white (1)
-             self._model.AddBoolOr([self._grid_vars[p] for p in previous_black_cells])
-        else:
-             pass
+        self._model.AddBoolOr([self._grid_vars[p] for p in previous_black_cells])
 
         return self._solve_and_ensure_connectivity()
 
@@ -40,12 +37,13 @@ class HitoriSolver(GameSolver):
             status = self._solver.Solve(self._model)
             if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
                  boolean_grid = self._build_boolean_grid_from_solution()
-                 if self._is_connected(boolean_grid):
+                 white_shapes = boolean_grid.get_all_shapes()
+                 if len(white_shapes) == 1:
                       solution_grid = self._build_solution_grid(boolean_grid)
                       self._previous_solution = solution_grid
                       return solution_grid
                  else:
-                      self._add_connectivity_constraints(boolean_grid)
+                      self._add_connectivity_constraints(white_shapes)
             else:
                  return Grid.empty()
 
@@ -55,14 +53,7 @@ class HitoriSolver(GameSolver):
     def _build_solution_grid(self, boolean_grid):
         return Grid([[self._grid.value(r, c) if boolean_grid.value(r, c) else False for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
 
-    def _is_connected(self, grid):
-        white_shapes = grid.get_all_shapes()
-        return len(white_shapes) == 1
-
-    def _add_connectivity_constraints(self, grid):
-        white_shapes = grid.get_all_shapes()
-        if len(white_shapes) <= 1:
-            return
+    def _add_connectivity_constraints(self, white_shapes: set[frozenset[Position]]):
 
         biggest_white_shapes = max(white_shapes, key=len)
         white_shapes.remove(biggest_white_shapes)
