@@ -16,3 +16,4 @@ tqdm~=4.67.1
 ortools>=9.12.4544
 flask-cors>=5.0.1
 ruff
+pytest
