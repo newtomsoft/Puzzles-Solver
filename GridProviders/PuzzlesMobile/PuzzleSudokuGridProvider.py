@@ -14,7 +14,7 @@ class PuzzleSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider
 
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await self.new_game(page, 'div.number')
         numbers_divs = await page.query_selector_all('div.number')
         numbers_str = [inner_text if (inner_text := await number_div.inner_text()) else SudokuBaseSolver.empty for number_div in numbers_divs]

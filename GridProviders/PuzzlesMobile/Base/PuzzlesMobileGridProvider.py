@@ -9,7 +9,7 @@ class PuzzlesMobileGridProvider:
     @staticmethod
     async def get_new_html_page(browser: BrowserContext, url) -> str:
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await PuzzlesMobileGridProvider.new_game(page)
         html_page = await page.content()
         return html_page

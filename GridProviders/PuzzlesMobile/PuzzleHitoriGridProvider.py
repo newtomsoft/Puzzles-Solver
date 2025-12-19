@@ -13,7 +13,7 @@ class PuzzleHitoriGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider
 
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await self.new_game(page, 'div.number')
         numbers_divs = await page.query_selector_all('div.number')
         numbers = [int(inner_text) if (inner_text := await number_div.inner_text()) else -1 for number_div in numbers_divs]

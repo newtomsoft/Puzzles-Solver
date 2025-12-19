@@ -14,7 +14,7 @@ class PuzzleSkyscrapersGridProvider(PlaywrightGridProvider, PuzzlesMobileGridPro
 
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await self.new_game(page)
         html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')

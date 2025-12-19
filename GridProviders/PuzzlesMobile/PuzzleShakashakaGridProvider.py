@@ -11,7 +11,7 @@ class PuzzleShakashakaGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProv
 
     async def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await self.new_game(page)
         await page.wait_for_selector('div.cell')
 

@@ -17,7 +17,7 @@ class PuzzleBinairoPlusGridProvider(PlaywrightGridProvider, PuzzlesMobileGridPro
 
     async def scrap_grid(self, browser: BrowserContext, url) -> tuple[Grid, dict[str, list[Tuple[Position, Position]]]]:
         page = browser.pages[0]
-        await page.goto(url)
+        await page.goto(url, wait_until='domcontentloaded')
         await self.new_game(page, 'div.cell')
         html_page = await page.content()
         soup = BeautifulSoup(html_page, 'html.parser')
