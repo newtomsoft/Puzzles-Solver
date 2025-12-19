@@ -3,6 +3,8 @@ import unittest
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Fillomino.FillominoSolver import FillominoSolver
 
+_ = 0
+
 
 class FillominoSolverLongTests(unittest.TestCase):
     def test_9x9_evil(self):
