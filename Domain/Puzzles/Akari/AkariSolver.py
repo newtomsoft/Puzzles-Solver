@@ -8,25 +8,12 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class AkariSolver(GameSolver):
-    def __init__(self, data_game: Any):
-        if isinstance(data_game, Grid):
-            self.rows_number = data_game.rows_number
-            self.columns_number = data_game.columns_number
-            self._black_cells = set()
-            self._number_constraints = {}
-            for r, c in data_game.get_positions():
-                val = data_game[r][c]
-                if val == -2:
-                    self._black_cells.add(Position(r, c))
-                elif val >= 0:
-                    self._black_cells.add(Position(r, c))
-                    self._number_constraints[Position(r, c)] = val
-        else:
-            self._data_game = data_game
-            self.rows_number = self._data_game['rows_number']
-            self.columns_number = self._data_game['columns_number']
-            self._black_cells = {Position(r, c) for r, c in self._data_game['black_cells']}
-            self._number_constraints = {Position(r, c): v for (r, c), v in self._data_game['number_constraints'].items()}
+    def __init__(self, data_game: dict[str, Any]):
+        self._data_game = data_game
+        self.rows_number = self._data_game['rows_number']
+        self.columns_number = self._data_game['columns_number']
+        self._black_cells = {Position(r, c) for r, c in self._data_game['black_cells']}
+        self._number_constraints = {Position(r, c): v for (r, c), v in self._data_game['number_constraints'].items()}
 
         if self.rows_number < 7 or self.columns_number < 7:
             raise ValueError("Akari grid must be at least 7x7")
