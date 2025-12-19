@@ -1,6 +1,5 @@
 
 import json
-from collections import defaultdict
 
 from playwright.async_api import BrowserContext
 
@@ -130,12 +129,12 @@ class VuqqKakuroGridProvider(PlaywrightGridProvider):
         rects = [op for op in ops if op['op'] == 'rect']
 
         # Use rects to define grid primarily, as they represent cells/backgrounds
-        for r in rects:
+        for rect_op in rects:
             # We assume rects align with grid lines
-            xs_candidates.append(r['x'])
-            xs_candidates.append(r['x'] + r['w'])
-            ys_candidates.append(r['y'])
-            ys_candidates.append(r['y'] + r['h'])
+            xs_candidates.append(rect_op['x'])
+            xs_candidates.append(rect_op['x'] + rect_op['w'])
+            ys_candidates.append(rect_op['y'])
+            ys_candidates.append(rect_op['y'] + rect_op['h'])
 
         # Use texts as well (centers or corners?) Text coords are usually baseline/start.
         for t in texts:
@@ -169,29 +168,24 @@ class VuqqKakuroGridProvider(PlaywrightGridProvider):
         if len(unique_xs) < 2 or len(unique_ys) < 2:
             raise Exception(f"Not enough grid lines found. xs: {len(unique_xs)}, ys: {len(unique_ys)}")
 
-        # Refine clusters: calculate gaps and filter
-        # ... logic to find the median gap and rebuild grid lines ...
-        # For simplicity, let's assume the clustering worked and we just use them.
-        # But we might need to filter boundaries.
-
         cols_count = len(unique_xs) - 1
         rows_count = len(unique_ys) - 1
 
         matrix = [[0 for _ in range(cols_count)] for _ in range(rows_count)]
 
         # Helper to find cell index
-        def get_cell_index(x, y, xs, ys):
-            c = -1
-            r = -1
-            for i in range(len(xs) - 1):
-                if xs[i] <= x <= xs[i+1] + 1: # +1 tolerance
-                    c = i
+        def get_cell_index(target_x, target_y, grid_xs, grid_ys):
+            col = -1
+            row = -1
+            for i in range(len(grid_xs) - 1):
+                if grid_xs[i] <= target_x <= grid_xs[i+1] + 1: # +1 tolerance
+                    col = i
                     break
-            for i in range(len(ys) - 1):
-                if ys[i] <= y <= ys[i+1] + 1:
-                    r = i
+            for i in range(len(grid_ys) - 1):
+                if grid_ys[i] <= target_y <= grid_ys[i+1] + 1:
+                    row = i
                     break
-            return r, c
+            return row, col
 
         # Analyze cells
         # We need to distinguish:
@@ -261,9 +255,12 @@ class VuqqKakuroGridProvider(PlaywrightGridProvider):
                 # Usually Horizontal sum (for the row) is in top-right corner
                 # Vertical sum (for the column) is in bottom-left corner
 
-                if rel_x > 0.5 and rel_y < 0.5:
+                is_top_right = rel_x > 0.5 and rel_y < 0.5
+                is_bottom_left = rel_x < 0.5 and rel_y > 0.5
+
+                if is_top_right:
                     matrix[r_idx][c_idx][0] = val
-                elif rel_x < 0.5 and rel_y > 0.5:
+                elif is_bottom_left:
                     matrix[r_idx][c_idx][1] = val
                 else:
                     # Fallback or center? Maybe just assign based on x/y
