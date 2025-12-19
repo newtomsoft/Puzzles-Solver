@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+import time
 from io import StringIO
 from unittest.mock import AsyncMock, patch
 
@@ -50,6 +51,11 @@ TEST_CASES = [
     ("tents", "https://fr.puzzle-tents.com/"),
     ("thermometers", "https://fr.puzzle-thermometers.com/"),
 ]
+
+@pytest.fixture(autouse=True)
+def run_around_tests():
+    yield
+    time.sleep(2)
 
 @pytest.mark.parametrize("puzzle_name, url", TEST_CASES)
 def test_integration_headless(puzzle_name, url):
