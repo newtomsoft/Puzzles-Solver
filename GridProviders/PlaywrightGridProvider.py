@@ -94,6 +94,8 @@ class PlaywrightGridProvider(GridProvider):
             else:
                 browser_context = await playwright.chromium.launch_persistent_context(**launch_args)
 
+            browser_context.set_default_navigation_timeout(60000)
+
             var = await callback(browser_context, source)
             return var, browser_context, playwright
         except Exception as e:
