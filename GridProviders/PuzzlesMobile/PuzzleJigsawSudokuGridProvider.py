@@ -7,7 +7,7 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleJigsawSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

@@ -5,7 +5,7 @@ from playwright.sync_api import BrowserContext
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleSudokuGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

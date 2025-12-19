@@ -14,7 +14,7 @@ class BinairoSolver(GameSolver):
         if self.rows_number % 2 != 0 or self.columns_number % 2 != 0:
             raise ValueError("Binairo grid must have an even number of rows/columns")
         self._solver = Solver()
-        self._grid_z3: Grid | None = None
+        self._grid_z3 = Grid.empty()
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
@@ -43,28 +43,33 @@ class BinairoSolver(GameSolver):
         self._add_not_same_3_adjacent_constraints()
 
     def _add_initial_constraints(self):
-        for position in [position for position, cell in self._grid if cell == 0 or cell == 1]:
-            pass  # todo
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                if self._grid.value(r, c) == 0:
+                    self._solver.add(Not(self._grid_z3[r][c]))
+                elif self._grid.value(r, c) == 1:
+                    self._solver.add(self._grid_z3[r][c])
 
     def _add_half_true_false_by_line_constraints(self):
-
+        half_columns = self.columns_number / 2
+        half_rows = self.rows_number / 2
         for row_z3 in self._grid_z3.matrix:
-            pass  # todo
+            self._solver.add(sum(row_z3[c] for c in range(self.columns_number)) == half_columns)
         for column_z3 in zip(*self._grid_z3.matrix):
-            pass  # todo
+            self._solver.add(sum(column_z3[r] for r in range(self.rows_number)) == half_rows)
 
     def _add_unique_line_constraints(self):
         for r0 in range(1, self.rows_number):
             for r1 in range(r0):
-                pass  # todo
+                self._solver.add(Not(And([self._grid_z3[r0][c] == self._grid_z3[r1][c] for c in range(self.columns_number)])))
         for c0 in range(1, self.columns_number):
             for c1 in range(c0):
-                pass  # todo
+                self._solver.add(Not(And([self._grid_z3[r][c0] == self._grid_z3[r][c1] for r in range(self.rows_number)])))
 
     def _add_not_same_3_adjacent_constraints(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number - 2):
-                pass  # todo
+                self._solver.add(Not(And(self._grid_z3[r][c] == self._grid_z3[r][c + 1], self._grid_z3[r][c + 1] == self._grid_z3[r][c + 2])))
         for c in range(self.columns_number):
             for r in range(self.rows_number - 2):
-                pass  # todo
+                self._solver.add(Not(And(self._grid_z3[r][c] == self._grid_z3[r + 1][c], self._grid_z3[r + 1][c] == self._grid_z3[r + 2][c])))

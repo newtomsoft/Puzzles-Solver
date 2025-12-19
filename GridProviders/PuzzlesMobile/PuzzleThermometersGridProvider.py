@@ -1,16 +1,16 @@
-﻿import math
+import math
+from typing import Any
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import BrowserContext
 
-from GridProviders.GridProvider import GridProvider
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 from Domain.Board.Grid import Grid
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleThermometersGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    def get_grid(self, url: str) -> tuple[any, BrowserContext]:
+    def get_grid(self, url: str) -> tuple[Any, BrowserContext]:
         return self.with_playwright(self.scrap_grid, url)
 
     def scrap_grid(self, browser: BrowserContext, url):

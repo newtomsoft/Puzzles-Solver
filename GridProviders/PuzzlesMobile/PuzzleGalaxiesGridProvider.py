@@ -3,7 +3,7 @@ from playwright.sync_api import BrowserContext
 
 from Domain.Board.Position import Position
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from GridProviders.PuzzlesMobile.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
+from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 
 
 class PuzzleGalaxiesGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):

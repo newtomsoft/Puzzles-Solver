@@ -18,14 +18,14 @@ class GridPuzzleKanjoGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasPr
 
     def scrap_grid(self, browser: BrowserContext, url):
         html_page = self.get_html(browser, url)
-        pqq_string_list, board_string_list, matrix_size = self._get_canvas_data_Kanjo(html_page)
+        pqq_string_list, board_string_list, matrix_size = self._get_canvas_data_kanjo(html_page)
         matrix = [[self._convert(r, c, pqq_string_list[r * matrix_size + c], board_string_list[r * matrix_size + c]) for c in range(matrix_size)] for r in range(matrix_size)]
         grid = Grid(matrix)
 
         return grid
 
     @staticmethod
-    def _get_canvas_data_Kanjo(html_page: str) -> tuple[list[str], list[str], int]:
+    def _get_canvas_data_kanjo(html_page: str) -> tuple[list[str], list[str], int]:
         html_string = BeautifulSoup(html_page, 'html.parser').prettify()
         size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
         pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
