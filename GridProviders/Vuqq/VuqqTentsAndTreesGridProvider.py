@@ -1,26 +1,22 @@
 import asyncio
+import json
 
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
     async def scrap_grid(self, browser, url):
         page = await browser.new_page()
-
-        # Inject drawing hook to capture canvas operations
         await page.route(lambda u: "drawing.js" in u, self._handle_drawing_js)
         await page.goto(url)
 
         try:
-            # Wait for canvas
             await page.wait_for_selector("canvas", timeout=30000)
 
-            # Poll for frames until we have a populated one
             logs = None
             for _ in range(40):
-                # Check if we have frames with content
-                # We look for a frame with > 10 items
                 js_check = """
                     (() => {
                         if (!window.vuqq_frames) return null;
@@ -40,23 +36,53 @@ class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
             if not logs:
                 raise Exception("No populated frame captured from drawing.js")
 
-            # Persist logs for Player
             await page.evaluate("logs => window.vuqq_logs = logs", logs)
 
-            return self._parse_grid(logs)
+            canvas_metrics = await page.evaluate("""
+                (() => {
+                    const canvas = document.querySelector('canvas');
+                    const rect = canvas.getBoundingClientRect();
+                    return {
+                        internal_width: canvas.width,
+                        internal_height: canvas.height,
+                        client_left: rect.left,
+                        client_top: rect.top,
+                        client_width: rect.width,
+                        client_height: rect.height
+                    };
+                })()
+            """)
+
+            grid, tents_numbers, raw_coords = self._parse_grid(logs)
+
+            scale_x = canvas_metrics['client_width'] / canvas_metrics['internal_width']
+            scale_y = canvas_metrics['client_height'] / canvas_metrics['internal_height']
+            offset_x = canvas_metrics['client_left']
+            offset_y = canvas_metrics['client_top']
+            
+            screen_col_xs = [x * scale_x + offset_x for x in raw_coords['col_xs']]
+            screen_row_ys = [y * scale_y + offset_y for y in raw_coords['row_ys']]
+            
+            meta = {
+                'col_xs': screen_col_xs,
+                'row_ys': screen_row_ys,
+                'trees': raw_coords['trees']
+            }
+            await page.evaluate(f"window.vuqq_meta = {json.dumps(meta)}")
+
+            return grid, tents_numbers
 
         except Exception as e:
             await page.close()
             raise e
 
-    async def _handle_drawing_js(self, route, request):
+    @staticmethod
+    async def _handle_drawing_js(route, request):
         try:
             response = await route.fetch()
             body = await response.text()
-            # Initialize frames storage
             new_body = "window.vuqq_frames = []; window.current_frame = [];\n" + body
 
-            # Inject hooks at start of function bodies
             hooks = [
                 (
                     "start_draw: function() {",
@@ -95,11 +121,11 @@ class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
             print(f"Error injecting hooks: {e}")
             await route.continue_()
 
-    def _parse_grid(self, logs):
+    @staticmethod
+    def _parse_grid(logs):
         texts = [l for l in logs if l["type"] == "text"]
         rects = [l for l in logs if l["type"] == "rect"]
 
-        # Identify clues
         xs = [t["x"] for t in texts]
         ys = [t["y"] for t in texts]
 
@@ -109,18 +135,14 @@ class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
         max_x = max(xs)
         max_y = max(ys)
 
-        # Row clues are on the right (high x)
         row_clues = sorted([t for t in texts if abs(t["x"] - max_x) < 5], key=lambda t: t["y"])
-        # Column clues are at the bottom (high y)
         col_clues = sorted([t for t in texts if abs(t["y"] - max_y) < 5], key=lambda t: t["x"])
 
         rows = len(row_clues)
         cols = len(col_clues)
 
-        # Initialize matrix with 0 (Grass/Empty)
         matrix = [[0 for _ in range(cols)] for _ in range(rows)]
         
-        # Prepare cues dict
         tents_numbers_by_column_row = {
             'row': [int(t["text"]) for t in row_clues],
             'column': [int(t["text"]) for t in col_clues]
@@ -129,21 +151,26 @@ class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
         row_ys = [t["y"] for t in row_clues]
         col_xs = [t["x"] for t in col_clues]
 
-        # Find Trees
-        # Palette index 3 is trunk (brown), 4 is leaves (green)
         trunks = [r for r in rects if r.get("colour") == 3]
+        trees = []
 
         for trunk in trunks:
             tx, ty = trunk["x"], trunk["y"]
             trunk_cx = tx + trunk["w"] / 2
             trunk_cy = ty + trunk["h"] / 2
 
-            # Find closest cell
             c = min(range(cols), key=lambda i: abs(col_xs[i] - trunk_cx))
             r = min(range(rows), key=lambda i: abs(row_ys[i] - trunk_cy))
 
-            matrix[r][c] = -1 # Tree value for Solver
+            matrix[r][c] = TentsSolver.tree_value
+            trees.append((r, c))
             
         grid = Grid(matrix)
+        
+        raw_coords = {
+            'col_xs': col_xs,
+            'row_ys': row_ys,
+            'trees': trees
+        }
 
-        return grid, tents_numbers_by_column_row
+        return grid, tents_numbers_by_column_row, raw_coords
