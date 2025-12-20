@@ -1,11 +1,11 @@
 ﻿import asyncio
-import inspect
 import time
 
 from GameComponentFactory import GameComponentFactory
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleMainConsole:
@@ -29,14 +29,23 @@ class PuzzleMainConsole:
         solution = PuzzleMainConsole.run_solver(game_solver, data_game)
 
         if game_player is not None and solution != Grid.empty():
-            await game_player.play(solution)
+            result = await game_player.play(solution)
+            if result is None:
+                print("Submission failed: No result returned")
+            elif result == SubmissionStatus.FAILED_NO_SUCCESS_SELECTOR:
+                print("Submission failed: No success selector found")
+            elif result == SubmissionStatus.FAILED_NO_SUBMIT_BUTTON:
+                print("Submission failed: No submit button found")
+            else:
+                print("Game played successfully")
 
-        # Properly cleanup browser context before stopping playwright to avoid event loop errors
         if browser_context is not None:
             await browser_context.close()
+            print("Browser context closed")
         
         if playwright:
             await playwright.stop()
+            print("Playwright stopped")
 
 
     @staticmethod

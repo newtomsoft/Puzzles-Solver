@@ -2,7 +2,7 @@ import re
 from typing import Optional
 
 from Domain.Puzzles.GameSolver import GameSolver
-from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.Base.GridPlayer import GridPlayer
 from GridProviders.GridProvider import GridProvider
 
 

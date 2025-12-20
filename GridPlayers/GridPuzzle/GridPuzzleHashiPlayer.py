@@ -1,6 +1,6 @@
 ﻿from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleHashiPlayer(PlaywrightPlayer):

@@ -14,7 +14,7 @@ def register():
     )(SkyscrapersSolver)
 
     GameRegistry.register(
-        r"https://vuqq\.com/.*/skyscrapers/", 
+        r"https://vuqq\.com/.*skyscrapers/", 
         VuqqSkyscrapersGridProvider, 
         VuqqSkyscrapersPlayer
     )(SkyscrapersSolver)

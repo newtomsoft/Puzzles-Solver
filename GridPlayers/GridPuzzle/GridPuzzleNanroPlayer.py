@@ -1,5 +1,5 @@
 ﻿from Domain.Board.Grid import Grid
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleNanroPlayer(PlaywrightPlayer):

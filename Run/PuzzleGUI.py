@@ -134,8 +134,7 @@ class PuzzleGUI:
 
             async def async_main():
                 factory = GameComponentFactory()
-                game_solver_class, data_game, game_player, playwright = await factory.create_components_from_url(url)
-
+                game_solver_class, data_game, game_player, browser_context, playwright = await factory.create_components_from_url(url)
                 print("Components created. Solving...")
                 solver_instance = factory.create_solver(game_solver_class, data_game)
 

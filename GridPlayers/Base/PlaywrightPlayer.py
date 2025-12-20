@@ -6,12 +6,11 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from moviepy import VideoFileClip
-from playwright.async_api import BrowserContext, Mouse, Video
-from playwright.async_api import ElementHandle, Page
+from playwright.async_api import BrowserContext, ElementHandle, Mouse, Page, Video
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridPlayers.GridPlayer import GridPlayer
+from GridPlayers.Base.GridPlayer import GridPlayer
 
 
 class VideoFile(Protocol):

@@ -3,6 +3,7 @@ import logging
 import os
 import tkinter as tk
 from abc import abstractmethod
+from typing import Any, cast
 
 from playwright.async_api import BrowserContext, async_playwright
 
@@ -76,29 +77,29 @@ class PlaywrightGridProvider(GridProvider):
                 'user_data_dir': self.user_data_path,
                 'viewport': {"width": window_width, "height": window_height},
                 'headless': self.headless,
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             }
             if self.record_video:
                 launch_args['record_video_dir'] = "videos/"
                 launch_args['record_video_size'] = {"width": window_width, "height": window_height}
 
-            launch_args['args'] = []
             if self.browser_type == 'chromium':
-                launch_args['args'] = [
+                chromium_args = [
                     f'--disable-extensions-except={self.extensions_path}',
                     f'--load-extension={self.extensions_path}',
                     '--start-maximized'
                 ]
-
-            if self.browser_type == 'firefox':
-                browser_context = await playwright.firefox.launch_persistent_context(**launch_args)
-            else:
+                launch_args['args'] = cast(Any, chromium_args)
                 browser_context = await playwright.chromium.launch_persistent_context(**launch_args)
+            else:
+                launch_args['args'] = cast(Any, [])
+                browser_context = await playwright.firefox.launch_persistent_context(**launch_args)
 
             browser_context.set_default_navigation_timeout(60000)
 
             var = await callback(browser_context, source)
             return var, browser_context, playwright
-        except Exception as e:
+        except Exception:
             await playwright.stop()
             raise
 

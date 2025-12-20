@@ -1,7 +1,7 @@
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleMintonettePlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):

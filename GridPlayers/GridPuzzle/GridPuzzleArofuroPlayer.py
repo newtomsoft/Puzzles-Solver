@@ -1,6 +1,6 @@
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Arofuro.ArofuroSolver import ArofuroSolver
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleArofuroPlayer(PlaywrightPlayer):

@@ -2,11 +2,12 @@ import asyncio
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaCellType
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid):
+    async def play(self, solution: Grid) -> SubmissionStatus:
         page = self.browser.pages[0]
 
         cells = page.locator('div.cell, div.shakashaka-task-cell')
@@ -28,5 +29,7 @@ class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
                 continue
             await cell.click(position={"x": w * 0.15, "y": h * 0.85})
 
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result

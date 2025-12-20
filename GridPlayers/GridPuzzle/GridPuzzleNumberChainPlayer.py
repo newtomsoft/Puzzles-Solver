@@ -1,5 +1,5 @@
 ﻿from Domain.Board.LinearPathGrid import LinearPathGrid
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleNumberChainPlayer(PlaywrightPlayer):

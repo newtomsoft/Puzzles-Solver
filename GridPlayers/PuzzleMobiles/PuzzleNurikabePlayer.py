@@ -1,10 +1,11 @@
 ﻿import asyncio
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleNurikabePlayer(PuzzlesMobilePlayer):
-    async def play(self, solution):
+    async def play(self, solution) -> SubmissionStatus:
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.board-back > div")
         for position, value in [(position, value) for (position, value) in solution if value]:
@@ -17,5 +18,7 @@ class PuzzleNurikabePlayer(PuzzlesMobilePlayer):
             await page.mouse.up()
 
         await asyncio.sleep(1)
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result

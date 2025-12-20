@@ -1,6 +1,6 @@
 ﻿from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleCanvasLoopAndBlackCellsPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):

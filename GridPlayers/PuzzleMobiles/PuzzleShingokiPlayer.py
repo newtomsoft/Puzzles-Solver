@@ -2,11 +2,12 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: IslandGrid):
+    async def play(self, solution: IslandGrid) -> SubmissionStatus:
         page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")
         verticals = page.locator(".loop-vertical")
@@ -23,5 +24,7 @@ class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
                 await page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
                 await page.mouse.down()
                 await page.mouse.up()
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result
