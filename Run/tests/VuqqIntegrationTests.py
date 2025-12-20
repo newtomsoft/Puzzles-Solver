@@ -3,20 +3,23 @@ import os
 import sys
 import time
 from io import StringIO
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
-
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
-from Run.PuzzleMainConsole import PuzzleMainConsole
-
-sys.modules["tkinter"] = MagicMock()
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from Run.PuzzleMainConsole import PuzzleMainConsole
+
 TEST_CASES = [
-    ("skyscrapers", "https://vuqq.com/en/skyscrapers/"),
+    # ("skyscrapers", "https://vuqq.com/skyscrapers/"),
+    # ("akari", "https://vuqq.com/akari/"),
+    # ("netwalk", "https://vuqq.com/netwalk/"),
+    # ("sudoku", "https://vuqq.com/sudoku/"),
+    # ("hitori", "https://vuqq.com/hitori/"),
+    ("tents", "https://vuqq.com/tents-and-trees/"),
 ]
 
 
@@ -34,7 +37,7 @@ def test_integration_headless(puzzle_name, url):
          patch.object(PlaywrightGridProvider, "_read_config", autospec=True) as mock_config:
 
         def side_effect_read_config(self_provider):
-            self_provider.headless = True
+            self_provider.headless = False
             self_provider.record_video = False
 
         mock_config.side_effect = side_effect_read_config

@@ -7,11 +7,10 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-# Add paths for imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Run.PuzzleMainConsole import PuzzleMainConsole
 
@@ -85,3 +84,6 @@ def test_integration_headless(puzzle_name, url):
         assert "getting grid..." in output
         assert "Solving..." in output
         assert "Solution found in" in output
+        assert "Game played successfully" in output
+        assert "Browser context closed" in output
+        assert "Playwright stopped" in output

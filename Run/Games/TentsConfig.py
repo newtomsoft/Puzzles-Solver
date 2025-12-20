@@ -3,6 +3,8 @@ from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCa
 from GridPlayers.PuzzleMobiles.PuzzleTentsPlayer import PuzzleTentsPlayer
 from GridProviders.PuzzleBaron.PuzzleBaronCampsitesGridProvider import PuzzleBaronCampsitesGridProvider
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
+from GridProviders.Vuqq.VuqqTentsAndTreesGridProvider import VuqqTentsAndTreesGridProvider
+from GridPlayers.Vuqq.VuqqTentsAndTreesPlayer import VuqqTentsAndTreesPlayer
 from Run.GameRegistry import GameRegistry
 
 
@@ -11,6 +13,12 @@ def register():
         r"https://.*\.puzzle-tents\.com", 
         PuzzleTentsGridProvider, 
         PuzzleTentsPlayer
+    )(TentsSolver)
+    
+    GameRegistry.register(
+        r"https://vuqq\.com/.*tents.*",
+        VuqqTentsAndTreesGridProvider,
+        VuqqTentsAndTreesPlayer
     )(TentsSolver)
 
     GameRegistry.register(

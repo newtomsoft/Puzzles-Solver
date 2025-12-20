@@ -1,11 +1,12 @@
 import asyncio
 
 from Domain.Board.Grid import Grid
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleShikakuPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid):
+    async def play(self, solution: Grid) -> SubmissionStatus:
         page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")
 
@@ -21,5 +22,7 @@ class PuzzleShikakuPlayer(PuzzlesMobilePlayer):
             await page.mouse.up()
 
         await asyncio.sleep(2)
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result

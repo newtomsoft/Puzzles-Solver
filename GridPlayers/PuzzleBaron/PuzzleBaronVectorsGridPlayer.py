@@ -2,7 +2,7 @@
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Position import Position
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class PuzzleBaronVectorsPlayer(PlaywrightPlayer):

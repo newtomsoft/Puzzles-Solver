@@ -1,7 +1,7 @@
 
 from Domain.Board.Grid import Grid
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleMitiPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
