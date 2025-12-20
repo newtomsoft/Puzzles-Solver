@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -11,14 +11,19 @@ class KakuroSolver(GameSolver):
         self.columns_number = self._grid.columns_number
         if self.rows_number < 3:
             raise ValueError("The grid must be at least 3x3")
-        self._model = cp_model.CpModel()
+        self._model = None
         self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 
-    def get_solution(self) -> Grid:
+    def _init_model(self):
+        self._model = cp_model.CpModel()
         self._grid_vars = [[self._model.NewIntVar(1, 9, f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
+
+    def get_solution(self) -> Grid:
+        if self._model is None:
+            self._init_model()
 
         self._status = self._solver.Solve(self._model)
 
@@ -29,7 +34,44 @@ class KakuroSolver(GameSolver):
         return solution_grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return self.get_solution()
+
+        # Current solution values
+        constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                var = self._grid_vars[r][c]
+                if var is not None:
+                    val = self._solver.Value(var)
+                    # We want: Not(All(var == val)) => Or(Any(var != val))
+                    # OrTools requires booleans for AddBoolOr.
+                    # Create b <=> var != val
+                    # Actually, better: Create b.
+                    # b => var != val.
+                    # And we want AtLeastOne(b).
+                    # Wait, simpler:
+                    # b <=> (var == val).
+                    # We want Not(And(b_i)).
+                    # => Or(Not(b_i)).
+                    # b_i is true if var == val.
+                    # We want at least one var != val.
+
+                    # Reified constraint:
+                    bool_diff = self._model.NewBoolVar(f"diff_{r}_{c}")
+                    self._model.Add(var != val).OnlyEnforceIf(bool_diff)
+                    self._model.Add(var == val).OnlyEnforceIf(bool_diff.Not())
+                    constraints.append(bool_diff)
+
+        self._model.AddBoolOr(constraints)
+
+        self._status = self._solver.Solve(self._model)
+
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
+
+        solution_grid = self._create_solution_grid()
+        return solution_grid
 
     def _create_solution_grid(self) -> Grid:
         return Grid([[self._solver.Value(self._grid_vars[r][c]) if self._grid_vars[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])

@@ -19,25 +19,51 @@ class AkariSolver(GameSolver):
             raise ValueError("Akari grid must be at least 7x7")
 
         self._solver = cp_model.CpSolver()
-        self._model = cp_model.CpModel()
+        self._model = None
         self._bulbs_vars = None
+        self._status = None
 
-    def get_solution(self) -> Grid:
+    def _init_model(self):
         self._model = cp_model.CpModel()
         self._bulbs_vars = Grid([[self._model.NewBoolVar(f'bulb_{r}_{c}') if Position(r, c) not in self._black_cells else None
                                   for c in range(self.columns_number)]
                                  for r in range(self.rows_number)])
-
         self._add_constraints()
 
-        status = self._solver.Solve(self._model)
-        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+    def get_solution(self) -> Grid:
+        if self._model is None:
+            self._init_model()
+
+        self._status = self._solver.Solve(self._model)
+        if self._status == cp_model.OPTIMAL or self._status == cp_model.FEASIBLE:
             return self._compute_solution()
 
         return Grid.empty()
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return self.get_solution()
+
+        # Create a constraint to exclude the current solution
+        current_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                p = Position(r, c)
+                if p not in self._black_cells and self._bulbs_vars[p] is not None:
+                    var = self._bulbs_vars[p]
+                    if self._solver.BooleanValue(var):
+                        current_vars.append(var.Not())
+                    else:
+                        current_vars.append(var)
+
+        if current_vars:
+            self._model.AddBoolOr(current_vars)
+
+        self._status = self._solver.Solve(self._model)
+        if self._status == cp_model.OPTIMAL or self._status == cp_model.FEASIBLE:
+            return self._compute_solution()
+
+        return Grid.empty()
 
     def _compute_solution(self) -> Grid:
         solution_grid = Grid([[0] * self.columns_number for _ in range(self.rows_number)])
