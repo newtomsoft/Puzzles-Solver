@@ -1,5 +1,5 @@
-﻿from bitarray import bitarray
-from z3 import BitVec, Extract, Or, Solver, sat
+from bitarray import bitarray
+from z3 import BitVec, Extract, Or, Solver, sat, Not, And
 
 from Domain.Board.Grid import Grid
 
@@ -21,16 +21,49 @@ class NonogramSolver:
         self._solver = None
         self._rows_z3: list = []
         self._columns_z3: list = []
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
+        if self._solver is None:
+            self._init_solver()
+
+        if self._solver.check() != sat:
+            return Grid.empty()
+
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def get_other_solution(self) -> Grid:
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        constraints = []
+        model = self._solver.model()
+        for r in range(self.rows_number):
+            # We reconstruct the bitvector value from the previous solution
+            row_val = 0
+            for c in range(self.columns_number):
+                if self._previous_solution.value(r, c) == 1:
+                    row_val |= (1 << (self.columns_number - 1 - c))
+            constraints.append(self._rows_z3[r] != row_val)
+
+        # We need at least one row to be different?
+        # Actually, if we just want "not this specific grid", we should say Or(row0 != val0, row1 != val1, ...)
+        # The previous loop created [row0 != val0, row1 != val1, ...].
+        # We need Or of these.
+        self._solver.add(Or(constraints))
+
+        if self._solver.check() != sat:
+            return Grid.empty()
+
+        self._previous_solution = self._compute_solution()
+        return self._previous_solution
+
+    def _init_solver(self):
         self._rows_z3: list = [BitVec(f"row_{r}", self.columns_number) for r in range(self.rows_number)]
         self._columns_z3: list = [BitVec(f"column_{c}", self.rows_number) for c in range(self.columns_number)]
         self._solver = Solver()
         self._add_constraints()
-        if self._solver.check() != sat:
-            return Grid.empty()
-
-        return self._compute_solution()
 
     def _compute_solution(self):
         model = self._solver.model()
