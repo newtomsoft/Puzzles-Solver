@@ -1,10 +1,11 @@
 ﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleThermometersPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution):
+    async def play(self, solution) -> SubmissionStatus:
         page = self.browser.pages[0]
         sorted_cells = await self._get_cells_sorted_by_position(page)
 
@@ -12,8 +13,10 @@ class PuzzleThermometersPlayer(PuzzlesMobilePlayer):
             index = position.r * solution.columns_number + position.c
             await sorted_cells[index].click()
 
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result
 
     @staticmethod
     async def _get_cells_sorted_by_position(page):

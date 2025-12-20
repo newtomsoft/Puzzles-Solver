@@ -8,7 +8,7 @@ from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 class PuzzlesMobilePlayer(PlaywrightPlayer):
     @abstractmethod
-    async def play(self, solution):
+    async def play(self, solution) -> SubmissionStatus:
         pass
 
     @staticmethod

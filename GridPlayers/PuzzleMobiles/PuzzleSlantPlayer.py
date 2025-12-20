@@ -2,10 +2,11 @@ import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleSlantPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid):
+    async def play(self, solution: Grid) -> SubmissionStatus:
         page = self.browser.pages[0]
         cell_elements = page.locator('div.cell')
 
@@ -16,5 +17,7 @@ class PuzzleSlantPlayer(PuzzlesMobilePlayer):
             else:
                 await cell_elements.nth(idx).click(button="right")
 
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(3)
+
+        return result

@@ -6,6 +6,7 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
@@ -13,15 +14,17 @@ class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
         super().__init__(browser)
         self._solution: Grid | None = None
 
-    async def play(self, solution):
+    async def play(self, solution) -> SubmissionStatus:
         self._solution = solution
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.loop-task-cell")
         different_neighbors_positions = solution.find_different_neighbors_positions()
         await self._draw_regions(cells, page, different_neighbors_positions)
 
-        await self.submit_score(page)
+        result = await self.submit_score(page)
         await asyncio.sleep(5)
+
+        return result
 
     async def _draw_regions(self, cells, page, pairs_positions: list[tuple[Position, Position]]):
         for position0, position1 in pairs_positions:

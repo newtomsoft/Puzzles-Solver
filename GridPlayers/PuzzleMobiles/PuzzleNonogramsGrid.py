@@ -1,10 +1,11 @@
-﻿from time import sleep
+﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 
 class PuzzleNonogramsPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution):
+    async def play(self, solution) -> SubmissionStatus:
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.cell.selectable")
         for position, value in solution:
@@ -12,5 +13,8 @@ class PuzzleNonogramsPlayer(PuzzlesMobilePlayer):
             if value:
                 await cells[index].click()
 
-        await self.submit_score(page)
-        sleep(3)
+        await asyncio.sleep(2)
+        result = await self.submit_score(page)
+        await asyncio.sleep(3)
+
+        return result
