@@ -1,4 +1,7 @@
 ﻿import asyncio
+import inspect
+import logging
+import os
 import time
 
 from GameComponentFactory import GameComponentFactory
@@ -10,7 +13,18 @@ from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
 
 class PuzzleMainConsole:
     @staticmethod
+    def setup_logging():
+        log_level = os.environ.get("PUZZLE_LOG_LEVEL", "DEBUG").upper()
+        numeric_level = getattr(logging, log_level, logging.INFO)
+        logging.basicConfig(
+            level=numeric_level,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+
+    @staticmethod
     async def main():
+        PuzzleMainConsole.setup_logging()
         print("Puzzle Solver")
         print("Enter game url")
         url = input()
@@ -42,7 +56,7 @@ class PuzzleMainConsole:
         if browser_context is not None:
             await browser_context.close()
             print("Browser context closed")
-        
+
         if playwright:
             await playwright.stop()
             print("Playwright stopped")

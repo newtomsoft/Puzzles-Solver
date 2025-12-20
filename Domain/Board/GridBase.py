@@ -91,9 +91,6 @@ class GridBase[T]:
             return self._matrix[r_or_position.r][r_or_position.c]
         return self._matrix[r_or_position][c]
 
-    def set_value(self, position: Position, value):
-        self._matrix[position.r][position.c] = value
-
     def get_index_from_position(self, position: Position) -> int:
         return position.r * self.columns_number + position.c
 
