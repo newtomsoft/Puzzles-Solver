@@ -5,7 +5,7 @@ from Domain.Board.Grid import Grid
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 
 _ = 0
-T = -1
+T = TentsSolver.tree_value
 
 
 class TentsSolverTests(TestCase):

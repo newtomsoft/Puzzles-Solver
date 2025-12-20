@@ -35,6 +35,10 @@ class Grid[T](GridBase[T]):
     def __hash__(self):
         return hash(str(self._matrix))
 
+    @property
+    def values(self) -> Iterable[T]:
+        return (self[position] for position, _ in self)
+
     @classmethod
     def from_str(cls, grid_str: str, element_type: type) -> 'Grid':
         rows_number = grid_str.count('\n') + 1

@@ -1,10 +1,11 @@
 import inspect
+import logging
 import os
 import sys
 import threading
 import time
 import tkinter as tk
-from tkinter import messagebox, scrolledtext
+from tkinter import messagebox, scrolledtext, ttk
 
 from Domain.Board.Grid import Grid
 from Run.GameComponentFactory import GameComponentFactory
@@ -35,6 +36,22 @@ class TextRedirector(object):
 
     def flush(self):
         pass
+
+
+class TextHandler(logging.Handler):
+    def __init__(self, widget):
+        super().__init__()
+        self.widget = widget
+
+    def emit(self, record):
+        msg = self.format(record)
+        try:
+            self.widget.configure(state="normal")
+            self.widget.insert("end", msg + "\n")
+            self.widget.see("end")
+            self.widget.configure(state="disabled")
+        except RuntimeError:
+            pass
 
 
 class PuzzleGUI:
@@ -71,6 +88,13 @@ class PuzzleGUI:
             side="left", padx=10
         )
 
+        tk.Label(options_frame, text="Log Level:").pack(side="left", padx=(10, 0))
+        self.log_level_var = tk.StringVar(value=os.environ.get("PUZZLE_LOG_LEVEL", "INFO").upper())
+        log_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        self.log_level_combo = ttk.Combobox(options_frame, textvariable=self.log_level_var, values=log_levels, width=10, state="readonly")
+        self.log_level_combo.pack(side="left", padx=5)
+        self.log_level_combo.bind("<<ComboboxSelected>>", lambda e: self.update_log_level())
+
         # Action Buttons
         action_frame = tk.Frame(root)
         action_frame.pack(pady=10)
@@ -96,6 +120,26 @@ class PuzzleGUI:
         self.original_stderr = sys.stderr
         sys.stdout = TextRedirector(self.log_area)
         sys.stderr = TextRedirector(self.log_area)
+
+        # Setup Logging
+        self.setup_logging()
+
+    def setup_logging(self):
+        self.logger = logging.getLogger()
+        log_level = self.log_level_var.get()
+        numeric_level = getattr(logging, log_level, logging.INFO)
+        self.logger.setLevel(numeric_level)
+
+        self.log_handler = TextHandler(self.log_area)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        self.log_handler.setFormatter(formatter)
+        self.logger.addHandler(self.log_handler)
+
+    def update_log_level(self):
+        log_level = self.log_level_var.get()
+        numeric_level = getattr(logging, log_level, logging.INFO)
+        self.logger.setLevel(numeric_level)
+        print(f"Log level changed to {log_level}")
 
     def set_url(self, name):
         self.url_entry.delete(0, tk.END)
