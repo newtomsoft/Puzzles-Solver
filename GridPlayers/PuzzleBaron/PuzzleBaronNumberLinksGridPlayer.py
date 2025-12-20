@@ -2,7 +2,7 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class PuzzleBaronNumberLinksPlayer(PlaywrightPlayer):

@@ -1,83 +1,67 @@
 import asyncio
 
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class VuqqTentsAndTreesPlayer(PlaywrightPlayer):
     async def play(self, solution):
         page = None
-        if hasattr(self.browser, "pages") and self.browser.pages:
-            found_page = None
-            for p in self.browser.pages:
-                try:
-                    logs_check = await p.evaluate("typeof window.vuqq_logs !== 'undefined'")
-                    if logs_check:
-                        page = p
-                        break
-                except:
-                    continue
-            
-            if not page:
-                 page = self.browser.pages[0] # Default Fallback
-        
-        elif hasattr(self.browser, "contexts") and self.browser.contexts:
-             if self.browser.contexts[0].pages:
-                 page = self.browser.contexts[0].pages[0]
+        pages = []
+
+        # Collect all pages from browser and contexts
+        if hasattr(self.browser, "pages"):
+             pages.extend(self.browser.pages)
+        if hasattr(self.browser, "contexts"):
+             for ctx in self.browser.contexts:
+                 pages.extend(ctx.pages)
+
+        # Find the page with our metadata
+        for p in pages:
+            try:
+                meta_check = await p.evaluate("typeof window.vuqq_meta !== 'undefined'")
+                if meta_check:
+                    page = p
+                    break
+            except:
+                continue
 
         if not page:
-            # Fallback: maybe we need to create one? No, Player plays on existing page.
-            raise Exception("No active page found to play on.")
+             # Fallback to first page if available
+             if pages:
+                 page = pages[0]
+             else:
+                 raise Exception("No active page found to play on.")
 
-        # We need to re-parse logs to get coordinates because solution Grid might be a copy without metadata
-        # or we simply rely on the page state which is preserved.
-        logs = await page.evaluate("window.vuqq_logs")
-        if not logs:
-            raise Exception("No logs found. GridProvider must run before Player.")
+        # Get metadata
+        meta = await page.evaluate("window.vuqq_meta")
+        if not meta:
+            raise Exception("No Vuqq metadata found. GridProvider must run before Player.")
 
-        texts = [l for l in logs if l["type"] == "text"]
-        xs = [t["x"] for t in texts]
-        ys = [t["y"] for t in texts]
-        max_x = max(xs)
-        max_y = max(ys)
-
-        row_clues = sorted([t for t in texts if abs(t["x"] - max_x) < 5], key=lambda t: t["y"])
-        col_clues = sorted([t for t in texts if abs(t["y"] - max_y) < 5], key=lambda t: t["x"])
-
-        row_ys = [t["y"] for t in row_clues]
-        col_xs = [t["x"] for t in col_clues]
-
-        rects = [l for l in logs if l["type"] == "rect"]
+        unique_xs = meta['col_xs']
+        unique_ys = meta['row_ys']
+        trees = meta.get('trees', []) # list of [r, c] pairs
         
-        # Find Trees (same logic as Provider)
-        trunks = [r for r in rects if r.get("colour") == 3]
-        tree_positions = set()
-        
+        # Convert trees to set of tuples for efficient lookup
+        tree_set = set()
+        for t in trees:
+            if len(t) >= 2:
+                tree_set.add((t[0], t[1]))
+
         cols = solution.columns_number
         rows = solution.rows_number
         
-        for trunk in trunks:
-            tx, ty = trunk["x"], trunk["y"]
-            trunk_cx = tx + trunk["w"] / 2
-            trunk_cy = ty + trunk["h"] / 2
-
-            # Find closest cell
-            if col_xs and row_ys:
-                c = min(range(cols), key=lambda i: abs(col_xs[i] - trunk_cx))
-                r = min(range(rows), key=lambda i: abs(row_ys[i] - trunk_cy))
-                tree_positions.add((r, c))
-
-        # Iterate solution
-        for r in range(solution.rows_number):
-            for c in range(solution.columns_number):
+        # Iterate solution and play
+        for r in range(rows):
+            for c in range(cols):
                 val = solution[r][c]
                 
-                # Check if this is a tree known from logs
-                if (r, c) in tree_positions:
+                # Check if this is a tree known from metadata
+                if (r, c) in tree_set:
                     continue
 
-                if c < len(col_xs) and r < len(row_ys):
-                    x = col_xs[c]
-                    y = row_ys[r]
+                if c < len(unique_xs) and r < len(unique_ys):
+                    x = unique_xs[c]
+                    y = unique_ys[r]
 
                     if val: # True = Tent
                         # Place Tent

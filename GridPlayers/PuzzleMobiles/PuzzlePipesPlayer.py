@@ -2,7 +2,7 @@
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzlePipesPlayer(PuzzlesMobilePlayer):

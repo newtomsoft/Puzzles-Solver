@@ -1,7 +1,7 @@
 ﻿import asyncio
 
 from Domain.Board.Direction import Direction
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleStitchesPlayer(PuzzlesMobilePlayer):

@@ -1,7 +1,7 @@
 ﻿import asyncio
 
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleBimaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):

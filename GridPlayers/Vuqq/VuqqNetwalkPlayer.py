@@ -1,7 +1,6 @@
 from Domain.Board.Direction import Direction
-from Domain.Board.Pipe import Pipe
 from Domain.Board.PipesGrid import PipesGrid
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class VuqqNetwalkPlayer(PlaywrightPlayer):
@@ -25,7 +24,14 @@ class VuqqNetwalkPlayer(PlaywrightPlayer):
             r = idx // columns_number
             c = idx % columns_number
 
-            target_pipe: Pipe = solution[r][c]
+            target_element = solution[r][c]
+            if hasattr(target_element, 'get_connected_to'):
+                target_pipe = target_element
+            elif hasattr(target_element, 'shape') and hasattr(target_element.shape, 'get_connected_to'):
+                target_pipe = target_element.shape
+            else:
+                raise ValueError(f"Unknown element type at {r},{c}: {type(target_element)}")
+
             target_connections = target_pipe.get_connected_to()
 
             # Get current state from DOM

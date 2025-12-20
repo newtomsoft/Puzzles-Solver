@@ -1,6 +1,6 @@
 import asyncio
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleStarBattlePlayer(PuzzlesMobilePlayer):

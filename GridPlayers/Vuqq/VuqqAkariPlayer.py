@@ -1,6 +1,6 @@
 
 import asyncio
-from GridPlayers.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 class VuqqAkariPlayer(PlaywrightPlayer):
     async def play(self, solution):

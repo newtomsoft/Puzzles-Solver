@@ -1,6 +1,6 @@
 ﻿from time import sleep
 
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleNonogramsPlayer(PuzzlesMobilePlayer):

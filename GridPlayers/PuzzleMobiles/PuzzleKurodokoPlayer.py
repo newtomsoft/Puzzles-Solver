@@ -2,7 +2,7 @@ import asyncio
 from typing import Literal
 
 from Domain.Board.Grid import Grid
-from GridPlayers.PuzzleMobiles.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class PuzzleKurodokoPlayer(PuzzlesMobilePlayer):
