@@ -54,8 +54,8 @@ class TapaSolverTests(TestCase):
             [[1], [1]],
             [[1], [1]],
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -64,8 +64,8 @@ class TapaSolverTests(TestCase):
             [[4], _],
             [_, _],
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
@@ -75,10 +75,12 @@ class TapaSolverTests(TestCase):
             [_, _],
         ])
         expected_solution = Grid([[_, 1], [1, 1]])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_exist_basic_grid_1_number_8(self):
         grid = Grid([
@@ -91,10 +93,12 @@ class TapaSolverTests(TestCase):
             [X, _, X],
             [X, X, X]
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_exist_basic_grid_2_numbers(self):
         grid = Grid([
@@ -105,10 +109,12 @@ class TapaSolverTests(TestCase):
             [_, X], 
             [_, X]
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_not_exist_black_square(self):
         grid = Grid([
@@ -154,10 +160,12 @@ class TapaSolverTests(TestCase):
             [X, _, X],
             [X, X, X]
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_exist_grid_with_list_count_2_2(self):
         grid = Grid([
@@ -172,10 +180,12 @@ class TapaSolverTests(TestCase):
             [X, X, X, _],
             [_, _, _, _]
         ])
-        game_solver = TapaSolver(grid)
 
+        game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_not_exist_isolated_black(self):
         grid = Grid([
@@ -204,9 +214,12 @@ class TapaSolverTests(TestCase):
             [X, X, _, _, X, X],
             [_, _, X, X, X, _]
         ])
+
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_grid_10x10(self):
         grid = Grid([
@@ -233,9 +246,12 @@ class TapaSolverTests(TestCase):
             [X, _, _, X, _, _, _, X, _, X],
             [X, X, _, X, X, X, X, _, X, X]
         ])
+
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_grid_10x10_2(self):
         grid = Grid([
@@ -262,9 +278,12 @@ class TapaSolverTests(TestCase):
             [X, _, _, X, _, X, X, _, _, X],
             [X, X, X, X, X, _, X, X, X, X]
         ])
+
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_grid_10x10_evil(self):
         """https://gridpuzzle.com/tapa/jmn01"""
@@ -292,9 +311,12 @@ class TapaSolverTests(TestCase):
             [X, _, _, _, X, X, X, X, X, _],
             [X, X, X, X, _, _, _, _, X, X]
         ])
+
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_grid_15x15_1(self):
         grid = Grid([
@@ -331,9 +353,12 @@ class TapaSolverTests(TestCase):
             [X, X, X, X, _, _, _, X, X, X, _, _, X, _, X],
             [_, _, _, _, X, X, X, X, _, X, X, _, X, X, X]
         ])
+
         game_solver = TapaSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
