@@ -32,6 +32,8 @@ class MinesweeperMosaicSolverTests(TestCase):
             [0, 0, 1]
         ])
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_12x12(self):
         grid = Grid([
@@ -51,6 +53,8 @@ class MinesweeperMosaicSolverTests(TestCase):
             [1, 1, 0, 0, 0]
         ])
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
