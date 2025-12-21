@@ -14,6 +14,7 @@ class MinesweeperMosaicSolverTests(TestCase):
             [0, 0, 0],
             [0, 0, 0]
         ])
+
         game_solver = MinesweeperMosaicSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
@@ -24,14 +25,18 @@ class MinesweeperMosaicSolverTests(TestCase):
             [0, 1, 1],
             [0, 1, 1]
         ])
-        game_solver = MinesweeperMosaicSolver(grid)
-        solution = game_solver.get_solution()
+
         expected_solution = Grid([
             [0, 0, 0],
             [0, 0, 0],
             [0, 0, 1]
         ])
+
+        game_solver = MinesweeperMosaicSolver(grid)
+        solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_12x12(self):
         grid = Grid([
@@ -41,8 +46,7 @@ class MinesweeperMosaicSolverTests(TestCase):
             [_, 3, 2, _, _],
             [3, _, 1, 1, _]
         ])
-        game_solver = MinesweeperMosaicSolver(grid)
-        solution = game_solver.get_solution()
+
         expected_solution = Grid([
             [1, 1, 1, 0, 0],
             [0, 1, 1, 0, 0],
@@ -50,8 +54,26 @@ class MinesweeperMosaicSolverTests(TestCase):
             [1, 0, 0, 0, 1],
             [1, 1, 0, 0, 0]
         ])
-        self.assertEqual(expected_solution, solution)
 
+        game_solver = MinesweeperMosaicSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_multiple_solutions(self):
+        grid = Grid([
+            [_, _, _],
+            [_, _, _],
+            [_, _, _],
+        ])
+
+        game_solver = MinesweeperMosaicSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
+        self.assertNotEqual(solution, other_solution)
 
 if __name__ == '__main__':
     unittest.main()

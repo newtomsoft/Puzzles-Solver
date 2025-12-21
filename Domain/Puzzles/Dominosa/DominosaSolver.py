@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -20,8 +20,14 @@ class DominosaSolver(GameSolver):
         self.len_range_number_on_domino = self.rows_number
         if self.max_number_on_domino - self.min_number_on_domino + 1 != self.len_range_number_on_domino:
             raise ValueError(f"Values on dominoes must be between x and x + {self.len_range_number_on_domino - 1}")
-        self._model = cp_model.CpModel()
+        self._model = None
         self._solver = cp_model.CpSolver()
+        self._dominoes_positions = None
+        self._domino_position_bool_vars = None
+        self._status = None
+
+    def _init_model(self):
+        self._model = cp_model.CpModel()
         self._dominoes_positions = {
             (value0, value1): [(self._model.NewIntVar(0, self.rows_number - 1, f"{value0}_{value1}_r0"), 
                                self._model.NewIntVar(0, self.columns_number - 1, f"{value0}_{value1}_c0")), 
@@ -30,14 +36,19 @@ class DominosaSolver(GameSolver):
             for value0 in range(self.min_number_on_domino, self.max_number_on_domino + 1)
             for value1 in range(self.min_number_on_domino, value0 + 1)
         }
-        self._possibles_neighbors: dict[tuple[int, int], set[tuple[int, int]]] = {}
+        self._add_constraints()
 
     def get_solution(self) -> Grid:
-        self._add_constraints()
-        status = self._solver.Solve(self._model)
-        if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
+        if self._model is None:
+            self._init_model()
+
+        self._status = self._solver.Solve(self._model)
+        if self._status != cp_model.OPTIMAL and self._status != cp_model.FEASIBLE:
             return Grid.empty()
 
+        return self._compute_solution()
+
+    def _compute_solution(self):
         dominoes_positions = {
             (value0, value1): [Position(self._solver.Value(r), self._solver.Value(c)) for r, c in positions]
             for (value0, value1), positions in self._dominoes_positions.items()
@@ -50,7 +61,24 @@ class DominosaSolver(GameSolver):
         return solution_grid
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return self.get_solution()
+
+        if self._domino_position_bool_vars:
+             constraints = []
+             for domino_values, vars_positions in self._domino_position_bool_vars.items():
+                 for bool_var, _, _ in vars_positions:
+                     if self._solver.BooleanValue(bool_var):
+                         constraints.append(bool_var.Not())
+                     else:
+                         constraints.append(bool_var)
+             self._model.AddBoolOr(constraints)
+
+        self._status = self._solver.Solve(self._model)
+        if self._status != cp_model.OPTIMAL and self._status != cp_model.FEASIBLE:
+            return Grid.empty()
+
+        return self._compute_solution()
 
     def _add_constraints(self):
         self._dominoes_constraints()
@@ -59,18 +87,18 @@ class DominosaSolver(GameSolver):
         possibles_dominoes_positions_by_value = self._get_all_possible_domino_positions_by_value()
         possibles_dominoes_positions_by_value = self.set_dominoes_positions_when_1_possibility_by_value(possibles_dominoes_positions_by_value)
 
-        domino_position_vars = {}
+        self._domino_position_bool_vars = {}
         for domino_values, possible_positions in possibles_dominoes_positions_by_value.items():
-            domino_position_vars[domino_values] = []
+            self._domino_position_bool_vars[domino_values] = []
             for i, ((r0, c0), (r1, c1)) in enumerate(possible_positions):
                 bool_var = self._model.NewBoolVar(f"domino_{domino_values[0]}_{domino_values[1]}_pos_{i}")
-                domino_position_vars[domino_values].append((bool_var, (r0, c0), (r1, c1)))
+                self._domino_position_bool_vars[domino_values].append((bool_var, (r0, c0), (r1, c1)))
 
-        for domino_values, vars_positions in domino_position_vars.items():
+        for domino_values, vars_positions in self._domino_position_bool_vars.items():
             self._model.AddExactlyOne([var for var, _, _ in vars_positions])
 
         cell_usage = {}
-        for domino_values, vars_positions in domino_position_vars.items():
+        for domino_values, vars_positions in self._domino_position_bool_vars.items():
             for bool_var, (r0, c0), (r1, c1) in vars_positions:
                 if (r0, c0) not in cell_usage:
                     cell_usage[(r0, c0)] = []
@@ -82,7 +110,7 @@ class DominosaSolver(GameSolver):
         for cell, bool_vars in cell_usage.items():
             self._model.AddAtMostOne(bool_vars)
 
-        for domino_values, vars_positions in domino_position_vars.items():
+        for domino_values, vars_positions in self._domino_position_bool_vars.items():
             r0, c0 = self._dominoes_positions[domino_values][0]
             r1, c1 = self._dominoes_positions[domino_values][1]
 

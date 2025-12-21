@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, Not, And, Or, is_true, sat
+from z3 import Solver, Bool, Not, And, Or, is_true, sat
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -17,8 +17,54 @@ class TapaSolver(GameSolver):
             raise ValueError("The grid must contain at least one list number")
         self._solver = Solver()
         self._grid_z3: Grid | None = None
+        self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
+        if self._grid_z3 is None:
+             self._init_solver()
+
+        # The previous loop (connected check) consumes the solver state by adding constraints until satisfied.
+        # But if we call get_solution again, we just want to return the last found valid solution, or resolve?
+        # Standard GameSolver contract: get_solution returns *a* solution.
+        # But Tapa has an iterative process for connectivity.
+
+        # If we already have a solution and constraints are satisfied, just return it.
+        if self._previous_solution is not None and self._solver.check() == sat:
+             return self._previous_solution
+
+        solution, _ = self._ensure_all_black_connected()
+        self._previous_solution = solution
+        return solution
+
+    def get_other_solution(self) -> Grid:
+        if self._previous_solution is None:
+             return self.get_solution()
+
+        # Add constraints to avoid previous solution
+        constraints = []
+        # Tapa grid is padded (rows+2, cols+2). We care about the inner part.
+        for r in range(1, self.rows_number + 1):
+             for c in range(1, self.columns_number + 1):
+                  val = self._previous_solution.value(r, c)
+                  # _previous_solution is padded too? No, crop_grid removes padding.
+                  # Wait, look at crop_grid:
+                  # return Grid([[True if solution_grid.value(r, c) else False for c in range(1, solution_grid.columns_number - 1)] for r in range(1, solution_grid.rows_number - 1)])
+                  # So previous_solution is NOT padded. It is size (rows, cols).
+                  # But _grid_z3 is size (rows+2, cols+2).
+                  # Map indices: r in prev (0..rows-1) -> r+1 in _grid_z3.
+
+                  if val: # True/Black
+                       constraints.append(Not(self._grid_z3.value(r, c)))
+                  else:
+                       constraints.append(self._grid_z3.value(r, c))
+
+        self._solver.add(Or(constraints))
+
+        solution, _ = self._ensure_all_black_connected()
+        self._previous_solution = solution
+        return solution
+
+    def _init_solver(self):
         #  True for black, False for white
         self._grid_z3 = Grid([[Bool(f"c_{r}-{c}") for c in range(1 + self._grid.columns_number + 1)] for r in range(1 + self._grid.rows_number + 1)])
 
@@ -27,12 +73,6 @@ class TapaSolver(GameSolver):
         self._no_black_on_numbers_cell()
         self._black_around_number()
         self._no_black_square()
-
-        solution, _ = self._ensure_all_black_connected()
-        return solution
-
-    def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
 
     def _init_borders_white(self):
         self._solver.add([Not(self._grid_z3.value(r, 0)) for r in range(self._grid_z3.rows_number)])
@@ -84,6 +124,10 @@ class TapaSolver(GameSolver):
             black_shapes = current_grid.get_all_shapes()
             if len(black_shapes) == 1:
                 return TapaSolver.crop_grid(current_grid), proposition_count
+            if len(black_shapes) == 0:
+                 # No black cells? Valid if grid is empty? Tapa usually requires some black cells.
+                 # Assuming empty solution if no black cells found, or check if that's allowed.
+                 return TapaSolver.crop_grid(current_grid), proposition_count
 
             biggest_shape = max(black_shapes, key=len)
             black_shapes.remove(biggest_shape)
