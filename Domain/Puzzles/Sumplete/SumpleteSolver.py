@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, unsat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -7,41 +7,75 @@ from Domain.Puzzles.GameSolver import GameSolver
 class SumpleteSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._grid = grid
-        self.rows_number = self._grid.rows_number - 1
-        self.columns_number = self._grid.columns_number - 1
+        self.rows_number = self._grid.rows_number
+        self.columns_number = self._grid.columns_number
+
+
         if self.rows_number != self.columns_number:
             raise ValueError("Sumplete grid must be square")
-        if self.rows_number < 2:
-            raise ValueError("Sumplete grid (without sums) must be at least 2x2")
-        self._row_sums = [self._grid.value(-1, r) for r in range(self.columns_number)]
-        self._column_sums = [self._grid.value(r, -1) for r in range(self.rows_number)]
-        self._solver = Solver()
-        self._grid_z3 = None
 
-    def get_solution(self) -> tuple[Grid | None, int]:
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        if self.rows_number < 3:
+             raise ValueError("Sumplete grid (without sums) must be at least 2x2")
+
+        self._target_rows = [self._grid.value(r, self.columns_number - 1) for r in range(self.rows_number)]
+        self._target_columns = [self._grid.value(self.rows_number - 1, c) for c in range(self.columns_number)]
+        self._model = None
+        self._solver = cp_model.CpSolver()
+        self._grid_vars = None
+        self._status = None
+
+    def _init_model(self):
+        self._model = cp_model.CpModel()
+        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
-        if self._solver.check() == unsat:
+
+    def get_solution(self) -> Grid:
+        if self._model is None:
+            self._init_model()
+
+        self._status = self._solver.Solve(self._model)
+
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return None
-        model = self._solver.model()
-        grid = Grid([[model.eval(self._grid_z3.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        return grid
+
+        return self._compute_solution()
 
     def get_other_solution(self) -> Grid:
-        raise NotImplementedError("This method is not yet implemented")
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return self.get_solution()
+
+        current_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                var = self._grid_vars[r][c]
+                if self._solver.BooleanValue(var):
+                    current_vars.append(var.Not())
+                else:
+                    current_vars.append(var)
+        self._model.AddBoolOr(current_vars)
+
+        self._status = self._solver.Solve(self._model)
+
+        if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return None
+
+        return self._compute_solution()
+
+    def _compute_solution(self) -> Grid:
+        # Return N-1 x N-1 grid of Booleans
+        grid = Grid([[True if self._solver.Value(self._grid_vars[i][j]) else False
+                      for j in range(self.columns_number - 1)]
+                     for i in range(self.rows_number - 1)])
+        return grid
 
     def _add_constraints(self):
-        self._add_constraint_sums_by_rows()
-        self._add_constraint_sums_by_columns()
+        self._add_rows_constraints()
+        self._add_columns_constraints()
 
-    def _add_constraint_sums_by_rows(self):
-        constraints = []
-        for r in range(self.rows_number):
-            constraints.append(sum([self._grid_z3.value(r, c) * self._grid.value(r, c) for c in range(self.columns_number)]) == self._column_sums[r])
-        self._solver.add(constraints)
+    def _add_rows_constraints(self):
+        for r in range(self.rows_number - 1):
+            self._model.Add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for c in range(self.columns_number - 1)]) == self._target_rows[r])
 
-    def _add_constraint_sums_by_columns(self):
-        constraints = []
-        for c in range(self.columns_number):
-            constraints.append(sum([self._grid_z3.value(r, c) * self._grid.value(r, c) for r in range(self.rows_number)]) == self._row_sums[c])
-        self._solver.add(constraints)
+    def _add_columns_constraints(self):
+        for c in range(self.columns_number - 1):
+            self._model.Add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for r in range(self.rows_number - 1)]) == self._target_columns[c])
