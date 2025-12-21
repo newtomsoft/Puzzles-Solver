@@ -9,9 +9,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleCreekGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
         soup = BeautifulSoup(html_page, 'html.parser')

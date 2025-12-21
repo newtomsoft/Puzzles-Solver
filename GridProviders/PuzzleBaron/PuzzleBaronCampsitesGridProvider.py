@@ -8,9 +8,6 @@ from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGr
 
 ###### TODO: Implement the PuzzleBaronCampsitesGridProvider class ######
 class PuzzleBaronCampsitesGridProvider(PlaywrightGridProvider, PuzzleBaronGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         await page.goto(url)

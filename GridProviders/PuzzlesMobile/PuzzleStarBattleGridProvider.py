@@ -7,9 +7,6 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileRegionGridProvider import Puz
 
 
 class PuzzleStarBattleGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         page = await self.open_page(browser, url)
         await page.wait_for_selector('div.cell')

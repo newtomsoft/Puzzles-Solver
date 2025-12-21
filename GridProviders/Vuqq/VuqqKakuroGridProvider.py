@@ -8,9 +8,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class VuqqKakuroGridProvider(PlaywrightGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         if len(browser.pages) > 0:
             page = browser.pages[0]

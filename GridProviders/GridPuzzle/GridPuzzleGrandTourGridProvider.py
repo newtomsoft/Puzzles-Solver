@@ -12,9 +12,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleGrandTourGridProvider(GridPuzzleProvider, PlaywrightGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
         qv_string_list, qh_string_list, size = await self._get_canvas_data(html_page)
