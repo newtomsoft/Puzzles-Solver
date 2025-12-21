@@ -10,7 +10,7 @@ _ = 0
 class KakuroSolverTests(TestCase):
     def test_solution_grid_size_less_than_3(self):
         grid = Grid([
-            [_, _],
+            [_, _], #
             [_, _],
         ])
         with self.assertRaises(ValueError) as context:
@@ -20,7 +20,7 @@ class KakuroSolverTests(TestCase):
 
     def test_solution_impossible_sum_19_with_2_numbers(self):
         grid = Grid([
-            [[_, _], [_, 19], [_, 19]],
+            [[_, _], [_, 19], [_, 19]], #
             [[19, _], _, _],
             [[19, _], _, _],
         ])
@@ -31,7 +31,7 @@ class KakuroSolverTests(TestCase):
 
     def test_solution_impossible_single_number(self):
         grid = Grid([
-            [[_, _], [_, 2], [_, 5]],
+            [[_, _], [_, 2], [_, 5]], #
             [[3, _], _, _],
             [[4, _], _, _],
         ])
@@ -42,7 +42,7 @@ class KakuroSolverTests(TestCase):
 
     def test_solution_minimal_grid(self):
         grid = Grid([
-            [[_, _], [_, 4], [_, 6]],
+            [[_, _], [_, 4], [_, 6]], #
             [[3, _], _, _],
             [[7, _], _, _],
         ])
@@ -51,14 +51,16 @@ class KakuroSolverTests(TestCase):
             [_, 1, 2],
             [_, 3, 4],
         ])
-        game_solver = KakuroSolver(grid)
 
+        game_solver = KakuroSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_(self):
         grid = Grid([
-            [[_, _], [_, 4], [_, 6], [_, _], [_, 6], [_, 4]],
+            [[_, _], [_, 4], [_, 6], [_, _], [_, 6], [_, 4]], #
             [[3, _], _, _, [7, _], _, _],
             [[7, _], _, _, [3, _], _, _],
             [[_, _], [_, 4], [_, 6], [_, _], [_, 6], [_, 4]],
@@ -66,21 +68,23 @@ class KakuroSolverTests(TestCase):
             [[7, _], _, _, [3, _], _, _],
         ])
         expected_solution = Grid([
-            [_, _, _, _, _, _],
+            [_, _, _, _, _, _], #
             [_, 1, 2, _, 4, 3],
             [_, 3, 4, _, 2, 1],
             [_, _, _, _, _, _],
             [_, 1, 2, _, 4, 3],
             [_, 3, 4, _, 2, 1],
         ])
-        game_solver = KakuroSolver(grid)
 
+        game_solver = KakuroSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_2(self):
         grid = Grid([
-            [[_, _], [_, 4], [_, 6], [_, _], [_, _], [_, 6], [_, 4]],
+            [[_, _], [_, 4], [_, 6], [_, _], [_, _], [_, 6], [_, 4]], #
             [[3, _], _, _, [_, _], [7, _], _, _],
             [[7, _], _, _, [_, _], [3, _], _, _],
             [[_, _], [_, 4], [_, 6], [_, _], [_, _], [_, 6], [_, 4]],
@@ -95,14 +99,16 @@ class KakuroSolverTests(TestCase):
             [_, 1, 2, _, _, 4, 3],
             [_, 3, 4, _, _, 2, 1],
         ])
-        game_solver = KakuroSolver(grid)
 
+        game_solver = KakuroSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_9x9(self):
         grid = Grid([
-            [[_, _], [_, _], [_, 16], [_, 4], [_, _], [_, 6], [_, 4], [_, 15], [_, _], [_, _], [_, 6], [_, 7]],
+            [[_, _], [_, _], [_, 16], [_, 4], [_, _], [_, 6], [_, 4], [_, 15], [_, _], [_, _], [_, 6], [_, 7]], #
             [[_, _], [7, 7], _, _, [9, _], _, _, _, [_, _], [4, 16], _, _],
             [[7, _], _, _, _, [7, 5], _, _, _, [6, 3], _, _, _],
             [[3, _], _, _, [4, 16], _, _, [16, 8], _, _, _, _, _],
@@ -114,7 +120,7 @@ class KakuroSolverTests(TestCase):
             [[3, _], _, _, [_, _], [7, _], _, _, _, [3, _], _, _, [_, _]]
         ])
         expected_solution = Grid([
-            [_, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, _], #
             [_, _, 4, 3, _, 1, 3, 5, _, _, 3, 1],
             [_, 4, 2, 1, _, 2, 1, 4, _, 3, 1, 2],
             [_, 2, 1, _, 1, 3, _, 3, 1, 6, 2, 4],
@@ -125,10 +131,12 @@ class KakuroSolverTests(TestCase):
             [_, 2, 4, 1, _, 5, 1, 2, _, 3, 1, 2],
             [_, 1, 2, _, _, 1, 2, 4, _, 1, 2, _]
         ])
-        game_solver = KakuroSolver(grid)
 
+        game_solver = KakuroSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_30x30(self):
         grid = Grid([
@@ -197,10 +205,26 @@ class KakuroSolverTests(TestCase):
             [_, 6, 1, 2, 3, _, _, 4, 8, 3, 1, 2, _, 1, 3, 5, 2, 4, _, 6, 8, 7, 3, 9, 4, 2, 1, 5, _, 8, 9],
             [_, _, _, 1, 5, _, _, 5, 9, _, 7, 5, _, 2, 1, _, 1, 3, _, 2, 9, _, 1, 5, 2, _, 7, 9, _, 3, 5],
         ])
-        game_solver = KakuroSolver(grid)
 
+        game_solver = KakuroSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_multiple_solutions(self):
+        grid = Grid([
+            [[_, _], [_, 5], [_, 5]], #
+            [[5, _], _, _],
+            [[5, _], _, _],
+        ])
+
+        game_solver = KakuroSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
+        self.assertNotEqual(solution, other_solution)
 
 
 if __name__ == '__main__':
