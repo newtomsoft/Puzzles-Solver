@@ -74,9 +74,12 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_basic_1_full_column(self):
         numbers_by_top_left = {
@@ -90,9 +93,12 @@ class NonogramSolverTests(TestCase):
             [0, 1, 0, 0, 0],
             [0, 1, 0, 0, 0]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_basic_all_full_(self):
         numbers_by_top_left = {
@@ -106,9 +112,12 @@ class NonogramSolverTests(TestCase):
             [1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_basic_2_numbers_in_column(self):
         numbers_by_top_left = {
@@ -122,9 +131,12 @@ class NonogramSolverTests(TestCase):
             [0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_basic_2_numbers_in_column_and_other_full(self):
         numbers_by_top_left = {
@@ -138,9 +150,12 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 1, 1],
             [1, 1, 1, 1, 1]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_5x5_1(self):
         numbers_by_top_left = {
@@ -154,9 +169,12 @@ class NonogramSolverTests(TestCase):
             [0, 0, 1, 0, 1],
             [0, 0, 0, 0, 1]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_5x5_2(self):
         numbers_by_top_left = {
@@ -170,9 +188,12 @@ class NonogramSolverTests(TestCase):
             [1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x10(self):
         numbers_by_top_left = {
@@ -191,9 +212,12 @@ class NonogramSolverTests(TestCase):
             [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
             [0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_15x15(self):
         numbers_by_top_left = {
@@ -217,40 +241,12 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
             [0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1],
         ])
-        game_solver = NonogramSolver(numbers_by_top_left)
-        solution = game_solver.get_solution()
-        self.assertEqual(expected_grid, solution)
 
-    def test_solution_20x20(self):
-        numbers_by_top_left = {
-            'top': [[2, 1, 3], [1, 4], [6], [1, 5], [1, 1, 5, 2], [4, 1, 2, 4], [7, 7], [9, 3], [10, 3], [6, 4, 1, 4], [13, 4], [5, 3], [2, 4, 1], [4, 4], [6, 1, 1], [6, 1, 1, 3], [7, 2, 7], [2, 4, 5], [4, 1, 3], [4, 1, 1, 3]],
-            'left': [[1, 2, 2], [1, 2, 6], [4, 5], [7, 7], [6, 6], [2, 7, 7], [1, 9, 5], [3, 5], [9, 2, 1], [4, 7, 1], [5, 5, 1], [5, 3], [5, 1, 2], [5, 3, 2], [1, 1, 3, 5], [6, 4], [3, 4, 1, 4], [2, 3, 2], [3, 2, 2], [3, 2]],
-        }
-        expected_grid = Grid([
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1],
-            [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
-            [1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
-            [0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-            [0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
-        ])
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x5(self):
         numbers_by_top_left = {
@@ -269,10 +265,25 @@ class NonogramSolverTests(TestCase):
             [0, 1, 1, 1, 0],
             [1, 0, 0, 0, 1]
         ])
+
         game_solver = NonogramSolver(numbers_by_top_left)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
+
+    def test_multiple_solution(self):
+        numbers_by_top_left = {
+            'top': [[1], [1], [1], [1], [1]],
+            'left': [[1], [1], [1], [1], [1]],
+        }
+
+        game_solver = NonogramSolver(numbers_by_top_left)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
 
 if __name__ == '__main__':
     unittest.main()

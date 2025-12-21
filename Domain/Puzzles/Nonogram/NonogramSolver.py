@@ -38,19 +38,13 @@ class NonogramSolver:
             return self.get_solution()
 
         constraints = []
-        model = self._solver.model()
         for r in range(self.rows_number):
-            # We reconstruct the bitvector value from the previous solution
             row_val = 0
             for c in range(self.columns_number):
                 if self._previous_solution.value(r, c) == 1:
                     row_val |= (1 << (self.columns_number - 1 - c))
             constraints.append(self._rows_z3[r] != row_val)
 
-        # We need at least one row to be different?
-        # Actually, if we just want "not this specific grid", we should say Or(row0 != val0, row1 != val1, ...)
-        # The previous loop created [row0 != val0, row1 != val1, ...].
-        # We need Or of these.
         self._solver.add(Or(constraints))
 
         if self._solver.check() != sat:
