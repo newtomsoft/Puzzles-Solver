@@ -64,8 +64,6 @@ class DominosaSolver(GameSolver):
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return self.get_solution()
 
-        # Add constraint to forbid current assignment
-        # We used bool vars to select positions. We should forbid the combination of bool vars that are true.
         if self._domino_position_bool_vars:
              constraints = []
              for domino_values, vars_positions in self._domino_position_bool_vars.items():
