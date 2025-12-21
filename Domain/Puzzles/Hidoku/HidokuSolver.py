@@ -38,20 +38,11 @@ class HidokuSolver(GameSolver):
         if self._previous_solution.is_empty():
             return Grid.empty()
 
-        # Add constraint to forbid previous solution
         bool_vars = []
         for position, value in self._previous_solution:
             var = self._grid_var[position]
-            # b <=> var != value
-            # We enforce b is true if var != value
-            # Actually we want "At least one cell differs".
-            # So we create b_i for each cell. b_i is true if cell_i != old_value_i.
-            # And we enforce Or(b_1, b_2, ...).
-
             b = self._model.NewBoolVar(f"diff_{position}")
-            # If b is true, then var != value
             self._model.Add(var != value).OnlyEnforceIf(b)
-            # If b is false, then var == value
             self._model.Add(var == value).OnlyEnforceIf(b.Not())
             bool_vars.append(b)
 
@@ -88,10 +79,8 @@ class HidokuSolver(GameSolver):
         for position, value in self._grid_var:
             neighbors_values = self._grid_var.neighbors_values(position, "diagonal")
             if position != self.position_value_min:
-                # Predecessor existence: Or(value == neighbor + 1)
                 bools = []
                 for neighbor_value in neighbors_values:
-                    # b <=> value == neighbor + 1
                     b = self._model.NewBoolVar(f"pred_{position}")
                     self._model.Add(value == neighbor_value + 1).OnlyEnforceIf(b)
                     self._model.Add(value != neighbor_value + 1).OnlyEnforceIf(b.Not())
@@ -99,10 +88,8 @@ class HidokuSolver(GameSolver):
                 self._model.AddBoolOr(bools)
 
             if position != self.position_value_max:
-                # Successor existence: Or(value == neighbor - 1)
                 bools = []
                 for neighbor_value in neighbors_values:
-                    # b <=> value == neighbor - 1
                     b = self._model.NewBoolVar(f"succ_{position}")
                     self._model.Add(value == neighbor_value - 1).OnlyEnforceIf(b)
                     self._model.Add(value != neighbor_value - 1).OnlyEnforceIf(b.Not())
