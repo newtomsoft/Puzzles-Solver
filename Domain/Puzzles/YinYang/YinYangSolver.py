@@ -1,13 +1,8 @@
-﻿from typing import Set
-
-from z3 import Solver, Bool, Not, And, Or, Implies, is_true, sat, unsat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.ShapeGenerator import ShapeGenerator
-
-FALSE = False
 
 
 class YinYangSolver(GameSolver):
@@ -17,175 +12,168 @@ class YinYangSolver(GameSolver):
         self.columns_number = self._grid.columns_number
         if self.rows_number < 6:
             raise ValueError("Yin Yang grid must be at least 6x6")
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
-        self._previous_solution = None
-        self.edge_positions_processed: Set[Position] = set()
 
-    def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"matrix_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._add_constraints()
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._solver.parameters.max_time_in_seconds = 120.0  # Fail fast if stuck
+        self._grid_vars = {}
+        self._previous_solution = None
+
+        self._init_model()
+
+    def _init_model(self):
+        # 1. Grid Variables
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                self._grid_vars[(r, c)] = self._model.NewBoolVar(f"cell_{r}_{c}")
+
+        # 2. Base Rules (Fixed values, 2x2, Checkerboard)
+        self._add_base_constraints()
+
+        # 3. Connectivity Rules (Rank/Flow based)
+        self._add_connectivity_constraints()
+
+    def _add_base_constraints(self):
+        # Initial values
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                val = self._grid[Position(r, c)]
+                if val == 1:  # White
+                    self._model.Add(self._grid_vars[(r, c)] == 1)
+                elif val == 0:  # Black
+                    self._model.Add(self._grid_vars[(r, c)] == 0)
+
+        # 2x2 Constraints (No solid square)
+        for r in range(self.rows_number - 1):
+            for c in range(self.columns_number - 1):
+                cells = [
+                    self._grid_vars[(r, c)],
+                    self._grid_vars[(r + 1, c)],
+                    self._grid_vars[(r, c + 1)],
+                    self._grid_vars[(r + 1, c + 1)],
+                ]
+                self._model.Add(sum(cells) > 0)
+                self._model.Add(sum(cells) < 4)
+
+        # Checkerboard Constraints
+        # Forbidden: 1 0 / 0 1 and 0 1 / 1 0
+        for r in range(self.rows_number - 1):
+            for c in range(self.columns_number - 1):
+                self._model.AddForbiddenAssignments(
+                    [
+                        self._grid_vars[(r, c)],
+                        self._grid_vars[(r, c + 1)],
+                        self._grid_vars[(r + 1, c)],
+                        self._grid_vars[(r + 1, c + 1)],
+                    ],
+                    [(1, 0, 0, 1), (0, 1, 1, 0)],
+                )
+
+    def _add_connectivity_constraints(self):
+        # Rank variables: 0 to N*M - 1
+        num_cells = self.rows_number * self.columns_number
+        rank_vars = {}
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                rank_vars[(r, c)] = self._model.NewIntVar(0, num_cells - 1, f"rank_{r}_{c}")
+
+        # Root indicators
+        root_white = {}
+        root_black = {}
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                root_white[(r, c)] = self._model.NewBoolVar(f"root_white_{r}_{c}")
+                root_black[(r, c)] = self._model.NewBoolVar(f"root_black_{r}_{c}")
+
+        # Exactly one root per color
+        self._model.Add(sum(root_white.values()) == 1)
+        self._model.Add(sum(root_black.values()) == 1)
+
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                u_pos = (r, c)
+                u_grid = self._grid_vars[u_pos]
+                u_rank = rank_vars[u_pos]
+                u_rw = root_white[u_pos]
+                u_rb = root_black[u_pos]
+
+                # Root implications
+                self._model.Add(u_grid == 1).OnlyEnforceIf(u_rw)
+                self._model.Add(u_rank == 0).OnlyEnforceIf(u_rw)
+
+                self._model.Add(u_grid == 0).OnlyEnforceIf(u_rb)
+                self._model.Add(u_rank == 0).OnlyEnforceIf(u_rb)
+
+                # Neighbors
+                neighbors = []
+                for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < self.rows_number and 0 <= nc < self.columns_number:
+                        neighbors.append((nr, nc))
+
+                # Connectivity logic
+                parents_white = []
+                parents_black = []
+
+                for v_pos in neighbors:
+                    # Parent White: v is parent of u (white)
+                    # Means: grid[u]==1, grid[v]==1, rank[v] == rank[u] - 1
+                    pw = self._model.NewBoolVar(f"pw_{u_pos}_{v_pos}")
+                    v_grid = self._grid_vars[v_pos]
+                    v_rank = rank_vars[v_pos]
+
+                    self._model.Add(u_grid == 1).OnlyEnforceIf(pw)
+                    self._model.Add(v_grid == 1).OnlyEnforceIf(pw)
+                    self._model.Add(v_rank == u_rank - 1).OnlyEnforceIf(pw)
+                    parents_white.append(pw)
+
+                    # Parent Black: v is parent of u (black)
+                    # Means: grid[u]==0, grid[v]==0, rank[v] == rank[u] - 1
+                    pb = self._model.NewBoolVar(f"pb_{u_pos}_{v_pos}")
+                    self._model.Add(u_grid == 0).OnlyEnforceIf(pb)
+                    self._model.Add(v_grid == 0).OnlyEnforceIf(pb)
+                    self._model.Add(v_rank == u_rank - 1).OnlyEnforceIf(pb)
+                    parents_black.append(pb)
+
+                # If u is White, (u is root) OR (exists white parent)
+                self._model.AddBoolOr([u_rw] + parents_white).OnlyEnforceIf(u_grid)
+
+                # If u is Black, (u is root) OR (exists black parent)
+                self._model.AddBoolOr([u_rb] + parents_black).OnlyEnforceIf(u_grid.Not())
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
-            self._init_solver()
-
-        solution, _ = self._get_solution_when_all_yin_yang_connected()
-        self._previous_solution = solution
-        return solution
-
-    def _get_solution_when_all_yin_yang_connected(self):
-        proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3[Position(r, c)])) for c in range(self.columns_number)] for r in range(self.rows_number)])
-
-            black_shapes = current_grid.get_all_shapes(False)
-            white_shapes = current_grid.get_all_shapes(True)
-            if len(black_shapes) == 1 and len(white_shapes) == 1:
-                self._previous_solution = current_grid
-                return current_grid, proposition_count
-
-            self._add_edges_values_constraints(current_grid)
-            self._exclude_isolated_shapes(black_shapes, False)
-            self._exclude_isolated_shapes(white_shapes, True)
-
-        return Grid.empty(), proposition_count
-
-    def _exclude_isolated_shapes(self, shapes, shape_value):
-        for shape in shapes:
-            shape_all_value = And([self._grid_z3[position] == shape_value for position in shape])
-            around_shape = ShapeGenerator.around_shape(shape)
-            around_all_not_value = And([self._grid_z3[Position(r, c)] != shape_value for r, c in around_shape if Position(r, c) in self._grid_z3])
-            constraint = Not(And(shape_all_value, around_all_not_value))
-            self._solver.add(constraint)
+        status = self._solver.Solve(self._model)
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            solution_grid = self._build_grid_from_solution()
+            self._previous_solution = solution_grid
+            return solution_grid
+        else:
+            return Grid.empty()
 
     def get_other_solution(self):
-        exclusion_constraint = Not(
-            And([self._grid_z3[Position(r, c)] == self._previous_solution[Position(r, c)] for r in range(self.rows_number) for c in range(self.columns_number)]))
-        self._solver.add(exclusion_constraint)
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        # Exclude previous solution
+        constraints = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                val = self._previous_solution[Position(r, c)]
+                if val == 1:
+                    constraints.append(self._grid_vars[(r, c)].Not())
+                else:
+                    constraints.append(self._grid_vars[(r, c)])
+
+        self._model.AddBoolOr(constraints)
+
         return self.get_solution()
 
-    def _add_constraints(self):
-        self._initial_constraints()
-        self.add_no_square_constraints()
-        self._add_no_diagonal_2_cells_isolated_constraints()
-        self._add_min_2_connected_cells_constraints()
-
-    def _initial_constraints(self):
-        self._add_initial_values__constraints()
-        self._add_edges_initial_values_constraints()
-
-    def _add_initial_values__constraints(self):
-        for position, value in self._grid:
-            if value == 0:
-                self._solver.add(self._grid_z3[position] == FALSE)
-                continue
-            if value == 1:
-                self._solver.add(self._grid_z3[position])
-                continue
-
-    def add_no_square_constraints(self):
-        for r in range(self.rows_number - 1):
-            for c in range(self.columns_number - 1):
-                self._solver.add(Not(And(self._grid_z3[r][c] == FALSE, self._grid_z3[r + 1][c] == FALSE, self._grid_z3[r][c + 1] == FALSE, self._grid_z3[r + 1][c + 1] == FALSE)))
-                self._solver.add(Not(And(self._grid_z3[r][c], self._grid_z3[r + 1][c], self._grid_z3[r][c + 1], self._grid_z3[r + 1][c + 1])))
-
-    def _add_no_diagonal_2_cells_isolated_constraints(self):
-        for r in range(self.rows_number - 1):
-            for c in range(self.columns_number - 1):
-                for bool_value in [False, True]:
-                    if0 = And(self._grid_z3[r][c] == bool_value, self._grid_z3[r + 1][c + 1] == bool_value)
-                    then0 = Or(self._grid_z3[r + 1][c] == bool_value, self._grid_z3[r][c + 1] == bool_value)
-                    self._solver.add(Implies(if0, then0))
-
-                    if1 = And(self._grid_z3[r][c + 1] == bool_value, self._grid_z3[r + 1][c] == bool_value)
-                    then1 = Or(self._grid_z3[r + 1][c + 1] == bool_value, self._grid_z3[r][c] == bool_value)
-                    self._solver.add(Implies(if1, then1))
-
-    def _add_min_2_connected_cells_constraints(self):
-        for position, value in self._grid_z3:
-            self._solver.add(Or([self._grid_z3[position] == value for position in self._grid_z3.neighbors_positions(position)]))
-
-    def _add_edges_initial_values_constraints(self):
-        known_edges_positions_values = []
-        for position, value in [(position, bool(self._grid[position])) for position in self._grid.edges_positions() if type(self._grid[position]) is int]:
-            known_edges_positions_values.append((position, value))
-
-        self._add_computed_edges_values_constraints(known_edges_positions_values)
-
-    def _add_edges_values_constraints(self, grid: Grid):
-        known_edges_positions_values = []
-        for position, value in [(position, grid[position]) for position in grid.edges_positions() if type(grid[position]) is bool]:
-            if position in self.edge_positions_processed:
-                known_edges_positions_values.append((position, value))
-            else:
-                self._solver.push()
-                self._solver.add(self._grid_z3[position] != value)
-                if self._solver.check() == unsat:
-                    known_edges_positions_values.append((position, value))
-                self._solver.pop()
-
-        self._add_computed_edges_values_constraints(known_edges_positions_values)
-
-    def _add_computed_edges_values_constraints(self, positions_values):
-        white_count = sum(1 for _, value in positions_values if value is True)
-        black_count = sum(1 for _, value in positions_values if value is False)
-        if white_count <= 1 and black_count <= 1 or white_count == 0 or black_count == 0:
-            return
-
-        array_fixed_edges = [(self._get_position_from_edge_index(index), None) for index in range((2 * (self.rows_number + self.columns_number) - 4))]
-        for position, value in positions_values:
-            index = self._clockwise_key((position, 0))
-            array_fixed_edges[index] = (position, value)
-        array_fixed_edges = self.fill_between_equals(array_fixed_edges)
-        for position, value in [(position, value) for position, value in array_fixed_edges if value is not None and position not in self.edge_positions_processed]:
-            self._solver.add(self._grid_z3[position] == value)
-            self.edge_positions_processed.add(position)
-
-    @staticmethod
-    def fill_between_equals(list_to_fill: list[tuple[Position, bool | None]]) -> list[tuple[Position, bool | None]]:
-        n = len(list_to_fill)
-        result = list_to_fill.copy()
-
-        for i in range(n):
-            if result[i][1] is None:
-                left_idx = (i - 1) % n
-                while left_idx != i and result[left_idx][1] is None:
-                    left_idx = (left_idx - 1) % n
-
-                right_idx = (i + 1) % n
-                while right_idx != i and result[right_idx][1] is None:
-                    right_idx = (right_idx + 1) % n
-
-                if result[left_idx][1] is not None and result[left_idx][1] == result[right_idx][1]:
-                    result[i] = (result[i][0], result[left_idx][1])
-
-        return result
-
-    def _clockwise_key(self, pos_val) -> int:
-        position, _ = pos_val
-        if position.r == 0:
-            return position.c
-        if position.c == self.columns_number - 1:
-            return self.columns_number + position.r - 1
-        if position.r == self.rows_number - 1:
-            return self.columns_number + self.rows_number - 1 + (self.columns_number - 1 - position.c)
-        return 2 * self.columns_number + self.rows_number - 3 + (self.rows_number - 1 - position.r)
-
-    def _get_position_from_edge_index(self, index):
-        total_edges = 2 * (self.rows_number + self.columns_number) - 4
-        index = index % total_edges
-        if index < self.columns_number:
-            return Position(0, index)
-        elif index < self.columns_number + self.rows_number - 1:
-            return Position(index - self.columns_number + 1, self.columns_number - 1)
-        elif index < 2 * self.columns_number + self.rows_number - 2:
-            bottom_index = index - (self.columns_number + self.rows_number - 1)
-            column = self.columns_number - 2 - bottom_index
-            return Position(self.rows_number - 1, column)
-        else:
-            left_index = index - (2 * self.columns_number + self.rows_number - 2)
-            row = self.rows_number - 2 - left_index
-            return Position(row, 0)
+    def _build_grid_from_solution(self) -> Grid:
+        data = []
+        for r in range(self.rows_number):
+            row_data = []
+            for c in range(self.columns_number):
+                val = self._solver.Value(self._grid_vars[(r, c)])
+                row_data.append(int(val))
+            data.append(row_data)
+        return Grid(data)
