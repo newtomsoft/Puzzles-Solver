@@ -43,6 +43,8 @@ class BinairoPlusSolverTests(TestCase):
         game_solver = BinairoPlusSolver(grid, comparisons_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':

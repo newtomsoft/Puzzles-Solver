@@ -34,7 +34,7 @@ class SumpleteSolverTests(TestCase):
         ])
         game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
-        self.assertIsNone(solution)
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_3x3_basic(self):
         grid = Grid([
@@ -49,6 +49,8 @@ class SumpleteSolverTests(TestCase):
         game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_3x3(self):
         grid = Grid([
@@ -63,6 +65,8 @@ class SumpleteSolverTests(TestCase):
         game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_7x7(self):
         grid = Grid([
@@ -87,6 +91,8 @@ class SumpleteSolverTests(TestCase):
         game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_9x9(self):
         grid = Grid([
@@ -115,6 +121,8 @@ class SumpleteSolverTests(TestCase):
         game_solver = SumpleteSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':

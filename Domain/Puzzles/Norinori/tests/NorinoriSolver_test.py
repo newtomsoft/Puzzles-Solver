@@ -89,6 +89,8 @@ class NorinoriSolverTests(TestCase):
         game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_10x10(self):
         grid = Grid([
@@ -118,6 +120,8 @@ class NorinoriSolverTests(TestCase):
         game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_20x20(self):
         grid = Grid([
@@ -167,6 +171,8 @@ class NorinoriSolverTests(TestCase):
         game_solver = NorinoriSolver(grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':

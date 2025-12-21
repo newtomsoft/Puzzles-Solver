@@ -23,12 +23,6 @@ class TapaSolver(GameSolver):
         if self._grid_z3 is None:
              self._init_solver()
 
-        # The previous loop (connected check) consumes the solver state by adding constraints until satisfied.
-        # But if we call get_solution again, we just want to return the last found valid solution, or resolve?
-        # Standard GameSolver contract: get_solution returns *a* solution.
-        # But Tapa has an iterative process for connectivity.
-
-        # If we already have a solution and constraints are satisfied, just return it.
         if self._previous_solution is not None and self._solver.check() == sat:
              return self._previous_solution
 
@@ -42,17 +36,11 @@ class TapaSolver(GameSolver):
 
         # Add constraints to avoid previous solution
         constraints = []
-        # Tapa grid is padded (rows+2, cols+2). We care about the inner part.
+        # Tapa grid z3 is padded (rows+2, cols+2). Inner part is 1..rows, 1..cols.
+        # _previous_solution is cropped (0..rows-1, 0..cols-1).
         for r in range(1, self.rows_number + 1):
              for c in range(1, self.columns_number + 1):
-                  val = self._previous_solution.value(r, c)
-                  # _previous_solution is padded too? No, crop_grid removes padding.
-                  # Wait, look at crop_grid:
-                  # return Grid([[True if solution_grid.value(r, c) else False for c in range(1, solution_grid.columns_number - 1)] for r in range(1, solution_grid.rows_number - 1)])
-                  # So previous_solution is NOT padded. It is size (rows, cols).
-                  # But _grid_z3 is size (rows+2, cols+2).
-                  # Map indices: r in prev (0..rows-1) -> r+1 in _grid_z3.
-
+                  val = self._previous_solution.value(r - 1, c - 1)
                   if val: # True/Black
                        constraints.append(Not(self._grid_z3.value(r, c)))
                   else:
@@ -125,8 +113,9 @@ class TapaSolver(GameSolver):
             if len(black_shapes) == 1:
                 return TapaSolver.crop_grid(current_grid), proposition_count
             if len(black_shapes) == 0:
-                 # No black cells? Valid if grid is empty? Tapa usually requires some black cells.
-                 # Assuming empty solution if no black cells found, or check if that's allowed.
+                 # If valid solution has NO black cells, it's valid if constraints allowed it.
+                 # Tapa usually requires some black cells, but strictly speaking empty grid might be valid if no clues force black.
+                 # Assuming empty solution if no black cells found.
                  return TapaSolver.crop_grid(current_grid), proposition_count
 
             biggest_shape = max(black_shapes, key=len)

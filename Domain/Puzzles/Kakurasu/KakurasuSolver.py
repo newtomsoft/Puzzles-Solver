@@ -8,24 +8,32 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KakurasuSolver(GameSolver):
-    empty = None
-
     def __init__(self, data_or_grid: Union[Grid, dict[str, List[int]]]):
+        self._input_is_grid = False
         if isinstance(data_or_grid, Grid):
+            self._input_is_grid = True
             self._grid = data_or_grid
-            self.rows_number = self._grid.rows_number
-            self.columns_number = self._grid.columns_number
-            self._rows_targets = [self._grid.value(r, self.columns_number - 1) for r in range(self.rows_number)]
-            self._columns_targets = [self._grid.value(self.rows_number - 1, c) for c in range(self.columns_number)]
+            # If grid, targets are in the last row/col.
+            # Playable area is (rows-1) x (cols-1).
+            self.total_rows = self._grid.rows_number
+            self.total_cols = self._grid.columns_number
+
+            self._rows_targets = [self._grid.value(r, self.total_cols - 1) for r in range(self.total_rows - 1)]
+            self._columns_targets = [self._grid.value(self.total_rows - 1, c) for c in range(self.total_cols - 1)]
+
+            self.rows_number = self.total_rows - 1
+            self.columns_number = self.total_cols - 1
+
         elif isinstance(data_or_grid, dict):
             self._rows_targets = data_or_grid['side']
             self._columns_targets = data_or_grid['top']
             self.rows_number = len(self._rows_targets)
             self.columns_number = len(self._columns_targets)
-            self._grid = None
+            self._grid = None # Virtual grid
         else:
              raise ValueError("Input must be Grid or dict")
 
+        # Check size first to match test expectations
         if self.rows_number < 4 or self.columns_number < 4:
             raise ValueError("Kakurasu grid must at least 4x4")
 
@@ -85,11 +93,10 @@ class KakurasuSolver(GameSolver):
     def _add_rows_constraints(self):
         for r in range(self.rows_number):
             target = self._rows_targets[r]
-            if target != self.empty:
-                self._model.Add(sum([(c + 1) * self._grid_vars[r][c] for c in range(self.columns_number)]) == target)
+            # Even if target is 0, we must enforce it.
+            self._model.Add(sum([(c + 1) * self._grid_vars[r][c] for c in range(self.columns_number)]) == target)
 
     def _add_columns_constraints(self):
         for c in range(self.columns_number):
             target = self._columns_targets[c]
-            if target != self.empty:
-                self._model.Add(sum([(r + 1) * self._grid_vars[r][c] for r in range(self.rows_number)]) == target)
+            self._model.Add(sum([(r + 1) * self._grid_vars[r][c] for r in range(self.rows_number)]) == target)
