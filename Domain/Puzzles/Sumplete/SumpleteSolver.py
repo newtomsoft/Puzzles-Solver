@@ -10,20 +10,11 @@ class SumpleteSolver(GameSolver):
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
 
-        # Test `test_solution_grid_square` (2x3) expects "The grid must be square" (FAIL: got "at least 3x3")
-        # Test `test_solution_grid_size_less_than_2` (2x2) expects "Sumplete grid (without sums) must be at least 2x2" (FAIL: got "at least 3x3")
 
-        # So I must check square first.
         if self.rows_number != self.columns_number:
-            raise ValueError("Sumplete grid must be square") # Changed message to match old test expectation if possible, or new one?
-            # Test expects "Sumplete grid must be square".
+            raise ValueError("Sumplete grid must be square")
 
-        # Then check size.
-        # Test 2x2 grid -> Error.
-        # 3x3 grid -> OK (test_solution_3x3).
-        # So min size is 3 (1x1 puzzle + targets).
         if self.rows_number < 3:
-             # Test expected: "Sumplete grid (without sums) must be at least 2x2"
              raise ValueError("Sumplete grid (without sums) must be at least 2x2")
 
         self._target_rows = [self._grid.value(r, self.columns_number - 1) for r in range(self.rows_number)]
