@@ -30,14 +30,14 @@ class StarBattleSolver(GameSolver):
         self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
 
-    def get_solution(self) -> Grid | None:
+    def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
         self._status = self._solver.Solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            return None
+            return Grid.empty()
 
         grid = Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid

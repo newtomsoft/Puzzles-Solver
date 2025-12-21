@@ -38,7 +38,7 @@ class StarBattleSolverTests(TestCase):
             StarBattleSolver(grid, 1)
         self.assertEqual("The grid must have the same number of regions as rows/column", str(context.exception))
 
-    def test_solution_1(self):
+    def test_no_solution(self):
         grid = Grid([
             [4, 1, 2, 3],
             [4, 4, 4, 4],
@@ -47,7 +47,7 @@ class StarBattleSolverTests(TestCase):
         ])
         game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
-        self.assertIsNone(solution)
+        self.assertEqual(Grid.empty(), solution)
 
     def test_solution_grid_4x4(self):
         grid = Grid([
@@ -62,9 +62,12 @@ class StarBattleSolverTests(TestCase):
             [_, _, _, 1],
             [_, 1, _, _],
         ])
+
         game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_9x9(self):
         grid = Grid([
@@ -89,9 +92,12 @@ class StarBattleSolverTests(TestCase):
             [_, _, _, _, _, 1, _, _, _],
             [1, _, _, _, _, _, _, _, _]
         ])
+
         game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_9x9_2(self):
         grid = Grid([
@@ -116,9 +122,12 @@ class StarBattleSolverTests(TestCase):
             [_, 1, _, _, _, _, _, _, _],
             [_, _, _, _, _, _, _, _, 1]
         ])
+
         game_solver = StarBattleSolver(grid, 1)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_when_stars_count_equal_0(self):
         grid = Grid([
@@ -162,10 +171,13 @@ class StarBattleSolverTests(TestCase):
             [1, _, 1, _, _, _, _, _, _, _],
             [_, _, _, _, 1, _, 1, _, _, _],
         ])
+
         stars_count_by_region_column_row = 2
         game_solver = StarBattleSolver(grid, stars_count_by_region_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_when_stars_count_equal_3(self):
         grid = Grid([
@@ -200,11 +212,28 @@ class StarBattleSolverTests(TestCase):
             [_, _, _, 1, _, 1, _, _, 1, _, _, _, _, _],
             [_, 1, _, _, _, _, _, _, _, _, 1, _, 1, _],
         ])
+
         stars_count_by_region_column_row = 3
         game_solver = StarBattleSolver(grid, stars_count_by_region_column_row)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 
+
+    def test_multiple_solutions(self):
+        grid = Grid([
+            [1, 1, 1, 1],
+            [2, 2, 2, 2],
+            [3, 3, 3, 3],
+            [4, 4, 4, 4],
+        ])
+
+        game_solver = StarBattleSolver(grid, 1)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
 
 if __name__ == '__main__':
     unittest.main()
