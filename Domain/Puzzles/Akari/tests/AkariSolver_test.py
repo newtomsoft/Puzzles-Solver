@@ -49,6 +49,23 @@ class AkariSolverTests(TestCase):
         game_solver = AkariSolver(data_game)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_multiple_solutions(self):
+        data_game = {
+            'rows_number': 7,
+            'columns_number': 7,
+            'black_cells': {},
+            'number_constraints': {},
+        }
+
+        game_solver = AkariSolver(data_game)
+        solution0 = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution0)
+        solution1 = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), solution1)
+        self.assertNotEqual(solution0, solution1)
 
 
 if __name__ == '__main__':
