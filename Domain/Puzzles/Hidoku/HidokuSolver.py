@@ -1,4 +1,4 @@
-﻿from z3 import Solver, sat, Not, Int, And, Distinct, Or, unsat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -12,39 +12,48 @@ class HidokuSolver(GameSolver):
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
         self._grid_var = Grid.empty()
         self._previous_solution = Grid.empty()
         self.position_value_min = next((p for p, v in self._grid if v == 1), None)
         self.position_value_max = next((p for p, v in self._grid if v == self._rows_number * self._columns_number), None)
+        self._init_model()
 
-    def get_solution(self) -> Grid:
+    def _init_model(self):
         self._grid_var = Grid(
-            [[Int(f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)]
+            [[self._model.NewIntVar(1, self._rows_number * self._columns_number, f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)]
         )
         self._add_constraints()
-        if not self._solver.check() == sat:
-            return Grid.empty()
 
-        return self._compute_solution()
+    def get_solution(self) -> Grid:
+        solver = cp_model.CpSolver()
+        status = solver.Solve(self._model)
+
+        if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
+            return self._compute_solution(solver)
+
+        return Grid.empty()
 
     def get_other_solution(self) -> Grid:
         if self._previous_solution.is_empty():
             return Grid.empty()
 
-        constraint = Not(And([self._grid_var[position] == number for position, number in self._previous_solution]))
-        self._solver.add(constraint)
-        return self._compute_solution()
+        bool_vars = []
+        for position, value in self._previous_solution:
+            var = self._grid_var[position]
+            b = self._model.NewBoolVar(f"diff_{position}")
+            self._model.Add(var != value).OnlyEnforceIf(b)
+            self._model.Add(var == value).OnlyEnforceIf(b.Not())
+            bool_vars.append(b)
 
-    def _compute_solution(self) -> Grid:
-        if self._solver.check() == unsat:
-            return Grid.empty()
+        self._model.AddBoolOr(bool_vars)
 
-        model = self._solver.model()
+        return self.get_solution()
 
+    def _compute_solution(self, solver) -> Grid:
         self._previous_solution = Grid(
             [
-                [model.eval(self._grid_var[Position(r, c)]).as_long() for c in range(self._columns_number)]
+                [solver.Value(self._grid_var[Position(r, c)]) for c in range(self._columns_number)]
                 for r in range(self._rows_number)
             ]
         )
@@ -58,19 +67,31 @@ class HidokuSolver(GameSolver):
     def _add_initial_constraints(self):
         for position, value in self._grid:
             if value == self.empty:
-                self._solver.add(self._grid_var[position] > 1, self._grid_var[position] < self._rows_number * self._columns_number)
+                self._model.Add(self._grid_var[position] > 1)
+                self._model.Add(self._grid_var[position] < self._rows_number * self._columns_number)
             else:
-                self._solver.add(self._grid_var[position] == value)
+                self._model.Add(self._grid_var[position] == value)
 
     def _add_distinct_number_constraints(self):
-        self._solver.add(Distinct(self._grid_var.values))
+        self._model.AddAllDifferent(list(self._grid_var.values))
 
     def _add_neighbors_constraints(self):
         for position, value in self._grid_var:
             neighbors_values = self._grid_var.neighbors_values(position, "diagonal")
             if position != self.position_value_min:
-                add = [value == neighbor_value + 1 for neighbor_value in neighbors_values]
-                self._solver.add(Or(add))
+                bools = []
+                for neighbor_value in neighbors_values:
+                    b = self._model.NewBoolVar(f"pred_{position}")
+                    self._model.Add(value == neighbor_value + 1).OnlyEnforceIf(b)
+                    self._model.Add(value != neighbor_value + 1).OnlyEnforceIf(b.Not())
+                    bools.append(b)
+                self._model.AddBoolOr(bools)
+
             if position != self.position_value_max:
-                less = [value == neighbor_value - 1 for neighbor_value in neighbors_values]
-                self._solver.add(Or(less))
+                bools = []
+                for neighbor_value in neighbors_values:
+                    b = self._model.NewBoolVar(f"succ_{position}")
+                    self._model.Add(value == neighbor_value - 1).OnlyEnforceIf(b)
+                    self._model.Add(value != neighbor_value - 1).OnlyEnforceIf(b.Not())
+                    bools.append(b)
+                self._model.AddBoolOr(bools)
