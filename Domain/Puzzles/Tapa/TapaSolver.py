@@ -38,25 +38,16 @@ class TapaSolver(GameSolver):
 
     def get_other_solution(self) -> Grid:
         if self._previous_solution is None:
-             return self.get_solution()
+            return self.get_solution()
 
-        # Add constraints to avoid previous solution
         constraints = []
-        # Tapa grid is padded (rows+2, cols+2). We care about the inner part.
-        for r in range(1, self.rows_number + 1):
-             for c in range(1, self.columns_number + 1):
-                  val = self._previous_solution.value(r, c)
-                  # _previous_solution is padded too? No, crop_grid removes padding.
-                  # Wait, look at crop_grid:
-                  # return Grid([[True if solution_grid.value(r, c) else False for c in range(1, solution_grid.columns_number - 1)] for r in range(1, solution_grid.rows_number - 1)])
-                  # So previous_solution is NOT padded. It is size (rows, cols).
-                  # But _grid_z3 is size (rows+2, cols+2).
-                  # Map indices: r in prev (0..rows-1) -> r+1 in _grid_z3.
-
-                  if val: # True/Black
-                       constraints.append(Not(self._grid_z3.value(r, c)))
-                  else:
-                       constraints.append(self._grid_z3.value(r, c))
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                val = self._previous_solution.value(r, c)
+                if val:
+                    constraints.append(Not(self._grid_z3.value(r + 1, c + 1)))
+                else:
+                    constraints.append(self._grid_z3.value(r + 1, c + 1))
 
         self._solver.add(Or(constraints))
 

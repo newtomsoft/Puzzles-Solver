@@ -360,6 +360,19 @@ class TapaSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
+    def test_multiple_solutions(self):
+        grid = Grid([
+            [[3], _, _],
+            [_, _, _],
+            [_, _, _],
+        ])
+
+        game_solver = TapaSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
+
 
 if __name__ == '__main__':
     unittest.main()
