@@ -6,7 +6,7 @@ from Run.GameRegistry import GameRegistry
 
 def register():
     GameRegistry.register(
-        r"https://gridgames.app/hidoku/",
+        r"https://gridgames.app/hidoku",
         HidokuGridProvider,
         None
     )(HidokuSolver)

@@ -14,12 +14,7 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Run.PuzzleMainConsole import PuzzleMainConsole
 
 TEST_CASES = [
-    # ("skyscrapers", "https://vuqq.com/skyscrapers/"),
-    # ("akari", "https://vuqq.com/akari/"),
-    # ("netwalk", "https://vuqq.com/netwalk/"),
-    # ("sudoku", "https://vuqq.com/sudoku/"),
-    # ("hitori", "https://vuqq.com/hitori/"),
-    ("tents", "https://vuqq.com/tents-and-trees/"),
+    ("Hidoku", "https://gridgames.app/hidoku")
 ]
 
 
