@@ -6,8 +6,6 @@ from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 
 
 class SumpleteSolverTests(TestCase):
-
-
     def test_solution_grid_square(self):
         grid = Grid([
             [0, 1, 1],
