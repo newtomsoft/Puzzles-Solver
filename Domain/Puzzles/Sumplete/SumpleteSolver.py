@@ -26,7 +26,7 @@ class SumpleteSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number - 1)] for r in range(self.rows_number - 1)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -45,8 +45,8 @@ class SumpleteSolver(GameSolver):
             return self.get_solution()
 
         current_vars = []
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
+        for r in range(self.rows_number - 1):
+            for c in range(self.columns_number - 1):
                 var = self._grid_vars[r][c]
                 if self._solver.BooleanValue(var):
                     current_vars.append(var.Not())
@@ -57,7 +57,7 @@ class SumpleteSolver(GameSolver):
         self._status = self._solver.Solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            return None
+            return Grid.empty()
 
         return self._compute_solution()
 
