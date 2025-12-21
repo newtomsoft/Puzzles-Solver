@@ -14,8 +14,6 @@ class BinairoPlusSolver(GameSolver):
         if self.rows_number % 2 != 0:
             raise ValueError("The grid size must be even")
 
-        # If comparisons_positions not passed, derive from grid if possible or error?
-        # BinairoPlus usually implies extra constraints.
         if comparisons_positions is None:
              self._comparisons_positions = self._grid.get_comparisons_positions()
         else:
@@ -92,9 +90,6 @@ class BinairoPlusSolver(GameSolver):
     def _add_not_same_3_adjacent_constraints(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number - 2):
-                # Forbidden: 000 and 111.
-                # sum = 0 => 000. sum = 3 => 111.
-                # So sum must be 1 or 2.
                 self._model.AddLinearConstraint(
                     self._grid_vars[r][c] + self._grid_vars[r][c+1] + self._grid_vars[r][c+2], 1, 2
                 )

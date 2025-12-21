@@ -5,18 +5,17 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
 
+_ = -1
 
 class BinairoPlusSolverTests(TestCase):
-
-
     def test_solution_6x6(self):
         grid = Grid([
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [-1, -1, 1, 0, -1, -1],
-            [-1, -1, -1, -1, -1, -1],
-            [1, -1, -1, -1, -1, 0],
-            [1, -1, 1, 0, -1, 1],
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [_, _, 1, 0, _, _],
+            [_, _, _, _, _, _],
+            [1, _, _, _, _, 0],
+            [1, _, 1, 0, _, 1],
         ])
         comparisons_positions = {
             'equal': [
@@ -43,6 +42,28 @@ class BinairoPlusSolverTests(TestCase):
         game_solver = BinairoPlusSolver(grid, comparisons_positions)
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_multiple_solution(self):
+        grid = Grid([
+            [_, _, _, _],
+            [_, _, _, _],
+            [_, _, 1, 0],
+            [_, _, _, _],
+        ])
+        comparisons_positions = {
+            'equal': [
+            ],
+            'non_equal': [
+            ],
+        }
+
+        game_solver = BinairoPlusSolver(grid, comparisons_positions)
+        solution = game_solver.get_solution()
+        self.assertNotEqual(Grid.empty(), solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertNotEqual(Grid.empty(), other_solution)
 
 
 if __name__ == '__main__':
