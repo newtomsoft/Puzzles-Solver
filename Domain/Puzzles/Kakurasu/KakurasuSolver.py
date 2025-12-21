@@ -8,6 +8,8 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KakurasuSolver(GameSolver):
+    empty = None
+
     def __init__(self, data_or_grid: Union[Grid, dict[str, List[int]]]):
         if isinstance(data_or_grid, Grid):
             self._grid = data_or_grid
@@ -20,11 +22,10 @@ class KakurasuSolver(GameSolver):
             self._columns_targets = data_or_grid['top']
             self.rows_number = len(self._rows_targets)
             self.columns_number = len(self._columns_targets)
-            self._grid = None # Virtual grid
+            self._grid = None
         else:
              raise ValueError("Input must be Grid or dict")
 
-        # Check size first to match test expectations
         if self.rows_number < 4 or self.columns_number < 4:
             raise ValueError("Kakurasu grid must at least 4x4")
 
@@ -84,11 +85,11 @@ class KakurasuSolver(GameSolver):
     def _add_rows_constraints(self):
         for r in range(self.rows_number):
             target = self._rows_targets[r]
-            if target != 0:
+            if target != self.empty:
                 self._model.Add(sum([(c + 1) * self._grid_vars[r][c] for c in range(self.columns_number)]) == target)
 
     def _add_columns_constraints(self):
         for c in range(self.columns_number):
             target = self._columns_targets[c]
-            if target != 0:
+            if target != self.empty:
                 self._model.Add(sum([(r + 1) * self._grid_vars[r][c] for r in range(self.rows_number)]) == target)
