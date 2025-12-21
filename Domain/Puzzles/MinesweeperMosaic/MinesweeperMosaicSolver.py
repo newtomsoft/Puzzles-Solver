@@ -28,7 +28,6 @@ class MinesweeperMosaicSolver(GameSolver):
         if self._previous_solution is None:
              return self.get_solution()
 
-        # Add exclusion constraint
         constraints = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -38,7 +37,6 @@ class MinesweeperMosaicSolver(GameSolver):
                 else:
                      constraints.append(self._grid_z3.value(r, c))
 
-        # At least one cell must be different
         self._solver.add(Or(constraints))
 
         if self._solver.check() == unsat:
@@ -68,7 +66,6 @@ class MinesweeperMosaicSolver(GameSolver):
                         if 0 <= r + dr < self.rows_number and 0 <= c + dc < self.columns_number:
                             cells_in_cell_zone.append(self._grid_z3.value(r + dr, c + dc))
 
-                # Use If to convert Bool to Int (0/1)
                 sum_expr = sum([If(b, 1, 0) for b in cells_in_cell_zone])
                 constraints.append(sum_expr == self._grid.value(r, c))
         self._solver.add(And(constraints))
