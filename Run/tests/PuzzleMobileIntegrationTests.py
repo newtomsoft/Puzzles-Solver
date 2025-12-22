@@ -50,6 +50,7 @@ class TestPuzzleMobileIntegration(BaseIntegrationTest):
     @pytest.mark.parametrize("puzzle_name, url", TEST_CASES)
     def test_integration_headless(self, puzzle_name, url):
         patches = [
-            patch("asyncio.sleep", new_callable=AsyncMock)
+            patch("asyncio.sleep", new_callable=AsyncMock),
+            patch("GridPlayers.Base.PlaywrightPlayer.PlaywrightPlayer._process_video")
         ]
         self.run_integration_test(url, patches=patches)
