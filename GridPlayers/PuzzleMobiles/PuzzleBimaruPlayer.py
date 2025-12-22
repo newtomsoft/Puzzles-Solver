@@ -2,11 +2,11 @@
 
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleBimaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
-    async def play(self, solution) -> SubmissionStatus:
+    async def play(self, solution) -> PlayStatus:
         page = self.browser.pages[0]
         cells = page.locator(".cell:not(.task):not(.ship)")
 
