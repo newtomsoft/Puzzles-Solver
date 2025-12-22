@@ -65,7 +65,7 @@ def test_integration_headless(puzzle_name, url):
          patch.object(PlaywrightGridProvider, "_read_config", autospec=True) as mock_config:
 
         def side_effect_read_config(self_provider):
-            self_provider.headless = True
+            self_provider.headless = os.getenv("CI", "false").lower() == "true"
             self_provider.record_video = False
 
         mock_config.side_effect = side_effect_read_config

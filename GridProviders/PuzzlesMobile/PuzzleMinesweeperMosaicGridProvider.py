@@ -9,9 +9,6 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleMinesweeperMosaicGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         page = await self.open_page(browser, url)
         await self.new_game(page, 'div.cell')

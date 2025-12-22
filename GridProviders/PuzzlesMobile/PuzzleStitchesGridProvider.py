@@ -6,9 +6,6 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileRegionGridProvider import Puz
 
 
 class PuzzleStitchesGridProvider(PlaywrightGridProvider, PuzzlesMobileRegionGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_new_html_page(browser, url)
         regions_grid = self._scrap_region_grid(html_page)

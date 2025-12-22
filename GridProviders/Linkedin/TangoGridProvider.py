@@ -6,9 +6,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class TangoGridProvider(PlaywrightGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         await page.goto(url)

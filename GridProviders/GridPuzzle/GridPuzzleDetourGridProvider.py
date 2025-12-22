@@ -10,9 +10,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleDetourGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
         pqq_string_list, ar_string_list, ab_string_list, size = self._get_canvas_data_extended(html_page)

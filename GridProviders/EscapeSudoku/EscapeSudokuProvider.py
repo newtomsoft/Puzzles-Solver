@@ -8,9 +8,6 @@ from Utils.utils import is_perfect_square
 
 
 class EscapeSudokuGridProvider(PlaywrightGridProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         page = browser.pages[0]
         await page.goto(url)

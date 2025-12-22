@@ -6,9 +6,6 @@ from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMo
 
 
 class PuzzleShakashakaGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider):
-    async def get_grid(self, url: str) -> Grid:
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
         page = await self.open_page(browser, url)
         await self.new_game(page)
