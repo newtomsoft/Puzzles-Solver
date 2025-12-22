@@ -10,7 +10,7 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 class HidokuGridProvider(PlaywrightGridProvider):
     async def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
-        page = await browser.new_page()
+        page = browser.pages[0]
 
         await page.add_init_script("""
             window.canvas_logs = [];
@@ -47,7 +47,7 @@ class HidokuGridProvider(PlaywrightGridProvider):
 
         parsed_url = urlparse(url)
         query_params = parse_qs(parsed_url.query)
-        difficulty_param = query_params.get('d', query_params.get('difficulty', ['Easy']))[0]
+        difficulty_param = query_params.get('d', query_params.get('difficulty', ['easy']))[0]
 
         difficulty_map = {
             'easy': ('Easy', 5),
@@ -67,21 +67,16 @@ class HidokuGridProvider(PlaywrightGridProvider):
         if await start_button.is_visible():
             await start_button.click()
 
-        # Update selector to find the row with difficulty text, then the play button inside it
-        # The classes have dynamic suffixes (e.g. _gameRow_...), so we use partial matching.
         row_locator = page.locator(f"div[class*='_gameRow_']:has-text('{diff_label}')")
         diff_button = row_locator.locator("div[class*='_playButton_']").first
-        
+
         if await diff_button.is_visible():
-             await diff_button.click(timeout=3000)
+             await diff_button.click()
         else:
-             # Fallback to old behavior just in case
              logging.warning(f"Could not find specific play button for {diff_label}, trying text click.")
-             await page.get_by_text(diff_label, exact=True).first.click(timeout=3000)
+             await page.get_by_text(diff_label, exact=True).first.click()
 
-        await page.wait_for_function("window.canvas_logs.length > 10", timeout=10000)
-
-        await asyncio.sleep(2)
+        await page.wait_for_function("window.canvas_logs.length > 10", timeout=3000)
 
         logs = await page.evaluate("window.canvas_logs")
 
@@ -89,7 +84,7 @@ class HidokuGridProvider(PlaywrightGridProvider):
 
     @staticmethod
     def _parse_logs_to_grid(logs: list, rows: int, cols: int) -> Grid:
-        text_events = [l for l in logs if l['type'] in ('fillText', 'strokeText')]
+        text_events = [log for log in logs if log['type'] in ('fillText', 'strokeText')]
 
         canvas_width = 351.0
         canvas_height = 351.0
@@ -105,7 +100,6 @@ class HidokuGridProvider(PlaywrightGridProvider):
 
         matrix = [[None for _ in range(cols)] for _ in range(rows)]
         grid = Grid(matrix)
-
 
         for event in text_events:
             text = event['text']
