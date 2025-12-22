@@ -13,6 +13,7 @@ class PuzzleTapaPlayer(PuzzlesMobilePlayer):
             if value:
                 await cells[index].click()
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

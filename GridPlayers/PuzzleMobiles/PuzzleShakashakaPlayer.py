@@ -29,6 +29,7 @@ class PuzzleShakashakaPlayer(PuzzlesMobilePlayer):
                 continue
             await cell.click(position={"x": w * 0.15, "y": h * 0.85})
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

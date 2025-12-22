@@ -11,6 +11,7 @@ class PuzzleHitoriPlayer(PuzzlesMobilePlayer):
         for index, _ in [(solution.get_index_from_position(position), value) for position, value in solution if not value]:
             await cells[index].click()
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

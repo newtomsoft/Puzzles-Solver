@@ -17,7 +17,7 @@ class PuzzleNurikabePlayer(PuzzlesMobilePlayer):
             await page.mouse.down()
             await page.mouse.up()
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 
