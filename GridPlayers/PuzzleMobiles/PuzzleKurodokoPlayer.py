@@ -3,11 +3,11 @@ from typing import Literal
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleKurodokoPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid) -> SubmissionStatus:
+    async def play(self, solution: Grid) -> PlayStatus:
         page = self.browser.pages[0]
         button_position: Literal["left", "right"] = "right" if "puzzles-mobile" in page.url else "left"
 

@@ -33,10 +33,10 @@ Thumbs.db
 # Project specific
 /GridProviders/Linkedin/QueensGridProvider.ini
 /GridProviders/Linkedin/ZipGridProvider.ini
-/GridProviders/Browsers/Chromium/user/
-/GridProviders/Browsers/Chromium/
-/GridProviders/Browsers/Firefox/user/
-/GridProviders/Browsers/Firefox/
+/GridProviders/Browsers/Chromium/*
+!/GridProviders/Browsers/Chromium/extensions/
+/GridProviders/Browsers/Firefox/*
+!/GridProviders/Browsers/Firefox/extensions/
 /Run/videos/
 /videos/
 *.ini

@@ -1,11 +1,11 @@
 ﻿import asyncio
 
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleLitsPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution) -> SubmissionStatus:
+    async def play(self, solution) -> PlayStatus:
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.selectable")
         for position, value in solution:

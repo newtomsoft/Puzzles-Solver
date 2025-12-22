@@ -6,7 +6,7 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
@@ -14,7 +14,7 @@ class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
         super().__init__(browser)
         self._solution: Grid | None = None
 
-    async def play(self, solution) -> SubmissionStatus:
+    async def play(self, solution) -> PlayStatus:
         self._solution = solution
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.loop-task-cell")
