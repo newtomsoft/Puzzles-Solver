@@ -1,11 +1,11 @@
 import asyncio
 
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleStarBattlePlayer(PuzzlesMobilePlayer):
-    async def play(self, solution) -> SubmissionStatus:
+    async def play(self, solution) -> PlayStatus:
         page = self.browser.pages[0]
         cells = page.locator(".cell, .task-cell")
         for position, value in solution:

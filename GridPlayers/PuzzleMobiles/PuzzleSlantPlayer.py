@@ -2,11 +2,11 @@ import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleSlantPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid) -> SubmissionStatus:
+    async def play(self, solution: Grid) -> PlayStatus:
         page = self.browser.pages[0]
         cell_elements = page.locator('div.cell')
 

@@ -1,5 +1,7 @@
 ﻿from abc import ABC, abstractmethod
 
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+
 
 class GridPlayer(ABC):
     @abstractmethod
@@ -7,5 +9,5 @@ class GridPlayer(ABC):
         self.browser_context = browser_context
 
     @abstractmethod
-    async def play(self, solution):
+    async def play(self, solution) -> PlayStatus:
         pass

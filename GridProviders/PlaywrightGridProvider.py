@@ -16,7 +16,7 @@ class PlaywrightGridProvider(GridProvider):
         self.config_dir_path = os.path.dirname(os.path.abspath(__file__))
         self.extensions_path = ""
         self.user_data_path = ""
-        self.headless = True
+        self.headless = False
         self.force_headless_if_screen_too_small = True
         self.record_video = True
         self.email = ""
@@ -50,15 +50,14 @@ class PlaywrightGridProvider(GridProvider):
         return config
 
     def _read_config(self):
-        self.headless = self.config["DEFAULT"]["headless"] == "True"
+        self.headless = self.config["DEFAULT"]["headless"] == "True" or os.environ.get("CI", "false").lower() == "true"
         self.force_headless_if_screen_too_small = self.config["DEFAULT"]["force_headless_if_screen_too_small"] == "True"
         self.record_video = os.environ.get("PLAYWRIGHT_RECORD_VIDEO", "True") == "True"
         self.user_data_path = os.path.join(self.config_dir_path, self.config["DEFAULT"]["user_data_path"])
         extensions_path = self.config["DEFAULT"]["extensions_path"]
         extensions_paths = extensions_path.split(",")
         extensions_paths = [os.path.join(self.config_dir_path, x) for x in extensions_paths if x]
-        self.extensions_path = ",".join([str(path) if os.path.exists(str(path)) else "" for path in extensions_paths])
-        self.email = self.config["DEFAULT"]["email"]
+        self.extensions_path = ",".join([str(path) for path in extensions_paths if os.path.exists(str(path))])
         self.email = self.config["DEFAULT"]["email"]
         self.password = self.config["DEFAULT"]["password"]
         self.browser_type = self.config["DEFAULT"].get("browser", "chromium")
@@ -67,7 +66,7 @@ class PlaywrightGridProvider(GridProvider):
         screen_width, screen_height = self.screen_size()
         window_width, window_height = 900, 1000
         if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):
-            self.headless = False
+            self.headless = True
             print("Screen too small, using headless mode")
 
         playwright = await async_playwright().start()
@@ -83,7 +82,10 @@ class PlaywrightGridProvider(GridProvider):
                 launch_args["record_video_size"] = {"width": window_width, "height": window_height}
 
             if self.browser_type == "chromium":
-                chromium_args = [f"--disable-extensions-except={self.extensions_path}", f"--load-extension={self.extensions_path}", "--start-maximized"]
+                chromium_args = ["--start-maximized"]
+                if self.extensions_path:
+                    chromium_args.append(f"--disable-extensions-except={self.extensions_path}")
+                    chromium_args.append(f"--load-extension={self.extensions_path}")
                 launch_args["args"] = cast(Any, chromium_args)
                 browser_context = await playwright.chromium.launch_persistent_context(**launch_args)
             else:

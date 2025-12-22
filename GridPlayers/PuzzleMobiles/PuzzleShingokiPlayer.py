@@ -3,11 +3,11 @@
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleShingokiPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: IslandGrid) -> SubmissionStatus:
+    async def play(self, solution: IslandGrid) -> PlayStatus:
         page = self.browser.pages[0]
         horizontals = page.locator(".loop-horizontal")
         verticals = page.locator(".loop-vertical")
