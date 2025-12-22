@@ -63,7 +63,7 @@ class PlaywrightGridProvider(GridProvider):
         self.password = self.config["DEFAULT"]["password"]
         self.browser_type = self.config["DEFAULT"].get("browser", "chromium")
 
-    async def with_playwright(self, callback, source):
+    async def with_playwright(self, callback, source) -> tuple[Any, BrowserContext, Any]:
         screen_width, screen_height = self.screen_size()
         window_width, window_height = 900, 1000
         if not self.headless and self.force_headless_if_screen_too_small and (screen_width < window_width or screen_height < window_height):

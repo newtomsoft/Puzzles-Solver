@@ -6,5 +6,5 @@ from playwright.async_api import BrowserContext
 
 class GridProvider(ABC):
     @staticmethod
-    async def get_grid(source: str) -> tuple[Any, BrowserContext]:
+    async def get_grid(source: str) -> tuple[Any, BrowserContext, Any]:
         pass
