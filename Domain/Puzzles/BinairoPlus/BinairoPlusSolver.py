@@ -5,7 +5,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class BinairoPlusSolver(GameSolver):
-    def __init__(self, grid: Grid, comparisons_positions: dict = None):
+    def __init__(self, grid: Grid, comparisons_positions: dict):
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -14,10 +14,7 @@ class BinairoPlusSolver(GameSolver):
         if self.rows_number % 2 != 0:
             raise ValueError("The grid size must be even")
 
-        if comparisons_positions is None:
-             self._comparisons_positions = self._grid.get_comparisons_positions()
-        else:
-             self._comparisons_positions = comparisons_positions
+        self._comparisons_positions = comparisons_positions
 
         self._model = None
         self._solver = cp_model.CpSolver()
