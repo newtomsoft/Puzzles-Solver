@@ -8,7 +8,7 @@ from GameComponentFactory import GameComponentFactory
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleMainConsole:
@@ -46,9 +46,9 @@ class PuzzleMainConsole:
             result = await game_player.play(solution)
             if result is None:
                 print("Submission failed: No result returned")
-            elif result == SubmissionStatus.FAILED_NO_SUCCESS_SELECTOR:
+            elif result == PlayStatus.FAILED_NO_SUCCESS_SELECTOR:
                 print("Submission failed: No success selector found")
-            elif result == SubmissionStatus.FAILED_NO_SUBMIT_BUTTON:
+            elif result == PlayStatus.FAILED_NO_SUBMIT_BUTTON:
                 print("Submission failed: No submit button found")
             else:
                 print("Game played successfully")

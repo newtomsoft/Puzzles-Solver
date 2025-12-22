@@ -3,11 +3,11 @@
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzlePipesPlayer(PuzzlesMobilePlayer):
-    async def play(self, solution: Grid[PipeShapeTransition]) -> SubmissionStatus:
+    async def play(self, solution: Grid[PipeShapeTransition]) -> PlayStatus:
         page = self.browser.pages[0]
         cells = await page.query_selector_all("div.selectable")
         for position, pipe_shape_transition in solution:

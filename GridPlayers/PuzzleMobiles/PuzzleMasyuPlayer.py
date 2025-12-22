@@ -6,7 +6,7 @@ from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.SubmissionStatus import SubmissionStatus
+from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
 
 
 class PuzzleMasyuPlayer(PuzzlesMobilePlayer):
@@ -19,7 +19,7 @@ class PuzzleMasyuPlayer(PuzzlesMobilePlayer):
         self.cell_height = 0
         self.columns_number = 0
 
-    async def play(self, solution: IslandGrid) -> SubmissionStatus:
+    async def play(self, solution: IslandGrid) -> PlayStatus:
         self.columns_number = solution.columns_number
         self.cell_width = (await self.page.locator(".loop-horizontal").nth(0).bounding_box())['width']
         self.cell_height = (await self.page.locator(".loop-vertical").nth(0).bounding_box())['height']
