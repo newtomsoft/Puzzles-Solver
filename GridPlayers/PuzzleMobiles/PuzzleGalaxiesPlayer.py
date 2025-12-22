@@ -21,8 +21,9 @@ class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):
         different_neighbors_positions = solution.find_different_neighbors_positions()
         await self._draw_regions(cells, page, different_neighbors_positions)
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
 
         return result
 

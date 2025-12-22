@@ -16,6 +16,7 @@ class PuzzleKurodokoPlayer(PuzzlesMobilePlayer):
         for index in (solution.get_index_from_position(position) for position, value in solution if not value):
             await cells.nth(index).click(button=button_position)
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

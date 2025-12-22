@@ -16,6 +16,7 @@ class PuzzleBinairoPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
             else:
                 await cells.nth(index).click()
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

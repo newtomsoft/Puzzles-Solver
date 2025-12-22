@@ -13,6 +13,7 @@ class PuzzleSudokuPlayer(PuzzlesMobilePlayer):
             if value:
                 await cells.nth(index).click()
                 await page.keyboard.press(str(value))
+
         await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)

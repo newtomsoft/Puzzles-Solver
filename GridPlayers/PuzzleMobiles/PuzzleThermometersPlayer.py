@@ -13,6 +13,7 @@ class PuzzleThermometersPlayer(PuzzlesMobilePlayer):
             index = position.r * solution.columns_number + position.c
             await sorted_cells[index].click()
 
+        await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
 

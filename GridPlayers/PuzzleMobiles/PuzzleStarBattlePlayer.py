@@ -12,6 +12,7 @@ class PuzzleStarBattlePlayer(PuzzlesMobilePlayer):
             index = position.r * solution.columns_number + position.c
             if value:
                 await cells.nth(index).click()
+
         await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)

@@ -21,6 +21,7 @@ class PuzzleDominosaPlayer(PuzzlesMobilePlayer):
                 await page.mouse.move(box['x'] + unknown_coefficient * box['width'], box['y'] + box['height'] / 2)
                 await page.mouse.down()
                 await page.mouse.up()
+        
         await asyncio.sleep(2)
         result = await self.submit_score(page)
         await asyncio.sleep(3)
