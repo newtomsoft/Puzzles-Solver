@@ -51,12 +51,7 @@ class HidokuSolver(GameSolver):
         return self.get_solution()
 
     def _compute_solution(self, solver) -> Grid:
-        self._previous_solution = Grid(
-            [
-                [solver.Value(self._grid_var[Position(r, c)]) for c in range(self._columns_number)]
-                for r in range(self._rows_number)
-            ]
-        )
+        self._previous_solution = Grid([[solver.Value(self._grid_var[Position(r, c)]) for c in range(self._columns_number)] for r in range(self._rows_number)])
         return self._previous_solution
 
     def _add_constraints(self):

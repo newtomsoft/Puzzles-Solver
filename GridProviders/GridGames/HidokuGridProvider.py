@@ -9,28 +9,41 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class HidokuGridProvider(PlaywrightGridProvider):
-    def __init__(self):
-        super().__init__()
-
     async def scrap_grid(self, browser: BrowserContext, url: str) -> Grid:
         page = await browser.new_page()
 
         await page.add_init_script("""
             window.canvas_logs = [];
-            const originalFillText = CanvasRenderingContext2D.prototype.fillText;
-            CanvasRenderingContext2D.prototype.fillText = function(text, x, y, maxWidth) {
-                window.canvas_logs.push({type: 'fillText', text: text, x: x, y: y, style: this.fillStyle, font: this.font});
-                return originalFillText.apply(this, arguments);
+            const proto = CanvasRenderingContext2D.prototype;
+
+            const originalFillText = proto.fillText;
+            proto.fillText = function(text, x, y, maxWidth) {
+                window.canvas_logs.push({type: 'fillText', text: String(text), x: x, y: y, style: this.fillStyle, font: this.font});
+                return originalFillText.call(this, text, x, y, maxWidth);
             };
 
-            const originalStrokeText = CanvasRenderingContext2D.prototype.strokeText;
-            CanvasRenderingContext2D.prototype.strokeText = function(text, x, y, maxWidth) {
-                window.canvas_logs.push({type: 'strokeText', text: text, x: x, y: y, style: this.strokeStyle, font: this.font});
-                return originalStrokeText.apply(this, arguments);
+            const originalStrokeText = proto.strokeText;
+            proto.strokeText = function(text, x, y, maxWidth) {
+                window.canvas_logs.push({type: 'strokeText', text: String(text), x: x, y: y, style: this.strokeStyle, font: this.font});
+                return originalStrokeText.call(this, text, x, y, maxWidth);
             };
         """)
 
         await page.goto(url)
+        try:
+            await page.wait_for_selector("div#snigel-cmp-framework", timeout=5000)
+            await page.evaluate("""
+                () => {
+                    const banner = document.getElementById('snigel-cmp-framework');
+                    if (banner) {
+                        banner.remove();
+                    }
+                }
+            """)
+            await asyncio.sleep(1)
+        except Exception:
+            logging.debug("Cookie banner not found or interaction failed.")
+
 
         parsed_url = urlparse(url)
         query_params = parse_qs(parsed_url.query)
@@ -41,7 +54,6 @@ class HidokuGridProvider(PlaywrightGridProvider):
             'medium': ('Medium', 6),
             'hard': ('Hard', 7),
             'extreme': ('Extreme', 8),
-            'extrême': ('Extreme', 8)
         }
 
         target_diff_key = difficulty_param.lower()
@@ -51,24 +63,21 @@ class HidokuGridProvider(PlaywrightGridProvider):
 
         diff_label, grid_size = difficulty_map[target_diff_key]
 
-        try:
-            start_button = page.locator("button:has-text('Let\\'s Go!'), button:has-text('C\\'est parti')").first
-            await start_button.wait_for(timeout=2000)
+        start_button = page.locator("button:has-text('Let\\'s Go!'), button:has-text('C\\'est parti')").first
+        if await start_button.is_visible():
             await start_button.click()
-        except Exception:
-            logging.debug("Start button not found or already clicked.")
 
-        try:
-            if diff_label == 'Extreme':
-                diff_button = page.locator("text=Extreme").or_(page.locator("text=Extrême")).first
-            else:
-                diff_button = page.locator(f"text={diff_label}").first
-
-            await diff_button.wait_for(timeout=10000)
-            await diff_button.click()
-        except Exception as e:
-            logging.error(f"Could not find difficulty button for '{diff_label}': {e}")
-            raise
+        # Update selector to find the row with difficulty text, then the play button inside it
+        # The classes have dynamic suffixes (e.g. _gameRow_...), so we use partial matching.
+        row_locator = page.locator(f"div[class*='_gameRow_']:has-text('{diff_label}')")
+        diff_button = row_locator.locator("div[class*='_playButton_']").first
+        
+        if await diff_button.is_visible():
+             await diff_button.click(timeout=3000)
+        else:
+             # Fallback to old behavior just in case
+             logging.warning(f"Could not find specific play button for {diff_label}, trying text click.")
+             await page.get_by_text(diff_label, exact=True).first.click(timeout=3000)
 
         await page.wait_for_function("window.canvas_logs.length > 10", timeout=10000)
 

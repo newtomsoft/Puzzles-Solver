@@ -7,9 +7,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleNanroGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url, "#puzzle_main")
         _, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)

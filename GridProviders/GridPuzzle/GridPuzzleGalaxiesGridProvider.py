@@ -7,9 +7,6 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 class GridPuzzleGalaxiesGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
-    async def get_grid(self, url: str):
-        return await self.with_playwright(self.scrap_grid, url)
-
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
         pqq_string_list, original_matrix_size = await self._get_canvas_data(html_page)
