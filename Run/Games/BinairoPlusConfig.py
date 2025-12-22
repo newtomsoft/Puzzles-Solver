@@ -14,7 +14,7 @@ def register():
     )(BinairoPlusSolver)
 
     GameRegistry.register(
-        r"https://.*\.puzzle-binairo\.com/.*binairo-plus", 
+        r"https://.*\.puzzle-binairo\.com.*binairo-plus.*",
         PuzzleBinairoPlusGridProvider, 
         PuzzleBinairoPlayer
     )(BinairoPlusSolver)
