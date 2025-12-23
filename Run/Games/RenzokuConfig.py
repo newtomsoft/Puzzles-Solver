@@ -1,5 +1,5 @@
 from Domain.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
-from GridPlayers.PuzzleMobiles.PuzzleFutoshikiPlayer import PuzzleFutoshikiPlayer
+from GridPlayers.PuzzlesMobile.PuzzleFutoshikiPlayer import PuzzleFutoshikiPlayer
 from GridProviders.PuzzlesMobile.PuzzleRenzokuGridProvider import PuzzleRenzokuGridProvider
 from Run.GameRegistry import GameRegistry
 

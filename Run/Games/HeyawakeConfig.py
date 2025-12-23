@@ -1,5 +1,5 @@
 from Domain.Puzzles.Heyawake.HeyawakeSolver import HeyawakeSolver
-from GridPlayers.PuzzleMobiles.PuzzleHeyawakePlayer import PuzzleHeyawakePlayer
+from GridPlayers.PuzzlesMobile.PuzzleHeyawakePlayer import PuzzleHeyawakePlayer
 from GridProviders.PuzzlesMobile.PuzzleHeyawakeGridProvider import PuzzleHeyawakeGridProvider
 from Run.GameRegistry import GameRegistry
 

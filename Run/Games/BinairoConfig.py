@@ -1,5 +1,5 @@
 from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
-from GridPlayers.PuzzleMobiles.PuzzleBinairoPlayer import PuzzleBinairoPlayer
+from GridPlayers.PuzzlesMobile.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridProviders.PuzzlesMobile.PuzzleBinairoGridProvider import PuzzleBinairoGridProvider
 from Run.GameRegistry import GameRegistry
 

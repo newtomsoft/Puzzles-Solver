@@ -1,5 +1,5 @@
 from Domain.Puzzles.Kurodoko.KurodokoSolver import KurodokoSolver
-from GridPlayers.PuzzleMobiles.PuzzleKurodokoPlayer import PuzzleKurodokoPlayer
+from GridPlayers.PuzzlesMobile.PuzzleKurodokoPlayer import PuzzleKurodokoPlayer
 from GridProviders.PuzzlesMobile.PuzzleKurodokoGridProvider import PuzzleKurodokoGridProvider
 from Run.GameRegistry import GameRegistry
 

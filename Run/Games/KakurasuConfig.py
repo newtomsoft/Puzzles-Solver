@@ -1,5 +1,5 @@
 from Domain.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
-from GridPlayers.PuzzleMobiles.PuzzleKakurasuPlayer import PuzzleKakurasuPlayer
+from GridPlayers.PuzzlesMobile.PuzzleKakurasuPlayer import PuzzleKakurasuPlayer
 from GridProviders.PuzzlesMobile.PuzzleKakurasuGridProvider import PuzzleKakurasuGridProvider
 from Run.GameRegistry import GameRegistry
 

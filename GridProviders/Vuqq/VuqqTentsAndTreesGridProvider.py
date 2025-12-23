@@ -3,128 +3,74 @@ import json
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 
 
-class VuqqTentsAndTreesGridProvider(PlaywrightGridProvider):
+class VuqqTentsAndTreesGridProvider(VuqqGridProvider):
     async def scrap_grid(self, browser, url):
-        page = await browser.new_page()
-        await page.route(lambda u: "drawing.js" in u, self._handle_drawing_js)
-        await page.goto(url)
+        page = await self.open_page(browser, url, "canvas")
 
-        try:
-            await page.wait_for_selector("canvas", timeout=30000)
-
-            logs = None
-            for _ in range(40):
-                js_check = """
-                    (() => {
-                        if (!window.vuqq_frames) return null;
-                        for (let i = window.vuqq_frames.length - 1; i >= 0; i--) {
-                            if (window.vuqq_frames[i].length > 10) {
-                                return window.vuqq_frames[i];
-                            }
-                        }
-                        return null;
-                    })()
-                """
-                logs = await page.evaluate(js_check)
-                if logs:
-                    break
-                await asyncio.sleep(0.5)
-
-            if not logs:
-                raise Exception("No populated frame captured from drawing.js")
-
-            await page.evaluate("logs => window.vuqq_logs = logs", logs)
-
-            canvas_metrics = await page.evaluate("""
+        logs = None
+        for _ in range(40):
+            js_check = """
                 (() => {
-                    const canvas = document.querySelector('canvas');
-                    const rect = canvas.getBoundingClientRect();
-                    return {
-                        internal_width: canvas.width,
-                        internal_height: canvas.height,
-                        client_left: rect.left,
-                        client_top: rect.top,
-                        client_width: rect.width,
-                        client_height: rect.height
-                    };
+                    if (!window.vuqq_frames) return null;
+                    for (let i = window.vuqq_frames.length - 1; i >= 0; i--) {
+                        if (window.vuqq_frames[i].length > 10) {
+                            return window.vuqq_frames[i];
+                        }
+                    }
+                    return null;
                 })()
-            """)
+            """
+            logs = await page.evaluate(js_check)
+            if logs:
+                break
+            await asyncio.sleep(0.5)
 
-            grid, tents_numbers, raw_coords = self._parse_grid(logs)
+        if not logs:
+            raise Exception("No populated frame captured from drawing.js")
 
-            scale_x = canvas_metrics['client_width'] / canvas_metrics['internal_width']
-            scale_y = canvas_metrics['client_height'] / canvas_metrics['internal_height']
-            offset_x = canvas_metrics['client_left']
-            offset_y = canvas_metrics['client_top']
-            
-            screen_col_xs = [x * scale_x + offset_x for x in raw_coords['col_xs']]
-            screen_row_ys = [y * scale_y + offset_y for y in raw_coords['row_ys']]
-            
-            meta = {
-                'col_xs': screen_col_xs,
-                'row_ys': screen_row_ys,
-                'trees': raw_coords['trees']
-            }
-            await page.evaluate(f"window.vuqq_meta = {json.dumps(meta)}")
+        await page.evaluate("logs => window.vuqq_logs = logs", logs)
 
-            return grid, tents_numbers
+        canvas_metrics = await page.evaluate("""
+            (() => {
+                const canvas = document.querySelector('canvas');
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    internal_width: canvas.width,
+                    internal_height: canvas.height,
+                    client_left: rect.left,
+                    client_top: rect.top,
+                    client_width: rect.width,
+                    client_height: rect.height
+                };
+            })()
+        """)
 
-        except Exception as e:
-            await page.close()
-            raise e
+        grid, tents_numbers, raw_coords = self._parse_grid(logs)
 
-    @staticmethod
-    async def _handle_drawing_js(route, request):
-        try:
-            response = await route.fetch()
-            body = await response.text()
-            new_body = "window.vuqq_frames = []; window.current_frame = [];\n" + body
+        scale_x = canvas_metrics['client_width'] / canvas_metrics['internal_width']
+        scale_y = canvas_metrics['client_height'] / canvas_metrics['internal_height']
+        offset_x = canvas_metrics['client_left']
+        offset_y = canvas_metrics['client_top']
 
-            hooks = [
-                (
-                    "start_draw: function() {",
-                    "window.current_frame = []; window.vuqq_frames.push(window.current_frame);",
-                ),
-                (
-                    "set_palette_entry: function(index, r, g, b) {",
-                    "try { window.current_frame.push({type:'palette', index:index, rgb:[r,g,b]}); } catch(e) {}",
-                ),
-                (
-                    "draw_text: function(x, y, fonttype, fontsize, align, colour, text) {",
-                    "try { window.current_frame.push({type:'text', x:x, y:y, text:text, colour:colour}); } catch(e) {}",
-                ),
-                (
-                    "draw_circle: function(cx, cy, radius, fillcolour, outlinecolour) {",
-                    "try { window.current_frame.push({type:'circle', x:cx, y:cy, r:radius, fill:fillcolour}); } catch(e) {}",
-                ),
-                (
-                    "draw_rect: function(x, y, w, h, colour) {",
-                    "try { window.current_frame.push({type:'rect', x:x, y:y, w:w, h:h, colour:colour}); } catch(e) {}",
-                ),
-                (
-                    "draw_poly: function(/* int* */coords, npoints, fillcolour, outlinecolour) {",
-                    "try { var dc = Module.c_to_js_array(coords, npoints*2, 'i32'); window.current_frame.push({type:'poly', coords:dc, fill:fillcolour}); } catch(e){}",
-                ),
-            ]
+        screen_col_xs = [x * scale_x + offset_x for x in raw_coords['col_xs']]
+        screen_row_ys = [y * scale_y + offset_y for y in raw_coords['row_ys']]
 
-            for signature, injection in hooks:
-                new_body = new_body.replace(signature, signature + " " + injection)
-            
-            await route.fulfill(
-                body=new_body,
-                content_type='application/javascript'
-            )
-        except Exception as e:
-            print(f"Error injecting hooks: {e}")
-            await route.continue_()
+        meta = {
+            'col_xs': screen_col_xs,
+            'row_ys': screen_row_ys,
+            'trees': raw_coords['trees']
+        }
+        await page.evaluate(f"window.vuqq_meta = {json.dumps(meta)}")
+
+        return grid, tents_numbers
 
     @staticmethod
     def _parse_grid(logs):
-        texts = [l for l in logs if l["type"] == "text"]
-        rects = [l for l in logs if l["type"] == "rect"]
+        texts = [log for log in logs if log["type"] == "text"]
+        rects = [log for log in logs if log["type"] == "rect"]
 
         xs = [t["x"] for t in texts]
         ys = [t["y"] for t in texts]

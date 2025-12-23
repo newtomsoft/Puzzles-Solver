@@ -1,5 +1,5 @@
 from Domain.Puzzles.Shikaku.ShikakuSolver import ShikakuSolver
-from GridPlayers.PuzzleMobiles.PuzzleShikakuPlayer import PuzzleShikakuPlayer
+from GridPlayers.PuzzlesMobile.PuzzleShikakuPlayer import PuzzleShikakuPlayer
 from GridProviders.PuzzlesMobile.PuzzleShikakuGridProvider import PuzzleShikakuGridProvider
 from Run.GameRegistry import GameRegistry
 

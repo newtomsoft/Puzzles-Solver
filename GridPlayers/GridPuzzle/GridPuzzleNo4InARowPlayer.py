@@ -1,5 +1,5 @@
 ﻿from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
-from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
+from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 
 class GridPuzzleNo4InARowPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):
