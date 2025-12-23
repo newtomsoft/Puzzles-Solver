@@ -1,6 +1,6 @@
 ﻿import asyncio
 
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 
 

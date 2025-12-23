@@ -6,7 +6,7 @@ from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class PuzzleGalaxiesPlayer(PuzzlesMobilePlayer):

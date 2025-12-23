@@ -1,11 +1,9 @@
 import asyncio
 import logging
 
-from playwright.async_api import BrowserContext
-
 from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class HidokuPlayer(PlaywrightPlayer):

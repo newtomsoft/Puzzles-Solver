@@ -3,7 +3,7 @@
 from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class PuzzleShingokiPlayer(PuzzlesMobilePlayer):

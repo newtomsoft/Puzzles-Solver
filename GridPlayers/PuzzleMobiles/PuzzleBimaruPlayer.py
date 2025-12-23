@@ -2,7 +2,7 @@
 
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class PuzzleBimaruPlayer(PuzzlesMobilePlayer, PlaywrightPlayer):

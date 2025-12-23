@@ -1,6 +1,6 @@
 ﻿from abc import ABC, abstractmethod
 
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class GridPlayer(ABC):
