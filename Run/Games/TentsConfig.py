@@ -1,6 +1,6 @@
 from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
-from GridPlayers.PuzzleMobiles.PuzzleTentsPlayer import PuzzleTentsPlayer
+from GridPlayers.PuzzlesMobile.PuzzleTentsPlayer import PuzzleTentsPlayer
 from GridProviders.PuzzleBaron.PuzzleBaronCampsitesGridProvider import PuzzleBaronCampsitesGridProvider
 from GridProviders.PuzzlesMobile.PuzzleTentsGridProvider import PuzzleTentsGridProvider
 from GridProviders.Vuqq.VuqqTentsAndTreesGridProvider import VuqqTentsAndTreesGridProvider

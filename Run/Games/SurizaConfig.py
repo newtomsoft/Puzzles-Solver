@@ -1,6 +1,6 @@
 from Domain.Puzzles.Suriza.SurizaSolver import SurizaSolver
 from GridPlayers.GridPuzzle.GridPuzzleSlitherlinkPlayer import GridPuzzleSlitherlinkPlayer
-from GridPlayers.PuzzleMobiles.PuzzleMasyuPlayer import PuzzleMasyuPlayer
+from GridPlayers.PuzzlesMobile.PuzzleMasyuPlayer import PuzzleMasyuPlayer
 from GridProviders.GridPuzzle.GridPuzzleSlitherlinkGridProvider import GridPuzzleSlitherlinkGridProvider
 from GridProviders.PuzzlesMobile.PuzzleSurizaGridProvider import PuzzleSurizaGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,21 +1,27 @@
+import asyncio
+
 from Domain.Board.Direction import Direction
 from Domain.Board.PipesGrid import PipesGrid
-from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlayStatus import PlayStatus
+from GridPlayers.Vuqq.Base.VuqqPlayer import VuqqPlayer
 
 
-class VuqqNetwalkPlayer(PlaywrightPlayer):
-    async def play(self, solution: PipesGrid):
-        # Access the page from the browser context
+class VuqqNetwalkPlayer(VuqqPlayer):
+    async def play(self, solution: PipesGrid) -> PlayStatus:
         if len(self.browser.pages) > 0:
             page = self.browser.pages[0]
         else:
-            # Should not happen if provider ran first, but safe fallback or raise
             raise Exception("No pages found in browser context")
 
         await self._play(page, solution)
 
+        await asyncio.sleep(2)
+        result = await self.get_play_status(page, success_message = "Victoire !")
+        await asyncio.sleep(3)
+
+        return result
+
     async def _play(self, page, solution: PipesGrid):
-        # Locate the grid cells
         cells = await page.locator('.grid .grid__cell').all()
 
         columns_number = solution.columns_number
@@ -34,12 +40,10 @@ class VuqqNetwalkPlayer(PlaywrightPlayer):
 
             target_connections = target_pipe.get_connected_to()
 
-            # Get current state from DOM
             path_el = cell.locator('.path')
             class_attr = await path_el.get_attribute('class')
             style_attr = await path_el.get_attribute('style')
 
-            # Parse Rotation
             current_rotation = 0
             if style_attr and 'rotate:' in style_attr:
                 try:
@@ -50,7 +54,6 @@ class VuqqNetwalkPlayer(PlaywrightPlayer):
 
             current_rotation = current_rotation % 360
 
-            # Determine base connections
             classes = class_attr.split()
             base_connections = set()
 
@@ -63,12 +66,10 @@ class VuqqNetwalkPlayer(PlaywrightPlayer):
             elif 'halfline' in classes:
                 base_connections = {Direction.left()}
 
-            # Simulate rotations to find match
             clicks_needed = 0
             found = False
 
             for i in range(4):
-                # Rotate base connections by (current_rotation/90 + i) steps
                 rotation_steps = (current_rotation // 90 + i) % 4
 
                 rotated_connections = set()
@@ -86,7 +87,6 @@ class VuqqNetwalkPlayer(PlaywrightPlayer):
             if found and clicks_needed > 0:
                 for _ in range(clicks_needed):
                     await cell.click()
-                    # Wait slightly to ensure UI updates or at least event is registered
                     await page.wait_for_timeout(50)
             elif not found:
                  print(f"Warning: Could not find rotation for cell {r},{c} to match target {target_connections} with base {base_connections}")

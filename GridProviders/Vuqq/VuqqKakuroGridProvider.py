@@ -4,17 +4,13 @@ import json
 from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 
 
-class VuqqKakuroGridProvider(PlaywrightGridProvider):
+class VuqqKakuroGridProvider(VuqqGridProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
-        if len(browser.pages) > 0:
-            page = browser.pages[0]
-        else:
-            page = await browser.new_page()
+        page = await self.open_page(browser, url, "canvas")
 
-        await page.goto(url)
         await page.wait_for_load_state('networkidle')
 
         # Inject hook to capture fillText and fillRect

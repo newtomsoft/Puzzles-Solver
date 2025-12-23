@@ -1,64 +1,27 @@
 import asyncio
 
-from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlayStatus import PlayStatus
+from GridPlayers.Vuqq.Base.VuqqPlayer import VuqqPlayer
 
 
-class VuqqTentsAndTreesPlayer(PlaywrightPlayer):
-    async def play(self, solution):
-        page = None
-        pages = []
-
-        if hasattr(self.browser, "pages"):
-             pages.extend(self.browser.pages)
-        if hasattr(self.browser, "contexts"):
-             for ctx in self.browser.contexts:
-                 pages.extend(ctx.pages)
-
-        for p in pages:
-            try:
-                meta_check = await p.evaluate("typeof window.vuqq_meta !== 'undefined'")
-                if meta_check:
-                    page = p
-                    break
-            except Exception:
-                continue
-
-        if not page:
-             if pages:
-                 page = pages[0]
-             else:
-                 raise Exception("No active page found to play on.")
+class VuqqTentsAndTreesPlayer(VuqqPlayer):
+    async def play(self, solution) -> PlayStatus:
+        page = self.browser.pages[0]
 
         meta = await page.evaluate("window.vuqq_meta")
         if not meta:
             raise Exception("No Vuqq metadata found. GridProvider must run before Player.")
 
-        unique_xs = meta['col_xs']
-        unique_ys = meta['row_ys']
-        trees = meta.get('trees', [])
-        
-        tree_set = set()
-        for t in trees:
-            if len(t) >= 2:
-                tree_set.add((t[0], t[1]))
+        xs = meta["col_xs"]
+        ys = meta["row_ys"]
 
-        cols = solution.columns_number
-        rows = solution.rows_number
-        
-        for r in range(rows):
-            for c in range(cols):
-                val = solution[r][c]
-                
-                if (r, c) in tree_set:
-                    continue
+        for position in (position for position, value in solution if value):
+            x = xs[position.c]
+            y = ys[position.r]
+            await page.mouse.click(x, y)
 
-                if c < len(unique_xs) and r < len(unique_ys):
-                    x = unique_xs[c]
-                    y = unique_ys[r]
+        await asyncio.sleep(2)
+        result = await self.get_play_status(page, success_selector=".alert-success")
+        await asyncio.sleep(3)
 
-                    if val:
-                        await page.mouse.click(x, y, button="right")
-                    else:
-                        await page.mouse.click(x, y, button="left")
-
-        await asyncio.sleep(1)
+        return result

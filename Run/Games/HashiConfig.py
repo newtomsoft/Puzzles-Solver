@@ -1,6 +1,6 @@
 from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
-from GridPlayers.PuzzleMobiles.PuzzleHashiPlayer import PuzzleHashiPlayer
+from GridPlayers.PuzzlesMobile.PuzzleHashiPlayer import PuzzleHashiPlayer
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider
 from GridProviders.PuzzlesMobile.PuzzleHashiGridProvider import PuzzleHashiGridProvider
 from Run.GameRegistry import GameRegistry

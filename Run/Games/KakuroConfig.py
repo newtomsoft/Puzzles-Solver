@@ -1,6 +1,6 @@
 from Domain.Puzzles.Kakuro.KakuroSolver import KakuroSolver
 from GridPlayers.Vuqq.VuqqKakuroPlayer import VuqqKakuroPlayer
-from GridPlayers.PuzzleMobiles.PuzzleKakuroPlayer import PuzzleKakuroPlayer
+from GridPlayers.PuzzlesMobile.PuzzleKakuroPlayer import PuzzleKakuroPlayer
 from GridProviders.PuzzlesMobile.PuzzleKakuroGridProvider import PuzzleKakuroGridProvider
 from GridProviders.Vuqq.VuqqKakuroGridProvider import VuqqKakuroGridProvider
 from Run.GameRegistry import GameRegistry

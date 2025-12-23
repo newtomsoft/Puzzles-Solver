@@ -1,25 +1,17 @@
-
 import json
-from collections import defaultdict
 
 from playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 
 
-class VuqqAkariGridProvider(PlaywrightGridProvider):
+class VuqqAkariGridProvider(VuqqGridProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
-        if len(browser.pages) > 0:
-            page = browser.pages[0]
-        else:
-            page = await browser.new_page()
+        page = await self.open_page(browser, url, "canvas")
 
         await page.goto(url)
-        # await page.wait_for_load_state('networkidle')
         await page.wait_for_selector('canvas')
 
-        # Inject hook to capture fillText and fillRect calls
         await page.evaluate("""
             (() => {
                 window.capturedTexts = [];
@@ -39,20 +31,17 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
             })();
         """)
 
-        # Trigger a redraw
         if await page.is_visible('.game-new'):
             await page.click('.game-new')
         elif await page.is_visible('.game-restart'):
             await page.click('.game-restart')
 
-        # Wait for canvas to be redrawn
         await page.wait_for_timeout(1000)
 
         captured_texts = await page.evaluate("window.capturedTexts")
         captured_rects = await page.evaluate("window.capturedRects")
 
         if not captured_rects:
-             # Try resizing to force redraw
              await page.set_viewport_size({"width": 1000, "height": 1000})
              await page.wait_for_timeout(500)
              captured_texts = await page.evaluate("window.capturedTexts")
@@ -61,20 +50,35 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
         if not captured_rects:
             raise Exception("No rects captured from canvas.")
 
-        # Filter relevant rects (cells are usually 100x100)
-        # Background is usually the largest one.
-        # Cells: w=100, h=100 (approx)
-        cells = [r for r in captured_rects if 95 <= r['w'] <= 105 and 95 <= r['h'] <= 105]
+        canvas_metrics = await page.evaluate("""
+            (() => {
+                const canvas = document.querySelector('canvas');
+                const rect = canvas.getBoundingClientRect();
+                return {
+                    internal_width: canvas.width,
+                    internal_height: canvas.height,
+                    client_left: rect.left,
+                    client_top: rect.top,
+                    client_width: rect.width,
+                    client_height: rect.height
+                };
+            })()
+        """)
+
+        cells = [r for r in captured_rects if 40 <= r['w'] <= 120 and 40 <= r['h'] <= 120 and abs(r['w'] - r['h']) < 5]
 
         if not cells:
              raise Exception("No cell-sized rects found.")
 
-        # Determine grid size
+        avg_cell_w = sum(c['w'] for c in cells) / len(cells)
+        avg_cell_h = sum(c['h'] for c in cells) / len(cells)
+
         xs = sorted(list(set([c['x'] for c in cells])))
         ys = sorted(list(set([c['y'] for c in cells])))
 
         def cluster(values, tolerance=10):
             if not values: return []
+            values = sorted(values)
             clusters = []
             curr = [values[0]]
             for v in values[1:]:
@@ -95,14 +99,6 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
         # Initialize Grid with -1 (White)
         matrix = [[-1 for _ in range(cols)] for _ in range(rows)]
 
-        # Map Black cells (-2)
-        # We saw '#000000' for black cells in inspection.
-        # But wait, cells with numbers might be black too.
-        # Actually, Akari only has White (Empty) and Black (Wall).
-        # Black can have number or not.
-        # We need to identify Black cells.
-
-        # Helper to find index
         def get_index(val, clusters):
             for i, c in enumerate(clusters):
                 if abs(val - c) < 20:
@@ -114,30 +110,17 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
             c_idx = get_index(c['x'], unique_xs)
 
             if r != -1 and c_idx != -1:
-                # Check style.
-                # White: #f3f4f8 (or close to it)
-                # Black: #000000 (or close to it)
                 style = str(c['style']).lower()
                 if style != '#f3f4f8' and style != '#ffffff':
                     matrix[r][c_idx] = -2  # Black, potentially with number
                 else:
                     matrix[r][c_idx] = -1 # White
 
-        # Map Clues (0-4) onto Black cells
-        # Text coords are centered.
-        # We can map text x/y to cell indices.
-        # Text x ~ cell x + 50. Text y ~ cell y + 50.
-
         for t in captured_texts:
             try:
                 val = int(t['text'])
                 tx = t['x']
                 ty = t['y']
-
-                # Find which cell contains this text
-                # We can reuse unique_xs/ys but with offset
-                # If cell x is 1, center is 51.
-                # So we look for index where unique_xs[i] is close to tx - 50
 
                 c_idx = get_index(tx - 50, unique_xs)
                 r_idx = get_index(ty - 50, unique_ys)
@@ -147,8 +130,6 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
             except ValueError:
                 pass
 
-        # Prepare data for AkariSolver
-        # AkariSolver expects a specific dict structure
         black_cells = []
         number_constraints = {}
         
@@ -158,7 +139,6 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
                 if val == -1:
                     continue # White
                 
-                # If we are here, it's a black cell (either -2 or 0-4)
                 black_cells.append((r, c))
                 
                 if 0 <= val <= 4:
@@ -171,8 +151,15 @@ class VuqqAkariGridProvider(PlaywrightGridProvider):
             'number_constraints': number_constraints
         }
 
-        # Pass metadata to player
-        metadata = {'xs': unique_xs, 'ys': unique_ys}
+        scale_x = canvas_metrics['client_width'] / canvas_metrics['internal_width']
+        scale_y = canvas_metrics['client_height'] / canvas_metrics['internal_height']
+        offset_x = canvas_metrics['client_left']
+        offset_y = canvas_metrics['client_top']
+
+        screen_xs = [(x + avg_cell_w / 2) * scale_x + offset_x for x in unique_xs]
+        screen_ys = [(y + avg_cell_h / 2) * scale_y + offset_y for y in unique_ys]
+
+        metadata = {'xs': screen_xs, 'ys': screen_ys}
         await page.evaluate(f"window.vuqq_meta = {json.dumps(metadata)}")
 
         return data_game

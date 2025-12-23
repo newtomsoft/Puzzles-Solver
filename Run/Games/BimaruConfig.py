@@ -1,5 +1,5 @@
 from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
-from GridPlayers.PuzzleMobiles.PuzzleBimaruPlayer import PuzzleBimaruPlayer
+from GridPlayers.PuzzlesMobile.PuzzleBimaruPlayer import PuzzleBimaruPlayer
 from GridProviders.PuzzlesMobile.PuzzleBimaruGridProvider import PuzzleBimaruGridProvider
 from Run.GameRegistry import GameRegistry
 

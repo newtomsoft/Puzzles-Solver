@@ -1,6 +1,6 @@
 from Domain.Puzzles.BinairoPlus.BinairoPlusSolver import BinairoPlusSolver
 from GridPlayers.LinkedIn.TangoPlayer import TangoPlayer
-from GridPlayers.PuzzleMobiles.PuzzleBinairoPlayer import PuzzleBinairoPlayer
+from GridPlayers.PuzzlesMobile.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridProviders.Linkedin.TangoGridProvider import TangoGridProvider
 from GridProviders.PuzzlesMobile.PuzzleBinairoPlusGridProvider import PuzzleBinairoPlusGridProvider
 from Run.GameRegistry import GameRegistry

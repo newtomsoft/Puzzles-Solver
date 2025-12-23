@@ -11,11 +11,12 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))) 
 from Run.tests.Base.BaseIntegrationTest import BaseIntegrationTest
 
 TEST_CASES = [
-    # ("skyscrapers", "https://vuqq.com/skyscrapers/"),
-    # ("akari", "https://vuqq.com/akari/"),
-    # ("netwalk", "https://vuqq.com/netwalk/"),
-    # ("sudoku", "https://vuqq.com/sudoku/"),
-    # ("hitori", "https://vuqq.com/hitori/"),
+    ("akari", "https://vuqq.com/akari/"),
+    ("hitori", "https://vuqq.com/hitori/"),
+    # ("kakuro", "https://vuqq.com/kakuro/"),
+    ("netwalk", "https://vuqq.com/netwalk/"),
+    ("skyscrapers", "https://vuqq.com/skyscrapers/"),
+    ("sudoku", "https://vuqq.com/sudoku/"),
     ("tents", "https://vuqq.com/tents-and-trees/"),
 ]
 

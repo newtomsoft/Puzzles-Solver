@@ -1,5 +1,5 @@
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
-from GridPlayers.PuzzleMobiles.PuzzleHitoriPlayer import PuzzleHitoriPlayer
+from GridPlayers.PuzzlesMobile.PuzzleHitoriPlayer import PuzzleHitoriPlayer
 from GridPlayers.Vuqq.VuqqHitoriPlayer import VuqqHitoriPlayer
 from GridProviders.PuzzlesMobile.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from GridProviders.Vuqq.VuqqHitoriGridProvider import VuqqHitoriGridProvider

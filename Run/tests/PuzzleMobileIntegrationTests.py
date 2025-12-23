@@ -1,7 +1,6 @@
-import asyncio
 import os
 import sys
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
 
 import pytest
 
@@ -9,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
 
 from Run.tests.Base.BaseIntegrationTest import BaseIntegrationTest
+
 
 TEST_CASES = [
     ("akari", "https://fr.puzzle-light-up.com/"),
@@ -51,7 +51,7 @@ class TestPuzzleMobileIntegration(BaseIntegrationTest):
     @pytest.mark.parametrize("puzzle_name, url", TEST_CASES)
     def test_integration_headless(self, puzzle_name, url):
         patches = [
-            patch("asyncio.sleep", side_effect=lambda _: asyncio.sleep(0.2)),
-            patch("GridPlayers.Base.PlaywrightPlayer.PlaywrightPlayer._process_video")
+            patch("asyncio.sleep", new=AsyncMock()),
+            patch("GridPlayers.Base.PlaywrightPlayer.PlaywrightPlayer._process_video", new=AsyncMock())
         ]
         self.run_integration_test(url, patches=patches)

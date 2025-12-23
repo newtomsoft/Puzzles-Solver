@@ -1,11 +1,12 @@
 
 import asyncio
 
-from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlayStatus import PlayStatus
+from GridPlayers.Vuqq.Base.VuqqPlayer import VuqqPlayer
 
 
-class VuqqKakuroPlayer(PlaywrightPlayer):
-    async def play(self, solution):
+class VuqqKakuroPlayer(VuqqPlayer):
+    async def play(self, solution) -> PlayStatus:
         page = self.browser.pages[0]
 
         meta = await page.evaluate("window.vuqq_meta")
@@ -38,4 +39,8 @@ class VuqqKakuroPlayer(PlaywrightPlayer):
             # Short delay for stability
             # await asyncio.sleep(0.05)
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
+        result = await self.get_play_status(page, success_message = "Victoire !")
+        await asyncio.sleep(3)
+
+        return result

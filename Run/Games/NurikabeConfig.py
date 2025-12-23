@@ -1,5 +1,5 @@
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
-from GridPlayers.PuzzleMobiles.PuzzleNurikabePlayer import PuzzleNurikabePlayer
+from GridPlayers.PuzzlesMobile.PuzzleNurikabePlayer import PuzzleNurikabePlayer
 from GridProviders.PuzzlesMobile.PuzzleNurikabeGridProvider import PuzzleNurikabeGridProvider
 from Run.GameRegistry import GameRegistry
 
