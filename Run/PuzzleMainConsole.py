@@ -1,5 +1,4 @@
 ﻿import asyncio
-import inspect
 import logging
 import os
 import time
@@ -8,7 +7,7 @@ from GameComponentFactory import GameComponentFactory
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class PuzzleMainConsole:

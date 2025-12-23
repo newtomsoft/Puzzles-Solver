@@ -2,7 +2,7 @@ import asyncio
 
 from Domain.Board.Grid import Grid
 from GridPlayers.PuzzleMobiles.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
-from GridPlayers.PuzzleMobiles.Base.PlayStatus import PlayStatus
+from GridPlayers.Base.PlayStatus import PlayStatus
 
 
 class PuzzleSlantPlayer(PuzzlesMobilePlayer):
