@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -13,7 +12,6 @@ from Run.tests.Base.BaseIntegrationTest import BaseIntegrationTest
 TEST_CASES = [
     ("akari", "https://vuqq.com/akari/"),
     ("hitori", "https://vuqq.com/hitori/"),
-    # ("kakuro", "https://vuqq.com/kakuro/"),
     ("netwalk", "https://vuqq.com/netwalk/"),
     ("skyscrapers", "https://vuqq.com/skyscrapers/"),
     ("sudoku", "https://vuqq.com/sudoku/"),
