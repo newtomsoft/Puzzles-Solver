@@ -40,6 +40,12 @@ class NurikabeSolver(GameSolver):
                 self._dist[r, c] = self._model.NewIntVar(0, max_dist, f"d_{r}_{c}")
 
     def _add_constraints(self):
+        self._add_white_island_constraints()
+        self._add_seed_constraints()
+        self._add_adjacency_constraints()
+        self._add_no_2x2_river_constraint()
+
+    def _add_white_island_constraints(self):
         # 1. Link is_white and island_id
         for r in range(self.rows):
             for c in range(self.cols):
@@ -50,12 +56,13 @@ class NurikabeSolver(GameSolver):
                 # if not white, dist is 0 (just to fix value)
                 self._model.Add(self._dist[r, c] == 0).OnlyEnforceIf(self._is_white[r, c].Not())
 
+    def _add_seed_constraints(self):
         # 2. Seeds
         for i, (sr, sc, size) in enumerate(self._seeds):
             seed_idx = i + 1
             self._model.Add(self._island_id[sr, sc] == seed_idx)
             self._model.Add(self._dist[sr, sc] == 0)
-            self._model.Add(self._is_white[sr, sc] == 1) # Force seed to be white
+            self._model.Add(self._is_white[sr, sc] == 1)  # Force seed to be white
 
             # 3. Size constraint
             cells_in_k = []
@@ -68,6 +75,7 @@ class NurikabeSolver(GameSolver):
                     cells_in_k.append(b)
             self._model.Add(sum(cells_in_k) == size)
 
+    def _add_adjacency_constraints(self):
         # 4. Adjacency and Connectivity
         for r in range(self.rows):
             for c in range(self.cols):
@@ -107,6 +115,7 @@ class NurikabeSolver(GameSolver):
                     # Also enforce dist > 0 if not seed
                     self._model.Add(self._dist[r, c] > 0).OnlyEnforceIf(self._is_white[r, c])
 
+    def _add_no_2x2_river_constraint(self):
         # 5. No 2x2 River
         for r in range(self.rows - 1):
             for c in range(self.cols - 1):
@@ -119,25 +128,25 @@ class NurikabeSolver(GameSolver):
                 ])
 
     def get_solution(self) -> Grid:
-        return self._solve_loop()
+        return self._solve_and_check_river_connectivity()
 
     def get_other_solution(self) -> Grid:
         if self._previous_solution:
-            self._block_solution(self._previous_solution)
-        return self._solve_loop()
+            self._exclude_solution(self._previous_solution)
+        return self._solve_and_check_river_connectivity()
 
-    def _block_solution(self, grid: Grid):
+    def _exclude_solution(self, grid: Grid):
         match_bools = []
         for r in range(self.rows):
             for c in range(self.cols):
                 val = grid.value(r, c)
-                if val == 0: # White
+                if val == 0:  # White
                     match_bools.append(self._is_white[r, c])
-                else: # Black
+                else:  # Black
                     match_bools.append(self._is_white[r, c].Not())
         self._model.AddBoolOr([b.Not() for b in match_bools])
 
-    def _solve_loop(self) -> Grid:
+    def _solve_and_check_river_connectivity(self) -> Grid:
         while True:
             status = self._solver.Solve(self._model)
             if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
@@ -146,9 +155,9 @@ class NurikabeSolver(GameSolver):
                     row = []
                     for c in range(self.cols):
                         if self._solver.BooleanValue(self._is_white[r, c]):
-                            row.append(0) # Island
+                            row.append(0)  # Island
                         else:
-                            row.append(1) # River
+                            row.append(1)  # River
                     sol_rows.append(row)
 
                 solution = Grid(sol_rows)
@@ -157,6 +166,6 @@ class NurikabeSolver(GameSolver):
                     self._previous_solution = solution
                     return solution
                 else:
-                    self._block_solution(solution)
+                    self._exclude_solution(solution)
             else:
                 return Grid.empty()
