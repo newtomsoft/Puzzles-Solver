@@ -1,6 +1,7 @@
 # GridPuzzle Sudoku Solver Extension
 
 This is a Chrome extension that solves "Evil Sudoku" (and other difficulties) on `gridpuzzle.com`.
+It leverages the powerful OR-Tools based Python solver present in this repository by communicating with a local server.
 
 ## Installation
 
@@ -9,15 +10,30 @@ This is a Chrome extension that solves "Evil Sudoku" (and other difficulties) on
 3.  Click the "Load unpacked" button.
 4.  Select the `ChromeExtensions/GridPuzzleSudoku` directory from this repository.
 
+## Running the Solver Server
+
+Because this extension uses the robust Python solver from the codebase, you must run a local server:
+
+1.  Open a terminal in the root directory of this repository.
+2.  Install dependencies (if not already installed):
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Run the server:
+    ```bash
+    python Run/ExtensionServer.py
+    ```
+    The server will start on `http://127.0.0.1:5000`.
+
 ## Usage
 
-1.  Go to [https://gridpuzzle.com/evil-sudoku](https://gridpuzzle.com/evil-sudoku) (or any Sudoku page on the site).
-2.  You should see a green "Solve" button next to the puzzle title.
-3.  Click "Solve".
-4.  The extension will calculate the solution and fill in the grid automatically.
+1.  Ensure the Python server is running.
+2.  Go to [https://gridpuzzle.com/evil-sudoku](https://gridpuzzle.com/evil-sudoku) (or any Sudoku page on the site).
+3.  You should see a green "Solve (Python)" button next to the puzzle title.
+4.  Click "Solve (Python)".
+5.  The extension will send the grid to your local Python server, receive the solution, and fill in the grid automatically.
 
-## How it works
+## Troubleshooting
 
--   **Scraping:** It reads the grid state from the DOM, identifying fixed clues (read-only cells).
--   **Solving:** It uses a backtracking algorithm (JavaScript) to find the solution.
--   **Interaction:** It simulates user clicks and keyboard input to fill in the missing numbers.
+-   **"Could not connect to Python server"**: Make sure you have started the server using `python Run/ExtensionServer.py` and it is printing "Starting Sudoku Solver Server...".
+-   **Mixed Content Errors**: Chrome generally allows `https` pages to fetch from `http://127.0.0.1`, but if you encounter issues, ensure you are not using a VPN or proxy that might interfere with localhost loopback.

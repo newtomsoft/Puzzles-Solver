@@ -4,7 +4,7 @@ function init() {
     const title = document.querySelector('h1') || document.querySelector('.page-header');
     if (title) {
         const btn = document.createElement('button');
-        btn.innerText = "Solve";
+        btn.innerText = "Solve (Python)";
         btn.className = "solver-btn";
         btn.onclick = runSolver;
         title.appendChild(btn);
@@ -12,7 +12,7 @@ function init() {
         console.warn("Could not find title element to attach Solver button");
         // Fallback: Fixed position button
         const btn = document.createElement('button');
-        btn.innerText = "Solve Sudoku";
+        btn.innerText = "Solve Sudoku (Python)";
         btn.className = "solver-btn";
         btn.style.position = "fixed";
         btn.style.top = "10px";
@@ -37,19 +37,17 @@ async function runSolver() {
             return;
         }
 
-        const solution = solveSudoku(grid);
+        const solution = await solveWithPython(grid);
         if (solution) {
             await applySolution(solution);
-        } else {
-            alert("No solution found!");
         }
     } catch (e) {
         console.error(e);
-        alert("Error solving puzzle: " + e.message);
+        alert("Error: " + e.message);
     } finally {
         if (btn) {
             btn.disabled = false;
-            btn.innerText = "Solve";
+            btn.innerText = "Solve (Python)";
         }
     }
 }
@@ -86,67 +84,33 @@ function scrapeGrid() {
     return grid;
 }
 
-// Backtracking Solver
-function solveSudoku(board) {
-    const size = board.length;
+// Call Python Server
+async function solveWithPython(grid) {
+    try {
+        const response = await fetch('http://127.0.0.1:5000/solve/sudoku', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ grid: grid }),
+        });
 
-    // Find empty cell
-    let row = -1;
-    let col = -1;
-    let isEmpty = false;
-    for (let i = 0; i < size; i++) {
-        for (let j = 0; j < size; j++) {
-            if (board[i][j] === 0) {
-                row = i;
-                col = j;
-                isEmpty = true;
-                break;
-            }
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
         }
-        if (isEmpty) break;
-    }
 
-    // No empty cell -> Solved
-    if (!isEmpty) return board;
-
-    // Try values 1 to size
-    for (let num = 1; num <= size; num++) {
-        if (isSafe(board, row, col, num)) {
-            board[row][col] = num;
-            if (solveSudoku(board)) {
-                return board;
-            }
-            board[row][col] = 0; // Backtrack
+        const data = await response.json();
+        if (data.success) {
+            return data.solution;
+        } else {
+            throw new Error(data.message || "Unknown error from server");
         }
-    }
-    return null;
-}
-
-function isSafe(board, row, col, num) {
-    const size = board.length;
-    const boxSize = Math.sqrt(size);
-
-    // Check Row
-    for (let d = 0; d < size; d++) {
-        if (board[row][d] === num) return false;
-    }
-
-    // Check Column
-    for (let r = 0; r < size; r++) {
-        if (board[r][col] === num) return false;
-    }
-
-    // Check Box
-    const boxRowStart = row - row % boxSize;
-    const boxColStart = col - col % boxSize;
-
-    for (let r = boxRowStart; r < boxRowStart + boxSize; r++) {
-        for (let d = boxColStart; d < boxColStart + boxSize; d++) {
-            if (board[r][d] === num) return false;
+    } catch (e) {
+        if (e.message.includes('Failed to fetch')) {
+            throw new Error("Could not connect to Python server. Please run 'python Run/ExtensionServer.py'.");
         }
+        throw e;
     }
-
-    return true;
 }
 
 // Apply solution to the DOM
