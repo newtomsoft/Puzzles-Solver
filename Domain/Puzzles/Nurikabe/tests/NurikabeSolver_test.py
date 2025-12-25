@@ -5,6 +5,8 @@ from Domain.Board.Grid import Grid
 from Domain.Puzzles.Nurikabe.NurikabeSolver import NurikabeSolver
 
 
+_ = NurikabeSolver.island
+
 class NurikabeSolverTests(TestCase):
 
     def test_grid_must_be_at_least_5x5_raises_value_error_column(self):
@@ -39,11 +41,11 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 0, 0, 1],
         ])
         expected_solution = Grid([
-            [0, 1, 0, 1, 0],
+            [_, 1, _, 1, _],
             [1, 1, 1, 1, 1],
-            [1, 0, 1, 0, 1],
-            [0, 1, 0, 1, 1],
-            [1, 1, 1, 1, 0]
+            [1, _, 1, _, 1],
+            [_, 1, _, 1, 1],
+            [1, 1, 1, 1, _]
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -93,11 +95,11 @@ class NurikabeSolverTests(TestCase):
             [2, 0, 0, 0, 2],
         ])
         expected_solution = Grid([
-            [1, 0, 1, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 1, 0, 1, 1],
-            [0, 1, 0, 1, 0],
-            [0, 1, 1, 1, 0]
+            [1, _, 1, 1, 1],
+            [1, _, 1, _, 1],
+            [1, 1, _, 1, 1],
+            [_, 1, _, 1, _],
+            [_, 1, 1, 1, _]
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -114,11 +116,11 @@ class NurikabeSolverTests(TestCase):
             [0, 2, 0, 2, 0],
         ])
         expected_solution = Grid([
-            [1, 1, 1, 0, 0],
-            [0, 0, 1, 1, 1],
-            [1, 1, 1, 0, 0],
-            [1, 0, 1, 1, 1],
-            [1, 0, 1, 0, 0],
+            [1, 1, 1, _, _],
+            [_, _, 1, 1, 1],
+            [1, 1, 1, _, _],
+            [1, _, 1, 1, 1],
+            [1, _, 1, _, _],
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -136,9 +138,9 @@ class NurikabeSolverTests(TestCase):
         ])
         expected_solution = Grid([
             [1, 1, 1, 1, 1],
-            [1, 0, 1, 0, 1],
-            [1, 0, 0, 1, 1],
-            [1, 0, 0, 0, 1],
+            [1, _, 1, _, 1],
+            [1, _, _, 1, 1],
+            [1, _, _, _, 1],
             [1, 1, 1, 1, 1],
         ])
         game_solver = NurikabeSolver(grid)
@@ -156,11 +158,11 @@ class NurikabeSolverTests(TestCase):
             [0, 1, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [0, 0, 1, 0, 1],
-            [1, 1, 1, 0, 1],
-            [1, 0, 1, 0, 1],
-            [1, 1, 1, 0, 1],
-            [1, 0, 1, 1, 1],
+            [_, _, 1, _, 1],
+            [1, 1, 1, _, 1],
+            [1, _, 1, _, 1],
+            [1, 1, 1, _, 1],
+            [1, _, 1, 1, 1],
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -177,10 +179,10 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [1, 1, 1, 1, 0],
-            [1, 0, 0, 1, 1],
-            [1, 1, 1, 0, 1],
-            [0, 0, 1, 0, 1],
+            [1, 1, 1, 1, _],
+            [1, _, _, 1, 1],
+            [1, 1, 1, _, 1],
+            [_, _, 1, _, 1],
             [1, 1, 1, 1, 1],
         ])
         game_solver = NurikabeSolver(grid)
@@ -198,10 +200,10 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [0, 0, 1, 1, 0],
-            [0, 1, 0, 1, 0],
-            [0, 1, 1, 1, 0],
-            [0, 1, 0, 0, 1],
+            [_, _, 1, 1, _],
+            [_, 1, _, 1, _],
+            [_, 1, 1, 1, _],
+            [_, 1, _, _, 1],
             [1, 1, 1, 1, 1],
         ])
         game_solver = NurikabeSolver(grid)
@@ -219,11 +221,11 @@ class NurikabeSolverTests(TestCase):
             [1, 0, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [0, 1, 1, 0, 0],
-            [1, 1, 0, 1, 0],
-            [1, 0, 1, 1, 1],
-            [1, 1, 0, 0, 1],
-            [0, 1, 1, 1, 1],
+            [_, 1, 1, _, _],
+            [1, 1, _, 1, _],
+            [1, _, 1, 1, 1],
+            [1, 1, _, _, 1],
+            [_, 1, 1, 1, 1],
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -241,10 +243,10 @@ class NurikabeSolverTests(TestCase):
         ])
         expected_solution = Grid([
             [1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 1],
-            [1, 1, 1, 0, 1],
-            [1, 0, 1, 1, 0],
-            [0, 1, 1, 0, 0],
+            [1, _, _, _, 1],
+            [1, 1, 1, _, 1],
+            [1, _, 1, 1, _],
+            [_, 1, 1, _, _],
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -261,10 +263,10 @@ class NurikabeSolverTests(TestCase):
             [0, 0, 0, 0, 0],
         ])
         expected_solution = Grid([
-            [0, 1, 1, 1, 0],
-            [1, 1, 0, 1, 0],
-            [1, 0, 1, 1, 1],
-            [1, 0, 0, 1, 0],
+            [_, 1, 1, 1, _],
+            [1, 1, _, 1, _],
+            [1, _, 1, 1, 1],
+            [1, _, _, 1, _],
             [1, 1, 1, 1, 1]
         ])
         game_solver = NurikabeSolver(grid)
@@ -285,12 +287,12 @@ class NurikabeSolverTests(TestCase):
         ])
         expected_solution = Grid([
             [1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 1],
+            [_, _, _, _, _, _, 1],
             [1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 1, 0],
-            [1, 1, 1, 1, 1, 1, 0],
-            [1, 0, 0, 1, 0, 1, 1],
-            [1, 1, 0, 1, 0, 0, 0],
+            [_, _, _, _, _, 1, _],
+            [1, 1, 1, 1, 1, 1, _],
+            [1, _, _, 1, _, 1, 1],
+            [1, 1, _, 1, _, _, _],
         ])
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
@@ -298,7 +300,6 @@ class NurikabeSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # @unittest.skip("This test takes too long to run")  # TODO:
     def test_get_solution_10x10(self):
         grid = Grid([
             [0, 0, 0, 0, 0, 6, 0, 0, 5, 0],
@@ -313,12 +314,58 @@ class NurikabeSolverTests(TestCase):
             [0, 2, 0, 0, 5, 0, 0, 0, 0, 0],
         ])
 
+        expected_solution = Grid([
+            [_, _, _, _, 1, _, 1, 1, _, _],
+            [_, 1, 1, 1, 1, _, 1, _, 1, _],
+            [1, _, _, 1, _, _, 1, _, 1, _],
+            [1, 1, 1, 1, _, _, 1, _, 1, _],
+            [_, 1, _, 1, 1, 1, 1, 1, 1, 1],
+            [_, 1, _, _, _, _, _, _, _, _],
+            [_, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [_, 1, _, 1, _, _, _, 1, _, 1],
+            [1, 1, _, 1, _, 1, 1, 1, 1, _],
+            [_, _, 1, 1, _, 1, _, _, _, _]
+        ])
+
         game_solver = NurikabeSolver(grid)
         solution = game_solver.get_solution()
-        self.assertNotEqual(Grid.empty(), solution)
+        self.assertEqual(expected_solution, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-
+    def test_get_solution_12x(self):
+        grid = Grid([
+            [0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 0, 0, 0, 2, 0, 3, 0, 1, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0],
+            [0, 7, 0, 2, 0, 3, 0, 0, 0, 0, 0, 0],
+            [2, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0],
+        ])
+        expected_solution = Grid([
+            [1, _, _, _, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, _, _, _, _, _, _, _, 1],
+            [1, _, _, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, _, 1, _, _, 1, _, 1, _, _, 1, _],
+            [1, _, 1, 1, 1, 1, _, 1, _, 1, _, 1],
+            [1, _, 1, _, _, 1, 1, 1, 1, 1, 1, 1],
+            [1, _, 1, 1, 1, _, 1, _, _, _, _, 1],
+            [1, _, 1, _, 1, _, 1, 1, 1, 1, 1, 1],
+            [_, 1, 1, _, 1, _, 1, _, _, _, _, 1],
+            [_, 1, _, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, _, _, _, _, _, _, 1, _, _, 1],
+            [_, 1, 1, 1, 1, 1, 1, 1, _, _, 1, 1],
+        ])
+        game_solver = NurikabeSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
 if __name__ == '__main__':
     unittest.main()
