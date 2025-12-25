@@ -4,6 +4,8 @@ from GridPlayers.PuzzlesMobile.PuzzleSudokuPlayer import PuzzleSudokuPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider
 from GridProviders.GridPuzzle.GridPuzzleSudokuGridProvider import GridPuzzleSudokuGridProvider
 from GridProviders.PuzzlesMobile.PuzzleSudokuGridProvider import PuzzleSudokuGridProvider
+from GridProviders.Vuqq.VuqqSudokuGridProvider import VuqqSudokuGridProvider
+from GridPlayers.Vuqq.VuqqSudokuPlayer import VuqqSudokuPlayer
 from Run.GameRegistry import GameRegistry
 
 
@@ -25,9 +27,6 @@ def register():
             GridPuzzleSudokuGridProvider,
             GridPuzzleSudokuPlayer
         )(SudokuSolver)
-
-    from GridProviders.Vuqq.VuqqSudokuGridProvider import VuqqSudokuGridProvider
-    from GridPlayers.Vuqq.VuqqSudokuPlayer import VuqqSudokuPlayer
 
     GameRegistry.register(
         r"https://vuqq\.com/.*sudoku.*",
