@@ -298,7 +298,7 @@ class NurikabeSolverTests(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("This test takes too long to run")  # TODO:
+    # @unittest.skip("This test takes too long to run")  # TODO:
     def test_get_solution_10x10(self):
         grid = Grid([
             [0, 0, 0, 0, 0, 6, 0, 0, 5, 0],
