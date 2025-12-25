@@ -4,6 +4,9 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class NurikabeSolver(GameSolver):
+    _ISLAND = 0
+    _RIVER = 1
+
     def __init__(self, grid: Grid):
         self._grid = grid
         self.rows = grid.rows_number
@@ -62,7 +65,7 @@ class NurikabeSolver(GameSolver):
             seed_idx = i + 1
             self._model.Add(self._island_id[sr, sc] == seed_idx)
             self._model.Add(self._dist[sr, sc] == 0)
-            self._model.Add(self._is_white[sr, sc] == 1)  # Force seed to be white
+            self._model.Add(self._is_white[sr, sc] == 1)
 
             # 3. Size constraint
             cells_in_k = []
@@ -140,9 +143,9 @@ class NurikabeSolver(GameSolver):
         for r in range(self.rows):
             for c in range(self.cols):
                 val = grid.value(r, c)
-                if val == 0:  # White
+                if val == self._ISLAND:
                     match_bools.append(self._is_white[r, c])
-                else:  # Black
+                else:  # River
                     match_bools.append(self._is_white[r, c].Not())
         self._model.AddBoolOr([b.Not() for b in match_bools])
 
@@ -155,14 +158,14 @@ class NurikabeSolver(GameSolver):
                     row = []
                     for c in range(self.cols):
                         if self._solver.BooleanValue(self._is_white[r, c]):
-                            row.append(0)  # Island
+                            row.append(self._ISLAND)
                         else:
-                            row.append(1)  # River
+                            row.append(self._RIVER)
                     sol_rows.append(row)
 
                 solution = Grid(sol_rows)
 
-                if solution.are_cells_connected(1) or not any(1 in row for row in sol_rows):
+                if solution.are_cells_connected(self._RIVER) or not any(self._RIVER in row for row in sol_rows):
                     self._previous_solution = solution
                     return solution
                 else:
