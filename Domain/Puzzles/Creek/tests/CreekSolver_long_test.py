@@ -8,7 +8,6 @@ x = 0
 
 
 class CreekSolverLongTests(unittest.TestCase):
-
     def test_solution_15x15_evil_0x6zx8(self):
         # https://gridpuzzle.com/creek/0x6zx8
         grid = Grid([
