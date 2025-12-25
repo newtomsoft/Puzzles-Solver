@@ -1,4 +1,4 @@
-﻿import collections
+import collections
 from typing import Iterable, Set
 
 from ortools.sat.python import cp_model
@@ -9,6 +9,7 @@ from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Lits.LitsGridBuilder import LitsGridBuilder
 from Domain.Puzzles.Lits.LitsType import LitsType
+from Utils.ShapeGenerator import ShapeGenerator
 
 
 class LitsSolver(GameSolver):
@@ -29,13 +30,47 @@ class LitsSolver(GameSolver):
         self._add_constraints()
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
 
-        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-            return Grid.empty()
+        while True:
+            status = solver.Solve(self._model)
 
-        self.previous_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
-        return self.previous_solution
+            if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+                return Grid.empty()
+
+            current_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+
+            # Check connectivity
+            bool_matrix = [[1 if cell != 0 else 0 for cell in row] for row in current_solution.matrix]
+            bool_grid = Grid(bool_matrix)
+
+            # Using get_all_shapes instead of get_connected_positions to avoid buggy StopIteration in Grid
+            components_shapes = bool_grid.get_all_shapes(1)
+            components = [set(shape) for shape in components_shapes] # Convert to list of sets (since ShapeGenerator uses list/collection, and we sort them)
+
+            if len(components) <= 1:
+                self.previous_solution = current_solution
+                return self.previous_solution
+
+            self._add_connectivity_constraints(components)
+
+    def _add_connectivity_constraints(self, components):
+        components.sort(key=len, reverse=True)
+        for component in components[1:]:
+            literals = []
+            for position in component:
+                is_unshaded = self._model.NewBoolVar(f"conn_unshade_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(is_unshaded)
+                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(is_unshaded.Not())
+                literals.append(is_unshaded)
+
+            neighbors = [p for p in ShapeGenerator.around_shape(component) if p in self._grid]
+            for position in neighbors:
+                is_shaded = self._model.NewBoolVar(f"conn_shade_{position.r}_{position.c}")
+                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(is_shaded)
+                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(is_shaded.Not())
+                literals.append(is_shaded)
+
+            self._model.AddBoolOr(literals)
 
     def get_other_solution(self):
         if self.previous_solution is None:

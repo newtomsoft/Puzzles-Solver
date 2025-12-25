@@ -1,4 +1,4 @@
-﻿import unittest
+import unittest
 
 from parameterized import parameterized
 
@@ -38,6 +38,14 @@ class LitsSolverTest(unittest.TestCase):
         solution = lits_solver.get_solution()
         self.assertEqual(Grid.empty(), solution)
 
+    def check_connectivity(self, solution: Grid):
+        if solution.is_empty():
+            return
+        # Create boolean grid where shaded cells are 1, unshaded are 0
+        bool_matrix = [[1 if cell != 0 else 0 for cell in row] for row in solution.matrix]
+        bool_grid = Grid(bool_matrix)
+        self.assertTrue(bool_grid.are_cells_connected(1), "Shaded cells must be connected")
+
     def test_solution_6x6_normal(self):
         input_grid = Grid([
             [1, 1, 2, 2, 3, 3],
@@ -58,6 +66,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -81,6 +90,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -108,6 +118,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -139,6 +150,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -180,6 +192,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -231,6 +244,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -283,6 +297,7 @@ class LitsSolverTest(unittest.TestCase):
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
         self.assertEqual(expected_solution, solution)
+        self.check_connectivity(solution)
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
