@@ -1,7 +1,7 @@
 from itertools import combinations
 from typing import Collection
 
-from ortools.sat.python import cp_model
+from z3 import Solver, Int, And, Not, Or, Distinct, ArithRef, sat
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -17,18 +17,13 @@ class BorderBlockSolver(GameSolver):
         self._dots = dots
         self._rows_number = self._input_grid.rows_number
         self._columns_number = self._input_grid.columns_number
-        self._max_region_id = max((value for position, value in self._input_grid if value is not None), default=1)
-        self._grid_vars = {}
-        self._model = cp_model.CpModel()
+        self._max_region_id = max(value for position, value in self._input_grid if value is not None)
+        self._grid_z3: Grid = Grid.empty()
+        self._solver = Solver()
         self._previous_solution: Grid = Grid.empty()
 
     def get_solution(self) -> Grid:
-        self._model = cp_model.CpModel()
-        self._grid_vars = {}
-        for r in range(self._rows_number):
-            for c in range(self._columns_number):
-                self._grid_vars[Position(r, c)] = self._model.NewIntVar(1, self._max_region_id, f"region_id_{r}_{c}")
-
+        self._grid_z3 = Grid([[Int(f"region_id_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
         solution, _ = self._ensure_all_shapes_compliant()
@@ -36,56 +31,28 @@ class BorderBlockSolver(GameSolver):
         return solution
 
     def _ensure_all_shapes_compliant(self) -> tuple[Grid, int]:
-        solver = cp_model.CpSolver()
         proposition_count = 0
-
-        while True:
-            status = solver.Solve(self._model)
-            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-                return Grid.empty(), proposition_count
-
+        while self._solver.check() == sat:
+            model = self._solver.model()
             proposition_count += 1
             proposition_grid = Grid(
-                [[solver.Value(self._grid_vars[Position(r, c)]) for c in range(self._columns_number)] for r in range(self._rows_number)])
-
+                [[model.eval(self._grid_z3[Position(r, c)]).as_long() for c in range(self._columns_number)] for r in range(self._rows_number)])
             shapes = {circle_value: proposition_grid.get_all_shapes(circle_value) for circle_value in range(1, self._max_region_id + 1)}
             not_compliant_shapes = [(value, shapes_positions) for (value, shapes_positions) in shapes.items() if len(shapes_positions) > 1]
-
             if len(not_compliant_shapes) == 0:
                 return proposition_grid, proposition_count
 
             for region_id, shapes_positions in not_compliant_shapes:
                 positions = frozenset().union(*shapes_positions)
+                shape_constraints = [self._grid_z3[position] == region_id for position in positions]
+                around_constraints = [self._grid_z3[position] != region_id for position in ShapeGenerator.around_shape(positions) if position in proposition_grid]
+                constraint = Not(And(shape_constraints + around_constraints))
+                self._solver.add(constraint)
 
-                literals = []
-
-                for pos in positions:
-                    if pos in self._grid_vars:
-                        b_eq = self._model.NewBoolVar(f"eq_{pos}_{region_id}")
-                        self._model.Add(self._grid_vars[pos] == region_id).OnlyEnforceIf(b_eq)
-                        self._model.Add(self._grid_vars[pos] != region_id).OnlyEnforceIf(b_eq.Not())
-                        literals.append(b_eq.Not())
-
-                for pos in ShapeGenerator.around_shape(positions):
-                    if pos in self._grid_vars:
-                        b_eq = self._model.NewBoolVar(f"eq_{pos}_{region_id}")
-                        self._model.Add(self._grid_vars[pos] == region_id).OnlyEnforceIf(b_eq)
-                        self._model.Add(self._grid_vars[pos] != region_id).OnlyEnforceIf(b_eq.Not())
-                        literals.append(b_eq)
-
-                self._model.AddBoolOr(literals)
+        return Grid.empty(), proposition_count
 
     def get_other_solution(self) -> Grid:
-        literals = []
-        for pos, val in self._previous_solution:
-            if pos in self._grid_vars:
-                b_eq = self._model.NewBoolVar(f"prev_eq_{pos}_{val}")
-                self._model.Add(self._grid_vars[pos] == val).OnlyEnforceIf(b_eq)
-                self._model.Add(self._grid_vars[pos] != val).OnlyEnforceIf(b_eq.Not())
-                literals.append(b_eq.Not())
-
-        self._model.AddBoolOr(literals)
-
+        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution])))
         solution, _ = self._ensure_all_shapes_compliant()
         self._previous_solution = solution
         return solution
@@ -98,53 +65,31 @@ class BorderBlockSolver(GameSolver):
     def _add_initials_constraints(self):
         for position, value in self._input_grid:
             if value is None:
-                pass
+                self._solver.add(self._grid_z3[position] > 0, self._grid_z3[position] <= self._max_region_id)
             else:
-                self._model.Add(self._grid_vars[position] == value)
+                self._solver.add(self._grid_z3[position] == value)
 
     def _add_dots_constraints(self):
         for dot in self._dots:
             self._add_dot_constraint(dot)
 
     def _add_dot_constraint(self, dot: Position):
-        neighbors_pos = [pos for pos in dot.straddled_neighbors() if pos in self._grid_vars]
-        neighbors_vars = [self._grid_vars[pos] for pos in neighbors_pos]
+        neighbors_value = [self._grid_z3[position] for position in dot.straddled_neighbors() if position in self._input_grid]
 
-        if self._add_edge_dot_constraints(neighbors_vars):
+        if self._add_edge_dot_constraints(neighbors_value):
             return
 
-        self._add_inside_dot_constraint(neighbors_vars)
+        self._add_inside_dot_constraint(neighbors_value)
 
-    def _add_edge_dot_constraints(self, neighbors_vars: list[cp_model.IntVar]) -> bool:
-        if len(neighbors_vars) == 2:
-            self._model.Add(neighbors_vars[0] != neighbors_vars[1])
+    def _add_edge_dot_constraints(self, neighbors_value: list[ArithRef]) -> bool:
+        if len(neighbors_value) == 2:
+            self._solver.add(neighbors_value[0] != neighbors_value[1])
             return True
+
         return False
 
-    def _add_inside_dot_constraint(self, neighbors_vars: list[cp_model.IntVar]):
-        trios = list(combinations(range(4), 3))
-        trio_bools = []
-
-        pairs = list(combinations(range(4), 2))
-        pair_eq_vars = {}
-
-        for i, j in pairs:
-            b_eq = self._model.NewBoolVar(f"eq_{neighbors_vars[i]}_{neighbors_vars[j]}")
-            self._model.Add(neighbors_vars[i] == neighbors_vars[j]).OnlyEnforceIf(b_eq)
-            self._model.Add(neighbors_vars[i] != neighbors_vars[j]).OnlyEnforceIf(b_eq.Not())
-            pair_eq_vars[(i, j)] = b_eq
-            pair_eq_vars[(j, i)] = b_eq
-
-        for trio in trios:
-            b_trio = self._model.NewBoolVar(f"distinct_trio_{trio}")
-
-            self._model.AddImplication(b_trio, pair_eq_vars[(trio[0], trio[1])].Not())
-            self._model.AddImplication(b_trio, pair_eq_vars[(trio[0], trio[2])].Not())
-            self._model.AddImplication(b_trio, pair_eq_vars[(trio[1], trio[2])].Not())
-
-            trio_bools.append(b_trio)
-
-        self._model.AddBoolOr(trio_bools)
+    def _add_inside_dot_constraint(self, neighbors_value: list[ArithRef]):
+        self._solver.add(Or([Distinct(trio) for trio in combinations(neighbors_value, 3)]))
 
     def _add_not_dots_constraints(self):
         self._add_not_edge_dot_constraints()
@@ -153,32 +98,16 @@ class BorderBlockSolver(GameSolver):
     def _add_not_edge_dot_constraints(self):
         empty_border_positions = self._get_empty_border_positions()
         for position in empty_border_positions:
-            neighbors_pos = [p for p in position.straddled_neighbors() if p in self._grid_vars]
-            if len(neighbors_pos) >= 2:
-                self._model.Add(self._grid_vars[neighbors_pos[0]] == self._grid_vars[neighbors_pos[1]])
+            neighbors_value = [self._grid_z3[neighbor] for neighbor in position.straddled_neighbors() if neighbor in self._input_grid]
+            self._solver.add(neighbors_value[0] == neighbors_value[1])
 
     def _add_not_inside_dot_constraints(self):
         inside_positions = self._get_inside_positions()
         for position in inside_positions:
-            neighbors_pos = position.straddled_neighbors()
-            neighbors_vars = [self._grid_vars[p] for p in neighbors_pos if p in self._grid_vars]
-            if len(neighbors_vars) < 4:
-                continue
-
-            v1 = self._model.NewIntVar(1, self._max_region_id, f"v1_{position}")
-            v2 = self._model.NewIntVar(1, self._max_region_id, f"v2_{position}")
-
-            for nv in neighbors_vars:
-                b_v1 = self._model.NewBoolVar(f"{nv}_eq_v1")
-                b_v2 = self._model.NewBoolVar(f"{nv}_eq_v2")
-
-                self._model.Add(nv == v1).OnlyEnforceIf(b_v1)
-                self._model.Add(nv != v1).OnlyEnforceIf(b_v1.Not())
-
-                self._model.Add(nv == v2).OnlyEnforceIf(b_v2)
-                self._model.Add(nv != v2).OnlyEnforceIf(b_v2.Not())
-
-                self._model.AddBoolOr([b_v1, b_v2])
+            v1 = Int(f"v1{position}")
+            v2 = Int(f"v2{position}")
+            for neighbor_value in [self._grid_z3[neighbor] for neighbor in position.straddled_neighbors()]:
+                self._solver.add(Or(neighbor_value == v1, neighbor_value == v2))
 
     def _get_empty_border_positions(self) -> set[Position]:
         first_position = Position(-0.5, -0.5)
