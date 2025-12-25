@@ -13,6 +13,8 @@ from Utils.ShapeGenerator import ShapeGenerator
 
 
 class LitsSolver(GameSolver):
+    empty = 0
+
     def __init__(self, grid: Grid):
         self._grid = grid
         self._regions = self._grid.get_regions()
@@ -31,27 +33,22 @@ class LitsSolver(GameSolver):
 
         solver = cp_model.CpSolver()
 
-        while True:
-            status = solver.Solve(self._model)
-
-            if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-                return Grid.empty()
-
+        while solver.Solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             current_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
-            # Check connectivity
             bool_matrix = [[1 if cell != 0 else 0 for cell in row] for row in current_solution.matrix]
             bool_grid = Grid(bool_matrix)
 
-            # Using get_all_shapes instead of get_connected_positions to avoid buggy StopIteration in Grid
             components_shapes = bool_grid.get_all_shapes(1)
-            components = [set(shape) for shape in components_shapes] # Convert to list of sets (since ShapeGenerator uses list/collection, and we sort them)
+            components = [set(shape) for shape in components_shapes]
 
             if len(components) <= 1:
                 self.previous_solution = current_solution
                 return self.previous_solution
 
             self._add_connectivity_constraints(components)
+
+        return Grid.empty()
 
     def _add_connectivity_constraints(self, components):
         components.sort(key=len, reverse=True)

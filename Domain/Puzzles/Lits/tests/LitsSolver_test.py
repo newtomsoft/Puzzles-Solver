@@ -7,7 +7,7 @@ from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Puzzles.Lits.LitsSolver import LitsSolver
 from Domain.Puzzles.Lits.LitsType import LitsType
 
-_ = 0
+_ = LitsSolver.empty
 
 class LitsSolverTest(unittest.TestCase):
     def test_get_solution_region_too_small(self):
@@ -248,7 +248,6 @@ class LitsSolverTest(unittest.TestCase):
         other_solution = lits_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    @unittest.skip("temporarily disabled - fails intermittently")  # todo reactive test
     def test_solution_20x20_hard_path(self):
         input_grid = Grid([
             [1, 1, 1, 2, 3, 4, 4, 4, 5, 5, 6, 7, 8, 8, 8, 8, 8, 9, 9, 9],
@@ -280,10 +279,10 @@ class LitsSolverTest(unittest.TestCase):
             [2, _, _, 3, 3, _, _, 2, 1, 1, _, 4, 4, 1, 1, 1, _, 1, 1, 1],
             [2, 1, _, 3, _, _, 4, 2, _, _, _, 2, _, _, _, 4, _, _, _, _],
             [_, 1, 1, 1, _, 4, 4, _, 4, _, _, 2, _, 1, _, 4, 4, _, _, 2],
-            [3, _, _, _, _, 4, _, 4, 4, 1, _, 2, _, 1, _, _, 4, 3, _, 2],
-            [3, 3, 4, _, 1, 1, 1, 4, _, 1, _, 2, 1, 1, _, _, _, 3, 3, 2],
-            [3, _, 4, 4, _, _, 1, _, 1, 1, _, _, _, _, _, _, _, 3, _, 2],
-            [1, 1, _, 4, 3, _, 3, 3, 3, _, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1],
+            [3, _, 4, _, _, 4, _, 4, 4, 1, _, 2, _, 1, _, _, 4, 3, _, 2],
+            [3, 3, 4, 4, 1, 1, 1, 4, _, 1, _, 2, 1, 1, _, _, _, 3, 3, 2],
+            [3, _, _, 4, _, _, 1, _, 1, 1, _, _, _, _, _, _, _, 3, _, 2],
+            [1, 1, _, _, 3, _, 3, 3, 3, _, 3, 3, 3, 2, 2, 2, 2, 1, 1, 1],
             [_, 1, _, _, 3, 3, _, 3, _, _, _, 3, _, _, _, _, _, 1, _, _],
             [_, 1, _, _, 3, _, _, 1, 1, _, _, 4, 4, 1, 1, 4, 4, _, _, _],
             [_, 4, 4, _, 4, 4, _, 1, _, 1, 4, 4, _, 1, _, _, 4, 4, _, 1],
@@ -292,7 +291,7 @@ class LitsSolverTest(unittest.TestCase):
             [1, _, _, _, _, 1, 3, 3, 3, _, _, 3, _, 1, _, _, 1, 1, _, 3],
             [1, 1, _, _, 3, _, _, 3, _, 3, _, 1, _, 1, 1, 1, _, 1, 3, 3],
             [_, 4, 4, 3, 3, _, _, 1, 3, 3, _, 1, _, 3, _, _, _, 1, _, 3],
-            [4, 4, _, _, 3, 1, 1, 1, _, 3, 1, 1, 3, 3, 3, 2, 2, 2, 2, _]
+            [4, 4, _, _, 3, 1, 1, 1, _, 3, 1, 1, 3, 3, 3, 2, 2, 2, 2, _],
         ])
         lits_solver = LitsSolver(input_grid)
         solution = lits_solver.get_solution()
