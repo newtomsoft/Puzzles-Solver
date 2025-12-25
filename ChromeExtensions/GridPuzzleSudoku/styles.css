@@ -1,0 +1,25 @@
+.solver-btn {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    margin-left: 20px;
+    vertical-align: middle;
+}
+
+.solver-btn:hover {
+    background-color: #45a049;
+}
+
+.solver-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
