@@ -6,6 +6,8 @@ import sys
 # Masyu Solver Implementation (Optimized Backtracking)
 # ------------------------------------------------------------------
 
+sys.setrecursionlimit(3000)
+
 class MasyuSolverWASM:
     def __init__(self, pqq, size):
         self.size = int(size)
@@ -102,14 +104,10 @@ class MasyuSolverWASM:
         for r in range(self.size):
             for c in range(self.size):
                 if self.grid[r][c] == 2: # Black
-                    # Must have 2 legs. If near border, some edges are impossible
-                    pass # Handled by degree check implicitly? No, need specific logic.
-                    # Black pearl on edge -> Impossible?
-                    # Actually standard Masyu: Black pearl on edge is impossible.
-                    # But checking boundary neighbors:
+                    # Black pearl at border is invalid
                     if r == 0 or r == self.size-1 or c == 0 or c == self.size-1:
-                        # Black pearl at border is invalid
-                        pass
+                        # Should we fail? Usually yes.
+                        pass # Let's not fail explicitly here, maybe the puzzle handles it (e.g. toroidal? no.)
 
                 if self.grid[r][c] == 1: # White
                     # White on border must run parallel
@@ -334,12 +332,23 @@ class MasyuSolverWASM:
 # ------------------------------------------------------------------
 
 try:
-    pqq = js.globals.get("gpl_pqq")
-    size = js.globals.get("gpl_size")
-    print(f"Python solving Masyu size {size}...")
-    solver = MasyuSolverWASM(pqq, size)
-    segments = solver.solve()
-    js.globals.set("solution_segments", segments)
+    # In Pyodide, globals set via window.pyodide.globals.set are available in the globals() dict
+    # or directly by name if the environment allows, but robustly:
+
+    # We retrieve them by name, assuming they were injected into the global namespace.
+    pqq_input = globals().get("gpl_pqq")
+    size_input = globals().get("gpl_size")
+
+    if not pqq_input or not size_input:
+        print("Error: Missing input globals gpl_pqq or gpl_size")
+        solution_segments = []
+    else:
+        print(f"Python solving Masyu size {size_input}...")
+        solver = MasyuSolverWASM(pqq_input, size_input)
+        solution_segments = solver.solve()
+
+    # 'solution_segments' is now a global variable, accessible by JS via globals.get()
+
 except Exception as e:
     print(f"Solver Error: {e}")
-    js.globals.set("solution_segments", [])
+    solution_segments = []

@@ -4,12 +4,13 @@
 console.log("Masyu Solver Injected Script Loaded");
 
 // Capture the base URL from the currently executing script tag
-// This works because this code runs immediately when the script is injected
 const currentScriptSrc = document.currentScript ? document.currentScript.src : null;
 const extensionBase = currentScriptSrc ? currentScriptSrc.substring(0, currentScriptSrc.lastIndexOf('/') + 1) : null;
 
 // Create UI
 function createUI() {
+    if (document.getElementById("masyu-solve-btn")) return; // Prevent duplicate buttons
+
     const title = document.querySelector('h1') || document.body;
     const btn = document.createElement('button');
     btn.innerText = "Solve Masyu";
@@ -34,7 +35,7 @@ function createUI() {
             btn.style.backgroundColor = "#4CAF50";
         } catch (e) {
             console.error("Solver failed:", e);
-            btn.innerText = "Error";
+            btn.innerText = "Error: " + e.message;
             btn.style.backgroundColor = "#f44336";
         }
         setTimeout(() => {
@@ -69,6 +70,41 @@ async function loadPyodideAndRun() {
     }
 }
 
+// Helper to extract GPL data from scripts if window.gpl is missing
+function extractGplFromScripts() {
+    console.log("Attempting to extract GPL data from script tags...");
+    const scripts = document.getElementsByTagName('script');
+    let pqq = null;
+    let size = null;
+
+    // Regex patterns matching the Python provider
+    const sizeRegex = /gpl\.([Ss]ize)\s*=\s*(\d+);/;
+    const pqqRegex = /gpl\.pq{1,2}\s*=\s*"(.*?)";/;
+
+    for (let script of scripts) {
+        if (script.innerHTML) {
+            const content = script.innerHTML;
+
+            if (!size) {
+                const sizeMatch = content.match(sizeRegex);
+                if (sizeMatch) size = parseInt(sizeMatch[2]);
+            }
+
+            if (!pqq) {
+                const pqqMatch = content.match(pqqRegex);
+                if (pqqMatch) pqq = pqqMatch[1];
+            }
+
+            if (size && pqq) break;
+        }
+    }
+
+    if (size && pqq) {
+        return { Size: size, pqq: pqq };
+    }
+    return null;
+}
+
 async function runSolver() {
     await loadPyodideAndRun();
 
@@ -77,20 +113,28 @@ async function runSolver() {
     }
 
     const pythonUrl = extensionBase + "masyu_solver.py";
-    console.log("Fetching solver from:", pythonUrl);
 
     const response = await fetch(pythonUrl);
     if (!response.ok) throw new Error("Failed to fetch masyu_solver.py");
     const pythonCode = await response.text();
 
     // Prepare Data
-    if (!window.gpl) {
-        alert("Could not find grid data (window.gpl). Ensure you are on a puzzle page.");
-        return;
+    let gplData = window.gpl;
+
+    if (!gplData) {
+        gplData = extractGplFromScripts();
     }
 
-    const pqq = window.gpl.pqq || window.gpl.pq;
-    const size = window.gpl.Size || window.gpl.size;
+    if (!gplData) {
+        throw new Error("Could not find grid data (window.gpl or script tags). Ensure you are on a puzzle page.");
+    }
+
+    const pqq = gplData.pqq || gplData.pq;
+    const size = gplData.Size || gplData.size;
+
+    if (!pqq || !size) {
+         throw new Error(`Incomplete grid data found. Size: ${size}, PQQ found: ${!!pqq}`);
+    }
 
     window.pyodide.globals.set("gpl_pqq", pqq);
     window.pyodide.globals.set("gpl_size", size);
@@ -105,7 +149,7 @@ async function runSolver() {
         console.log("Solution segments found:", segments.length);
 
         if (segments && segments.length > 0) {
-            await simulateDrawing(segments);
+            await simulateDrawing(segments, size);
         } else {
             alert("No solution found by the backtracking solver.");
         }
@@ -114,11 +158,7 @@ async function runSolver() {
     }
 }
 
-async function simulateDrawing(segments) {
-    // gridpuzzle.com usually uses a canvas with id 'grid' or inside a container
-    // We can try to find the canvas by context if id fails, but 'grid' is standard for gpl.
-    // Sometimes the canvas is unnamed but is the only canvas in '.game-area'.
-
+async function simulateDrawing(segments, size) {
     let canvas = document.getElementById('grid');
     if (!canvas) {
         canvas = document.querySelector('canvas');
@@ -129,7 +169,9 @@ async function simulateDrawing(segments) {
         return;
     }
 
-    const size = window.gpl.Size || window.gpl.size;
+    // If we didn't get size passed, try to extract from data
+    if (!size) size = window.pyodide.globals.get("gpl_size");
+
     const rect = canvas.getBoundingClientRect();
     const cellW = rect.width / size;
     const cellH = rect.height / size;
@@ -148,8 +190,6 @@ async function simulateDrawing(segments) {
         canvas.dispatchEvent(ev);
     }
 
-    // Iterate and draw lines
-    // To ensure lines are drawn correctly, we drag from center to center.
     for (const seg of segments) {
         const [r1, c1, r2, c2] = seg;
 
@@ -159,12 +199,11 @@ async function simulateDrawing(segments) {
         const yEnd = rect.top + (r2 + 0.5) * cellH;
 
         dispatch("mousedown", xStart, yStart);
-        // Small step for better simulation?
         dispatch("mousemove", (xStart+xEnd)/2, (yStart+yEnd)/2);
         dispatch("mousemove", xEnd, yEnd);
         dispatch("mouseup", xEnd, yEnd);
 
-        await new Promise(r => setTimeout(r, 10)); // Short delay
+        await new Promise(r => setTimeout(r, 10));
     }
 }
 
