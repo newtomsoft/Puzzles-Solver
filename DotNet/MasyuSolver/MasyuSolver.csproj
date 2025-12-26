@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WasmMainJSPath>dotnet.js</WasmMainJSPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- No external dependencies needed for pure solver -->
+  </ItemGroup>
+
+</Project>
