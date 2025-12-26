@@ -8,7 +8,8 @@ let pyodide = null;
 async function initPyodide() {
     if (pyodide) return;
     statusDiv.textContent = "Loading Python...";
-    pyodide = await loadPyodide();
+    // Point to local resources
+    pyodide = await loadPyodide({ indexURL: "./lib/" });
     // Load local python files
     const files = [
         'solver_logic.py',

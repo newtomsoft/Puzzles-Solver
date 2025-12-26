@@ -14,11 +14,11 @@ This Chrome Extension solves Masyu puzzles on `https://gridpuzzle.com/masyu`.
 1. Navigate to a Masyu puzzle on `https://gridpuzzle.com/masyu`.
 2. Open the extension popup (click the puzzle piece icon).
 3. Click "Solve".
-4. The extension will scrape the grid, solve it using Python (via Pyodide), and interact with the page to fill the solution.
+4. The extension will scrape the grid, solve it using Python (via local Pyodide), and interact with the page to fill the solution.
 
 ## Architecture
 
 - **Manifest V3**
-- **Popup**: Loads Pyodide (WASM) to run Python code.
+- **Popup**: Loads Pyodide (WASM) locally to run Python code without external CSP issues.
 - **Content Script**: Scrapes grid data and clicks the canvas to apply moves.
 - **Solver**: Pure Python logic (Constraint Propagation + Backtracking).
