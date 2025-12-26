@@ -1,122 +1,128 @@
 using System;
 using System.Text;
 
-namespace EverySecondTurnSolver
+namespace EverySecondTurnSolver;
+
+internal static class Program
 {
-    class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
+        Console.WriteLine("Every Second Turn Solver (.NET Port)");
+        Console.WriteLine("=====================================");
+
+        const char x = '*';
+        const char _ = '.';
+        var gridData = new[,]
         {
-            Console.WriteLine("Every Second Turn Solver (.NET Port)");
-            Console.WriteLine("=====================================");
+            { _, _, _, _, _, x },
+            { _, x, _, _, _, _ },
+            { _, _, _, _, x, _ },
+            { x, _, _, x, _, _ },
+            { _, _, x, _, _, x },
+            { x, _, _, _, _, _ },
+        };
 
-            // Sample Grid (from Python tests or common sense)
-            // Example:
-            // * . .
-            // . . .
-            // . . *
-            // Just a dummy 3x3 for structure, real puzzle logic requires valid input.
 
-            // Let's use a small solvable example if possible.
-            //
-            // * . *
-            // . . .
-            // * . *
-            //
-            char[,] gridData = new char[,] {
-                { '*', '.', '*' },
-                { '.', '.', '.' },
-                { '*', '.', '*' }
-            };
+        Console.WriteLine("Input Grid:");
+        PrintGrid(gridData);
 
-            Console.WriteLine("Input Grid:");
-            PrintGrid(gridData);
+        try
+        {
+            var solver = new EverySecondTurnSolver(gridData);
+            var solution = solver.GetSolution();
 
-            try
+            if (solution != null)
             {
-                var solver = new EverySecondTurnSolver(gridData);
-                var solution = solver.GetSolution();
-
-                if (solution != null)
-                {
-                    Console.WriteLine("\nSolution Found:");
-                    PrintSolution(solution);
-                }
-                else
-                {
-                    Console.WriteLine("\nNo solution found.");
-                }
+                Console.WriteLine("\nSolution Found:");
+                PrintSolution(solution);
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("\nNo solution found.");
             }
         }
-
-        static void PrintGrid(char[,] grid)
+        catch (Exception ex)
         {
-            int rows = grid.GetLength(0);
-            int cols = grid.GetLength(1);
-            for (int r = 0; r < rows; r++)
-            {
-                for (int c = 0; c < cols; c++)
-                {
-                    Console.Write(grid[r, c] + " ");
-                }
-                Console.WriteLine();
-            }
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
         }
+    }
 
-        static void PrintSolution(IslandGrid solution)
+    private static void PrintGrid(char[,] grid)
+    {
+        var rows = grid.GetLength(0);
+        var cols = grid.GetLength(1);
+        for (var r = 0; r < rows; r++)
         {
-            // Simple ASCII representation of bridges
-            // Since we don't have a full UI, we'll just print connection counts or simplistic lines
-
-            // We can try to draw box drawing characters based on bridges
-            int rows = solution.Rows;
-            int cols = solution.Cols;
-
-            // 2D char buffer (expand to 2x size for visual links)
-
-            for (int r = 0; r < rows; r++)
+            for (var c = 0; c < cols; c++)
             {
-                // Top half of cell row
-                StringBuilder line1 = new StringBuilder();
-                // Bottom half (connections down)
-                StringBuilder line2 = new StringBuilder();
-
-                for (int c = 0; c < cols; c++)
-                {
-                    var island = solution[r, c];
-
-                    // Determine char for center
-                    // We assume input grid was passed or we know positions.
-                    // Since solution object doesn't have original chars, we just use 'O' or '+'
-
-                    bool up = island.Bridges.ContainsKey(Direction.Up) && island.Bridges[Direction.Up] > 0;
-                    bool down = island.Bridges.ContainsKey(Direction.Down) && island.Bridges[Direction.Down] > 0;
-                    bool left = island.Bridges.ContainsKey(Direction.Left) && island.Bridges[Direction.Left] > 0;
-                    bool right = island.Bridges.ContainsKey(Direction.Right) && island.Bridges[Direction.Right] > 0;
-
-                    string center = "+";
-                    if (up && down && !left && !right) center = "|";
-                    else if (!up && !down && left && right) center = "-";
-                    else if (up && right) center = "L"; // Simplified
-                    else if (down && right) center = "F";
-                    else if (down && left) center = "7";
-                    else if (up && left) center = "J";
-
-                    line1.Append(center);
-                    if (right) line1.Append("-");
-                    else line1.Append(" ");
-
-                    if (down) line2.Append("| ");
-                    else line2.Append("  ");
-                }
-                Console.WriteLine(line1.ToString());
-                Console.WriteLine(line2.ToString());
+                Console.Write(grid[r, c] + " ");
             }
+
+            Console.WriteLine();
+        }
+    }
+
+    private static void PrintSolution(IslandGrid solution)
+    {
+        var rows = solution.Rows;
+        var cols = solution.Cols;
+
+        for (var r = 0; r < rows; r++)
+        {
+            var line1 = new StringBuilder();
+            var line2 = new StringBuilder();
+
+            for (var c = 0; c < cols; c++)
+            {
+                var island = solution[r, c];
+
+                var up = island.Bridges.ContainsKey(Direction.Up) && island.Bridges[Direction.Up] > 0;
+                var down = island.Bridges.ContainsKey(Direction.Down) && island.Bridges[Direction.Down] > 0;
+                var left = island.Bridges.ContainsKey(Direction.Left) && island.Bridges[Direction.Left] > 0;
+                var right = island.Bridges.ContainsKey(Direction.Right) && island.Bridges[Direction.Right] > 0;
+
+                var center = "+";
+                switch (up)
+                {
+                    case true when down && !left && !right:
+                        center = "|";
+                        break;
+                    case false when !down && left && right:
+                        center = "-";
+                        break;
+                    case true when right:
+                        center = "L"; // Simplified
+                        break;
+                    default:
+                    {
+                        switch (down)
+                        {
+                            case true when right:
+                                center = "F";
+                                break;
+                            case true when left:
+                                center = "7";
+                                break;
+                            default:
+                            {
+                                if (up && left) center = "J";
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                line1.Append(center);
+                line1.Append(right ? "-" : " ");
+
+                line2.Append(down ? "| " : "  ");
+            }
+
+            Console.WriteLine(line1.ToString());
+            Console.WriteLine(line2.ToString());
         }
     }
 }
