@@ -4,6 +4,9 @@ namespace EverySecondTurnSolver;
 
 public class EverySecondTurnSolver
 {
+    public const char Circle = '*';
+    public const char Empty = '.';
+
     private readonly char[,] _inputGrid;
     private readonly int _rows;
     private readonly int _cols;
@@ -11,9 +14,6 @@ public class EverySecondTurnSolver
     private readonly CpModel _model;
     private readonly Dictionary<Position, Dictionary<DirectionEnum, BoolVar>> _islandBridges;
     private IslandGrid? _previousSolution;
-
-    private const char CircleChar = '*';
-    private const char EmptyChar = '.';
 
     public EverySecondTurnSolver(char[,] grid)
     {
@@ -33,10 +33,9 @@ public class EverySecondTurnSolver
             var pos = island.Position;
             _islandBridges[pos] = new Dictionary<DirectionEnum, BoolVar>();
             foreach (var dir in Direction.OrthogonalDirections())
-            {
                 _islandBridges[pos][dir] = _model.NewBoolVar($"{pos}_{dir}");
-            }
         }
+
         AddConstraints();
     }
 
@@ -45,6 +44,31 @@ public class EverySecondTurnSolver
         if (_islandBridges.Count == 0) InitSolver();
 
         return EnsureAllIslandsConnected();
+    }
+
+    public IslandGrid? GetOtherSolution()
+    {
+        if (_previousSolution == null) return null;
+
+        var previousSolutionConstraints = new List<ILiteral>();
+        foreach (var island in _previousSolution.GetAllIslands())
+        {
+            var pos = island.Position;
+            foreach (var kvp in island.Bridges)
+            {
+                if (kvp.Value > 0)
+                {
+                    previousSolutionConstraints.Add(_islandBridges[pos][kvp.Key]);
+                }
+            }
+        }
+
+        _model.AddBoolOr(previousSolutionConstraints.Select(c => c.Not()));
+
+        foreach (var island in _islandGrid.GetAllIslands())
+            island.Bridges.Clear();
+
+        return GetSolution();
     }
 
     private IslandGrid? EnsureAllIslandsConnected()
@@ -66,11 +90,8 @@ public class EverySecondTurnSolver
                     var neighborPos = pos.After(dir);
                     if (!_islandGrid.IsValidPosition(neighborPos)) continue;
 
-                    // Bridges are booleans here (0 or 1)
                     if (solver.Value(_islandBridges[pos][dir]) == 1)
-                    {
                         island.Bridges[dir] = 1;
-                    }
                 }
             }
 
@@ -89,10 +110,9 @@ public class EverySecondTurnSolver
                 {
                     var island = _islandGrid[pos];
                     foreach (var kvp in island.Bridges)
-                    {
                         if (kvp.Value > 0) activeEdges.Add(_islandBridges[pos][kvp.Key]);
-                    }
                 }
+
                 _model.AddBoolOr(activeEdges.Select(x => x.Not()));
             }
         }
@@ -109,10 +129,7 @@ public class EverySecondTurnSolver
     private void AddInitialConstraints()
     {
         foreach (var kvp in _islandBridges)
-        {
-            var bridges = kvp.Value.Values;
-            _model.Add(LinearExpr.Sum(bridges) == 2);
-        }
+            _model.Add(LinearExpr.Sum(kvp.Value.Values) == 2);
     }
 
     private void AddOppositeBridgesConstraints()
@@ -137,7 +154,7 @@ public class EverySecondTurnSolver
         {
             for (var c = 0; c < _cols; c++)
             {
-                if (_inputGrid[r, c] != CircleChar) continue;
+                if (_inputGrid[r, c] != Circle) continue;
                 var pos = new Position(r, c);
                 var linkConstraints = OneTurnBetweenLinkedCirclesConstraints(pos);
                 _model.Add(LinearExpr.Sum(linkConstraints) == 2);
@@ -154,10 +171,8 @@ public class EverySecondTurnSolver
         {
             for (var c = 0; c < _cols; c++)
             {
-                if (_inputGrid[r, c] == CircleChar && (r != circlePos.R || c != circlePos.C))
-                {
+                if (_inputGrid[r, c] == Circle && (r != circlePos.R || c != circlePos.C))
                     otherCircles.Add(new Position(r, c));
-                }
             }
         }
 
@@ -189,22 +204,19 @@ public class EverySecondTurnSolver
 
     private List<ILiteral> ToOtherCircleConstraint(Position start, Position end, Position turnPos, DirectionEnum dir1, DirectionEnum dir2)
     {
-        var constraints = new List<ILiteral>();
+        var constraints = new List<ILiteral> { _islandBridges[start][dir1] };
 
-        constraints.Add(_islandBridges[start][dir1]);
         var current = start.After(dir1);
-        while (_islandGrid.IsValidPosition(current) && _inputGrid[current.R, current.C] == EmptyChar && current != turnPos)
+        while (_islandGrid.IsValidPosition(current) && _inputGrid[current.R, current.C] == Empty && current != turnPos)
         {
             constraints.Add(_islandBridges[current][dir1]);
             current = current.After(dir1);
         }
 
-        // Check if we hit a blocker or went out of bounds before turnPos
-        if (!_islandGrid.IsValidPosition(current) || _inputGrid[current.R, current.C] != EmptyChar)
+        if (!_islandGrid.IsValidPosition(current) || _inputGrid[current.R, current.C] != Empty)
         {
-            if (!_islandGrid.IsValidPosition(current) || (_inputGrid[current.R, current.C] != EmptyChar && current != turnPos))
+            if (!_islandGrid.IsValidPosition(current) || (_inputGrid[current.R, current.C] != Empty && current != turnPos))
             {
-                // Return Impossible
                 var b = _model.NewBoolVar("impossible_path");
                 _model.Add(b == 0);
                 return [b];
@@ -214,7 +226,7 @@ public class EverySecondTurnSolver
         constraints.Add(_islandBridges[current][dir2]);
         current = current.After(dir2);
 
-        while (_islandGrid.IsValidPosition(current) && _inputGrid[current.R, current.C] == EmptyChar && current != end)
+        while (_islandGrid.IsValidPosition(current) && _inputGrid[current.R, current.C] == Empty && current != end)
         {
             constraints.Add(_islandBridges[current][dir2]);
             current = current.After(dir2);
@@ -226,7 +238,6 @@ public class EverySecondTurnSolver
             _model.Add(b == 0);
             return [b];
         }
-
     }
 
     private BoolVar NewAnd(List<ILiteral> literals)
@@ -238,11 +249,8 @@ public class EverySecondTurnSolver
             return b;
         }
 
-        // b => all literals
         foreach (var lit in literals)
-        {
             _model.AddImplication(b, lit);
-        }
 
         var clause = literals.Select(l => l.Not()).ToList();
         clause.Add(b);
@@ -257,7 +265,7 @@ public class EverySecondTurnSolver
         {
             for (var c = 0; c < _cols; c++)
             {
-                if (_inputGrid[r, c] != CircleChar) continue;
+                if (_inputGrid[r, c] != Circle) continue;
 
                 var pos = new Position(r, c);
                 var right = _islandBridges[pos][Direction.Right];

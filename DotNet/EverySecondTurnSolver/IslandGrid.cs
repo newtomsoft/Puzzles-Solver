@@ -1,4 +1,6 @@
-﻿namespace EverySecondTurnSolver;
+﻿using System.Text;
+
+namespace EverySecondTurnSolver;
 
 public class IslandGrid
 {
@@ -76,10 +78,29 @@ public class IslandGrid
                     }
                 }
             }
+
             components.Add(component);
         }
+
         return components;
     }
 
     public static IslandGrid Empty() => new IslandGrid(0, 0);
+
+    public override string ToString()
+    {
+        if (Rows == 0) return "";
+        var sb = new StringBuilder();
+        for (var r = 0; r < Rows; r++)
+        {
+            for (var c = 0; c < Cols; c++)
+            {
+                sb.Append(_islands[r, c]);
+            }
+
+            if (r < Rows - 1) sb.Append('\n');
+        }
+
+        return sb.ToString();
+    }
 }
