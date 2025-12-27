@@ -26,11 +26,11 @@ public class MasyuSolver
     {
         if (!Propagate()) return false;
 
-        // Find unknown edge
+        // Find unknown edge using MRV (Minimum Remaining Values) or Degree heuristic?
+        // Simple heuristic: find first unknown
         int r = -1, c = -1;
         bool isH = false;
 
-        // Simple heuristic: find first unknown
         for (int i = 0; i < _rows; i++)
         {
             for (int j = 0; j < _cols - 1; j++)
@@ -57,7 +57,7 @@ public class MasyuSolver
         Found:
         if (r == -1)
         {
-            return VerifyLoop();
+            return VerifySolution();
         }
 
         // Save state
@@ -73,6 +73,10 @@ public class MasyuSolver
         // Restore
         _hEdges = savedH;
         _vEdges = savedV;
+        savedH = (int[,])_hEdges.Clone(); // Clone again or just copy back?
+        // Actually we restored _hEdges reference to the saved one, but let's be safe:
+        // When we backtrack, we must ensure we don't pollute the saved state if we reuse variables.
+        // The simple assignment _hEdges = savedH works because savedH was a clone.
 
         // Try -1 (No Line)
         if (SetEdge(isH, r, c, -1))
@@ -80,37 +84,100 @@ public class MasyuSolver
             if (Solve()) return true;
         }
 
+        // Restore for caller (though irrelevant at top level)
+        _hEdges = savedH;
+        _vEdges = savedV;
+
         return false;
     }
 
-    private bool VerifyLoop()
+    private bool VerifySolution()
     {
-        // Must form exactly one single loop that visits all circles.
-        // Also degree constraints must be satisfied (already checked by propagate mostly)
-        // Check connectivity.
-
-        int startR = -1, startC = -1;
-        int degrees = 0;
-
-        // Check degrees first
+        // 1. Check all local constraints (degrees, straight/turn)
         for(int r=0; r<_rows; r++) {
             for(int c=0; c<_cols; c++) {
                 int d = GetDegree(r, c);
-                if (d != 0 && d != 2) return false;
-
                 char type = _grid[r,c];
-                if ((type == 'w' || type == 'b') && d != 2) return false;
 
-                if (d > 0 && startR == -1) {
-                    startR = r; startC = c;
+                // Degree checks
+                if (type == 'w' || type == 'b') {
+                    if (d != 2) return false;
+                } else {
+                    if (d != 0 && d != 2) return false;
                 }
-                if (d > 0) degrees++;
+
+                if (d == 0) continue;
+
+                // Edges
+                int u = (r > 0) ? _vEdges[r-1, c] : -1;
+                int down = (r < _rows - 1) ? _vEdges[r, c] : -1;
+                int l = (c > 0) ? _hEdges[r, c-1] : -1;
+                int right = (c < _cols - 1) ? _hEdges[r, c] : -1;
+
+                // Black Circle Logic
+                if (type == 'b') {
+                    // Must turn: (u & d) is forbidden, (l & r) is forbidden
+                    if (u == 1 && down == 1) return false;
+                    if (l == 1 && right == 1) return false;
+                    // Must extend legs (already mostly propagated but verify)
+                    // If U, then U of U
+                    if (u == 1 && (r < 2 || _vEdges[r-2, c] != 1)) return false;
+                    if (down == 1 && (r > _rows - 3 || _vEdges[r+1, c] != 1)) return false;
+                    if (l == 1 && (c < 2 || _hEdges[r, c-2] != 1)) return false;
+                    if (right == 1 && (c > _cols - 3 || _hEdges[r, c+1] != 1)) return false;
+                }
+
+                // White Circle Logic
+                if (type == 'w') {
+                    // Must go straight
+                    if (!((u == 1 && down == 1) || (l == 1 && right == 1))) return false;
+
+                    // Must turn at one side
+                    bool turnPrev = false;
+                    bool turnNext = false;
+
+                    if (u == 1 && down == 1) { // Vertical
+                        // Top neighbor (r-1, c)
+                        // It turns if it is NOT straight vertical.
+                        // Straight vertical at (r-1, c) would mean v[r-2, c] == 1.
+                        // So Turn means v[r-2, c] != 1.
+                        // But wait, neighbor MUST exist on path.
+                        // Since u=1, neighbor IS on path.
+                        // So we just check if it goes straight through.
+                        bool straightTop = (r >= 2 && _vEdges[r-2, c] == 1);
+                        bool straightBottom = (r <= _rows - 3 && _vEdges[r+1, c] == 1);
+
+                        if (!straightTop) turnPrev = true;
+                        if (!straightBottom) turnNext = true;
+                    }
+                    else if (l == 1 && right == 1) { // Horizontal
+                        bool straightLeft = (c >= 2 && _hEdges[r, c-2] == 1);
+                        bool straightRight = (c <= _cols - 3 && _hEdges[r, c+1] == 1);
+
+                        if (!straightLeft) turnPrev = true;
+                        if (!straightRight) turnNext = true;
+                    }
+
+                    if (!turnPrev && !turnNext) return false;
+                }
             }
         }
 
-        if (startR == -1) return false; // Empty grid?
+        // 2. Check Single Loop Connectivity
+        // Find start
+        int startR = -1, startC = -1;
+        int totalNodes = 0;
+        for(int r=0; r<_rows; r++) {
+            for(int c=0; c<_cols; c++) {
+                if (GetDegree(r,c) > 0) {
+                    if (startR == -1) { startR = r; startC = c; }
+                    totalNodes++;
+                }
+            }
+        }
 
-        // BFS/DFS to count connected nodes
+        if (startR == -1) return false; // Empty
+
         var visited = new bool[_rows, _cols];
         var q = new Queue<(int, int)>();
         q.Enqueue((startR, startC));
@@ -121,25 +188,21 @@ public class MasyuSolver
             var (cr, cc) = q.Dequeue();
 
             // Neighbors
-            // Up
             if (cr > 0 && _vEdges[cr-1, cc] == 1 && !visited[cr-1, cc]) {
                 visited[cr-1, cc] = true; visitedCount++; q.Enqueue((cr-1, cc));
             }
-            // Down
             if (cr < _rows - 1 && _vEdges[cr, cc] == 1 && !visited[cr+1, cc]) {
                 visited[cr+1, cc] = true; visitedCount++; q.Enqueue((cr+1, cc));
             }
-            // Left
             if (cc > 0 && _hEdges[cr, cc-1] == 1 && !visited[cr, cc-1]) {
                 visited[cr, cc-1] = true; visitedCount++; q.Enqueue((cr, cc-1));
             }
-            // Right
             if (cc < _cols - 1 && _hEdges[cr, cc] == 1 && !visited[cr, cc+1]) {
                 visited[cr, cc+1] = true; visitedCount++; q.Enqueue((cr, cc+1));
             }
         }
 
-        return visitedCount == degrees;
+        return visitedCount == totalNodes;
     }
 
     private int GetDegree(int r, int c)
@@ -173,8 +236,6 @@ public class MasyuSolver
     {
         char type = _grid[r, c];
 
-        // Get neighbors states
-        // Values: 1, -1, 0
         int u = (r > 0) ? _vEdges[r - 1, c] : -1;
         int d = (r < _rows - 1) ? _vEdges[r, c] : -1;
         int l = (c > 0) ? _hEdges[r, c - 1] : -1;
@@ -195,46 +256,31 @@ public class MasyuSolver
         if (lines > 2) return false;
 
         bool mustBe2 = (type == 'w' || type == 'b');
-
         if (mustBe2)
         {
             if (lines == 2 && unknown > 0)
             {
-                // Set all unknowns to -1
                 if (!SetNeighbors(r, c, -1, ref changed)) return false;
             }
             else if (lines + unknown < 2) return false;
             else if (lines + unknown == 2 && unknown > 0)
             {
-                // Set all unknowns to 1
                 if (!SetNeighbors(r, c, 1, ref changed)) return false;
             }
         }
         else
         {
-            // Empty: degree 0 or 2
             if (lines == 2 && unknown > 0)
             {
                  if (!SetNeighbors(r, c, -1, ref changed)) return false;
             }
-            // Avoid degree 1 (dead end)
-            // If lines=1 and unknown=0 -> fail
-            if (lines == 1 && unknown == 0) return false;
-            // If lines=1 and unknown=1, and nolines=2 -> Must extend
-            // Wait, if lines=1, we must reach 2. So if unknown=1, that one must be 1.
-            // If lines=1, we need 1 more. So any unknowns MUST be 1?
-            // No, we could have 2 unknowns. One could be 1, one -1? No, if lines=1, we need exactly 1 more.
-            // If lines=1, we cannot have 0 more (degree 1 bad). We MUST have degree 2.
-            // So if lines=1, remaining lines needed is 1.
-            // If we have > 1 unknowns, we don't know which one.
-            // But if we have exactly 1 unknown, it MUST be 1.
+            if (lines == 1 && unknown == 0) return false; // Dead end
             if (lines == 1 && unknown == 1)
             {
                 if (!SetNeighbors(r, c, 1, ref changed)) return false;
             }
         }
 
-        // Specific Constraints
         if (type == 'b') return ApplyBlackConstraints(r, c, u, d, l, ri, ref changed);
         if (type == 'w') return ApplyWhiteConstraints(r, c, u, d, l, ri, ref changed);
 
@@ -244,18 +290,16 @@ public class MasyuSolver
     private bool ApplyBlackConstraints(int r, int c, int u, int d, int l, int ri, ref bool changed)
     {
         // Must turn
-        // Cannot be (Up & Down) or (Left & Right)
         if (u == 1 && d == 1) return false;
         if (l == 1 && ri == 1) return false;
 
-        // If (u=1), then (d must be -1).
+        // If one used, opposite blocked
         if (u == 1 && d == 0) { if (!SetV(r, c, -1)) return false; changed = true; }
         if (d == 1 && u == 0) { if (!SetV(r - 1, c, -1)) return false; changed = true; }
         if (l == 1 && ri == 0) { if (!SetH(r, c, -1)) return false; changed = true; }
         if (ri == 1 && l == 0) { if (!SetH(r, c - 1, -1)) return false; changed = true; }
 
         // Legs extension
-        // If u=1, u_of_u must be 1 (v[r-2, c])
         if (u == 1) { if (!SetV(r - 2, c, 1)) return false; changed = true; }
         if (d == 1) { if (!SetV(r + 1, c, 1)) return false; changed = true; }
         if (l == 1) { if (!SetH(r, c - 2, 1)) return false; changed = true; }
@@ -267,7 +311,6 @@ public class MasyuSolver
     private bool ApplyWhiteConstraints(int r, int c, int u, int d, int l, int ri, ref bool changed)
     {
         // Straight
-        // (u=1 <=> d=1) and (l=1 <=> ri=1)
         if (u == 1 && d == 0) { if (!SetV(r, c, 1)) return false; changed = true; }
         if (d == 1 && u == 0) { if (!SetV(r - 1, c, 1)) return false; changed = true; }
         if (u == -1 && d == 0) { if (!SetV(r, c, -1)) return false; changed = true; }
@@ -278,20 +321,49 @@ public class MasyuSolver
         if (l == -1 && ri == 0) { if (!SetH(r, c, -1)) return false; changed = true; }
         if (ri == -1 && l == 0) { if (!SetH(r, c - 1, -1)) return false; changed = true; }
 
-        // If turned, must be straight (degree 2 constraint handles "must visit", but straightness is key)
-        // Check for "Turn at neighbor" rule:
-        // If we go through White, we must turn at PREVIOUS or NEXT.
-        // Complex to enforce locally without knowing which way is "previous".
-        // But since it's symmetric: At least one neighbor must be a Corner/Turn.
-        // If u=1 and d=1 (Vertical through White):
-        // Then (TopNeighbor turns) OR (BottomNeighbor turns).
-        // Turn means NOT Straight.
-        // TopNeighbor (r-1, c). Straight Vertical there means v[r-2, c]=1.
-        // So we need NOT (v[r-2, c]=1).
-        // Wait, neighbor turn means it enters from Up and leaves to Left/Right.
-        // If v[r-1, c]=1 (edge into white), then TopNeighbor must have l/r edge active?
-        // Actually: if Vertical, then (UpNeighbor is NOT Straight Vertical) OR (DownNeighbor is NOT Straight Vertical).
-        // Straight Vertical at neighbor means path continues.
+        // Turn at neighbors check
+        // If straight, check neighbors
+        bool isVert = (u == 1 && d == 1);
+        bool isHorz = (l == 1 && ri == 1);
+
+        if (isVert)
+        {
+            // Vertical passage: neighbors at (r-1, c) and (r+1, c) must NOT both go straight vertical.
+            // Straight Vertical at (r-1, c) => v[r-2, c] == 1.
+            // Straight Vertical at (r+1, c) => v[r+1, c] == 1.
+            // We need: (v[r-2, c] != 1) OR (v[r+1, c] != 1).
+            // Logic: if v[r-2, c] == 1, then v[r+1, c] MUST be -1 (cannot be 1).
+
+            int topLeg = (r >= 2) ? _vEdges[r-2, c] : -1; // -1 if OOB (no edge)
+            int botLeg = (r <= _rows - 3) ? _vEdges[r+1, c] : -1;
+
+            if (topLeg == 1) {
+                if (botLeg == 1) return false; // Both straight!
+                if (botLeg == 0) { if (!SetV(r + 1, c, -1)) return false; changed = true; }
+            }
+            if (botLeg == 1) {
+                if (topLeg == 1) return false;
+                if (topLeg == 0) { if (!SetV(r - 2, c, -1)) return false; changed = true; }
+            }
+        }
+
+        if (isHorz)
+        {
+            // Horizontal passage: (r, c-1) and (r, c+1)
+            // Left Straight: h[r, c-2] == 1
+            // Right Straight: h[r, c+1] == 1
+            int leftLeg = (c >= 2) ? _hEdges[r, c-2] : -1;
+            int rightLeg = (c <= _cols - 3) ? _hEdges[r, c+1] : -1;
+
+            if (leftLeg == 1) {
+                if (rightLeg == 1) return false;
+                if (rightLeg == 0) { if (!SetH(r, c + 1, -1)) return false; changed = true; }
+            }
+            if (rightLeg == 1) {
+                if (leftLeg == 1) return false;
+                if (leftLeg == 0) { if (!SetH(r, c - 2, -1)) return false; changed = true; }
+            }
+        }
 
         return true;
     }
@@ -313,7 +385,7 @@ public class MasyuSolver
 
     private bool SetH(int r, int c, int val)
     {
-        if (r < 0 || r >= _rows || c < 0 || c >= _cols - 1) return val == -1; // Out of bounds is implicitly -1
+        if (r < 0 || r >= _rows || c < 0 || c >= _cols - 1) return val == -1;
         if (_hEdges[r, c] != 0 && _hEdges[r, c] != val) return false;
         _hEdges[r, c] = val;
         return true;
