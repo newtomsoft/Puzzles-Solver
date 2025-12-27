@@ -1,39 +1,37 @@
 
-// Popup script for Masyu WASM Solver
+// Popup script for Masyu Z3 Solver
 const statusDiv = document.getElementById('status');
 const solveBtn = document.getElementById('solveBtn');
 
-let dotnetExports = null;
+// Initialize Z3 worker or load script
+// Since z3-built.js puts Z3 on window, we can load it dynamically or via script tag.
+// For extension, better to load explicitly.
 
-async function initWasm() {
-    if (dotnetExports) return;
-    statusDiv.textContent = "Loading WASM...";
+async function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
 
-    try {
-        // Import dotnet runtime
-        const { dotnet } = await import('./dotnet.js');
-
-        // Initialize runtime
-        const { getAssemblyExports, getConfig } = await dotnet
-            .withDiagnosticTracing(false)
-            .create();
-
-        // Get exports from our assembly
-        const exports = await getAssemblyExports("MasyuSolver.dll");
-        dotnetExports = exports.MasyuSolver.Program;
-
-        statusDiv.textContent = "WASM Ready.";
-    } catch (e) {
-        console.error(e);
-        statusDiv.textContent = "WASM Load Error: " + e.message;
-        throw e;
+async function initSolver() {
+    statusDiv.textContent = "Loading Z3...";
+    if (!window.Z3) {
+        await loadScript('z3-built.js');
     }
+    if (!window.solveMasyu) {
+        await loadScript('solver.js');
+    }
+    statusDiv.textContent = "Z3 Ready.";
 }
 
 solveBtn.addEventListener('click', async () => {
     try {
         statusDiv.textContent = "Initializing...";
-        await initWasm();
+        await initSolver();
 
         statusDiv.textContent = "Scraping Grid...";
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -51,55 +49,15 @@ solveBtn.addEventListener('click', async () => {
             statusDiv.textContent = "Solving...";
             const grid = response.grid;
 
-            // Grid is string[][]
-            // Pass to WASM
-            // Note: JS string array maps to string[] in C# if marshaling works,
-            // but simple marshaling might need adjustment.
-            // With JSExport, string[] should be supported.
+            // Call solver
+            const solution = await window.solveMasyu(grid);
 
-            // Flatten rows to strings for safety if needed, or pass array directly.
-            // Let's pass array of strings.
-            const gridRows = grid.map(row => row.join(''));
-
-            const resultStr = dotnetExports.Solve(gridRows);
-
-            if (!resultStr || resultStr.startsWith("ERROR") || resultStr === "NO_SOLUTION") {
-                statusDiv.textContent = resultStr || "No Solution Found";
+            if (!solution) {
+                statusDiv.textContent = "No Solution Found";
                 return;
             }
 
-            // Parse result: ROWS|COLS|H_STRING|V_STRING
-            const parts = resultStr.split('|');
-            const rows = parseInt(parts[0]);
-            const cols = parseInt(parts[1]);
-            const hStr = parts[2];
-            const vStr = parts[3];
-
-            const h = [];
-            let idx = 0;
-            for(let r=0; r<rows; r++) {
-                const row = [];
-                for(let c=0; c<cols-1; c++) {
-                    row.push(parseInt(hStr[idx]));
-                    idx++;
-                }
-                h.push(row);
-            }
-
-            const v = [];
-            idx = 0;
-            for(let r=0; r<rows-1; r++) {
-                const row = [];
-                for(let c=0; c<cols; c++) {
-                    row.push(parseInt(vStr[idx]));
-                    idx++;
-                }
-                v.push(row);
-            }
-
             statusDiv.textContent = "Applying...";
-            const solution = { h, v };
-
             chrome.tabs.sendMessage(tab.id, { action: "applySolution", solution: solution });
             statusDiv.textContent = "Done!";
         });

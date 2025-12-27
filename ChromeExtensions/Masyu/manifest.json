@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Masyu Solver WASM",
-  "version": "2.0",
-  "description": "Solves Masyu puzzles on gridpuzzle.com using C# and WASM.",
+  "name": "Masyu Solver Z3",
+  "version": "3.0",
+  "description": "Solves Masyu puzzles on gridpuzzle.com using Vanilla JS and Z3 WASM.",
   "permissions": [
     "activeTab",
     "scripting"
@@ -27,9 +27,10 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "dotnet.js",
-        "dotnet.wasm",
-        "MasyuSolver.dll"
+        "z3-built.js",
+        "z3-built.wasm",
+        "z3-built.worker.js",
+        "solver.js"
       ],
       "matches": ["<all_urls>"]
     }
