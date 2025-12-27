@@ -1,38 +1,46 @@
 
-// Popup script
+// Popup script for Masyu Z3 Solver
 const statusDiv = document.getElementById('status');
 const solveBtn = document.getElementById('solveBtn');
 
-let pyodide = null;
+// Initialize Z3 worker or load script
+// Since z3-built.js puts Z3 on window, we can load it dynamically or via script tag.
+// For extension, better to load explicitly.
 
-async function initPyodide() {
-    if (pyodide) return;
-    statusDiv.textContent = "Loading Python...";
-    pyodide = await loadPyodide();
-    // Load local python files
-    const files = [
-        'solver_logic.py',
-        'solver.py'
-    ];
+async function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
 
-    for (const file of files) {
-        const response = await fetch(file);
-        const text = await response.text();
-        const filename = file.split('/').pop();
-        pyodide.FS.writeFile(filename, text);
+async function initSolver() {
+    statusDiv.textContent = "Loading Z3...";
+    if (!window.Z3) {
+        await loadScript('z3-built.js');
     }
-    statusDiv.textContent = "Python Ready.";
+    if (!window.solveMasyu) {
+        await loadScript('solver.js');
+    }
+    statusDiv.textContent = "Z3 Ready.";
 }
 
 solveBtn.addEventListener('click', async () => {
     try {
         statusDiv.textContent = "Initializing...";
-        await initPyodide();
+        await initSolver();
 
         statusDiv.textContent = "Scraping Grid...";
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
         chrome.tabs.sendMessage(tab.id, { action: "getGrid" }, async (response) => {
+            if (chrome.runtime.lastError) {
+                statusDiv.textContent = "Error: " + chrome.runtime.lastError.message;
+                return;
+            }
             if (!response || !response.grid) {
                 statusDiv.textContent = "Error: No grid found.";
                 return;
@@ -41,34 +49,16 @@ solveBtn.addEventListener('click', async () => {
             statusDiv.textContent = "Solving...";
             const grid = response.grid;
 
-            // Run Python Solver
-            // Pass grid as list of lists
-            pyodide.globals.set("grid_data", grid);
-
-            const pythonCode = `
-import solver
-import js
-
-solution = solver.solve_masyu(grid_data.to_py())
-solution
-            `;
-
-            const solution = await pyodide.runPythonAsync(pythonCode);
+            // Call solver
+            const solution = await window.solveMasyu(grid);
 
             if (!solution) {
-                statusDiv.textContent = "No solution found.";
+                statusDiv.textContent = "No Solution Found";
                 return;
             }
 
-            const solObj = solution.toJs();
-            // Map comes as Map, convert to obj
-            const result = {
-                h: solObj.get('h'),
-                v: solObj.get('v')
-            };
-
             statusDiv.textContent = "Applying...";
-            chrome.tabs.sendMessage(tab.id, { action: "applySolution", solution: result });
+            chrome.tabs.sendMessage(tab.id, { action: "applySolution", solution: solution });
             statusDiv.textContent = "Done!";
         });
 

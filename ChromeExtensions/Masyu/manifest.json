@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Masyu Solver WASM",
-  "version": "1.0",
-  "description": "Solves Masyu puzzles on gridpuzzle.com using Python and WASM.",
+  "name": "Masyu Solver Z3",
+  "version": "3.0",
+  "description": "Solves Masyu puzzles on gridpuzzle.com using Vanilla JS and Z3 WASM.",
   "permissions": [
     "activeTab",
     "scripting"
@@ -26,11 +26,16 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["solver.py", "solver_logic.py"],
+      "resources": [
+        "z3-built.js",
+        "z3-built.wasm",
+        "z3-built.worker.js",
+        "solver.js"
+      ],
       "matches": ["<all_urls>"]
     }
   ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval' https://cdn.jsdelivr.net; object-src 'self'"
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   }
 }
