@@ -100,7 +100,6 @@ class Island:
                 island.set_bridge_to_direction(Direction.up(), 1)
                 island.set_bridge_to_direction(Direction.down(), 1)
                 island.set_bridge_to_direction(Direction.left(), 1)
-
             case '─┼─':
                 island.set_bridge_to_direction(Direction.up(), 1)
                 island.set_bridge_to_direction(Direction.down(), 1)
