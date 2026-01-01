@@ -1,0 +1,21 @@
+meta {
+  name: Solve Minesweeper
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-minesweeper.com/",
+    "grid": [
+      [-1, -1],
+      [-1, -1]
+    ]
+  }
+}

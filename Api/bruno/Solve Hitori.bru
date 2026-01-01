@@ -1,0 +1,22 @@
+meta {
+  name: Solve Hitori
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://vuqq.com/game/hitori/123",
+    "grid": [
+      [1, 1, 2],
+      [3, 1, 2],
+      [3, 3, 1]
+    ]
+  }
+}
