@@ -26,12 +26,17 @@ def get_patterns():
 @app.route('/api/solve', methods=['POST'])
 def solve_puzzle():
     data = request.json
-    if not data or 'url' not in data or 'grid' not in data:
-        return jsonify({"error": "Missing 'url' or 'grid' in request body"}), 400
+    if not data or 'url' not in data:
+        return jsonify({"error": "Missing 'url' in request body"}), 400
 
     url = data['url']
-    grid_matrix = data['grid']
+    # Input can be 'grid' (list of lists) or 'data' (generic object)
+    grid_matrix = data.get('grid')
+    raw_data = data.get('data')
     extra_data = data.get('extra_data', [])
+
+    if grid_matrix is None and raw_data is None:
+        return jsonify({"error": "Missing 'grid' or 'data' in request body"}), 400
 
     try:
         # 1. Identify Solver Class using the URL pattern
@@ -41,19 +46,27 @@ def solve_puzzle():
         except ValueError:
              return jsonify({"error": "Unknown URL pattern or puzzle type"}), 404
 
-        # 2. Create Grid
-        # The grid constructor expects a list of lists.
-        # We assume the JSON input is already a valid matrix of primitives (int, str, bool, null).
-        grid = Grid(grid_matrix)
+        # 2. Prepare Game Data
+        if raw_data is not None:
+            # If raw data is provided, use it directly (e.g. dict for Akari)
+            game_data = raw_data
+        else:
+            # Construct Grid
+            grid = Grid(grid_matrix)
+            if extra_data:
+                # Handle nested Grids in extra_data
+                processed_extra_data = []
+                for item in extra_data:
+                    # Heuristic: if item looks like a matrix, make it a Grid
+                    if isinstance(item, list) and len(item) > 0 and isinstance(item[0], list):
+                        processed_extra_data.append(Grid(item))
+                    else:
+                        processed_extra_data.append(item)
+                game_data = (grid, *processed_extra_data)
+            else:
+                game_data = grid
 
         # 3. Instantiate Solver
-        # Factory expects (grid, *extra_data) if it's a tuple, or just the grid.
-        # extra_data allows passing additional info that some solvers might need.
-        if extra_data:
-            game_data = (grid, *extra_data)
-        else:
-            game_data = grid
-
         solver = GameComponentFactory.create_solver(solver_class, game_data)
 
         # 4. Solve
@@ -63,18 +76,27 @@ def solve_puzzle():
         if solution is None:
              return jsonify({"status": "no_solution"}), 200
 
-        if solution.is_empty():
-            # Some solvers return Grid.empty() for no solution
+        if hasattr(solution, 'is_empty') and solution.is_empty():
             return jsonify({"status": "no_solution"}), 200
 
-        return jsonify({
-            "status": "solved",
-            "solution": solution.matrix
-        })
+        # Handle cases where solution might not be a Grid (though GameSolver says it should be)
+        if hasattr(solution, 'matrix'):
+            return jsonify({
+                "status": "solved",
+                "solution": solution.matrix
+            })
+        else:
+            # Fallback for non-standard return types
+            return jsonify({
+                "status": "solved",
+                "solution": str(solution)
+            })
 
     except Exception as e:
         # Log the error (optional) and return 500
         print(f"Error solving puzzle: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':

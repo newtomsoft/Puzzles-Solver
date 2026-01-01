@@ -1,0 +1,24 @@
+meta {
+  name: Solve Nurikabe
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-nurikabe.com/",
+    "grid": [
+      [-1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1],
+      [-1, -1, -1, -1, -1]
+    ]
+  }
+}

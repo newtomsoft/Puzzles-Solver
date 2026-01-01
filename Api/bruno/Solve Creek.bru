@@ -1,0 +1,18 @@
+meta {
+  name: Solve Creek
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.gridpuzzle.com/creek",
+    "grid": [[-1, -1], [-1, -1]]
+  }
+}
