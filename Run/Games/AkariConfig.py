@@ -5,7 +5,10 @@ from GridPlayers.Vuqq.VuqqAkariPlayer import VuqqAkariPlayer
 from GridProviders.PuzzleBaron.PuzzleBaronLaserGridsGridProvider import PuzzleBaronLaserGridsGridProvider
 from GridProviders.PuzzlesMobile.PuzzleAkariGridProvider import PuzzleAkariGridProvider
 from GridProviders.Vuqq.VuqqAkariGridProvider import VuqqAkariGridProvider
+from GridProviders.GridPuzzle.GridPuzzleAkariGridProvider import GridPuzzleAkariGridProvider
+from GridPlayers.GridPuzzle.GridPuzzleAkariPlayer import GridPuzzleAkariPlayer
 from Run.GameRegistry import GameRegistry
+
 
 
 def register():
@@ -25,4 +28,10 @@ def register():
         r"https://vuqq\.com/.*akari",
         VuqqAkariGridProvider,
         VuqqAkariPlayer
+    )(AkariSolver)
+
+    GameRegistry.register(
+        r"https://.*gridpuzzle\.com/lightup",
+        GridPuzzleAkariGridProvider,
+        GridPuzzleAkariPlayer
     )(AkariSolver)

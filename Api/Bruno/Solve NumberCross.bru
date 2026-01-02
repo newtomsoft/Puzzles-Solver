@@ -1,0 +1,70 @@
+meta {
+  name: Solve NumberCross
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/number-cross/l4j0e",
+    "grid": [
+      [
+        7,
+        null,
+        9,
+        6,
+        null
+      ],
+      [
+        1,
+        7,
+        1,
+        4,
+        2
+      ],
+      [
+        1,
+        5,
+        2,
+        7,
+        7
+      ],
+      [
+        1,
+        null,
+        null,
+        5,
+        2
+      ],
+      [
+        8,
+        3,
+        3,
+        8,
+        9
+      ]
+    ],
+    "extra_data": [
+      [
+        9,
+        7,
+        15,
+        2,
+        14
+      ],
+      [
+        9,
+        8,
+        15,
+        4,
+        11
+      ]
+    ]
+  }
+}

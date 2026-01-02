@@ -1,0 +1,12 @@
+{
+    "name": "puzzle-monorepo",
+    "version": "1.0.0",
+    "description": "Multi-extension and Python API for puzzle solving",
+    "scripts": {
+        "build:browser": "cd BrowserExtension && npm run build",
+        "build:chrome": "cd ChromeExtension && npm run build",
+        "build": "npm run build:browser",
+        "api": "python Api/app.py",
+        "test:browser": "cd BrowserExtension && npm run test"
+    }
+}

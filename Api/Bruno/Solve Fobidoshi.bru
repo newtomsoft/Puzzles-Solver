@@ -1,0 +1,43 @@
+meta {
+  name: Solve Fobidoshi
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/fobidoshi/31j59",
+    "grid": [
+      [
+        1,
+        -1,
+        1,
+        0
+      ],
+      [
+        -1,
+        1,
+        -1,
+        1
+      ],
+      [
+        1,
+        -1,
+        1,
+        -1
+      ],
+      [
+        0,
+        -1,
+        -1,
+        -1
+      ]
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Solve Miti
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/miti/37401",
+    "extra_data": [
+      6
+    ]
+  }
+}

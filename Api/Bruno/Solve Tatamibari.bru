@@ -1,0 +1,43 @@
+meta {
+  name: Solve Tatamibari
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/tatamibari/lge62",
+    "grid": [
+      [
+        "|",
+        ".",
+        "-",
+        "."
+      ],
+      [
+        ".",
+        "+",
+        ".",
+        "|"
+      ],
+      [
+        ".",
+        "+",
+        "|",
+        "+"
+      ],
+      [
+        "-",
+        ".",
+        ".",
+        "."
+      ]
+    ]
+  }
+}
