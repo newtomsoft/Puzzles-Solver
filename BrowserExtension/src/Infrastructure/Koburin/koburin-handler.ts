@@ -1,23 +1,17 @@
 import { BasePuzzleHandler } from '../Base/base-puzzle-handler.js';
 import { KoburinGridProvider } from './koburin-grid-provider.js';
-import { KoburinSolver } from '../../Application/Koburin/koburin-solver.js';
+import { ExtractionResult } from '../Base/puzzle-handler.js';
 
 export class KoburinHandler extends BasePuzzleHandler {
     constructor() {
         super('koburin', 'koburin');
     }
 
-    extract(html: string, url: string): any {
-        return { grid: KoburinGridProvider.getGridFromHTML(html) };
+    extract(html: string, url: string): ExtractionResult {
+        return { grid: KoburinGridProvider.getGridFromHTML(html), url };
     }
 
-    async solve(ctx: any, extractionResult: any): Promise<any> {
-        const solver = new KoburinSolver(ctx, extractionResult.grid);
-        extractionResult.solverInstance = solver;
-        return await solver.solve();
-    }
-
-    getSolutionDisplay(puzzleType: string, extractionResult: any, solution: any): string {
+    getSolutionDisplay(puzzleType: string, extractionResult: ExtractionResult, solution: any): string {
         const grid = extractionResult.grid;
         const rows = grid.length;
         const cols = grid[0].length;

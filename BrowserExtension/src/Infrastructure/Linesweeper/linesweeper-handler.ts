@@ -1,23 +1,17 @@
 import { BasePuzzleHandler } from '../Base/base-puzzle-handler.js';
 import { LinesweeperGridProvider } from './linesweeper-grid-provider.js';
-import { LinesweeperSolver } from '../../Application/Linesweeper/linesweeper-solver.js';
+import { ExtractionResult } from '../Base/puzzle-handler.js';
 
 export class LinesweeperHandler extends BasePuzzleHandler {
     constructor() {
         super('linesweeper', 'linesweeper');
     }
 
-    extract(html: string, url: string): any {
-        return { grid: LinesweeperGridProvider.getGridFromHTML(html) };
+    extract(html: string, url: string): ExtractionResult {
+        return { grid: LinesweeperGridProvider.getGridFromHTML(html), url };
     }
 
-    async solve(ctx: any, extractionResult: any): Promise<any> {
-        const solver = new LinesweeperSolver(ctx, extractionResult.grid);
-        extractionResult.solverInstance = solver;
-        return await solver.solve();
-    }
-
-    getSolutionDisplay(puzzleType: string, extractionResult: any, solution: any): string {
+    getSolutionDisplay(puzzleType: string, extractionResult: ExtractionResult, solution: any): string {
         const grid = extractionResult.grid;
         const rows = grid.length;
         const cols = grid[0].length;

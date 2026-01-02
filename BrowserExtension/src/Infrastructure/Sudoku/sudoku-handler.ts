@@ -1,6 +1,6 @@
 import { BasePuzzleHandler } from '../Base/base-puzzle-handler.js';
 import { SudokuGridProvider } from './sudoku-grid-provider.js';
-import { SudokuSolver } from '../../Application/Sudoku/sudoku-solver.js';
+import { ExtractionResult } from '../Base/puzzle-handler.js';
 
 export class SudokuHandler extends BasePuzzleHandler {
     constructor() {
@@ -11,17 +11,17 @@ export class SudokuHandler extends BasePuzzleHandler {
         return url.includes('sudoku') || url.includes('jigsaw') || url.includes('killer');
     }
 
-    extract(html: string, url: string): any {
+    extract(html: string, url: string): ExtractionResult {
         const problem = SudokuGridProvider.getGridFromHTML(html, url);
-        return { grid: problem.grid, problem };
+        return {
+            grid: problem.grid,
+            url,
+            regions: problem.regions,
+            cages: problem.cages
+        };
     }
 
-    async solve(ctx: any, extractionResult: any): Promise<any> {
-        const solver = new SudokuSolver(ctx, extractionResult.problem);
-        return await solver.solve();
-    }
-
-    getSolutionDisplay(puzzleType: string, extractionResult: any, solution: any): string {
+    getSolutionDisplay(puzzleType: string, extractionResult: ExtractionResult, solution: any): string {
         const grid = extractionResult.grid;
         const rows = grid.length;
         const cols = grid[0].length;

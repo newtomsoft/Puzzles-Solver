@@ -8,6 +8,8 @@ import { LinesweeperHandler } from '../Linesweeper/linesweeper-handler.js';
 import { ShirokuroHandler } from '../Shirokuro/shirokuro-handler.js';
 import { KuroshiroHandler } from '../Kuroshiro/kuroshiro-handler.js';
 import { MidloopHandler } from '../Midloop/midloop-handler.js';
+import { AkariHandler } from '../Akari/akari-handler.js';
+import { PythonProviderHandler } from './python-provider-handler.js';
 
 export class PuzzleRegistry {
     private handlers: PuzzleHandler[] = [];
@@ -39,6 +41,15 @@ export class PuzzleRegistry {
         registry.register(new KuroshiroHandler());
         registry.register(new SudokuHandler());
         registry.register(new MidloopHandler());
+        registry.register(new AkariHandler());
+
+        // Puzzles using Python-based extraction (Python providers)
+        registry.register(new PythonProviderHandler('slitherlink', 'slitherlink'));
+        registry.register(new PythonProviderHandler('yajilin', 'yajilin'));
+        registry.register(new PythonProviderHandler('hashi', 'hashi'));
+        registry.register(new PythonProviderHandler('galaxies', 'galaxies'));
+        registry.register(new PythonProviderHandler('shingoki', 'shingoki'));
+
         // Default masyu handler last as it has broadest detection or fallback
         registry.register(new BasePuzzleHandler('masyu', 'masyu'));
         return registry;
