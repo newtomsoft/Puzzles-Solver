@@ -10,6 +10,7 @@ import { KuroshiroHandler } from '../Kuroshiro/kuroshiro-handler.js';
 import { MidloopHandler } from '../Midloop/midloop-handler.js';
 import { AkariHandler } from '../Akari/akari-handler.js';
 import { PythonProviderHandler } from './python-provider-handler.js';
+import { YajikabeHandler } from '../Yajikabe/yajikabe-handler.js';
 
 export class PuzzleRegistry {
     private handlers: PuzzleHandler[] = [];
@@ -49,6 +50,7 @@ export class PuzzleRegistry {
         registry.register(new PythonProviderHandler('hashi', 'hashi'));
         registry.register(new PythonProviderHandler('galaxies', 'galaxies'));
         registry.register(new PythonProviderHandler('shingoki', 'shingoki'));
+        registry.register(new YajikabeHandler());
 
         // Default masyu handler last as it has broadest detection or fallback
         registry.register(new BasePuzzleHandler('masyu', 'masyu'));

@@ -2,7 +2,11 @@ import { PuzzleHandler, ExtractionResult } from './puzzle-handler.js';
 import { MasyuGridProvider } from '../Masyu/masyu-grid-provider.js';
 
 export class BasePuzzleHandler implements PuzzleHandler {
-    constructor(private type: string, private urlKeyword: string) { }
+    constructor(
+        private type: string,
+        private urlKeyword: string,
+        private provider: MasyuGridProvider | any | null = null
+    ) { }
 
     getType(): string {
         return this.type;
@@ -13,6 +17,9 @@ export class BasePuzzleHandler implements PuzzleHandler {
     }
 
     extract(html: string, url: string): ExtractionResult {
+        if (this.provider && this.provider.extract) {
+            return { grid: this.provider.extract(html), url };
+        }
         return { grid: MasyuGridProvider.getGridFromHTML(html), url };
     }
 
