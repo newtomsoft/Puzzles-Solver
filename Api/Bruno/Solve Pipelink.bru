@@ -1,0 +1,17 @@
+meta {
+  name: Solve Pipelink
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/pipelink/3e2vn"
+  }
+}
