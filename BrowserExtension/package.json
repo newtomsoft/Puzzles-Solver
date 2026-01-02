@@ -1,0 +1,31 @@
+{
+    "type": "module",
+    "scripts": {
+        "build:chrome": "node build.cjs --browser=chrome",
+        "build:firefox": "node build.cjs --browser=firefox",
+        "build": "npm run build:chrome && npm run build:firefox",
+        "pretest": "npm run build:chrome",
+        "test": "npm run test:src",
+        "test:jest": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+        "test:part1": "npm run test:jest src/Infrastructure src/Application/Koburin/koburin-player-tests.ts src/Application/Masyu/masyu-player-tests.ts",
+        "test:part2": "npm run test:jest src/Application/Masyu/masyu-solver-tests.ts && npm run test:jest src/Application/Koburin/koburin-solver-tests.ts && npm run test:jest src/Application/Midloop/midloop-solver-tests.ts && npm run test:jest src/Application/Detour/detour-solver-tests.ts && npm run test:jest src/Application/CountryRoad/country-road-solver-tests.ts",
+        "test:part3": "npm run test:jest src/Application/Shirokuro/shirokuro-solver-tests.ts && npm run test:jest src/Application/Linesweeper/linesweeper-solver-tests.ts && npm run test:jest src/Application/Purenrupu/purenrupu-solver-tests.ts && npm run test:jest src/Application/Kuroshiro/kuroshiro-solver-tests.ts && npm run test:jest src/Application/Sudoku/sudoku-solver-tests.ts",
+        "test:src": "npm run test:part1 && npm run test:part2 && npm run test:part3",
+        "test:watch": "jest --watch",
+        "lint": "eslint ."
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "@types/chrome": "^0.1.32",
+        "@types/jest": "^30.0.0",
+        "@types/node": "^25.0.3",
+        "eslint": "^9.39.2",
+        "globals": "^16.5.0",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6",
+        "typescript-eslint": "^8.50.1"
+    },
+    "dependencies": {
+        "typescript": "^5.9.3"
+    }
+}
