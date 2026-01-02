@@ -3,7 +3,6 @@ from flask_cors import CORS
 import sys
 import os
 
-# Ensure we can import from root
 sys.path.append(os.getcwd())
 
 from Run.UrlPatternMatcher import UrlPatternMatcher
@@ -30,7 +29,6 @@ def solve_puzzle():
         return jsonify({"error": "Missing 'url' in request body"}), 400
 
     url = data['url']
-    # Input can be 'grid' (list of lists) or 'data' (generic object)
     grid_matrix = data.get('grid')
     raw_data = data.get('data')
     extra_data = data.get('extra_data', [])
@@ -39,25 +37,19 @@ def solve_puzzle():
         return jsonify({"error": "Missing 'grid' or 'data' in request body"}), 400
 
     try:
-        # 1. Identify Solver Class using the URL pattern
         try:
             components = GameRegistry.get_components_for_url(url)
             solver_class = components[0]
         except ValueError:
              return jsonify({"error": "Unknown URL pattern or puzzle type"}), 404
 
-        # 2. Prepare Game Data
         if raw_data is not None:
-            # If raw data is provided, use it directly (e.g. dict for Akari)
             game_data = raw_data
         else:
-            # Construct Grid
             grid = Grid(grid_matrix)
             if extra_data:
-                # Handle nested Grids in extra_data
                 processed_extra_data = []
                 for item in extra_data:
-                    # Heuristic: if item looks like a matrix, make it a Grid
                     if isinstance(item, list) and len(item) > 0 and isinstance(item[0], list):
                         processed_extra_data.append(Grid(item))
                     else:
@@ -66,34 +58,26 @@ def solve_puzzle():
             else:
                 game_data = grid
 
-        # 3. Instantiate Solver
         solver = GameComponentFactory.create_solver(solver_class, game_data)
-
-        # 4. Solve
         solution = solver.get_solution()
-
-        # 5. Return result
         if solution is None:
              return jsonify({"status": "no_solution"}), 200
 
         if hasattr(solution, 'is_empty') and solution.is_empty():
             return jsonify({"status": "no_solution"}), 200
 
-        # Handle cases where solution might not be a Grid (though GameSolver says it should be)
         if hasattr(solution, 'matrix'):
             return jsonify({
                 "status": "solved",
                 "solution": solution.matrix
             })
         else:
-            # Fallback for non-standard return types
             return jsonify({
                 "status": "solved",
                 "solution": str(solution)
             })
 
     except Exception as e:
-        # Log the error (optional) and return 500
         print(f"Error solving puzzle: {e}")
         import traceback
         traceback.print_exc()
