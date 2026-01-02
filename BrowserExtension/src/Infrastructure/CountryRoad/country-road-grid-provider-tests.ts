@@ -24,8 +24,8 @@ describe('CountryRoadGridProvider Tests', () => {
         const { clues, regions } = CountryRoadGridProvider.getGridFromHTML(html);
 
         const expectedClues = [
-            [2, 0],
-            [0, 1]
+            [2, null],
+            [null, 1]
         ];
 
         const expectedRegions = [
