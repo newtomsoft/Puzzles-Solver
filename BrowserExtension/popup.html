@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Masyu Solver</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 10px;
+            min-width: 250px;
+        }
+
+        #solutionContainer {
+            display: none;
+            position: relative;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        pre {
+            margin: 0;
+            font-family: monospace;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <button id="solveBtn">Résoudre un problème</button>
+
+    <div id="solutionContainer">
+        <button id="closeBtn">×</button>
+        <pre id="output"></pre>
+    </div>
+
+    <script src="libs/z3-built.js"></script>
+    <script src="libs/z3-bundle.js"></script>
+    <script type="module" src="src/Infrastructure/EntryPoints/popup.js"></script>
+</body>
+</html>

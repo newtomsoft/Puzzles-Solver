@@ -1,0 +1,28 @@
+meta {
+  name: Solve Aquarium
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-aquarium.com/",
+    "grid": [
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0]
+    ],
+    "extra_data": [
+      [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+meta {
+  name: Solve Skyscrapers
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-skyscrapers.com/",
+    "grid": [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0]
+    ],
+    "extra_data": [
+      {
+        "top": [1, 2, 3, 4],
+        "bottom": [4, 3, 2, 1],
+        "left": [1, 2, 3, 4],
+        "by_est": [4, 3, 2, 1]
+      }
+    ]
+  }
+}
