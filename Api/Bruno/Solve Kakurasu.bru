@@ -1,0 +1,23 @@
+meta {
+  name: Solve Kakurasu
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-kakurasu.com/",
+    "data": {
+      "top": [1, 2, 3, 4],
+      "side": [1, 2, 3, 4],
+      "rows_number": 4,
+      "columns_number": 4
+    }
+  }
+}

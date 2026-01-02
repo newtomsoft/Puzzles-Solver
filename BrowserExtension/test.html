@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <div id="output"></div>
+    <script>
+        window.onerror = function (message, source, lineno, colno, error) {
+            document.getElementById('output').innerText = 'Global Error: ' + message + '\n' + (error ? error.stack : '');
+        };
+    </script>
+    <script src="libs/z3-built.js"></script>
+    <script src="libs/z3-bundle.js"></script>
+    <script>
+        async function run() {
+            try {
+                const output = document.getElementById('output');
+                output.innerText = 'Initializing...';
+                console.log('Starting Z3 init');
+                // Z3 is now on globalThis
+                const { Context } = await globalThis.Z3();
+                console.log('Z3 init done');
+                const ctx = new Context('main');
+                console.log('Context created');
+                const x = ctx.Int.const('x');
+                const y = ctx.Int.const('y');
+                const solver = new ctx.Solver();
+                solver.add(x.gt(2));
+                solver.add(y.lt(10));
+                solver.add(x.add(y).eq(25));
+                const result = await solver.check();
+                console.log('Result:', result);
+                if (result === 'sat') {
+                    const model = solver.model();
+                    const xVal = model.eval(x);
+                    const yVal = model.eval(y);
+                    output.innerText = `Success: x=${xVal}, y=${yVal}`;
+                } else {
+                    output.innerText = 'Unsat';
+                }
+            } catch (e) {
+                document.getElementById('output').innerText = 'Error: ' + e.message + '\n' + e.stack;
+                console.error(e);
+            }
+        }
+        run();
+    </script>
+</body>
+
+</html>
