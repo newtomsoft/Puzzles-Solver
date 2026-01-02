@@ -1,5 +1,5 @@
 export class CountryRoadGridProvider {
-    static getGridFromHTML(html: string): { clues: number[][], regions: number[][] } {
+    static getGridFromHTML(html: string): { clues: (number | null)[][], regions: number[][] } {
         const sizeMatch = html.match(/gpl\.([Ss]ize)\s*=\s*(\d+);/);
         if (!sizeMatch) throw new Error("Could not find gpl.Size");
         const size = parseInt(sizeMatch[2], 10);
@@ -46,13 +46,13 @@ export class CountryRoadGridProvider {
         const ar = atob(arMatch[1].substring(3));
         const ab = atob(abMatch[1].substring(3));
 
-        const clues: number[][] = [];
+        const clues: (number | null)[][] = [];
         let pqqList: string[];
         const splitPipe = pqq.split('|');
         pqqList = splitPipe.length === size || splitPipe.length === size * size ? splitPipe : pqq.split('');
 
         for (let r = 0; r < size; r++) {
-            const row: number[] = [];
+            const row: (number | null)[] = [];
             for (let c = 0; c < size; c++) {
                 const index = r * size + c;
                 let valStr = "";
@@ -60,11 +60,11 @@ export class CountryRoadGridProvider {
                     valStr = pqqList[index];
                 }
 
-                let val = 0; // Empty/No Clue. In Country Road, clues are > 0.
+                let val: number | null = null; // Empty/No Clue
                 if (valStr >= '0' && valStr <= '9') {
                     val = parseInt(valStr, 10);
                 } else if (valStr === '.') {
-                    val = 0;
+                    val = null;
                 }
                 row.push(val);
             }

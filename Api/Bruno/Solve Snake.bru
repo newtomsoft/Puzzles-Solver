@@ -1,0 +1,85 @@
+meta {
+  name: Solve Snake
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/snake/3jzyo",
+    "grid": [
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "extra_data": [
+      [
+        5,
+        1,
+        1,
+        1,
+        4,
+        3
+      ],
+      [
+        5,
+        2,
+        2,
+        3,
+        2,
+        1
+      ]
+    ]
+  }
+}

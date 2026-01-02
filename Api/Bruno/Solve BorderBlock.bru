@@ -1,0 +1,67 @@
+meta {
+  name: Solve Binairo
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://www.puzzle-binairo.com/",
+    "grid": [
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ]
+    ]
+  }
+}

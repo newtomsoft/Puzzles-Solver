@@ -40,62 +40,36 @@ document.getElementById('solveBtn')!.onclick = async () => {
         updateStatus(`Type detected: ${puzzleType}. Extracting grid...`, output);
 
         const extractionResult = handler.extract(html, url);
-        const grid = extractionResult.grid;
-
         await showScrapedOverlay(tab.id, puzzleType, extractionResult);
 
-        updateStatus('Initialisation de Z3...', output);
-        const z3 = await initZ3();
-        if (!z3) {
-            updateStatus("La bibliothèque Z3 n'a pas été chargée. Vérifiez les scripts dans popup.html.", output);
-            return;
-        }
-
-        const ctx = new z3.Context('main');
-        updateStatus(`Solving ${puzzleType}...`, output);
-
-        const solution = await handler.solve(ctx, extractionResult);
+        updateStatus(`Solving ${puzzleType} via API...`, output);
+        const solution = await handler.solve(extractionResult);
 
         if (solution) {
             const solutionText = handler.getSolutionDisplay(puzzleType, extractionResult, solution);
             await showSolutionOverlay(tab.id, solutionText);
 
             if (puzzleType !== 'sudoku') {
-                const orderedPath = handler.getOrderedPath(extractionResult.solverInstance, solution); 
+                const orderedPath = handler.getOrderedPath(null, solution);
                 const blackCells = handler.getBlackCells(solution) || [];
-                await injectPlayLogic(tab.id, orderedPath, blackCells, grid.length);
+                const solutionMatrix = solution.matrix || (Array.isArray(solution) && Array.isArray(solution[0]) ? solution : null);
+                const rows = (extractionResult.grid && extractionResult.grid.length) ||
+                    (extractionResult.data && extractionResult.data.rows_number) ||
+                    (solutionMatrix && solutionMatrix.length) || 0;
+                await injectPlayLogic(tab.id, orderedPath, blackCells, rows);
             }
-            updateStatus("Solution affichée !", output);
+            updateStatus("Solution displayed!", output);
         } else {
             updateStatus("No solution found.", output);
         }
     } catch (e: any) {
-        updateStatus('Erreur: ' + e.message, output);
+        updateStatus('Error: ' + e.message, output);
         console.error(e);
     }
 };
 
 function updateStatus(message: string, output: HTMLDivElement) {
     output.textContent = message;
-}
-
-async function initZ3() {
-    if (!(window as any).Z3) return null;
-    const z3 = await (window as any).Z3();
-    try { z3.setParam('parallel.enable', 'false'); } catch (e) { }
-
-    if (z3.em && typeof z3.em.ccall === 'function') {
-        const intArrayToByteArr = (ints: number[]) => new Uint8Array(new Uint32Array(ints).buffer);
-        z3.Z3.solver_check = function (c: number, s: number) {
-            return z3.em.ccall("Z3_solver_check", "number", ["number", "number"], [c, s]);
-        };
-        z3.Z3.solver_check_assumptions = function (c: number, s: number, assumptions: number[]) {
-            return z3.em.ccall("Z3_solver_check_assumptions", "number", ["number", "number", "number", "array"], [
-                c, s, assumptions.length, intArrayToByteArr(assumptions)
-            ]);
-        };
-    }
-    return z3;
 }
 
 async function showScrapedOverlay(tabId: number, puzzleType: string, extractionResult: any) {
@@ -108,8 +82,14 @@ async function showScrapedOverlay(tabId: number, puzzleType: string, extractionR
     if (extractionResult.regions) {
         scrapedDisplay += "Clues:\n" + format2D(extractionResult.clues) + "\n\n";
         scrapedDisplay += "Regions:\n" + format2D(extractionResult.regions);
-    } else {
+    } else if (extractionResult.data && extractionResult.data.black_cells) {
+        scrapedDisplay += `Akari Grid (${extractionResult.data.rows_number}x${extractionResult.data.columns_number})\n`;
+        scrapedDisplay += `Black Cells: ${extractionResult.data.black_cells.length}\n`;
+        scrapedDisplay += `Constraints: ${Object.keys(extractionResult.data.number_constraints).length}`;
+    } else if (extractionResult.grid) {
         scrapedDisplay += "Grid:\n" + format2D(extractionResult.grid);
+    } else {
+        scrapedDisplay += "Extraction delegated to backend (no local preview).";
     }
 
     await chrome.scripting.executeScript({

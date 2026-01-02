@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from ortools.sat.python import cp_model
@@ -13,7 +14,16 @@ class AkariSolver(GameSolver):
         self.rows_number = self._data_game['rows_number']
         self.columns_number = self._data_game['columns_number']
         self._black_cells = {Position(r, c) for r, c in self._data_game['black_cells']}
-        self._number_constraints = {Position(r, c): v for (r, c), v in self._data_game['number_constraints'].items()}
+        self._number_constraints = {}
+        for k, v in self._data_game['number_constraints'].items():
+            if isinstance(k, str):
+                # Handle "(r, c)" or "r,c" formatted string keys from JSON
+                match = re.search(r'\(?(\d+),\s*(\d+)\)?', k)
+                if match:
+                    pos = Position(int(match.group(1)), int(match.group(2)))
+                    self._number_constraints[pos] = v
+            else:
+                self._number_constraints[Position(k[0], k[1])] = v
 
         if self.rows_number < 7 or self.columns_number < 7:
             raise ValueError("Akari grid must be at least 7x7")

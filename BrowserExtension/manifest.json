@@ -23,18 +23,10 @@
     "activeTab",
     "scripting"
   ],
+  "host_permissions": [
+    "http://localhost/*"
+  ],
   "content_security_policy": {
-    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self' 'blob:'"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "libs/z3-built.wasm",
-        "libs/z3-built.js"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    }
-  ]
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }

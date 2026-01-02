@@ -12,7 +12,7 @@ class GridPuzzleGappyGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider)
         gaps_v = [self.extract_sum_value('vl', row_count, soup) for row_count in range(1, row_count + 1)]
         gaps_h = [self.extract_sum_value('ht', column_count, soup) for column_count in range(1, column_count + 1)]
 
-        return gaps_v, gaps_h
+        return [gaps_v, gaps_h]
 
     @staticmethod
     def extract_sum_value(name: str, column_count: int, soup: BeautifulSoup):

@@ -1,0 +1,43 @@
+meta {
+  name: Solve Arofuro
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/arofuro/375gk",
+    "grid": [
+      [
+        1,
+        null,
+        null,
+        3
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        5,
+        null,
+        null,
+        1
+      ]
+    ]
+  }
+}

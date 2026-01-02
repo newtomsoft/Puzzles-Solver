@@ -1,0 +1,28 @@
+meta {
+  name: Solve Lightup
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/solve
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "url": "https://gridpuzzle.com/lightup",
+    "data": {
+      "rows_number": 7,
+      "columns_number": 7,
+      "black_cells": [[1, 1], [1, 3], [3, 0], [3, 4]],
+      "number_constraints": {
+        "(1, 1)": 2,
+        "(1, 3)": 1,
+        "(3, 0)": 1,
+        "(3, 4)": 2
+      }
+    }
+  }
+}

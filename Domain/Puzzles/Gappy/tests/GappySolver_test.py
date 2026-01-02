@@ -24,7 +24,7 @@ class GappySolverTests(TestCase):
             [_, _, _, X, _, X, _, _, _],
             [_, X, _, _, _, _, _, X, _]
         ])
-        game_solver = GappySolver(rows_gaps, columns_gaps)
+        game_solver = GappySolver([rows_gaps, columns_gaps])
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -51,7 +51,7 @@ class GappySolverTests(TestCase):
             [_, _, _, _, _, _, X, _, _, _, _, _, _, X, _,],
             [_, _, _, X, _, _, _, _, _, _, _, X, _, _, _,]
         ])
-        game_solver = GappySolver(rows_gaps, columns_gaps)
+        game_solver = GappySolver([rows_gaps, columns_gaps])
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
@@ -81,7 +81,7 @@ class GappySolverTests(TestCase):
            [_, _, _, _, _, _, _, _, _, _, X, _, X, _, _, _, _, _],
            [_, _, _, _, X, _, X, _, _, _, _, _, _, _, _, _, _, _]
         ])
-        game_solver = GappySolver(rows_gaps, columns_gaps)
+        game_solver = GappySolver([rows_gaps, columns_gaps])
         solution = game_solver.get_solution()
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
