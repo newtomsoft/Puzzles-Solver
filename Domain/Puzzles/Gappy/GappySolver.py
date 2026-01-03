@@ -5,11 +5,11 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class GappySolver(GameSolver):
-    def __init__(self, rows_gaps: list[int], columns_gaps: list[int]):
-        self._rows_gaps = rows_gaps
-        self._columns_gaps = columns_gaps
-        self._rows_number = len(rows_gaps)
-        self._columns_number = len(columns_gaps)
+    def __init__(self, gaps: list[list[int]]):
+        self._rows_gaps = gaps[0]
+        self._columns_gaps = gaps[1]
+        self._rows_number = len(self._rows_gaps)
+        self._columns_number = len(self._columns_gaps)
         self._solver = Solver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
