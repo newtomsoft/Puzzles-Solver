@@ -11,6 +11,8 @@ import { MidloopHandler } from '../Midloop/midloop-handler.js';
 import { AkariHandler } from '../Akari/akari-handler.js';
 import { PythonProviderHandler } from './python-provider-handler.js';
 import { YajikabeHandler } from '../Yajikabe/yajikabe-handler.js';
+import { AquariumGridProvider } from '../PuzzlesMobile/Aquarium/aquarium-grid-provider.js';
+import { TapaGridProvider } from '../PuzzlesMobile/Tapa/tapa-grid-provider.js';
 
 export class PuzzleRegistry {
     private handlers: PuzzleHandler[] = [];
@@ -34,6 +36,24 @@ export class PuzzleRegistry {
 
     static createDefault(): PuzzleRegistry {
         const registry = new PuzzleRegistry();
+
+        // Puzzles Mobile Implementations
+        registry.register(new BasePuzzleHandler('aquarium', 'puzzle-aquarium.com', new AquariumGridProvider()));
+        registry.register(new BasePuzzleHandler('tapa', 'puzzle-tapa.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('nurikabe', 'puzzle-nurikabe.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('hitori', 'puzzle-hitori.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('heyawake', 'puzzle-heyawake.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('minesweeper', 'puzzle-minesweeper.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('binairo', 'puzzle-binairo.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('fillomino', 'puzzle-fillomino.com', new TapaGridProvider()));
+        registry.register(new BasePuzzleHandler('shakashaka', 'puzzle-shakashaka.com', new TapaGridProvider()));
+        // registry.register(new BasePuzzleHandler('tents', 'puzzle-tents.com', new TapaGridProvider())); // Tents usually has outside clues but TapaProvider might extract grid if clues are in grid? No, Tents has outside clues.
+        // Tents needs Aquarium-like provider (Outside clues + Grid).
+        registry.register(new BasePuzzleHandler('norinori', 'puzzle-norinori.com', new AquariumGridProvider())); // Regions
+        registry.register(new BasePuzzleHandler('starbattle', 'puzzle-star-battle.com', new AquariumGridProvider())); // Regions
+        registry.register(new BasePuzzleHandler('renkatsu', 'puzzle-renkatsu.com', new AquariumGridProvider())); // Regions
+
+        // Existing handlers
         registry.register(new KoburinHandler());
         registry.register(new DetourHandler());
         registry.register(new LinesweeperHandler());
