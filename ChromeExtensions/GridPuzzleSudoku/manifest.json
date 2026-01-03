@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "GridPuzzle Sudoku Solver",
+  "version": "1.0",
+  "description": "Solves Evil Sudoku puzzles on gridpuzzle.com",
+  "content_scripts": [
+    {
+      "matches": ["https://gridpuzzle.com/*sudoku*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}
