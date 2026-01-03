@@ -12,7 +12,7 @@ import { AkariHandler } from '../Akari/akari-handler.js';
 import { PythonProviderHandler } from './python-provider-handler.js';
 import { YajikabeHandler } from '../Yajikabe/yajikabe-handler.js';
 import { AquariumGridProvider } from '../PuzzlesMobile/Aquarium/aquarium-grid-provider.js';
-import { TapaGridProvider } from '../PuzzlesMobile/Tapa/tapa-grid-provider.js';
+import { PuzzlesMobileGridProvider } from '../PuzzlesMobile/Base/puzzles-mobile-grid-provider.js';
 
 export class PuzzleRegistry {
     private handlers: PuzzleHandler[] = [];
@@ -39,15 +39,15 @@ export class PuzzleRegistry {
 
         // Puzzles Mobile Implementations
         registry.register(new BasePuzzleHandler('aquarium', 'puzzle-aquarium.com', new AquariumGridProvider()));
-        registry.register(new BasePuzzleHandler('tapa', 'puzzle-tapa.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('nurikabe', 'puzzle-nurikabe.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('hitori', 'puzzle-hitori.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('heyawake', 'puzzle-heyawake.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('minesweeper', 'puzzle-minesweeper.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('binairo', 'puzzle-binairo.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('fillomino', 'puzzle-fillomino.com', new TapaGridProvider()));
-        registry.register(new BasePuzzleHandler('shakashaka', 'puzzle-shakashaka.com', new TapaGridProvider()));
-        // registry.register(new BasePuzzleHandler('tents', 'puzzle-tents.com', new TapaGridProvider())); // Tents usually has outside clues but TapaProvider might extract grid if clues are in grid? No, Tents has outside clues.
+        registry.register(new BasePuzzleHandler('tapa', 'puzzle-tapa.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('nurikabe', 'puzzle-nurikabe.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('hitori', 'puzzle-hitori.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('heyawake', 'puzzle-heyawake.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('minesweeper', 'puzzle-minesweeper.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('binairo', 'puzzle-binairo.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('fillomino', 'puzzle-fillomino.com', new PuzzlesMobileGridProvider()));
+        registry.register(new BasePuzzleHandler('shakashaka', 'puzzle-shakashaka.com', new PuzzlesMobileGridProvider()));
+        // registry.register(new BasePuzzleHandler('tents', 'puzzle-tents.com', new PuzzlesMobileGridProvider())); // Tents usually has outside clues but TapaProvider might extract grid if clues are in grid? No, Tents has outside clues.
         // Tents needs Aquarium-like provider (Outside clues + Grid).
         registry.register(new BasePuzzleHandler('norinori', 'puzzle-norinori.com', new AquariumGridProvider())); // Regions
         registry.register(new BasePuzzleHandler('starbattle', 'puzzle-star-battle.com', new AquariumGridProvider())); // Regions

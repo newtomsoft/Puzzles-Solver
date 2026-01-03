@@ -1,4 +1,4 @@
-import { PuzzlesMobileGridProvider } from "../Base/puzzles-mobile-grid-provider";
+import { PuzzlesMobileGridProvider } from "../Base/puzzles-mobile-grid-provider.js";
 
 export class AquariumGridProvider extends PuzzlesMobileGridProvider {
     protected parseDocument(doc: Document): { grid: any[][], regions?: any[][], extra?: any } {
@@ -92,7 +92,7 @@ export class AquariumGridProvider extends PuzzlesMobileGridProvider {
                 const leftIndex = r * size + (c - 1);
                 const leftCell = cells[leftIndex];
                 if (!leftCell.classList.contains('b-r')) {
-                     if (regions[r][c - 1] === -1) {
+                    if (regions[r][c - 1] === -1) {
                         regions[r][c - 1] = id;
                         stack.push([r, c - 1]);
                     }
@@ -104,7 +104,7 @@ export class AquariumGridProvider extends PuzzlesMobileGridProvider {
                 const upIndex = (r - 1) * size + c;
                 const upCell = cells[upIndex];
                 if (!upCell.classList.contains('b-b')) {
-                     if (regions[r - 1][c] === -1) {
+                    if (regions[r - 1][c] === -1) {
                         regions[r - 1][c] = id;
                         stack.push([r - 1, c]);
                     }

@@ -1,19 +1,12 @@
-import { GridProvider } from "../../Base/grid-provider";
-import { Grid } from "../../../Domain/grid";
+import { GridProvider } from "../../Base/grid-provider.js";
+import { Grid } from "../../../Domain/Base/grid.js";
 
 export class PuzzlesMobileGridProvider implements GridProvider {
-    public getGrid(): Grid {
+    public getGrid(): Grid<any> {
         const html = document.documentElement.outerHTML;
         const data = this.extract(html);
         const gridData = data.grid || [];
-        const size = gridData.length;
-        const grid = new Grid(size, size);
-        for(let r=0; r<size; r++) {
-            for(let c=0; c<size; c++) {
-                grid.setValue(r, c, gridData[r][c]);
-            }
-        }
-        return grid;
+        return new Grid(gridData);
     }
 
     public extract(html: string): { grid: any[][], regions?: any[][], extra?: any } {
