@@ -61,4 +61,5 @@ Thumbs.db
 
 # PyInstaller
 /build/
-/dist/
+/dist/BrowserExtension/node_modules
+BrowserExtension/node_modules/
