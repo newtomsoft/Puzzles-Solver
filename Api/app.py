@@ -9,6 +9,9 @@ from Run.UrlPatternMatcher import UrlPatternMatcher
 from Run.GameRegistry import GameRegistry
 from Run.GameComponentFactory import GameComponentFactory
 from Domain.Board.Grid import Grid
+from Domain.Board.Direction import Direction
+from Domain.Board.Position import Position
+from Domain.Board.IslandsGrid import IslandGrid
 
 app = Flask(__name__)
 CORS(app)
@@ -22,9 +25,7 @@ def get_patterns():
     patterns = list(GameRegistry.get_all_patterns().keys())
     return jsonify({"patterns": patterns})
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Position import Position
-from Domain.Board.IslandsGrid import IslandGrid
+
 
 def serialize_island_grid(grid):
     rows = grid.rows_number
