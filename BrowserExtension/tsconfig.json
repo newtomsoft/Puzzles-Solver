@@ -16,7 +16,12 @@
     "declaration": false,
     "sourceMap": true,
     "moduleResolution": "node16",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "types": [
+      "jest",
+      "chrome",
+      "node"
+    ]
   },
   "include": [
     "*.ts",

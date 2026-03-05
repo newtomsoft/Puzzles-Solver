@@ -69,6 +69,7 @@ export class PuzzleRegistry {
         registry.register(new PythonProviderHandler('yajilin', 'yajilin'));
         registry.register(new PythonProviderHandler('hashi', 'hashi'));
         registry.register(new PythonProviderHandler('galaxies', 'galaxies'));
+        registry.register(new PythonProviderHandler('rabbits-and-trees', 'rabbits-and-trees'));
         registry.register(new PythonProviderHandler('shingoki', 'shingoki'));
         registry.register(new YajikabeHandler());
 

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { MidloopHandler } from './midloop-handler.js';
 
 describe('MidloopHandler Detection', () => {

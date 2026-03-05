@@ -2,7 +2,7 @@ import { PuzzleRegistry } from '../Base/puzzle-registry.js';
 
 const registry = PuzzleRegistry.createDefault();
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
     if (message.action === 'SOLVE') {
         solvePuzzle(message.html, message.url)
             .then(result => sendResponse(result))

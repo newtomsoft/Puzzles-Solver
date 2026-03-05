@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { MasyuPlayer } from './masyu-player.js';
 import { Position } from '../../Domain/Base/position.js';
 

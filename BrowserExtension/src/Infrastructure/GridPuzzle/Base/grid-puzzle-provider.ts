@@ -1,4 +1,4 @@
-import { Grid } from "../../../Domain/Base/grid";
+import { Grid } from "../../../Domain/Base/grid.js";
 
 export class GridPuzzleProvider {
     static makeOpenedGrid(rowCount: number, columnCount: number, matrixCells: Element[]): Grid<Set<string>> {

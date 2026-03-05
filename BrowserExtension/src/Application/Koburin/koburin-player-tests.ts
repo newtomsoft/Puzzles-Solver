@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { KoburinPlayer } from './koburin-player.js';
 import { Position } from '../../Domain/Base/position.js';
 
