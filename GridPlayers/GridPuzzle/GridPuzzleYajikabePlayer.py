@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -13,4 +13,4 @@ class GridPuzzleYajikabePlayer(PlaywrightPlayer):
             await cells[position_index].click()
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

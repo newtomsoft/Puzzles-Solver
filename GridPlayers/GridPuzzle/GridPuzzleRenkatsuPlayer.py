@@ -22,7 +22,7 @@ class GridPuzzleRenkatsuPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         await self._draw_regions(cell_height, cell_width, page, pairs_positions, x0, y0)
 
         await self.close()
-        self._process_video(video, rectangle)
+        await self._process_video(video, rectangle)
 
     def _find_unique_different_pairs_positions(self) -> list[tuple[Position, Position]]:
         pairs: list[tuple[Position, Position]] = list()

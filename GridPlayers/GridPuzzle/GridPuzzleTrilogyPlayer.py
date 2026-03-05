@@ -1,4 +1,4 @@
-﻿from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleTrilogyPlayer(PlaywrightPlayer):
@@ -20,7 +20,7 @@ class GridPuzzleTrilogyPlayer(PlaywrightPlayer):
             await shape_div.click()
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)
 
     @staticmethod
     def _convert_to_shape(value: int):

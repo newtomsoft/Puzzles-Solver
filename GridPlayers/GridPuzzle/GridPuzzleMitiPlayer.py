@@ -13,5 +13,5 @@ class GridPuzzleMitiPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         # video, rectangle = self._get_data_video_viewport(page)
         # ... drawing logic ...
         # self.close()
-        # self._process_video(video, rectangle)
+        # await self._process_video(video, rectangle)
         pass

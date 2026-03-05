@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -16,4 +16,4 @@ class GridPuzzleStr8tsPlayer(PlaywrightPlayer):
             await page.keyboard.press(str(solution_value))
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

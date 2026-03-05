@@ -1,4 +1,4 @@
-﻿
+
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
@@ -14,7 +14,7 @@ class GridPuzzleCanvasMultiLoopsPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer)
         await self._draw_multi_loop(cell_height, cell_width, page, solution, x0, y0)
 
         await self.close()
-        self._process_video(video, rectangle)
+        await self._process_video(video, rectangle)
 
 
     async def _draw_multi_loop(self, cell_height, cell_width, page, solution: IslandGrid, x0, y0):

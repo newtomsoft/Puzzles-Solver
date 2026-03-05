@@ -14,7 +14,7 @@ class GridPuzzleMintonettePlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         await self._draw_paths(cell_height, cell_width, page, solution, x0, y0)
 
         await self.close()
-        self._process_video(video, rectangle)
+        await self._process_video(video, rectangle)
 
     async def _draw_paths(self, cell_height, cell_width, page, solution, x0, y0):
         start_positions = self._get_circles_starts(solution)

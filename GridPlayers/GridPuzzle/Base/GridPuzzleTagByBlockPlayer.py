@@ -1,4 +1,4 @@
-﻿from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
+from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
 class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
@@ -46,4 +46,4 @@ class GridPuzzleTagByBlockPlayer(PlaywrightPlayer):
                 await cells[index].click()
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

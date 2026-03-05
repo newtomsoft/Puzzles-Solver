@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.GridPuzzle.Base.GridPuzzleTagByBlockPlayer import GridPuzzleTagByBlockPlayer
 
@@ -19,4 +19,4 @@ class GridPuzzleTilePaintPlayer(GridPuzzleTagByBlockPlayer):
                 await cells[index].click()
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

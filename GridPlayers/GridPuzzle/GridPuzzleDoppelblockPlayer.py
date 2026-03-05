@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -20,4 +20,4 @@ class GridPuzzleDoppelblockPlayer(PlaywrightPlayer):
             else:
                 await page.keyboard.press(str(solution_value))
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)
