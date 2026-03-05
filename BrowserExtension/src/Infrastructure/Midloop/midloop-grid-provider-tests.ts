@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { MidloopGridProvider } from './midloop-grid-provider.js';
 import { MidloopCell } from '../../Domain/Midloop/midloop-constants.js';
 

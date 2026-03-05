@@ -11,7 +11,7 @@ if (hasCanvas && hasGpl) {
             btn.textContent = 'Solving...';
             try {
                 const html = document.documentElement.outerHTML;
-                const response = await chrome.runtime.sendMessage({ action: 'SOLVE', html, url: window.location.href });
+                const response: any = await chrome.runtime.sendMessage({ action: 'SOLVE', html, url: window.location.href });
                 if (response.success) {
                     btn.textContent = 'Solved!';
                     drawSolution(response.solutionPath, response.blackCells, response.rows);
