@@ -30,4 +30,4 @@ class GridPuzzleSudokuPlayer(PlaywrightPlayer):
             await page.keyboard.press(str(solution_value))
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

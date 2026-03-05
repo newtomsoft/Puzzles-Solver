@@ -14,7 +14,7 @@ from GridPlayers.Base.GridPlayer import GridPlayer
 
 
 class VideoFile(Protocol):
-    def path(self) -> str:
+    async def path(self) -> str:
         ...
 
 
@@ -148,7 +148,7 @@ class PlaywrightPlayer(GridPlayer):
         if video_file is None or rect is None:
             return None
         
-        video_path = video_file.path()
+        video_path = await video_file.path()
         await cls._crop_video(video_path, cls.game_name, rect, start_time)
         return video_path
 

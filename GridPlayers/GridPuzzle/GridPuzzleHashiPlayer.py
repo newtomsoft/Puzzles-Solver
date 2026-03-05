@@ -1,4 +1,4 @@
-﻿from Domain.Board.Direction import Direction
+from Domain.Board.Direction import Direction
 from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
@@ -24,4 +24,4 @@ class GridPuzzleHashiPlayer(PlaywrightPlayer):
                         await page.mouse.up()
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

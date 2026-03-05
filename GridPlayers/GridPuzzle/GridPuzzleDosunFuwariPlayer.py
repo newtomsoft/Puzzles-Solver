@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -15,4 +15,4 @@ class GridPuzzleDosunFuwariPlayer(PlaywrightPlayer):
             await cells[index].click(click_count=solution_value)
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

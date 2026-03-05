@@ -1,4 +1,4 @@
-﻿from Domain.Board.LinearPathGrid import LinearPathGrid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -15,4 +15,4 @@ class GridPuzzleNumberChainPlayer(PlaywrightPlayer):
         await page.mouse.up()
 
         await self.close()
-        self._process_video(video, rectangle)
+        await self._process_video(video, rectangle)

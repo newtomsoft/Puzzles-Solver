@@ -1,4 +1,4 @@
-﻿from Domain.Board.LinearPathGrid import LinearPathGrid
+from Domain.Board.LinearPathGrid import LinearPathGrid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -17,4 +17,4 @@ class ZipPlayer(PlaywrightPlayer):
             await self.mouse_click_on_position(page.mouse, solution, position, cells_divs)
 
         await self.close()
-        self._process_video(video, rectangle, 1.5)
+        await self._process_video(video, rectangle, 1.5)

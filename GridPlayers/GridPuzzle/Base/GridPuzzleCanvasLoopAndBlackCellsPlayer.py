@@ -1,4 +1,4 @@
-﻿from Domain.Board.IslandsGrid import IslandGrid
+from Domain.Board.IslandsGrid import IslandGrid
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
@@ -12,7 +12,7 @@ class GridPuzzleCanvasLoopAndBlackCellsPlayer(PlaywrightPlayer, GridPuzzleCanvas
         await self._draw_loop(cell_height, cell_width, page, solution, x0, y0)
 
         await self.close()
-        self._process_video(video, rectangle)
+        await self._process_video(video, rectangle)
 
     async def mark_black_cells(self, cell_height, cell_width, page, solution, x0, y0):
         for position in [position for position, value in solution if value == "■"]:

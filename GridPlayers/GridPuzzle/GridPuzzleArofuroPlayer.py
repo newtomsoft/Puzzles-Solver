@@ -28,4 +28,4 @@ class GridPuzzleArofuroPlayer(PlaywrightPlayer):
             await page.click(arrow_selector)
 
         await self.close()
-        self._process_video(video, rectangle, 0)
+        await self._process_video(video, rectangle, 0)

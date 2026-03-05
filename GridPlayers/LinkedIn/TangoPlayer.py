@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
@@ -20,4 +20,4 @@ class TangoPlayer(PlaywrightPlayer):
                 await cell.click(click_count=1 if value else 2)
 
         await self.close(delay_sec=5)
-        self._process_video(video, rectangle, 3)
+        await self._process_video(video, rectangle, 3)
