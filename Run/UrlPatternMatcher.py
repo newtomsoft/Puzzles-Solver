@@ -72,6 +72,7 @@ import Run.Games.RabbitsAndTreesConfig
 import Run.Games.RoundTripConfig
 import Run.Games.SeeThroughConfig
 import Run.Games.ShakashakaConfig
+import Run.Games.SheepAndWolvesConfig
 import Run.Games.ShikakuConfig
 import Run.Games.ShingokiConfig
 import Run.Games.ShirokuroConfig
@@ -190,6 +191,7 @@ class UrlPatternMatcher:
         Run.Games.RoundTripConfig.register()
         Run.Games.SeeThroughConfig.register()
         Run.Games.ShakashakaConfig.register()
+        Run.Games.SheepAndWolvesConfig.register()
         Run.Games.ShikakuConfig.register()
         Run.Games.ShirokuroConfig.register()
         Run.Games.ShingokiConfig.register()
