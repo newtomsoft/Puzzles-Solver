@@ -14,14 +14,6 @@
 # puzzles main list
 The different sizes and difficulties are handled
 
-## Puzzle Baron
-https://calcudoku.puzzlebaron.com/init2.php?sg=5&sd=3  
-https://campsites.puzzlebaron.com/init2.php?sg=5&sd=3  
-https://lasergrids.puzzlebaron.com/init2.php?sg=4&sd=3  
-https://numberlinks.puzzlebaron.com/init2.php?sg=7  
-https://starbattle.puzzlebaron.com/init2.php?sg=3  
-https://vectors.puzzlebaron.com/init2.php?sg=7  
-
 ## GridPuzzle
 https://gridpuzzle.com/balance-loop/evil-12  
 https://gridpuzzle.com/bodaburokku/evil-10  
@@ -84,11 +76,6 @@ https://gridpuzzle.com/wamuzu/size-12
 https://gridpuzzle.com/yajikabe/evil-12  
 https://gridpuzzle.com/yajilin/evil-12  
 
-## Linkedin
-https://www.linkedin.com/games/zip/  
-https://www.linkedin.com/games/queens/  
-https://www.linkedin.com/games/tango/  
-
 ## Puzzle Mobiles
 https://www.puzzle-aquarium.com/?size=8  
 https://www.puzzle-battleships.com/?size=7  
@@ -127,3 +114,16 @@ https://www.puzzle-tents.com/?size=7
 https://www.puzzle-thermometers.com/?size=6  
 https://www.puzzle-thermometers.com/?size=7  
 https://www.puzzle-yin-yang.com/?size=11   
+
+## Puzzle Baron
+https://calcudoku.puzzlebaron.com/init2.php?sg=5&sd=3  
+https://campsites.puzzlebaron.com/init2.php?sg=5&sd=3  
+https://lasergrids.puzzlebaron.com/init2.php?sg=4&sd=3  
+https://numberlinks.puzzlebaron.com/init2.php?sg=7  
+https://starbattle.puzzlebaron.com/init2.php?sg=3  
+https://vectors.puzzlebaron.com/init2.php?sg=7  
+
+## Linkedin
+https://www.linkedin.com/games/zip/  
+https://www.linkedin.com/games/queens/  
+https://www.linkedin.com/games/tango/  
