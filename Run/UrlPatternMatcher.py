@@ -33,6 +33,7 @@ import Run.Games.KakurasuConfig
 import Run.Games.KakuroConfig
 import Run.Games.KakuteruAnpuConfig
 import Run.Games.KanjoConfig
+import Run.Games.KazokuConfig
 import Run.Games.KemaruConfig
 import Run.Games.KenKenConfig
 import Run.Games.KillerSudokuConfig
@@ -150,6 +151,7 @@ class UrlPatternMatcher:
         Run.Games.KakuroConfig.register()
         Run.Games.KakuteruAnpuConfig.register()
         Run.Games.KanjoConfig.register()
+        Run.Games.KazokuConfig.register()
         Run.Games.KemaruConfig.register()
         Run.Games.KenKenConfig.register()
         Run.Games.KillerSudokuConfig.register()
