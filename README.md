@@ -59,6 +59,7 @@ https://gridpuzzle.com/regional-yajilin/evil-10
 https://gridpuzzle.com/renkatsu/size-6  
 https://gridpuzzle.com/round-trip/evil-12  
 https://gridpuzzle.com/seethrough/evil-10  
+https://gridpuzzle.com/sheep-and-wolves/evil-12  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
 https://gridpuzzle.com/starbattle/size-10  
