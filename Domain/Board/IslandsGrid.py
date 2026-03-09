@@ -9,7 +9,7 @@ class IslandGrid(Grid[Island]):
         super().__init__(input_matrix)
         self.islands: dict[Position, Island] = {}
         for position, island_or_bridges_number in self:
-            if isinstance(island_or_bridges_number, Island) and island_or_bridges_number.bridges_count != 0:
+            if isinstance(island_or_bridges_number, Island):
                 self.islands[position] = island_or_bridges_number
             elif isinstance(island_or_bridges_number, int) and island_or_bridges_number != 0:
                 self.islands[position] = Island(position, island_or_bridges_number)
@@ -142,6 +142,8 @@ class IslandGrid(Grid[Island]):
         position_and_bridges = self.islands[position].direction_position_bridges.values()
         next_positions = [position for position, bridges_count in position_and_bridges if bridges_count > 0 and position not in visited_positions]
         for current_position in next_positions:
+            if current_position not in self.islands:
+                continue
             new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
             if new_visited_positions != visited_positions:
                 return new_visited_positions
