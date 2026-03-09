@@ -15,10 +15,17 @@ class GridPuzzleMirukutiPlayer(PlaywrightPlayer, GridPuzzleCanvasPlayer):
         for biscuit_info in getattr(solution, 'biscuits', []):
             junction = biscuit_info['junction']
             for milk_pos in biscuit_info['milks']:
-                direction = milk_pos.direction_to(junction)
+                if milk_pos.r == junction.r: # horizontal
+                    start = milk_pos if milk_pos.c < junction.c else junction
+                    end = junction if milk_pos.c < junction.c else milk_pos
+                else: # vertical
+                    start = milk_pos if milk_pos.r < junction.r else junction
+                    end = junction if milk_pos.r < junction.r else milk_pos
+                
+                direction = start.direction_to(end)
                 if direction != Direction.none():
-                    dist = abs(milk_pos.r - junction.r) + abs(milk_pos.c - junction.c)
-                    curr = milk_pos
+                    dist = abs(start.r - end.r) + abs(start.c - end.c)
+                    curr = start
                     for _ in range(dist):
                         await self._trace_direction_from_position(curr, direction, page, cell_width, cell_height, x0, y0)
                         curr = curr.after(direction)
