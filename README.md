@@ -47,6 +47,7 @@ https://gridpuzzle.com/mid-loop/hard-12
 https://gridpuzzle.com/minesweeper/evil-12  
 https://gridpuzzle.com/mintonette/evil-15  
 https://gridpuzzle.com/mirukuti/size-15  
+https://gridpuzzle.com/miti/size-20  
 https://gridpuzzle.com/moonsun/evil-12  
 https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/neighbours/evil-12  
