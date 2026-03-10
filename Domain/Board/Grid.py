@@ -41,17 +41,18 @@ class Grid[T](GridBase[T]):
 
     @classmethod
     def from_str(cls, grid_str: str, element_type: type) -> 'Grid':
-        rows_number = grid_str.count('\n') + 1
-        columns_number = len(grid_str.split('\n')[0]) // 3
-        grid_str = grid_str.replace('\n', '')
-        matrix = [[Grid.get_element_type(r, c, columns_number, grid_str, element_type) for c in range(columns_number)] for r in range(rows_number)]
+        lines = grid_str.strip('\n').split('\n')
+        rows_number = len(lines)
+        columns_number = len(lines[0]) // 3
+        # Ensure each line is long enough
+        matrix = [[Grid.get_element_type(r, c, lines[r], element_type) for c in range(columns_number)] for r in range(rows_number)]
         return Grid(matrix)
 
     @classmethod
-    def get_element_type(cls, row: int, column: int, columns_number: int, grid_str, element_type :type) -> T:
-        column_ = 3 * (row * columns_number + column)
-        number_column_ = 3 * (row * columns_number + column + 1)
-        grid_element = grid_str[column_: number_column_]
+    def get_element_type(cls, row: int, column: int, grid_line, element_type: type) -> T:
+        column_ = 3 * column
+        number_column_ = 3 * (column + 1)
+        grid_element = grid_line[column_: number_column_]
         if grid_element is None:
             return None
         if is_integer(grid_element.strip()):
