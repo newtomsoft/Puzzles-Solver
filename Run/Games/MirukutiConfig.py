@@ -6,7 +6,7 @@ from Run.GameRegistry import GameRegistry
 
 def register():
     GameRegistry.register(
-        r"https://.*gridpuzzle\.com/mirukuti",
+        r"https://.*gridpuzzle\.com/mirukuti$",
         GridPuzzleMirukutiGridProvider,
         GridPuzzleMirukutiPlayer
     )(MirukutiSolver)
