@@ -53,6 +53,7 @@ import Run.Games.MinesweeperConfig
 import Run.Games.MinesweeperMosaicConfig
 import Run.Games.MintonetteConfig
 import Run.Games.MirukutiConfig
+import Run.Games.MirukutiTeaseConfig
 import Run.Games.MitiConfig
 import Run.Games.MoonsunConfig
 import Run.Games.NanroConfig
@@ -175,6 +176,7 @@ class UrlPatternMatcher:
         Run.Games.MinesweeperMosaicConfig.register()
         Run.Games.MintonetteConfig.register()
         Run.Games.MirukutiConfig.register()
+        Run.Games.MirukutiTeaseConfig.register()
         Run.Games.MitiConfig.register()
         Run.Games.MoonsunConfig.register()
         Run.Games.NanroConfig.register()
