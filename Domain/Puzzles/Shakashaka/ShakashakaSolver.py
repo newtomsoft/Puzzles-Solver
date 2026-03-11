@@ -31,12 +31,12 @@ class ShakashakaSolver(GameSolver):
         self._init_solver()
 
     def _init_solver(self):
-        self._grid_vars = Grid([[self._model.NewIntVar(ShakashakaCellType.WHITE_FULL, ShakashakaCellType.BLACK_FULL, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in
+        self._grid_vars = Grid([[self._model.new_int_var(ShakashakaCellType.WHITE_FULL, ShakashakaCellType.BLACK_FULL, f'cell_{r}_{c}') for c in range(self._columns_number)] for r in
                                 range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             self._previous_solution = self._build_solution_grid()
             return self._previous_solution
@@ -58,7 +58,7 @@ class ShakashakaSolver(GameSolver):
     def _build_solution_grid(self) -> Grid:
         solution_grid = Grid([[None] * self._columns_number for _ in range(self._rows_number)])
         for position, var in self._grid_vars:
-            val = self._solver.Value(var)
+            val = self._solver.value(var)
             solution_grid[position] = ShakashakaCellType(int(val))
         return solution_grid
 
@@ -72,9 +72,9 @@ class ShakashakaSolver(GameSolver):
     def _add_fixed_cell_constraints(self):
         for position, val in self._grid:
             if val != self.input_white:
-                self._model.Add(self._grid_vars[position] == ShakashakaCellType.BLACK_FULL)
+                self._model.add(self._grid_vars[position] == ShakashakaCellType.BLACK_FULL)
                 continue
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.BLACK_FULL)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.BLACK_FULL)
 
     def _add_triangle_connectivity_constraints(self):
         allowed_horizontal = []
@@ -96,15 +96,15 @@ class ShakashakaSolver(GameSolver):
         for position, var in self._grid_vars:
             right = self._grid_vars.neighbor_right(position)
             if right:
-                self._model.AddAllowedAssignments([var, self._grid_vars[right]], allowed_horizontal)
+                self._model.add_allowed_assignments([var, self._grid_vars[right]], allowed_horizontal)
 
         for position in self._grid_vars.edge_right_positions():
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_BR)
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_TR)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_BR)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_TR)
 
         for position in self._grid_vars.edge_left_positions():
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_BL)
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_TL)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_BL)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_TL)
 
         allowed_vertical = []
         for top in range(6):
@@ -125,15 +125,15 @@ class ShakashakaSolver(GameSolver):
         for position, var in self._grid_vars:
             down = self._grid_vars.neighbor_down(position)
             if down:
-                self._model.AddAllowedAssignments([var, self._grid_vars[down]], allowed_vertical)
+                self._model.add_allowed_assignments([var, self._grid_vars[down]], allowed_vertical)
 
         for position in self._grid_vars.edge_down_positions():
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_BR)
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_BL)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_BR)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_BL)
 
         for position in self._grid_vars.edge_up_positions():
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_TL)
-            self._model.Add(self._grid_vars[position] != ShakashakaCellType.WHITE_TR)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_TL)
+            self._model.add(self._grid_vars[position] != ShakashakaCellType.WHITE_TR)
 
         # Interdire le motif suivant (horizontal) sur deux lignes consécutives:
         # Ligne r   :    [0]...[0][2] (au moins un 0 entre les deux colonnes)
@@ -153,7 +153,7 @@ class ShakashakaSolver(GameSolver):
             up = self._grid_vars.neighbor_up(position)
             right = self._grid_vars.neighbor_right(position)
             if up and right:
-                self._model.AddAllowedAssignments([self._grid_vars[up], var, self._grid_vars[right]], allowed_p1)
+                self._model.add_allowed_assignments([self._grid_vars[up], var, self._grid_vars[right]], allowed_p1)
 
         allowed_p1_edge = []
         for t in range(6):
@@ -165,7 +165,7 @@ class ShakashakaSolver(GameSolver):
         for position in self._grid_vars.edge_right_positions():
             up = self._grid_vars.neighbor_up(position)
             if up:
-                self._model.AddAllowedAssignments([self._grid_vars[up], self._grid_vars[position]], allowed_p1_edge)
+                self._model.add_allowed_assignments([self._grid_vars[up], self._grid_vars[position]], allowed_p1_edge)
 
         # Pattern 2: (Above=1, Cell=0) => Left=1
         allowed_p2 = []
@@ -180,7 +180,7 @@ class ShakashakaSolver(GameSolver):
             up = self._grid_vars.neighbor_up(position)
             left = self._grid_vars.neighbor_left(position)
             if up and left:
-                self._model.AddAllowedAssignments([self._grid_vars[up], var, self._grid_vars[left]], allowed_p2)
+                self._model.add_allowed_assignments([self._grid_vars[up], var, self._grid_vars[left]], allowed_p2)
 
         allowed_p2_edge = []
         for t in range(6):
@@ -192,7 +192,7 @@ class ShakashakaSolver(GameSolver):
         for position in self._grid_vars.edge_left_positions():
             up = self._grid_vars.neighbor_up(position)
             if up:
-                self._model.AddAllowedAssignments([self._grid_vars[up], self._grid_vars[position]], allowed_p2_edge)
+                self._model.add_allowed_assignments([self._grid_vars[up], self._grid_vars[position]], allowed_p2_edge)
 
         # Pattern 3: (Below=4, Cell=0) => Left=4
         allowed_p3 = []
@@ -207,7 +207,7 @@ class ShakashakaSolver(GameSolver):
             down = self._grid_vars.neighbor_down(position)
             left = self._grid_vars.neighbor_left(position)
             if down and left:
-                self._model.AddAllowedAssignments([self._grid_vars[down], var, self._grid_vars[left]], allowed_p3)
+                self._model.add_allowed_assignments([self._grid_vars[down], var, self._grid_vars[left]], allowed_p3)
 
         allowed_p3_edge = []
         for b in range(6):
@@ -219,7 +219,7 @@ class ShakashakaSolver(GameSolver):
         for position in self._grid_vars.edge_left_positions():
             down = self._grid_vars.neighbor_down(position)
             if down:
-                self._model.AddAllowedAssignments([self._grid_vars[down], self._grid_vars[position]], allowed_p3_edge)
+                self._model.add_allowed_assignments([self._grid_vars[down], self._grid_vars[position]], allowed_p3_edge)
 
         # Pattern 4: (Below=3, Cell=0) => Right=3
         allowed_p4 = []
@@ -234,7 +234,7 @@ class ShakashakaSolver(GameSolver):
             down = self._grid_vars.neighbor_down(position)
             right = self._grid_vars.neighbor_right(position)
             if down and right:
-                self._model.AddAllowedAssignments([self._grid_vars[down], var, self._grid_vars[right]], allowed_p4)
+                self._model.add_allowed_assignments([self._grid_vars[down], var, self._grid_vars[right]], allowed_p4)
 
         allowed_p4_edge = []
         for b in range(6):
@@ -246,28 +246,28 @@ class ShakashakaSolver(GameSolver):
         for position in self._grid_vars.edge_right_positions():
             down = self._grid_vars.neighbor_down(position)
             if down:
-                self._model.AddAllowedAssignments([self._grid_vars[down], self._grid_vars[position]], allowed_p4_edge)
+                self._model.add_allowed_assignments([self._grid_vars[down], self._grid_vars[position]], allowed_p4_edge)
 
     def _add_number_constraints(self):
         for position, val in [(pos, val) for pos, val in self._grid if val >= 0]:
             neighbors_var = []
             for neighbor_position in self._grid.neighbors_positions(position):
-                is_1 = self._model.NewBoolVar(f'is_1_{neighbor_position}')
-                is_2 = self._model.NewBoolVar(f'is_2_{neighbor_position}')
-                is_3 = self._model.NewBoolVar(f'is_3_{neighbor_position}')
-                is_4 = self._model.NewBoolVar(f'is_4_{neighbor_position}')
+                is_1 = self._model.new_bool_var(f'is_1_{neighbor_position}')
+                is_2 = self._model.new_bool_var(f'is_2_{neighbor_position}')
+                is_3 = self._model.new_bool_var(f'is_3_{neighbor_position}')
+                is_4 = self._model.new_bool_var(f'is_4_{neighbor_position}')
                 neighbor_var = self._grid_vars[neighbor_position]
-                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_BR).OnlyEnforceIf(is_1)
-                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_BR).OnlyEnforceIf(is_1.Not())
-                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_BL).OnlyEnforceIf(is_2)
-                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_BL).OnlyEnforceIf(is_2.Not())
-                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_TL).OnlyEnforceIf(is_3)
-                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_TL).OnlyEnforceIf(is_3.Not())
-                self._model.Add(neighbor_var == ShakashakaCellType.WHITE_TR).OnlyEnforceIf(is_4)
-                self._model.Add(neighbor_var != ShakashakaCellType.WHITE_TR).OnlyEnforceIf(is_4.Not())
+                self._model.add(neighbor_var == ShakashakaCellType.WHITE_BR).only_enforce_if(is_1)
+                self._model.add(neighbor_var != ShakashakaCellType.WHITE_BR).only_enforce_if(is_1.Not())
+                self._model.add(neighbor_var == ShakashakaCellType.WHITE_BL).only_enforce_if(is_2)
+                self._model.add(neighbor_var != ShakashakaCellType.WHITE_BL).only_enforce_if(is_2.Not())
+                self._model.add(neighbor_var == ShakashakaCellType.WHITE_TL).only_enforce_if(is_3)
+                self._model.add(neighbor_var != ShakashakaCellType.WHITE_TL).only_enforce_if(is_3.Not())
+                self._model.add(neighbor_var == ShakashakaCellType.WHITE_TR).only_enforce_if(is_4)
+                self._model.add(neighbor_var != ShakashakaCellType.WHITE_TR).only_enforce_if(is_4.Not())
                 neighbors_var.append(sum([is_1, is_2, is_3, is_4]))
 
-            self._model.Add(sum(neighbors_var) == val)
+            self._model.add(sum(neighbors_var) == val)
 
     def _add_vertex_constraints(self):
         allowed_vertex = []
@@ -310,14 +310,14 @@ class ShakashakaSolver(GameSolver):
                     get_var(r, c - 1),
                     get_var(r, c)
                 ]
-                self._model.AddAllowedAssignments(vars_list, allowed_vertex)
+                self._model.add_allowed_assignments(vars_list, allowed_vertex)
 
     def _new_bool_var_domain_check(self, var, allowed_values, name):
-        b = self._model.NewBoolVar(name)
+        b = self._model.new_bool_var(name)
         table = []
         for val in range(6):
             table.append((val, 1 if val in allowed_values else 0))
-        self._model.AddAllowedAssignments([var, b], table)
+        self._model.add_allowed_assignments([var, b], table)
         return b
 
     def _add_rectangularity_constraints(self):
@@ -387,10 +387,10 @@ class ShakashakaSolver(GameSolver):
                         clause3.extend(not_mid)
                         clause4.extend(not_mid)
 
-                    self._model.AddBoolOr(clause1)
-                    self._model.AddBoolOr(clause2)
-                    self._model.AddBoolOr(clause3)
-                    self._model.AddBoolOr(clause4)
+                    self._model.add_bool_or(clause1)
+                    self._model.add_bool_or(clause2)
+                    self._model.add_bool_or(clause3)
+                    self._model.add_bool_or(clause4)
 
         # [4;1] ⇒ à droite [3;2]
         allowed_vpair1 = []
@@ -409,7 +409,7 @@ class ShakashakaSolver(GameSolver):
             if down and right:
                 down_right = self._grid_vars.neighbor_right(down)
                 if down_right:
-                    self._model.AddAllowedAssignments([var, self._grid_vars[down], self._grid_vars[right], self._grid_vars[down_right]], allowed_vpair1)
+                    self._model.add_allowed_assignments([var, self._grid_vars[down], self._grid_vars[right], self._grid_vars[down_right]], allowed_vpair1)
 
         # [3;2] ⇒ à gauche [4;1]
         allowed_vpair2 = []
@@ -428,4 +428,4 @@ class ShakashakaSolver(GameSolver):
             if down and left:
                 down_left = self._grid_vars.neighbor_down(left)
                 if down_left:
-                    self._model.AddAllowedAssignments([var, self._grid_vars[down], self._grid_vars[left], self._grid_vars[down_left]], allowed_vpair2)
+                    self._model.add_allowed_assignments([var, self._grid_vars[down], self._grid_vars[left], self._grid_vars[down_left]], allowed_vpair2)

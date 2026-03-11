@@ -27,19 +27,19 @@ class StarBattleSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_vars = [[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
 
-        grid = Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def get_other_solution(self) -> Grid:
@@ -50,13 +50,13 @@ class StarBattleSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 var = self._grid_vars[r][c]
-                if self._solver.BooleanValue(var):
+                if self._solver.boolean_value(var):
                     current_vars.append(var.Not())
                 else:
                     current_vars.append(var)
-        self._model.AddBoolOr(current_vars)
+        self._model.add_bool_or(current_vars)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -64,7 +64,7 @@ class StarBattleSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self):
-         return Grid([[self._solver.Value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+         return Grid([[self._solver.value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def queen(self, position):
         return self._grid_vars[position.r][position.c]
@@ -77,18 +77,18 @@ class StarBattleSolver(GameSolver):
 
     def _add_constraint_queen_by_row(self):
         for r in range(self.rows_number):
-            self._model.Add(sum([self.queen(Position(r, c)) for c in range(self.columns_number)]) == self._stars_count_by_region_column_row)
+            self._model.add(sum([self.queen(Position(r, c)) for c in range(self.columns_number)]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_queen_by_column(self):
         for c in range(self.columns_number):
-            self._model.Add(sum([self.queen(Position(r, c)) for r in range(self.rows_number)]) == self._stars_count_by_region_column_row)
+            self._model.add(sum([self.queen(Position(r, c)) for r in range(self.rows_number)]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_queen_by_region(self):
         for region in self._regions.values():
-            self._model.Add(sum([self.queen(position) for position in region]) == self._stars_count_by_region_column_row)
+            self._model.add(sum([self.queen(position) for position in region]) == self._stars_count_by_region_column_row)
 
     def _add_constraint_no_adjacent_queen(self):
         for position, _ in self._grid:
             neighbors = self._grid.neighbors_positions(position, "diagonal")
             for neighbor in neighbors:
-                self._model.AddBoolOr([self.queen(position).Not(), self.queen(neighbor).Not()])
+                self._model.add_bool_or([self.queen(position).Not(), self.queen(neighbor).Not()])

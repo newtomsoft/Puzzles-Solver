@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -26,7 +26,7 @@ class AquariumSolver(GameSolver):
         self._previous_solution = None
 
     def get_solution(self) -> Grid:
-        self._grid_vars = Grid([[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -34,23 +34,23 @@ class AquariumSolver(GameSolver):
     def get_other_solution(self) -> Grid:
         previous_solution_literals = []
         for position, value in self._previous_solution:
-            temp_var = self._model.NewBoolVar(f"prev_{position.r}_{position.c}")
-            self._model.Add(self._grid_vars[position] == value).OnlyEnforceIf(temp_var)
-            self._model.Add(self._grid_vars[position] != value).OnlyEnforceIf(temp_var.Not())
+            temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
+            self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.AddBoolOr([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
 
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def _compute_solution(self):
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
             return Grid.empty()
 
-        grid = Grid([[self._solver.Value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -59,11 +59,11 @@ class AquariumSolver(GameSolver):
 
     def _add_sum_constraints(self):
         for i, row in enumerate(self._grid_vars.matrix):
-            self._model.Add(sum(row) == self.rows_water_numbers[i])
+            self._model.add(sum(row) == self.rows_water_numbers[i])
 
         for i in range(self.columns_number):
             column_vars = [self._grid_vars[Position(r, i)] for r in range(self.rows_number)]
-            self._model.Add(sum(column_vars) == self.columns_water_numbers[i])
+            self._model.add(sum(column_vars) == self.columns_water_numbers[i])
 
     def _add_aquariums_constraints(self):
         for positions in self._aquariums.values():
@@ -78,7 +78,7 @@ class AquariumSolver(GameSolver):
                 if len(positions) > 1:
                     first_cell = aquarium_row_cells[0]
                     for cell in aquarium_row_cells[1:]:
-                        self._model.Add(self._grid_vars[first_cell] == self._grid_vars[cell])
+                        self._model.add(self._grid_vars[first_cell] == self._grid_vars[cell])
 
                 row = aquarium_row_cells[0][0]
                 column = aquarium_row_cells[0][1]
@@ -92,6 +92,6 @@ class AquariumSolver(GameSolver):
                 up_cells = [position for position in positions if position[0] < row]
                 for up_cell in up_cells:
                     up_cell_var = self._grid_vars[up_cell]
-                    not_cell_var = self._model.NewBoolVar(f"not_cell_{row}_{column}")
+                    not_cell_var = self._model.new_bool_var(f"not_cell_{row}_{column}")
                     self._model.AddBoolXOr([cell_var, not_cell_var])
                     self._model.AddImplication(not_cell_var, up_cell_var.Not())

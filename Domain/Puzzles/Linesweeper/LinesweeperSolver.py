@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, Int, sat, ArithRef, Or
+from z3 import Solver, Not, And, Int, sat, ArithRef, Or
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid

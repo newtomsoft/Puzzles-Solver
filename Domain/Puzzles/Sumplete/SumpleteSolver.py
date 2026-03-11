@@ -26,14 +26,14 @@ class SumpleteSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number - 1)] for r in range(self.rows_number - 1)]
+        self._grid_vars = [[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number - 1)] for r in range(self.rows_number - 1)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return None
@@ -48,13 +48,13 @@ class SumpleteSolver(GameSolver):
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
                 var = self._grid_vars[r][c]
-                if self._solver.BooleanValue(var):
+                if self._solver.boolean_value(var):
                     current_vars.append(var.Not())
                 else:
                     current_vars.append(var)
-        self._model.AddBoolOr(current_vars)
+        self._model.add_bool_or(current_vars)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -63,7 +63,7 @@ class SumpleteSolver(GameSolver):
 
     def _compute_solution(self) -> Grid:
         # Return N-1 x N-1 grid of Booleans
-        grid = Grid([[True if self._solver.Value(self._grid_vars[i][j]) else False
+        grid = Grid([[True if self._solver.value(self._grid_vars[i][j]) else False
                       for j in range(self.columns_number - 1)]
                      for i in range(self.rows_number - 1)])
         return grid
@@ -74,8 +74,8 @@ class SumpleteSolver(GameSolver):
 
     def _add_rows_constraints(self):
         for r in range(self.rows_number - 1):
-            self._model.Add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for c in range(self.columns_number - 1)]) == self._target_rows[r])
+            self._model.add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for c in range(self.columns_number - 1)]) == self._target_rows[r])
 
     def _add_columns_constraints(self):
         for c in range(self.columns_number - 1):
-            self._model.Add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for r in range(self.rows_number - 1)]) == self._target_columns[c])
+            self._model.add(sum([self._grid.value(r, c) * self._grid_vars[r][c] for r in range(self.rows_number - 1)]) == self._target_columns[c])

@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -17,7 +17,7 @@ class SnakeSolver(GameSolver):
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
-        self._grid_vars = Grid([[self._model.NewIntVar(0, 1, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(0, 1, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -28,13 +28,13 @@ class SnakeSolver(GameSolver):
 
         previous_solution_literals = []
         for position, value in self._previous_solution:
-            temp_var = self._model.NewBoolVar(f"prev_{position.r}_{position.c}")
-            self._model.Add(self._grid_vars[position] == value).OnlyEnforceIf(temp_var)
-            self._model.Add(self._grid_vars[position] != value).OnlyEnforceIf(temp_var.Not())
+            temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
+            self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.AddBoolOr([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
 
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -44,12 +44,12 @@ class SnakeSolver(GameSolver):
         max_attempts = 1000000
 
         while attempted_solutions_number <= max_attempts:
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
 
             if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
                 return Grid.empty()
 
-            attempt = Grid([[self._solver.Value(self._grid_vars[i, j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+            attempt = Grid([[self._solver.value(self._grid_vars[i, j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
             if attempt.enlarge(value=0, top=1, left=1, bottom=1, right=1).are_all_cells_connected():
                 print(f"Found solution in {attempted_solutions_number} attempts")
@@ -57,13 +57,13 @@ class SnakeSolver(GameSolver):
 
             solution_literals = []
             for position, value in attempt:
-                temp_var = self._model.NewBoolVar(f"attempt_{attempted_solutions_number}_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] == value).OnlyEnforceIf(temp_var)
-                self._model.Add(self._grid_vars[position] != value).OnlyEnforceIf(temp_var.Not())
+                temp_var = self._model.new_bool_var(f"attempt_{attempted_solutions_number}_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
+                self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
                 solution_literals.append(temp_var)
 
             if solution_literals:
-                self._model.AddBoolOr([lit.Not() for lit in solution_literals])
+                self._model.add_bool_or([lit.Not() for lit in solution_literals])
 
             attempted_solutions_number += 1
 
@@ -77,32 +77,32 @@ class SnakeSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position in [position for position, value in self._grid if value == 1]:
-            self._model.Add(self._grid_vars[position] == 1)
+            self._model.add(self._grid_vars[position] == 1)
 
     def _add_cells_row_sum_constraints(self):
         for row_index, row_sum in [(row_index, row_sum) for row_index, row_sum in enumerate(self._row_sums) if row_sum >= 0]:
-            self._model.Add(sum([self._grid_vars[row_index, c] for c in range(self.columns_number)]) == row_sum)
+            self._model.add(sum([self._grid_vars[row_index, c] for c in range(self.columns_number)]) == row_sum)
 
     def _add_cells_column_sum_constraints(self):
         for column_index, column_sum in [(column_index, column_sum) for column_index, column_sum in enumerate(self._column_sums) if column_sum >= 0]:
-            self._model.Add(sum([self._grid_vars[r, column_index] for r in range(self.rows_number)]) == column_sum)
+            self._model.add(sum([self._grid_vars[r, column_index] for r in range(self.rows_number)]) == column_sum)
 
     def _add_neighbors_count_constraints(self):
         start_or_end_value = 1
         for position, position_value in self._grid:
             neighbor_equality_vars = []
             for neighbor_position in self._grid.neighbors_positions(position):
-                equality_var = self._model.NewBoolVar(f"eq_{position}_{neighbor_position}")
-                self._model.Add(self._grid_vars[position] == self._grid_vars[neighbor_position]).OnlyEnforceIf(equality_var)
-                self._model.Add(self._grid_vars[position] != self._grid_vars[neighbor_position]).OnlyEnforceIf(equality_var.Not())
+                equality_var = self._model.new_bool_var(f"eq_{position}_{neighbor_position}")
+                self._model.add(self._grid_vars[position] == self._grid_vars[neighbor_position]).only_enforce_if(equality_var)
+                self._model.add(self._grid_vars[position] != self._grid_vars[neighbor_position]).only_enforce_if(equality_var.Not())
                 neighbor_equality_vars.append(equality_var)
 
             if position_value == start_or_end_value:
-                self._model.Add(sum(neighbor_equality_vars) == 1)
+                self._model.add(sum(neighbor_equality_vars) == 1)
                 continue
 
-            cell_is_one = self._model.NewBoolVar(f"cell_is_one_{position}")
-            self._model.Add(self._grid_vars[position] == 1).OnlyEnforceIf(cell_is_one)
-            self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(cell_is_one.Not())
+            cell_is_one = self._model.new_bool_var(f"cell_is_one_{position}")
+            self._model.add(self._grid_vars[position] == 1).only_enforce_if(cell_is_one)
+            self._model.add(self._grid_vars[position] == 0).only_enforce_if(cell_is_one.Not())
 
-            self._model.Add(sum(neighbor_equality_vars) == 2).OnlyEnforceIf(cell_is_one)
+            self._model.add(sum(neighbor_equality_vars) == 2).only_enforce_if(cell_is_one)

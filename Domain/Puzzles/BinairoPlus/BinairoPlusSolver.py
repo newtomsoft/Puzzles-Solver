@@ -23,14 +23,14 @@ class BinairoPlusSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_vars = [[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -45,13 +45,13 @@ class BinairoPlusSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 var = self._grid_vars[r][c]
-                if self._solver.BooleanValue(var):
+                if self._solver.boolean_value(var):
                     current_vars.append(var.Not())
                 else:
                     current_vars.append(var)
-        self._model.AddBoolOr(current_vars)
+        self._model.add_bool_or(current_vars)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -59,7 +59,7 @@ class BinairoPlusSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        grid = Grid([[1 if self._solver.Value(self._grid_vars[i][j]) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[1 if self._solver.value(self._grid_vars[i][j]) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constraints(self):
@@ -72,17 +72,17 @@ class BinairoPlusSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._grid.value(r, c) == 0:
-                    self._model.Add(self._grid_vars[r][c] == 0)
+                    self._model.add(self._grid_vars[r][c] == 0)
                 elif self._grid.value(r, c) == 1:
-                    self._model.Add(self._grid_vars[r][c] == 1)
+                    self._model.add(self._grid_vars[r][c] == 1)
 
     def _add_half_true_false_by_line_constraints(self):
         half_columns = self.columns_number // 2
         half_rows = self.rows_number // 2
         for r in range(self.rows_number):
-            self._model.Add(sum(self._grid_vars[r][c] for c in range(self.columns_number)) == half_columns)
+            self._model.add(sum(self._grid_vars[r][c] for c in range(self.columns_number)) == half_columns)
         for c in range(self.columns_number):
-            self._model.Add(sum(self._grid_vars[r][c] for r in range(self.rows_number)) == half_rows)
+            self._model.add(sum(self._grid_vars[r][c] for r in range(self.rows_number)) == half_rows)
 
     def _add_not_same_3_adjacent_constraints(self):
         for r in range(self.rows_number):
@@ -98,6 +98,6 @@ class BinairoPlusSolver(GameSolver):
 
     def _add_comparison_operators_constraints(self):
         for position0, position1 in self._comparisons_positions['equal']:
-            self._model.Add(self._grid_vars[position0.r][position0.c] == self._grid_vars[position1.r][position1.c])
+            self._model.add(self._grid_vars[position0.r][position0.c] == self._grid_vars[position1.r][position1.c])
         for position0, position1 in self._comparisons_positions['non_equal']:
-            self._model.Add(self._grid_vars[position0.r][position0.c] != self._grid_vars[position1.r][position1.c])
+            self._model.add(self._grid_vars[position0.r][position0.c] != self._grid_vars[position1.r][position1.c])

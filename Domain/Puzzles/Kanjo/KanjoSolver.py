@@ -64,15 +64,15 @@ class KanjoSolver(GameSolver):
 
     def _create_variables(self):
         rows, cols = self._rows_number, self._columns_number
-        self._h_arcs = [[self._model.NewBoolVar(f'h_{r}_{c}') for c in range(cols-1)] for r in range(rows)]
-        self._v_arcs = [[self._model.NewBoolVar(f'v_{r}_{c}') for c in range(cols)] for r in range(rows-1)]
+        self._h_arcs = [[self._model.new_bool_var(f'h_{r}_{c}') for c in range(cols-1)] for r in range(rows)]
+        self._v_arcs = [[self._model.new_bool_var(f'v_{r}_{c}') for c in range(cols)] for r in range(rows-1)]
         
-        self._loop_id = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_{r}_{c}') for c in range(cols)] for r in range(rows)]
-        self._loop_id_hor = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_h_{r}_{c}') for c in range(cols)] for r in range(rows)]
-        self._loop_id_ver = [[self._model.NewIntVar(0, self._loop_count - 1, f'id_v_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._loop_id = [[self._model.new_int_var(0, self._loop_count - 1, f'id_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._loop_id_hor = [[self._model.new_int_var(0, self._loop_count - 1, f'id_h_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._loop_id_ver = [[self._model.new_int_var(0, self._loop_count - 1, f'id_v_{r}_{c}') for c in range(cols)] for r in range(rows)]
         
-        self._is_deg2 = [[self._model.NewBoolVar(f'd2_{r}_{c}') for c in range(cols)] for r in range(rows)]
-        self._is_deg4 = [[self._model.NewBoolVar(f'd4_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._is_deg2 = [[self._model.new_bool_var(f'd2_{r}_{c}') for c in range(cols)] for r in range(rows)]
+        self._is_deg4 = [[self._model.new_bool_var(f'd4_{r}_{c}') for c in range(cols)] for r in range(rows)]
 
     def _add_constraints(self):
         rows, cols = self._rows_number, self._columns_number
@@ -88,9 +88,9 @@ class KanjoSolver(GameSolver):
                 degree = sum(edges)
                 
                 # Must be 2 or 4
-                self._model.Add(degree == 2).OnlyEnforceIf(self._is_deg2[r][c])
-                self._model.Add(degree == 4).OnlyEnforceIf(self._is_deg4[r][c])
-                self._model.Add(self._is_deg2[r][c] + self._is_deg4[r][c] == 1)
+                self._model.add(degree == 2).only_enforce_if(self._is_deg2[r][c])
+                self._model.add(degree == 4).only_enforce_if(self._is_deg4[r][c])
+                self._model.add(self._is_deg2[r][c] + self._is_deg4[r][c] == 1)
                 
         # 2. Clue Constraints
         for pos, clue_val in self._clues_by_positions.items():
@@ -98,9 +98,9 @@ class KanjoSolver(GameSolver):
             mapped_id = self._clue_map[clue_val]
             
             # Clues imply degree 2
-            self._model.Add(self._is_deg2[r][c] == 1)
+            self._model.add(self._is_deg2[r][c] == 1)
             # Clues imply loop_id
-            self._model.Add(self._loop_id[r][c] == mapped_id)
+            self._model.add(self._loop_id[r][c] == mapped_id)
 
         # 3. Pre-filled Bridges
         for r in range(rows):
@@ -112,7 +112,7 @@ class KanjoSolver(GameSolver):
                         is_bridge = (val == 1)
                         arc = self._get_arc_var(r, c, direction)
                         if arc is not None:
-                            self._model.Add(arc == is_bridge)
+                            self._model.add(arc == is_bridge)
 
         # 4. Loop ID Propagation
         for r in range(rows):
@@ -127,13 +127,13 @@ class KanjoSolver(GameSolver):
                     v_d4 = self._is_deg4[r][c+1]
                     
                     # u(2) - v(2)
-                    self._model.Add(self._loop_id[r][c] == self._loop_id[r][c+1]).OnlyEnforceIf([edge, u_d2, v_d2])
+                    self._model.add(self._loop_id[r][c] == self._loop_id[r][c+1]).only_enforce_if([edge, u_d2, v_d2])
                     # u(4) - v(2)
-                    self._model.Add(self._loop_id_hor[r][c] == self._loop_id[r][c+1]).OnlyEnforceIf([edge, u_d4, v_d2])
+                    self._model.add(self._loop_id_hor[r][c] == self._loop_id[r][c+1]).only_enforce_if([edge, u_d4, v_d2])
                     # u(2) - v(4)
-                    self._model.Add(self._loop_id[r][c] == self._loop_id_hor[r][c+1]).OnlyEnforceIf([edge, u_d2, v_d4])
+                    self._model.add(self._loop_id[r][c] == self._loop_id_hor[r][c+1]).only_enforce_if([edge, u_d2, v_d4])
                     # u(4) - v(4)
-                    self._model.Add(self._loop_id_hor[r][c] == self._loop_id_hor[r][c+1]).OnlyEnforceIf([edge, u_d4, v_d4])
+                    self._model.add(self._loop_id_hor[r][c] == self._loop_id_hor[r][c+1]).only_enforce_if([edge, u_d4, v_d4])
 
                 # Vertical Connection (Down)
                 if r < rows - 1:
@@ -145,18 +145,18 @@ class KanjoSolver(GameSolver):
                     v_d4 = self._is_deg4[r+1][c]
                     
                     # u(2) - v(2)
-                    self._model.Add(self._loop_id[r][c] == self._loop_id[r+1][c]).OnlyEnforceIf([edge, u_d2, v_d2])
+                    self._model.add(self._loop_id[r][c] == self._loop_id[r+1][c]).only_enforce_if([edge, u_d2, v_d2])
                     # u(4) - v(2)
-                    self._model.Add(self._loop_id_ver[r][c] == self._loop_id[r+1][c]).OnlyEnforceIf([edge, u_d4, v_d2])
+                    self._model.add(self._loop_id_ver[r][c] == self._loop_id[r+1][c]).only_enforce_if([edge, u_d4, v_d2])
                     # u(2) - v(4)
-                    self._model.Add(self._loop_id[r][c] == self._loop_id_ver[r+1][c]).OnlyEnforceIf([edge, u_d2, v_d4])
+                    self._model.add(self._loop_id[r][c] == self._loop_id_ver[r+1][c]).only_enforce_if([edge, u_d2, v_d4])
                     # u(4) - v(4)
-                    self._model.Add(self._loop_id_ver[r][c] == self._loop_id_ver[r+1][c]).OnlyEnforceIf([edge, u_d4, v_d4])
+                    self._model.add(self._loop_id_ver[r][c] == self._loop_id_ver[r+1][c]).only_enforce_if([edge, u_d4, v_d4])
 
     def _ensure_all_islands_grouped(self):
         propositions_count = 0
         while True:
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
             if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
                 return IslandGrid.empty(), propositions_count
             
@@ -203,7 +203,7 @@ class KanjoSolver(GameSolver):
                          constraints.append(self._v_arcs[r][c].Not())
                      else:
                          constraints.append(self._v_arcs[r][c])
-        self._model.AddBoolOr(constraints)
+        self._model.add_bool_or(constraints)
 
     def _exclude_loop_without_clue(self, loop):
         has_clue = not loop.isdisjoint(self._clues_by_positions.keys())
@@ -229,13 +229,13 @@ class KanjoSolver(GameSolver):
             for direction in Direction.orthogonal_directions():
                 arc = self._get_arc_var(r, c, direction)
                 if arc is not None:
-                    val = self._solver.Value(arc)
+                    val = self._solver.value(arc)
                     if val:
                         constraints.append(arc.Not())
                     else:
                         constraints.append(arc)
         
-        self._model.AddBoolOr(constraints)
+        self._model.add_bool_or(constraints)
 
     def _get_arc_var(self, r, c, direction):
         if direction == Direction.right():
@@ -255,16 +255,16 @@ class KanjoSolver(GameSolver):
                 pos = Position(r, c)
                 island = self._island_grid[pos]
                 
-                if c < self._columns_number - 1 and self._solver.Value(self._h_arcs[r][c]):
+                if c < self._columns_number - 1 and self._solver.value(self._h_arcs[r][c]):
                     island.set_bridge_to_direction(Direction.right(), 1)
 
-                if c > 0 and self._solver.Value(self._h_arcs[r][c-1]):
+                if c > 0 and self._solver.value(self._h_arcs[r][c-1]):
                     island.set_bridge_to_direction(Direction.left(), 1)
 
-                if r < self._rows_number - 1 and self._solver.Value(self._v_arcs[r][c]):
+                if r < self._rows_number - 1 and self._solver.value(self._v_arcs[r][c]):
                     island.set_bridge_to_direction(Direction.down(), 1)
 
-                if r > 0 and self._solver.Value(self._v_arcs[r-1][c]):
+                if r > 0 and self._solver.value(self._v_arcs[r-1][c]):
                     island.set_bridge_to_direction(Direction.up(), 1)
                 
                 island.set_bridges_count_according_to_directions_bridges()

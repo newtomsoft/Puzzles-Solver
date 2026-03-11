@@ -39,9 +39,9 @@ class MintonetteSolver(GameSolver):
 
     def _init_solver(self):
         self._grid_ortools = Grid(
-            [[{direction: self._model.NewBoolVar(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in
+            [[{direction: self._model.new_bool_var(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in
              range(self._rows_number)])
-        self._path_id_var_by_position = {position: self._model.NewIntVar(0, self._paths_count - 1, f"path_id_{position}") for position, _ in self._input_grid}
+        self._path_id_var_by_position = {position: self._model.new_int_var(0, self._paths_count - 1, f"path_id_{position}") for position, _ in self._input_grid}
         self._is_turn_var_by_position = {}
         self._add_constraints()
 
@@ -58,12 +58,12 @@ class MintonetteSolver(GameSolver):
 
     def _ensure_no_loop_solution(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._solver.Solve(self._model) in { cp_model.OPTIMAL, cp_model.FEASIBLE }:
+        while self._solver.solve(self._model) in { cp_model.OPTIMAL, cp_model.FEASIBLE }:
             proposition_count += 1
             self._init_island_grid()
             for position, direction_bridges in self._grid_ortools:
                 for direction, bridges in direction_bridges.items():
-                    bridges_number = 1 if self._solver.Value(bridges) else 0
+                    bridges_number = 1 if self._solver.value(bridges) else 0
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
@@ -93,7 +93,7 @@ class MintonetteSolver(GameSolver):
                 else:
                     no_clue_constraints.append(var.Not())
 
-        self._model.AddBoolOr([c.Not() for c in no_clue_constraints])
+        self._model.add_bool_or([c.Not() for c in no_clue_constraints])
 
     def _add_constraints(self):
         self._add_initials_constraints()
@@ -103,49 +103,49 @@ class MintonetteSolver(GameSolver):
 
     def _add_initials_constraints(self):
         for position in self._grid_ortools.edge_up_positions():
-            self._model.Add(self._grid_ortools[position][Direction.up()] == 0)
+            self._model.add(self._grid_ortools[position][Direction.up()] == 0)
         for position in self._grid_ortools.edge_down_positions():
-            self._model.Add(self._grid_ortools[position][Direction.down()] == 0)
+            self._model.add(self._grid_ortools[position][Direction.down()] == 0)
         for position in self._grid_ortools.edge_left_positions():
-            self._model.Add(self._grid_ortools[position][Direction.left()] == 0)
+            self._model.add(self._grid_ortools[position][Direction.left()] == 0)
         for position in self._grid_ortools.edge_right_positions():
-            self._model.Add(self._grid_ortools[position][Direction.right()] == 0)
+            self._model.add(self._grid_ortools[position][Direction.right()] == 0)
 
         for position, island in [(position, island) for position, island in self._input_grid if type(island) is Island and not island.has_no_bridge()]:
             for direction, (_, bridges) in island.direction_position_bridges.items():
-                self._model.Add(self._grid_ortools[position][direction] == (bridges == 1))
+                self._model.add(self._grid_ortools[position][direction] == (bridges == 1))
 
     def _add_opposite_constraints(self):
         for position, _ in self._grid_ortools:
             if position.up in self._grid_ortools:
-                self._model.Add(self._grid_ortools[position][Direction.up()] == self._grid_ortools[position.up][Direction.down()])
+                self._model.add(self._grid_ortools[position][Direction.up()] == self._grid_ortools[position.up][Direction.down()])
             if position.down in self._grid_ortools:
-                self._model.Add(self._grid_ortools[position][Direction.down()] == self._grid_ortools[position.down][Direction.up()])
+                self._model.add(self._grid_ortools[position][Direction.down()] == self._grid_ortools[position.down][Direction.up()])
             if position.left in self._grid_ortools:
-                self._model.Add(self._grid_ortools[position][Direction.left()] == self._grid_ortools[position.left][Direction.right()])
+                self._model.add(self._grid_ortools[position][Direction.left()] == self._grid_ortools[position.left][Direction.right()])
             if position.right in self._grid_ortools:
-                self._model.Add(self._grid_ortools[position][Direction.right()] == self._grid_ortools[position.right][Direction.left()])
+                self._model.add(self._grid_ortools[position][Direction.right()] == self._grid_ortools[position.right][Direction.left()])
 
     def _add_bridges_sum_constraints(self):
         for position, value in self._input_grid:
             if value == self.Empty:
-                self._model.Add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 2)
+                self._model.add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 2)
                 continue
-            self._model.Add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 1)
+            self._model.add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 1)
 
     def _add_candidates_paths_constraints(self):
         for clue_position, _ in self._turn_clues_by_positions.items():
             paths_constraints = []
             for path in self._compute_candidates_paths(clue_position):
-                path_active = self._model.NewBoolVar(f"path_active_{clue_position}_{len(paths_constraints)}")
+                path_active = self._model.new_bool_var(f"path_active_{clue_position}_{len(paths_constraints)}")
                 connects = []
                 for index, current_position in enumerate(path[:-1]):
                     next_position = path[index + 1]
                     direction = current_position.direction_to(next_position)
                     connects.append(self._grid_ortools[current_position][direction])
-                self._model.AddBoolAnd(connects).OnlyEnforceIf(path_active)
+                self._model.add_bool_and(connects).only_enforce_if(path_active)
                 paths_constraints.append(path_active)
-            self._model.AddBoolOr(paths_constraints)
+            self._model.add_bool_or(paths_constraints)
 
     def _compute_candidates_paths(self, start_node: Position) -> list[tuple]:
         value = self._input_grid[start_node]

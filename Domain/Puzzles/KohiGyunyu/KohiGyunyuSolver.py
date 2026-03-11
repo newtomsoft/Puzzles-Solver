@@ -52,7 +52,7 @@ class KohiGyunyuSolver(GameSolver):
             self._constraints_added = True
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
 
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             self._last_solver = solver
@@ -99,7 +99,7 @@ class KohiGyunyuSolver(GameSolver):
         circle_map = {pos: i for i, pos in enumerate(all_circles)}
 
         connections, adj = self._init_variables(num_grays, num_milks, num_coffees, num_circles, all_circles, circles_set)
-        circle_group = [self._model.NewIntVar(0, num_grays - 1, f"cg_{i}") for i in range(num_circles)]
+        circle_group = [self._model.new_int_var(0, num_grays - 1, f"cg_{i}") for i in range(num_circles)]
         self._circle_group_vars = circle_group
 
         self._add_assignment_constraints(num_milks, num_coffees)
@@ -118,7 +118,7 @@ class KohiGyunyuSolver(GameSolver):
                 p2 = all_circles[j]
                 if not self._circles_visible_without_intermediate_circle(p1, p2, circles_set):
                     continue
-                conn_var = self._model.NewBoolVar(f"conn_{i}_{j}")
+                conn_var = self._model.new_bool_var(f"conn_{i}_{j}")
                 connections[(i, j)] = conn_var
                 adj[i].append(j)
                 adj[j].append(i)
@@ -126,20 +126,20 @@ class KohiGyunyuSolver(GameSolver):
         self._connection_vars = list(connections.values())
         self._connection_pairs = [(u, v, var) for (u, v), var in connections.items()]
 
-        self.milk_in_group = [[self._model.NewBoolVar(f"milk_{w}_in_g_{g}") for g in range(num_grays)] for w in range(num_milks)]
-        self.coffee_in_group = [[self._model.NewBoolVar(f"coffee_{b}_in_g_{g}") for g in range(num_grays)] for b in range(num_coffees)]
+        self.milk_in_group = [[self._model.new_bool_var(f"milk_{w}_in_g_{g}") for g in range(num_grays)] for w in range(num_milks)]
+        self.coffee_in_group = [[self._model.new_bool_var(f"coffee_{b}_in_g_{g}") for g in range(num_grays)] for b in range(num_coffees)]
 
         return connections, adj
 
     def _add_assignment_constraints(self, num_milks, num_coffees):
         for w in range(num_milks):
-            self._model.Add(sum(self.milk_in_group[w]) == 1)
+            self._model.add(sum(self.milk_in_group[w]) == 1)
         for b in range(num_coffees):
-            self._model.Add(sum(self.coffee_in_group[b]) == 1)
+            self._model.add(sum(self.coffee_in_group[b]) == 1)
 
     def _add_balance_constraints(self, num_grays, num_milks, num_coffees):
         for g in range(num_grays):
-            self._model.Add(sum(self.milk_in_group[w][g] for w in range(num_milks)) == sum(self.coffee_in_group[b][g] for b in range(num_coffees)))
+            self._model.add(sum(self.milk_in_group[w][g] for w in range(num_milks)) == sum(self.coffee_in_group[b][g] for b in range(num_coffees)))
 
     def _add_group_id_constraints(self, num_grays, num_circles, circle_group, circle_map):
         gray_indices = [circle_map[p] for p in self.grays]
@@ -148,19 +148,19 @@ class KohiGyunyuSolver(GameSolver):
 
         for i in range(num_circles):
             if i in gray_indices:
-                self._model.Add(circle_group[i] == gray_indices.index(i))
+                self._model.add(circle_group[i] == gray_indices.index(i))
             elif i in milk_indices:
                 w_idx = milk_indices.index(i)
                 for g in range(num_grays):
-                    self._model.Add(circle_group[i] == g).OnlyEnforceIf(self.milk_in_group[w_idx][g])
+                    self._model.add(circle_group[i] == g).only_enforce_if(self.milk_in_group[w_idx][g])
             elif i in coffee_indices:
                 b_idx = coffee_indices.index(i)
                 for g in range(num_grays):
-                    self._model.Add(circle_group[i] == g).OnlyEnforceIf(self.coffee_in_group[b_idx][g])
+                    self._model.add(circle_group[i] == g).only_enforce_if(self.coffee_in_group[b_idx][g])
 
     def _add_connection_logic_constraints(self, connections, circle_group):
         for (u, v), conn_var in connections.items():
-            self._model.Add(circle_group[u] == circle_group[v]).OnlyEnforceIf(conn_var)
+            self._model.add(circle_group[u] == circle_group[v]).only_enforce_if(conn_var)
 
     def _add_crossing_constraints(self, connections, all_circles):
         connection_list = list(connections.items())
@@ -172,40 +172,40 @@ class KohiGyunyuSolver(GameSolver):
 
                 # Check if p1u-p1v and p2u-p2v cross
                 if self._is_crossing(p1u, p1v, p2u, p2v):
-                    self._model.Add(var1 + var2 <= 1)
+                    self._model.add(var1 + var2 <= 1)
 
     def _add_milk_coffee_prohibition_constraints(self, connections, all_circles):
         for (u, v), conn_var in connections.items():
             p1, p2 = all_circles[u], all_circles[v]
             if (p1 in self.milks and p2 in self.coffees) or (p1 in self.coffees and p2 in self.milks):
-                self._model.Add(conn_var == 0)
+                self._model.add(conn_var == 0)
 
     def _add_rank_connectivity_constraints(self, num_grays, num_circles, circle_map, adj, connections):
         gray_indices = [circle_map[p] for p in self.grays]
-        ranks = [self._model.NewIntVar(0, num_circles - 1, f"rank_{i}") for i in range(num_circles)]
+        ranks = [self._model.new_int_var(0, num_circles - 1, f"rank_{i}") for i in range(num_circles)]
 
         # Directed parent variables
         parents = {}  # (from, to) -> BoolVar
         for (u, v), conn_var in connections.items():
-            p_uv = self._model.NewBoolVar(f"p_{u}_{v}")
-            p_vu = self._model.NewBoolVar(f"p_{v}_{u}")
+            p_uv = self._model.new_bool_var(f"p_{u}_{v}")
+            p_vu = self._model.new_bool_var(f"p_{v}_{u}")
             parents[(u, v)] = p_uv
             parents[(v, u)] = p_vu
 
             # Link to undirected connection
-            self._model.Add(conn_var == p_uv + p_vu)
+            self._model.add(conn_var == p_uv + p_vu)
 
             # Rank constraint: parent has lower rank
-            self._model.Add(ranks[u] == ranks[v] + 1).OnlyEnforceIf(p_uv)
-            self._model.Add(ranks[v] == ranks[u] + 1).OnlyEnforceIf(p_vu)
+            self._model.add(ranks[u] == ranks[v] + 1).only_enforce_if(p_uv)
+            self._model.add(ranks[v] == ranks[u] + 1).only_enforce_if(p_vu)
 
         for i in range(num_circles):
             out_edges = [parents[(i, j)] for j in adj[i]]
             if i in gray_indices:
-                self._model.Add(ranks[i] == 0)
-                self._model.Add(sum(out_edges) == 0)
+                self._model.add(ranks[i] == 0)
+                self._model.add(sum(out_edges) == 0)
             else:
-                self._model.Add(sum(out_edges) == 1)
+                self._model.add(sum(out_edges) == 1)
 
     @staticmethod
     def _is_crossing(p1u: Position, p1v: Position, p2u: Position, p2v: Position) -> bool:
@@ -254,21 +254,21 @@ class KohiGyunyuSolver(GameSolver):
         exclude = []
         for w_in_g_list in self.milk_in_group:
             for lit in w_in_g_list:
-                exclude.append(lit if not self._last_solver.Value(lit) else lit.Not())
+                exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
 
         for b_in_g_list in self.coffee_in_group:
             for lit in b_in_g_list:
-                exclude.append(lit if not self._last_solver.Value(lit) else lit.Not())
+                exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
 
         for lit in self._connection_vars:
-            exclude.append(lit if not self._last_solver.Value(lit) else lit.Not())
+            exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
 
         if not exclude:
             return IslandGrid.empty()
 
-        self._model.AddBoolOr(exclude)
+        self._model.add_bool_or(exclude)
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
 
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return self._build_grid_from_solver(solver)
@@ -283,14 +283,14 @@ class KohiGyunyuSolver(GameSolver):
         # Build adjacency for each group
         adj = {}
         for u, v, conn_var in self._connection_pairs:
-            if not solver.Value(conn_var):
+            if not solver.value(conn_var):
                 continue
             p1 = self._all_circles[u]
             p2 = self._all_circles[v]
             self._draw_straight_connection(island_grid, p1, p2)
             island_grid.connections.append((p1, p2))
 
-            group_id = solver.Value(self._circle_group_vars[u])
+            group_id = solver.value(self._circle_group_vars[u])
             if group_id not in adj: adj[group_id] = {}
             if p1 not in adj[group_id]: adj[group_id][p1] = []
             if p2 not in adj[group_id]: adj[group_id][p2] = []

@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 from typing import Collection
 
 from z3 import Solver, Int, sat, And, Not, Or, Implies

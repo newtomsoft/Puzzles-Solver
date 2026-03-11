@@ -1,4 +1,4 @@
-﻿from typing import Callable
+from typing import Callable
 
 from ortools.sat.python import cp_model
 
@@ -24,7 +24,7 @@ class NumberCrossSolver(GameSolver):
         self._previous_solution: Grid | None = None
 
     def get_solution(self) -> Grid:
-        self._grid_vars = Grid([[self._model.NewBoolVar(f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -40,21 +40,21 @@ class NumberCrossSolver(GameSolver):
             for c in range(self.columns_number):
                 prev_val = 1 if self._previous_solution.value(r, c) != self.black_value else 0
                 v = self._grid_vars[Position(r, c)]
-                diff = self._model.NewBoolVar(f"diff_{r}_{c}")
-                self._model.Add(v != prev_val).OnlyEnforceIf(diff)
-                self._model.Add(v == prev_val).OnlyEnforceIf(diff.Not())
+                diff = self._model.new_bool_var(f"diff_{r}_{c}")
+                self._model.add(v != prev_val).only_enforce_if(diff)
+                self._model.add(v == prev_val).only_enforce_if(diff.Not())
                 diff_bools.append(diff)
-        self._model.AddBoolOr(diff_bools)
+        self._model.add_bool_or(diff_bools)
         self._previous_solution = self._compute_solution()
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
         grid = Grid([
-            [self._input_grid[Position(i, j)] if solver.Value(self._grid_vars[Position(i, j)]) == 1 else self.black_value for j in range(self.columns_number)]
+            [self._input_grid[Position(i, j)] if solver.value(self._grid_vars[Position(i, j)]) == 1 else self.black_value for j in range(self.columns_number)]
             for i in range(self.rows_number)
         ])
         return grid
@@ -66,7 +66,7 @@ class NumberCrossSolver(GameSolver):
     def _add_initials_constraints(self):
         for position, value in self._input_grid:
             if value == self.black_value:
-                self._model.Add(self._grid_vars[position] == 0)
+                self._model.add(self._grid_vars[position] == 0)
 
     def _add_sums_clues_constraints(self):
         self._add_constraints_for_clues(self._row_sums_clues, self._row_positions_generator)
@@ -85,4 +85,4 @@ class NumberCrossSolver(GameSolver):
         return [Position(r, column_index) for r in range(self.rows_number)]
 
     def _add_sum_for_line_constraint(self, line_positions: list, clue: int):
-        self._model.Add(sum((self._input_grid[position] * self._grid_vars[position] for position in line_positions)) == clue)
+        self._model.add(sum((self._input_grid[position] * self._grid_vars[position] for position in line_positions)) == clue)

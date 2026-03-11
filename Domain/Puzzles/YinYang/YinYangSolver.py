@@ -1,4 +1,4 @@
-﻿from typing import Set
+from typing import Set
 
 from z3 import Solver, Bool, Not, And, Or, Implies, is_true, sat, unsat
 

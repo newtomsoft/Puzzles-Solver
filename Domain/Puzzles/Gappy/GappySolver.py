@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Bool, Not, And, is_true, sat, Implies, Or, Xor, If
+from z3 import Solver, Bool, Not, And, is_true, sat, Implies, Or, Xor, If
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver

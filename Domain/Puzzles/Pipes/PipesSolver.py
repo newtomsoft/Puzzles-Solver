@@ -23,10 +23,10 @@ class PipesSolver(GameSolver):
         self._grid_vars = GridBase([
             [
                 {
-                    Direction.up(): self._model.NewBoolVar(f"{r}_{c}_up"),
-                    Direction.left(): self._model.NewBoolVar(f"{r}_{c}_left"),
-                    Direction.down(): self._model.NewBoolVar(f"{r}_{c}_down"),
-                    Direction.right(): self._model.NewBoolVar(f"{r}_{c}_right"),
+                    Direction.up(): self._model.new_bool_var(f"{r}_{c}_up"),
+                    Direction.left(): self._model.new_bool_var(f"{r}_{c}_left"),
+                    Direction.down(): self._model.new_bool_var(f"{r}_{c}_down"),
+                    Direction.right(): self._model.new_bool_var(f"{r}_{c}_right"),
                 }
                 for c in range(self._columns_number)
             ]
@@ -44,7 +44,7 @@ class PipesSolver(GameSolver):
 
     def get_solution_when_all_pipes_connected(self):
         proposition_count = 0
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
 
         while status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
@@ -76,15 +76,15 @@ class PipesSolver(GameSolver):
                     (Direction.left(), Direction.left() in connected_to),
                     (Direction.right(), Direction.right() in connected_to)
                 ]:
-                    temp_var = self._model.NewBoolVar(f"excl_{position}_{direction}")
-                    self._model.Add(self._grid_vars[position][direction] == is_connected).OnlyEnforceIf(temp_var)
-                    self._model.Add(self._grid_vars[position][direction] != is_connected).OnlyEnforceIf(temp_var.Not())
+                    temp_var = self._model.new_bool_var(f"excl_{position}_{direction}")
+                    self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
+                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
                     exclusion_literals.append(temp_var)
 
             if exclusion_literals:
-                self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
+                self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
 
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
 
         return GridBase.empty(), proposition_count
 
@@ -101,13 +101,13 @@ class PipesSolver(GameSolver):
                 (Direction.left(), Direction.left() in connected_to),
                 (Direction.right(), Direction.right() in connected_to)
             ]:
-                temp_var = self._model.NewBoolVar(f"prev_{position}_{direction}")
-                self._model.Add(self._grid_vars[position][direction] == is_connected).OnlyEnforceIf(temp_var)
-                self._model.Add(self._grid_vars[position][direction] != is_connected).OnlyEnforceIf(temp_var.Not())
+                temp_var = self._model.new_bool_var(f"prev_{position}_{direction}")
+                self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
+                self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
                 exclusion_literals.append(temp_var)
 
         if exclusion_literals:
-            self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
+            self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
 
         return self.get_solution()
 
@@ -131,132 +131,132 @@ class PipesSolver(GameSolver):
 
     def _add_edges_constraints(self, position):
         if position.r == 0:
-            self._model.Add(self._grid_vars[position][Direction.up()] == False)
+            self._model.add(self._grid_vars[position][Direction.up()] == False)
         if position.r == self._input_grid.rows_number - 1:
-            self._model.Add(self._grid_vars[position][Direction.down()] == False)
+            self._model.add(self._grid_vars[position][Direction.down()] == False)
         if position.c == 0:
-            self._model.Add(self._grid_vars[position][Direction.left()] == False)
+            self._model.add(self._grid_vars[position][Direction.left()] == False)
         if position.c == self._input_grid.columns_number - 1:
-            self._model.Add(self._grid_vars[position][Direction.right()] == False)
+            self._model.add(self._grid_vars[position][Direction.right()] == False)
 
     def _add_shape_l_constraint(self, pos: Position):
         # Create boolean variables for each L shape orientation
-        l0 = self._model.NewBoolVar(f"l0_{pos}")
-        l1 = self._model.NewBoolVar(f"l1_{pos}")
-        l2 = self._model.NewBoolVar(f"l2_{pos}")
-        l3 = self._model.NewBoolVar(f"l3_{pos}")
+        l0 = self._model.new_bool_var(f"l0_{pos}")
+        l1 = self._model.new_bool_var(f"l1_{pos}")
+        l2 = self._model.new_bool_var(f"l2_{pos}")
+        l3 = self._model.new_bool_var(f"l3_{pos}")
 
         # L shape: up and right connections
-        self._model.Add(self._grid_vars[pos][Direction.up()] == True).OnlyEnforceIf(l0)
-        self._model.Add(self._grid_vars[pos][Direction.right()] == True).OnlyEnforceIf(l0)
-        self._model.Add(self._grid_vars[pos][Direction.down()] == False).OnlyEnforceIf(l0)
-        self._model.Add(self._grid_vars[pos][Direction.left()] == False).OnlyEnforceIf(l0)
+        self._model.add(self._grid_vars[pos][Direction.up()] == True).only_enforce_if(l0)
+        self._model.add(self._grid_vars[pos][Direction.right()] == True).only_enforce_if(l0)
+        self._model.add(self._grid_vars[pos][Direction.down()] == False).only_enforce_if(l0)
+        self._model.add(self._grid_vars[pos][Direction.left()] == False).only_enforce_if(l0)
 
         # L shape: left and up connections
-        self._model.Add(self._grid_vars[pos][Direction.left()] == True).OnlyEnforceIf(l1)
-        self._model.Add(self._grid_vars[pos][Direction.up()] == True).OnlyEnforceIf(l1)
-        self._model.Add(self._grid_vars[pos][Direction.right()] == False).OnlyEnforceIf(l1)
-        self._model.Add(self._grid_vars[pos][Direction.down()] == False).OnlyEnforceIf(l1)
+        self._model.add(self._grid_vars[pos][Direction.left()] == True).only_enforce_if(l1)
+        self._model.add(self._grid_vars[pos][Direction.up()] == True).only_enforce_if(l1)
+        self._model.add(self._grid_vars[pos][Direction.right()] == False).only_enforce_if(l1)
+        self._model.add(self._grid_vars[pos][Direction.down()] == False).only_enforce_if(l1)
 
         # L shape: down and left connections
-        self._model.Add(self._grid_vars[pos][Direction.down()] == True).OnlyEnforceIf(l2)
-        self._model.Add(self._grid_vars[pos][Direction.left()] == True).OnlyEnforceIf(l2)
-        self._model.Add(self._grid_vars[pos][Direction.up()] == False).OnlyEnforceIf(l2)
-        self._model.Add(self._grid_vars[pos][Direction.right()] == False).OnlyEnforceIf(l2)
+        self._model.add(self._grid_vars[pos][Direction.down()] == True).only_enforce_if(l2)
+        self._model.add(self._grid_vars[pos][Direction.left()] == True).only_enforce_if(l2)
+        self._model.add(self._grid_vars[pos][Direction.up()] == False).only_enforce_if(l2)
+        self._model.add(self._grid_vars[pos][Direction.right()] == False).only_enforce_if(l2)
 
         # L shape: right and down connections
-        self._model.Add(self._grid_vars[pos][Direction.right()] == True).OnlyEnforceIf(l3)
-        self._model.Add(self._grid_vars[pos][Direction.down()] == True).OnlyEnforceIf(l3)
-        self._model.Add(self._grid_vars[pos][Direction.left()] == False).OnlyEnforceIf(l3)
-        self._model.Add(self._grid_vars[pos][Direction.up()] == False).OnlyEnforceIf(l3)
+        self._model.add(self._grid_vars[pos][Direction.right()] == True).only_enforce_if(l3)
+        self._model.add(self._grid_vars[pos][Direction.down()] == True).only_enforce_if(l3)
+        self._model.add(self._grid_vars[pos][Direction.left()] == False).only_enforce_if(l3)
+        self._model.add(self._grid_vars[pos][Direction.up()] == False).only_enforce_if(l3)
 
         # Exactly one of the L shapes must be true
         self._model.AddExactlyOne([l0, l1, l2, l3])
 
     def add_shape_i_constraint(self, position):
         # Create boolean variables for each I shape orientation
-        i0 = self._model.NewBoolVar(f"i0_{position}")
-        i1 = self._model.NewBoolVar(f"i1_{position}")
+        i0 = self._model.new_bool_var(f"i0_{position}")
+        i1 = self._model.new_bool_var(f"i1_{position}")
 
         # I shape: vertical (up and down connections)
-        self._model.Add(self._grid_vars[position][Direction.up()] == True).OnlyEnforceIf(i0)
-        self._model.Add(self._grid_vars[position][Direction.down()] == True).OnlyEnforceIf(i0)
-        self._model.Add(self._grid_vars[position][Direction.left()] == False).OnlyEnforceIf(i0)
-        self._model.Add(self._grid_vars[position][Direction.right()] == False).OnlyEnforceIf(i0)
+        self._model.add(self._grid_vars[position][Direction.up()] == True).only_enforce_if(i0)
+        self._model.add(self._grid_vars[position][Direction.down()] == True).only_enforce_if(i0)
+        self._model.add(self._grid_vars[position][Direction.left()] == False).only_enforce_if(i0)
+        self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(i0)
 
         # I shape: horizontal (left and right connections)
-        self._model.Add(self._grid_vars[position][Direction.left()] == True).OnlyEnforceIf(i1)
-        self._model.Add(self._grid_vars[position][Direction.right()] == True).OnlyEnforceIf(i1)
-        self._model.Add(self._grid_vars[position][Direction.up()] == False).OnlyEnforceIf(i1)
-        self._model.Add(self._grid_vars[position][Direction.down()] == False).OnlyEnforceIf(i1)
+        self._model.add(self._grid_vars[position][Direction.left()] == True).only_enforce_if(i1)
+        self._model.add(self._grid_vars[position][Direction.right()] == True).only_enforce_if(i1)
+        self._model.add(self._grid_vars[position][Direction.up()] == False).only_enforce_if(i1)
+        self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(i1)
 
         # Exactly one of the I shapes must be true
         self._model.AddExactlyOne([i0, i1])
 
     def add_shape_t_constraint(self, position):
         # Create boolean variables for each T shape orientation
-        t0 = self._model.NewBoolVar(f"t0_{position}")
-        t1 = self._model.NewBoolVar(f"t1_{position}")
-        t2 = self._model.NewBoolVar(f"t2_{position}")
-        t3 = self._model.NewBoolVar(f"t3_{position}")
+        t0 = self._model.new_bool_var(f"t0_{position}")
+        t1 = self._model.new_bool_var(f"t1_{position}")
+        t2 = self._model.new_bool_var(f"t2_{position}")
+        t3 = self._model.new_bool_var(f"t3_{position}")
 
         # T shape: down, left, right connections (upside-down T)
-        self._model.Add(self._grid_vars[position][Direction.down()] == True).OnlyEnforceIf(t0)
-        self._model.Add(self._grid_vars[position][Direction.left()] == True).OnlyEnforceIf(t0)
-        self._model.Add(self._grid_vars[position][Direction.right()] == True).OnlyEnforceIf(t0)
-        self._model.Add(self._grid_vars[position][Direction.up()] == False).OnlyEnforceIf(t0)
+        self._model.add(self._grid_vars[position][Direction.down()] == True).only_enforce_if(t0)
+        self._model.add(self._grid_vars[position][Direction.left()] == True).only_enforce_if(t0)
+        self._model.add(self._grid_vars[position][Direction.right()] == True).only_enforce_if(t0)
+        self._model.add(self._grid_vars[position][Direction.up()] == False).only_enforce_if(t0)
 
         # T shape: right, up, down connections (T facing right)
-        self._model.Add(self._grid_vars[position][Direction.right()] == True).OnlyEnforceIf(t1)
-        self._model.Add(self._grid_vars[position][Direction.up()] == True).OnlyEnforceIf(t1)
-        self._model.Add(self._grid_vars[position][Direction.down()] == True).OnlyEnforceIf(t1)
-        self._model.Add(self._grid_vars[position][Direction.left()] == False).OnlyEnforceIf(t1)
+        self._model.add(self._grid_vars[position][Direction.right()] == True).only_enforce_if(t1)
+        self._model.add(self._grid_vars[position][Direction.up()] == True).only_enforce_if(t1)
+        self._model.add(self._grid_vars[position][Direction.down()] == True).only_enforce_if(t1)
+        self._model.add(self._grid_vars[position][Direction.left()] == False).only_enforce_if(t1)
 
         # T shape: up, right, left connections (T facing up)
-        self._model.Add(self._grid_vars[position][Direction.up()] == True).OnlyEnforceIf(t2)
-        self._model.Add(self._grid_vars[position][Direction.right()] == True).OnlyEnforceIf(t2)
-        self._model.Add(self._grid_vars[position][Direction.left()] == True).OnlyEnforceIf(t2)
-        self._model.Add(self._grid_vars[position][Direction.down()] == False).OnlyEnforceIf(t2)
+        self._model.add(self._grid_vars[position][Direction.up()] == True).only_enforce_if(t2)
+        self._model.add(self._grid_vars[position][Direction.right()] == True).only_enforce_if(t2)
+        self._model.add(self._grid_vars[position][Direction.left()] == True).only_enforce_if(t2)
+        self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(t2)
 
         # T shape: left, down, up connections (T facing left)
-        self._model.Add(self._grid_vars[position][Direction.left()] == True).OnlyEnforceIf(t3)
-        self._model.Add(self._grid_vars[position][Direction.down()] == True).OnlyEnforceIf(t3)
-        self._model.Add(self._grid_vars[position][Direction.up()] == True).OnlyEnforceIf(t3)
-        self._model.Add(self._grid_vars[position][Direction.right()] == False).OnlyEnforceIf(t3)
+        self._model.add(self._grid_vars[position][Direction.left()] == True).only_enforce_if(t3)
+        self._model.add(self._grid_vars[position][Direction.down()] == True).only_enforce_if(t3)
+        self._model.add(self._grid_vars[position][Direction.up()] == True).only_enforce_if(t3)
+        self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(t3)
 
         # Exactly one of the T shapes must be true
         self._model.AddExactlyOne([t0, t1, t2, t3])
 
     def add_shape_e_constraint(self, position):
         # Create boolean variables for each E shape orientation (endpoint)
-        e0 = self._model.NewBoolVar(f"e0_{position}")
-        e1 = self._model.NewBoolVar(f"e1_{position}")
-        e2 = self._model.NewBoolVar(f"e2_{position}")
-        e3 = self._model.NewBoolVar(f"e3_{position}")
+        e0 = self._model.new_bool_var(f"e0_{position}")
+        e1 = self._model.new_bool_var(f"e1_{position}")
+        e2 = self._model.new_bool_var(f"e2_{position}")
+        e3 = self._model.new_bool_var(f"e3_{position}")
 
         # E shape: only up connection
-        self._model.Add(self._grid_vars[position][Direction.up()] == True).OnlyEnforceIf(e0)
-        self._model.Add(self._grid_vars[position][Direction.down()] == False).OnlyEnforceIf(e0)
-        self._model.Add(self._grid_vars[position][Direction.left()] == False).OnlyEnforceIf(e0)
-        self._model.Add(self._grid_vars[position][Direction.right()] == False).OnlyEnforceIf(e0)
+        self._model.add(self._grid_vars[position][Direction.up()] == True).only_enforce_if(e0)
+        self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(e0)
+        self._model.add(self._grid_vars[position][Direction.left()] == False).only_enforce_if(e0)
+        self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(e0)
 
         # E shape: only left connection
-        self._model.Add(self._grid_vars[position][Direction.left()] == True).OnlyEnforceIf(e1)
-        self._model.Add(self._grid_vars[position][Direction.right()] == False).OnlyEnforceIf(e1)
-        self._model.Add(self._grid_vars[position][Direction.up()] == False).OnlyEnforceIf(e1)
-        self._model.Add(self._grid_vars[position][Direction.down()] == False).OnlyEnforceIf(e1)
+        self._model.add(self._grid_vars[position][Direction.left()] == True).only_enforce_if(e1)
+        self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(e1)
+        self._model.add(self._grid_vars[position][Direction.up()] == False).only_enforce_if(e1)
+        self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(e1)
 
         # E shape: only down connection
-        self._model.Add(self._grid_vars[position][Direction.down()] == True).OnlyEnforceIf(e2)
-        self._model.Add(self._grid_vars[position][Direction.up()] == False).OnlyEnforceIf(e2)
-        self._model.Add(self._grid_vars[position][Direction.left()] == False).OnlyEnforceIf(e2)
-        self._model.Add(self._grid_vars[position][Direction.right()] == False).OnlyEnforceIf(e2)
+        self._model.add(self._grid_vars[position][Direction.down()] == True).only_enforce_if(e2)
+        self._model.add(self._grid_vars[position][Direction.up()] == False).only_enforce_if(e2)
+        self._model.add(self._grid_vars[position][Direction.left()] == False).only_enforce_if(e2)
+        self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(e2)
 
         # E shape: only right connection
-        self._model.Add(self._grid_vars[position][Direction.right()] == True).OnlyEnforceIf(e3)
-        self._model.Add(self._grid_vars[position][Direction.left()] == False).OnlyEnforceIf(e3)
-        self._model.Add(self._grid_vars[position][Direction.up()] == False).OnlyEnforceIf(e3)
-        self._model.Add(self._grid_vars[position][Direction.down()] == False).OnlyEnforceIf(e3)
+        self._model.add(self._grid_vars[position][Direction.right()] == True).only_enforce_if(e3)
+        self._model.add(self._grid_vars[position][Direction.left()] == False).only_enforce_if(e3)
+        self._model.add(self._grid_vars[position][Direction.up()] == False).only_enforce_if(e3)
+        self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(e3)
 
         # Exactly one of the E shapes must be true
         self._model.AddExactlyOne([e0, e1, e2, e3])
@@ -268,22 +268,22 @@ class PipesSolver(GameSolver):
             position_left = self._grid_vars.neighbor_left(position)
             position_right = self._grid_vars.neighbor_right(position)
             if position_up is not None:
-                self._model.Add(self._grid_vars[position][Direction.up()] == self._grid_vars[position_up][Direction.down()])
+                self._model.add(self._grid_vars[position][Direction.up()] == self._grid_vars[position_up][Direction.down()])
             if position_down is not None:
-                self._model.Add(self._grid_vars[position][Direction.down()] == self._grid_vars[position_down][Direction.up()])
+                self._model.add(self._grid_vars[position][Direction.down()] == self._grid_vars[position_down][Direction.up()])
             if position_left is not None:
-                self._model.Add(self._grid_vars[position][Direction.left()] == self._grid_vars[position_left][Direction.right()])
+                self._model.add(self._grid_vars[position][Direction.left()] == self._grid_vars[position_left][Direction.right()])
             if position_right is not None:
-                self._model.Add(self._grid_vars[position][Direction.right()] == self._grid_vars[position_right][Direction.left()])
+                self._model.add(self._grid_vars[position][Direction.right()] == self._grid_vars[position_right][Direction.left()])
 
     def _create_pipe_from_model(self, position: Position):
         directions = []
-        if self._solver.Value(self._grid_vars[position][Direction.up()]):
+        if self._solver.value(self._grid_vars[position][Direction.up()]):
             directions.append(Direction.up())
-        if self._solver.Value(self._grid_vars[position][Direction.left()]):
+        if self._solver.value(self._grid_vars[position][Direction.left()]):
             directions.append(Direction.left())
-        if self._solver.Value(self._grid_vars[position][Direction.down()]):
+        if self._solver.value(self._grid_vars[position][Direction.down()]):
             directions.append(Direction.down())
-        if self._solver.Value(self._grid_vars[position][Direction.right()]):
+        if self._solver.value(self._grid_vars[position][Direction.right()]):
             directions.append(Direction.right())
         return Pipe.from_connection(frozenset(directions))

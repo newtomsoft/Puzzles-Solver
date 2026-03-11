@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, Or, sat, Bool, is_true, BoolRef
+from z3 import Solver, Not, And, Or, sat, Bool, is_true, BoolRef
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid

@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from ortools.sat.python import cp_model
 
@@ -45,25 +45,25 @@ class TatamibariSolver(GameSolver):
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 prev_val = self._previous_solution.value(r, c)
-                diff_var = self._model.NewBoolVar(f"diff_{r}_{c}_{len(self._model.Proto().variables)}")
-                self._model.Add(self._grid_vars.value(r, c) != prev_val).OnlyEnforceIf(diff_var)
-                self._model.Add(self._grid_vars.value(r, c) == prev_val).OnlyEnforceIf(diff_var.Not())
+                diff_var = self._model.new_bool_var(f"diff_{r}_{c}_{len(self._model.Proto().variables)}")
+                self._model.add(self._grid_vars.value(r, c) != prev_val).only_enforce_if(diff_var)
+                self._model.add(self._grid_vars.value(r, c) == prev_val).only_enforce_if(diff_var.Not())
                 bool_vars.append(diff_var)
-        self._model.AddBoolOr(bool_vars)
+        self._model.add_bool_or(bool_vars)
 
 
         return self._compute_solution()
 
     def _init_solver(self):
         max_id = len(self._symbol_by_position)
-        self._grid_vars = Grid([[self._model.NewIntVar(1, max_id, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(1, max_id, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-            solution = Grid([[solver.Value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
+            solution = Grid([[solver.value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
             return solution
         return Grid.empty()
 
@@ -75,7 +75,7 @@ class TatamibariSolver(GameSolver):
     def _add_value_at_symbols_constraints(self):
         for index, (position, symbol) in enumerate(self._symbol_by_position.items()):
             cell_id = self._grid_vars[position]
-            self._model.Add(cell_id == index + 1)
+            self._model.add(cell_id == index + 1)
             self._region_id_by_position[position] = index + 1
 
     def _add_no_four_corners_shared_constraint(self):
@@ -87,32 +87,32 @@ class TatamibariSolver(GameSolver):
                 e = self._grid_vars.value(r + 1, c + 1)
 
                 # Not all different, so at least one pair is equal
-                ab_eq = self._model.NewBoolVar('')
-                ad_eq = self._model.NewBoolVar('')
-                ae_eq = self._model.NewBoolVar('')
-                bd_eq = self._model.NewBoolVar('')
-                be_eq = self._model.NewBoolVar('')
-                de_eq = self._model.NewBoolVar('')
+                ab_eq = self._model.new_bool_var('')
+                ad_eq = self._model.new_bool_var('')
+                ae_eq = self._model.new_bool_var('')
+                bd_eq = self._model.new_bool_var('')
+                be_eq = self._model.new_bool_var('')
+                de_eq = self._model.new_bool_var('')
 
-                self._model.Add(a == b).OnlyEnforceIf(ab_eq)
-                self._model.Add(a != b).OnlyEnforceIf(ab_eq.Not())
+                self._model.add(a == b).only_enforce_if(ab_eq)
+                self._model.add(a != b).only_enforce_if(ab_eq.Not())
 
-                self._model.Add(a == d).OnlyEnforceIf(ad_eq)
-                self._model.Add(a != d).OnlyEnforceIf(ad_eq.Not())
+                self._model.add(a == d).only_enforce_if(ad_eq)
+                self._model.add(a != d).only_enforce_if(ad_eq.Not())
 
-                self._model.Add(a == e).OnlyEnforceIf(ae_eq)
-                self._model.Add(a != e).OnlyEnforceIf(ae_eq.Not())
+                self._model.add(a == e).only_enforce_if(ae_eq)
+                self._model.add(a != e).only_enforce_if(ae_eq.Not())
 
-                self._model.Add(b == d).OnlyEnforceIf(bd_eq)
-                self._model.Add(b != d).OnlyEnforceIf(bd_eq.Not())
+                self._model.add(b == d).only_enforce_if(bd_eq)
+                self._model.add(b != d).only_enforce_if(bd_eq.Not())
 
-                self._model.Add(b == e).OnlyEnforceIf(be_eq)
-                self._model.Add(b != e).OnlyEnforceIf(be_eq.Not())
+                self._model.add(b == e).only_enforce_if(be_eq)
+                self._model.add(b != e).only_enforce_if(be_eq.Not())
 
-                self._model.Add(d == e).OnlyEnforceIf(de_eq)
-                self._model.Add(d != e).OnlyEnforceIf(de_eq.Not())
+                self._model.add(d == e).only_enforce_if(de_eq)
+                self._model.add(d != e).only_enforce_if(de_eq.Not())
 
-                self._model.AddBoolOr([ab_eq, ad_eq, ae_eq, bd_eq, be_eq, de_eq])
+                self._model.add_bool_or([ab_eq, ad_eq, ae_eq, bd_eq, be_eq, de_eq])
 
     def _add_region_shape_constraints(self):
         for position, symbol in self._symbol_by_position.items():
@@ -121,18 +121,18 @@ class TatamibariSolver(GameSolver):
     def _add_region_rectangle_constraints(self, position, symbol):
         region_id = self._region_id_by_position[position]
 
-        left_row = self._model.NewIntVar(0, self._rows_number - 1, f"rect_r0_{region_id}")
-        top_column = self._model.NewIntVar(0, self._columns_number - 1, f"rect_c0_{region_id}")
-        height = self._model.NewIntVar(1, self._rows_number, f"rect_h_{region_id}")
-        width = self._model.NewIntVar(1, self._columns_number, f"rect_w_{region_id}")
+        left_row = self._model.new_int_var(0, self._rows_number - 1, f"rect_r0_{region_id}")
+        top_column = self._model.new_int_var(0, self._columns_number - 1, f"rect_c0_{region_id}")
+        height = self._model.new_int_var(1, self._rows_number, f"rect_h_{region_id}")
+        width = self._model.new_int_var(1, self._columns_number, f"rect_w_{region_id}")
 
         match symbol:
             case '-':
-                self._model.Add(width > height)
+                self._model.add(width > height)
             case '|':
-                self._model.Add(height > width)
+                self._model.add(height > width)
             case '+':
-                self._model.Add(width == height)
+                self._model.add(width == height)
             case _:
                 raise ValueError(f"Unexpected symbol '{symbol}' at position {position}")
 
@@ -140,38 +140,38 @@ class TatamibariSolver(GameSolver):
 
         for r in range(self._rows_number):
             for c in range(self._columns_number):
-                cell_is_region = self._model.NewBoolVar(f"cell_is_region_{r}_{c}_{region_id}")
-                inside_rectangle = self._model.NewBoolVar(f"inside_rectangle_{r}_{c}_{region_id}")
+                cell_is_region = self._model.new_bool_var(f"cell_is_region_{r}_{c}_{region_id}")
+                inside_rectangle = self._model.new_bool_var(f"inside_rectangle_{r}_{c}_{region_id}")
 
-                self._model.Add(self._grid_vars.value(r, c) == region_id).OnlyEnforceIf(cell_is_region)
-                self._model.Add(self._grid_vars.value(r, c) != region_id).OnlyEnforceIf(cell_is_region.Not())
+                self._model.add(self._grid_vars.value(r, c) == region_id).only_enforce_if(cell_is_region)
+                self._model.add(self._grid_vars.value(r, c) != region_id).only_enforce_if(cell_is_region.Not())
 
                 # inside_rectangle <=> (left_row <= r < left_row + height) and (top_column <= c < top_column + width)
-                r_in = self._model.NewBoolVar('')
-                self._model.Add(r >= left_row).OnlyEnforceIf(r_in)
-                self._model.Add(r < left_row).OnlyEnforceIf(r_in.Not())
+                r_in = self._model.new_bool_var('')
+                self._model.add(r >= left_row).only_enforce_if(r_in)
+                self._model.add(r < left_row).only_enforce_if(r_in.Not())
 
-                r_out = self._model.NewBoolVar('')
-                self._model.Add(r < left_row + height).OnlyEnforceIf(r_out)
-                self._model.Add(r >= left_row + height).OnlyEnforceIf(r_out.Not())
+                r_out = self._model.new_bool_var('')
+                self._model.add(r < left_row + height).only_enforce_if(r_out)
+                self._model.add(r >= left_row + height).only_enforce_if(r_out.Not())
 
-                c_in = self._model.NewBoolVar('')
-                self._model.Add(c >= top_column).OnlyEnforceIf(c_in)
-                self._model.Add(c < top_column).OnlyEnforceIf(c_in.Not())
+                c_in = self._model.new_bool_var('')
+                self._model.add(c >= top_column).only_enforce_if(c_in)
+                self._model.add(c < top_column).only_enforce_if(c_in.Not())
 
-                c_out = self._model.NewBoolVar('')
-                self._model.Add(c < top_column + width).OnlyEnforceIf(c_out)
-                self._model.Add(c >= top_column + width).OnlyEnforceIf(c_out.Not())
+                c_out = self._model.new_bool_var('')
+                self._model.add(c < top_column + width).only_enforce_if(c_out)
+                self._model.add(c >= top_column + width).only_enforce_if(c_out.Not())
 
-                self._model.AddBoolAnd([r_in, r_out, c_in, c_out]).OnlyEnforceIf(inside_rectangle)
-                self._model.AddBoolOr([r_in.Not(), r_out.Not(), c_in.Not(), c_out.Not()]).OnlyEnforceIf(inside_rectangle.Not())
+                self._model.add_bool_and([r_in, r_out, c_in, c_out]).only_enforce_if(inside_rectangle)
+                self._model.add_bool_or([r_in.Not(), r_out.Not(), c_in.Not(), c_out.Not()]).only_enforce_if(inside_rectangle.Not())
 
-                self._model.Add(cell_is_region == inside_rectangle)
+                self._model.add(cell_is_region == inside_rectangle)
 
     def _add_rectangle_in_grid_constraints(self, rectangle_height, rectangle_width, left_row, top_column):
-        self._model.Add(left_row >= 0)
-        self._model.Add(top_column >= 0)
-        self._model.Add(rectangle_height >= 1)
-        self._model.Add(rectangle_width >= 1)
-        self._model.Add(left_row + rectangle_height <= self._rows_number)
-        self._model.Add(top_column + rectangle_width <= self._columns_number)
+        self._model.add(left_row >= 0)
+        self._model.add(top_column >= 0)
+        self._model.add(rectangle_height >= 1)
+        self._model.add(rectangle_width >= 1)
+        self._model.add(left_row + rectangle_height <= self._rows_number)
+        self._model.add(top_column + rectangle_width <= self._columns_number)

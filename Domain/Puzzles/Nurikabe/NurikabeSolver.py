@@ -38,9 +38,9 @@ class NurikabeSolver(GameSolver):
 
         for r in range(self.rows):
             for c in range(self.cols):
-                self._is_white[r, c] = self._model.NewBoolVar(f"w_{r}_{c}")
-                self._island_id[r, c] = self._model.NewIntVar(0, num_seeds, f"id_{r}_{c}")
-                self._dist[r, c] = self._model.NewIntVar(0, max_dist, f"d_{r}_{c}")
+                self._is_white[r, c] = self._model.new_bool_var(f"w_{r}_{c}")
+                self._island_id[r, c] = self._model.new_int_var(0, num_seeds, f"id_{r}_{c}")
+                self._dist[r, c] = self._model.new_int_var(0, max_dist, f"d_{r}_{c}")
 
     def _add_constraints(self):
         self._add_white_island_constraints()
@@ -51,26 +51,26 @@ class NurikabeSolver(GameSolver):
     def _add_white_island_constraints(self):
         for r in range(self.rows):
             for c in range(self.cols):
-                self._model.Add(self._island_id[r, c] > 0).OnlyEnforceIf(self._is_white[r, c])
-                self._model.Add(self._island_id[r, c] == 0).OnlyEnforceIf(self._is_white[r, c].Not())
+                self._model.add(self._island_id[r, c] > 0).only_enforce_if(self._is_white[r, c])
+                self._model.add(self._island_id[r, c] == 0).only_enforce_if(self._is_white[r, c].Not())
 
-                self._model.Add(self._dist[r, c] == 0).OnlyEnforceIf(self._is_white[r, c].Not())
+                self._model.add(self._dist[r, c] == 0).only_enforce_if(self._is_white[r, c].Not())
 
     def _add_seed_constraints(self):
         for i, (sr, sc, size) in enumerate(self._seeds):
             seed_idx = i + 1
-            self._model.Add(self._island_id[sr, sc] == seed_idx)
-            self._model.Add(self._dist[sr, sc] == 0)
-            self._model.Add(self._is_white[sr, sc] == 1)
+            self._model.add(self._island_id[sr, sc] == seed_idx)
+            self._model.add(self._dist[sr, sc] == 0)
+            self._model.add(self._is_white[sr, sc] == 1)
 
             cells_in_k = []
             for r in range(self.rows):
                 for c in range(self.cols):
-                    b = self._model.NewBoolVar(f"in_{seed_idx}_{r}_{c}")
-                    self._model.Add(self._island_id[r, c] == seed_idx).OnlyEnforceIf(b)
-                    self._model.Add(self._island_id[r, c] != seed_idx).OnlyEnforceIf(b.Not())
+                    b = self._model.new_bool_var(f"in_{seed_idx}_{r}_{c}")
+                    self._model.add(self._island_id[r, c] == seed_idx).only_enforce_if(b)
+                    self._model.add(self._island_id[r, c] != seed_idx).only_enforce_if(b.Not())
                     cells_in_k.append(b)
-            self._model.Add(sum(cells_in_k) == size)
+            self._model.add(sum(cells_in_k) == size)
 
     def _add_adjacency_constraints(self):
         for r in range(self.rows):
@@ -82,7 +82,7 @@ class NurikabeSolver(GameSolver):
                 if c < self.cols - 1: neighbors.append((r, c + 1))
 
                 for nr, nc in neighbors:
-                    self._model.Add(self._island_id[r, c] == self._island_id[nr, nc]).OnlyEnforceIf(
+                    self._model.add(self._island_id[r, c] == self._island_id[nr, nc]).only_enforce_if(
                         [self._is_white[r, c], self._is_white[nr, nc]]
                     )
 
@@ -95,21 +95,21 @@ class NurikabeSolver(GameSolver):
                 if not is_seed:
                     valid_parents = []
                     for nr, nc in neighbors:
-                        p_ok = self._model.NewBoolVar(f"pok_{r}_{c}_{nr}_{nc}")
+                        p_ok = self._model.new_bool_var(f"pok_{r}_{c}_{nr}_{nc}")
 
-                        self._model.Add(self._island_id[nr, nc] == self._island_id[r, c]).OnlyEnforceIf(p_ok)
-                        self._model.Add(self._dist[r, c] == self._dist[nr, nc] + 1).OnlyEnforceIf(p_ok)
+                        self._model.add(self._island_id[nr, nc] == self._island_id[r, c]).only_enforce_if(p_ok)
+                        self._model.add(self._dist[r, c] == self._dist[nr, nc] + 1).only_enforce_if(p_ok)
 
                         valid_parents.append(p_ok)
 
-                    self._model.Add(sum(valid_parents) >= 1).OnlyEnforceIf(self._is_white[r, c])
+                    self._model.add(sum(valid_parents) >= 1).only_enforce_if(self._is_white[r, c])
 
-                    self._model.Add(self._dist[r, c] > 0).OnlyEnforceIf(self._is_white[r, c])
+                    self._model.add(self._dist[r, c] > 0).only_enforce_if(self._is_white[r, c])
 
     def _add_no_2x2_river_constraint(self):
         for r in range(self.rows - 1):
             for c in range(self.cols - 1):
-                self._model.AddBoolOr([
+                self._model.add_bool_or([
                     self._is_white[r, c],
                     self._is_white[r + 1, c],
                     self._is_white[r, c + 1],
@@ -133,17 +133,17 @@ class NurikabeSolver(GameSolver):
                     match_bools.append(self._is_white[r, c])
                 else:  # River
                     match_bools.append(self._is_white[r, c].Not())
-        self._model.AddBoolOr([b.Not() for b in match_bools])
+        self._model.add_bool_or([b.Not() for b in match_bools])
 
     def _solve_and_check_river_connectivity(self) -> Grid:
         while True:
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
             if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
                 sol_rows = []
                 for r in range(self.rows):
                     row = []
                     for c in range(self.cols):
-                        if self._solver.BooleanValue(self._is_white[r, c]):
+                        if self._solver.boolean_value(self._is_white[r, c]):
                             row.append(self.island)
                         else:
                             row.append(self.river)

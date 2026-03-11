@@ -1,4 +1,4 @@
-﻿from z3 import Solver, unsat, Or, Implies, Int, Sum
+from z3 import Solver, unsat, Or, Implies, Int, Sum
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position

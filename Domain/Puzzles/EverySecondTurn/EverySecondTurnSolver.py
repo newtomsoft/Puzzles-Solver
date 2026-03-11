@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -28,7 +28,7 @@ class EverySecondTurnSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges = {
-            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in
+            island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in
                               Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
@@ -44,13 +44,13 @@ class EverySecondTurnSolver(GameSolver):
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
         solver = cp_model.CpSolver()
-        while solver.Solve(self._model) == cp_model.OPTIMAL:
+        while solver.solve(self._model) == cp_model.OPTIMAL:
             proposition_count += 1
             for position, direction_bridges in self._island_bridges.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges:
                         continue
-                    bridges_number = solver.Value(bridges)
+                    bridges_number = solver.value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
@@ -71,7 +71,7 @@ class EverySecondTurnSolver(GameSolver):
                         cell_constraints.append(self._island_bridges[position][direction])
                 not_loop_constraints.append(cell_constraints)
             for constraint in not_loop_constraints:
-                self._model.AddBoolOr([c.Not() for c in constraint])
+                self._model.add_bool_or([c.Not() for c in constraint])
             self.init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -81,7 +81,7 @@ class EverySecondTurnSolver(GameSolver):
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
                 previous_solution_constraints.append(self._island_bridges[island.position][direction])
-        self._model.AddBoolOr([c.Not() for c in previous_solution_constraints])
+        self._model.add_bool_or([c.Not() for c in previous_solution_constraints])
 
         self.init_island_grid()
         return self.get_solution()
@@ -95,22 +95,22 @@ class EverySecondTurnSolver(GameSolver):
     def _add_initial_constraints(self):
         for position, direction_bridges in self._island_bridges.items():
             bridges_count_vars = list(direction_bridges.values())
-            self._model.Add(sum(bridges_count_vars) == 2)
+            self._model.add(sum(bridges_count_vars) == 2)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._model.Add(
+                    self._model.add(
                         self._island_bridges[island.position][direction] ==
                         self._island_bridges[island.direction_position_bridges[direction][0]][direction.opposite])
                 else:
-                    self._model.Add(self._island_bridges[island.position][direction] == 0)
+                    self._model.add(self._island_bridges[island.position][direction] == 0)
 
     def _add_links_constraints(self):
         for position in [position for position, value in self._input_grid if value == X]:
             linked_circles_constraints = self._one_turn_between_linked_circles_constraints(position)
-            self._model.Add(sum(linked_circles_constraints) == 2)
+            self._model.add(sum(linked_circles_constraints) == 2)
 
     def _one_turn_between_linked_circles_constraints(self, circle_pos: Position) -> list:
         constraints = []
@@ -129,8 +129,8 @@ class EverySecondTurnSolver(GameSolver):
             hor_path_ok = self.new_and(hor_path_vars)
             vert_path_ok = self.new_and(vert_path_vars)
 
-            link_ok = self._model.NewBoolVar(f"link_{circle_pos}_to_{other_circle_pos}")
-            self._model.AddBoolOr([hor_path_ok, vert_path_ok]).OnlyEnforceIf(link_ok)
+            link_ok = self._model.new_bool_var(f"link_{circle_pos}_to_{other_circle_pos}")
+            self._model.add_bool_or([hor_path_ok, vert_path_ok]).only_enforce_if(link_ok)
             self._model.AddImplication(hor_path_ok, link_ok)
             self._model.AddImplication(vert_path_ok, link_ok)
 
@@ -146,8 +146,8 @@ class EverySecondTurnSolver(GameSolver):
             constraints.append(self._island_bridges[current_position][first_direction])
             current_position = current_position.after(first_direction)
         if self._input_grid[current_position] != _:
-            b = self._model.NewBoolVar("")
-            self._model.Add(b == 0)
+            b = self._model.new_bool_var("")
+            self._model.add(b == 0)
             return [b]
 
         constraints.append(self._island_bridges[current_position][second_direction])
@@ -156,8 +156,8 @@ class EverySecondTurnSolver(GameSolver):
             constraints.append(self._island_bridges[current_position][second_direction])
             current_position = current_position.after(second_direction)
         if current_position != other_circle_pos:
-            b = self._model.NewBoolVar("")
-            self._model.Add(b == 0)
+            b = self._model.new_bool_var("")
+            self._model.add(b == 0)
             return [b]
 
         return constraints
@@ -169,7 +169,7 @@ class EverySecondTurnSolver(GameSolver):
             left = self._island_bridges[position][Direction.left()]
             down = self._island_bridges[position][Direction.down()]
 
-            self._model.AddBoolOr([
+            self._model.add_bool_or([
                 self.new_and([right, up, left.Not(), down.Not()]),
                 self.new_and([right, up.Not(), left.Not(), down]),
                 self.new_and([right.Not(), up.Not(), left, down]),
@@ -177,11 +177,11 @@ class EverySecondTurnSolver(GameSolver):
             ])
 
     def new_and(self, literals):
-        b = self._model.NewBoolVar('')
+        b = self._model.new_bool_var('')
         if not literals:
-            self._model.Add(b == 1)
+            self._model.add(b == 1)
             return b
         for lit in literals:
             self._model.AddImplication(b, lit)
-        self._model.AddBoolOr([l.Not() for l in literals] + [b])
+        self._model.add_bool_or([l.Not() for l in literals] + [b])
         return b

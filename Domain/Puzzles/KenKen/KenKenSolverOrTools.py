@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 
 from ortools.sat.python import cp_model
 
@@ -18,17 +18,17 @@ class KenKenSolverOrTools(GameSolver):
         self._previous_solution = None
 
     def get_solution(self) -> tuple[Grid | None, int]:
-        self._grid_vars = Grid([[self._model.NewIntVar(1, self.rows_number, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(1, self.rows_number, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):
@@ -42,12 +42,12 @@ class KenKenSolverOrTools(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 prev_val = self._previous_solution.value(r, c)
-                diff_var = self._model.NewBoolVar(f"diff_r{r}_c{c}_{uuid_str}")
-                self._model.Add(self._grid_vars[Position(r, c)] != prev_val).OnlyEnforceIf(diff_var)
-                self._model.Add(self._grid_vars[Position(r, c)] == prev_val).OnlyEnforceIf(diff_var.Not())
+                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}_{uuid_str}")
+                self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
                 bool_vars.append(diff_var)
 
-        self._model.AddBoolOr(bool_vars)
+        self._model.add_bool_or(bool_vars)
 
         return self._compute_solution()
 
@@ -61,19 +61,19 @@ class KenKenSolverOrTools(GameSolver):
     def _initials_constraints(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                self._model.Add(self._grid_vars[Position(r, c)] >= 1)
-                self._model.Add(self._grid_vars[Position(r, c)] <= self.rows_number)
+                self._model.add(self._grid_vars[Position(r, c)] >= 1)
+                self._model.add(self._grid_vars[Position(r, c)] <= self.rows_number)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
-            self._model.AddAllDifferent([self._grid_vars[Position(r, c)] for c in range(self.columns_number)])
+            self._model.add_all_different([self._grid_vars[Position(r, c)] for c in range(self.columns_number)])
         for c in range(self.columns_number):
-            self._model.AddAllDifferent([self._grid_vars[Position(r, c)] for r in range(self.rows_number)])
+            self._model.add_all_different([self._grid_vars[Position(r, c)] for r in range(self.rows_number)])
 
     def _add_operations_add_constraints(self):
         for region, operator_str, result in self._regions_operators_results:
             if operator_str == '+':
-                self._model.Add(sum([self._grid_vars[position] for position in region]) == result)
+                self._model.add(sum([self._grid_vars[position] for position in region]) == result)
 
     def _add_operations_sub_constraints(self):
         for region, operator_str, result in self._regions_operators_results:
@@ -84,13 +84,13 @@ class KenKenSolverOrTools(GameSolver):
                 a = self._grid_vars[region[0]]
                 b = self._grid_vars[region[1]]
 
-                case1 = self._model.NewBoolVar(f"sub_case1_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
-                case2 = self._model.NewBoolVar(f"sub_case2_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+                case1 = self._model.new_bool_var(f"sub_case1_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+                case2 = self._model.new_bool_var(f"sub_case2_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
 
-                self._model.Add(a - b == result).OnlyEnforceIf(case1)
-                self._model.Add(b - a == result).OnlyEnforceIf(case2)
+                self._model.add(a - b == result).only_enforce_if(case1)
+                self._model.add(b - a == result).only_enforce_if(case2)
 
-                self._model.Add(case1 + case2 == 1)
+                self._model.add(case1 + case2 == 1)
 
     def _get_rows_columns_number(self) -> tuple[int, int]:
         all_positions = [pos for sublist, _, _ in self._regions_operators_results for pos in sublist]

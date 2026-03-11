@@ -1,3 +1,3 @@
-﻿from Puzzles.Suriza.SurizaSolver import SurizaSolver
+from Puzzles.Suriza.SurizaSolver import SurizaSolver
 
 SlitherlinkSolver = SurizaSolver

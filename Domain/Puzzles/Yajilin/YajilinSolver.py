@@ -1,4 +1,4 @@
-﻿from typing import Dict
+from typing import Dict
 
 from z3 import ArithRef, Solver, Not, And, Or, Int, sat, Bool, Implies, is_true
 

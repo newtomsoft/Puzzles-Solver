@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from z3 import Solver, Bool, Not, And, is_true, sat, BoolRef, Implies, Or
 

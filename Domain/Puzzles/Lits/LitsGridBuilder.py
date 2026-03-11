@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 from Domain.Puzzles.Lits.LitsType import LitsType
 
 

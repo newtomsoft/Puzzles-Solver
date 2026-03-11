@@ -28,13 +28,13 @@ class LitsSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         max_value = max(LitsType, key=lambda x: x.value).value
-        self._grid_vars = Grid([[self._model.NewIntVar(0, max_value, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(0, max_value, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
 
         solver = cp_model.CpSolver()
 
-        while solver.Solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            current_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        while solver.solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            current_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
             bool_matrix = [[1 if cell != 0 else 0 for cell in row] for row in current_solution.matrix]
             bool_grid = Grid(bool_matrix)
@@ -55,19 +55,19 @@ class LitsSolver(GameSolver):
         for component in components[1:]:
             literals = []
             for position in component:
-                is_unshaded = self._model.NewBoolVar(f"conn_unshade_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(is_unshaded)
-                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(is_unshaded.Not())
+                is_unshaded = self._model.new_bool_var(f"conn_unshade_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] == 0).only_enforce_if(is_unshaded)
+                self._model.add(self._grid_vars[position] != 0).only_enforce_if(is_unshaded.Not())
                 literals.append(is_unshaded)
 
             neighbors = [p for p in ShapeGenerator.around_shape(component) if p in self._grid]
             for position in neighbors:
-                is_shaded = self._model.NewBoolVar(f"conn_shade_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(is_shaded)
-                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(is_shaded.Not())
+                is_shaded = self._model.new_bool_var(f"conn_shade_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] != 0).only_enforce_if(is_shaded)
+                self._model.add(self._grid_vars[position] == 0).only_enforce_if(is_shaded.Not())
                 literals.append(is_shaded)
 
-            self._model.AddBoolOr(literals)
+            self._model.add_bool_or(literals)
 
     def get_other_solution(self):
         if self.previous_solution is None:
@@ -77,12 +77,12 @@ class LitsSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 prev_val = self.previous_solution.value(r, c)
-                diff_var = self._model.NewBoolVar(f"diff_r{r}_c{c}")
-                self._model.Add(self._grid_vars[Position(r, c)] != prev_val).OnlyEnforceIf(diff_var)
-                self._model.Add(self._grid_vars[Position(r, c)] == prev_val).OnlyEnforceIf(diff_var.Not())
+                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}")
+                self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
                 bool_vars.append(diff_var)
 
-        self._model.AddBoolOr(bool_vars)
+        self._model.add_bool_or(bool_vars)
 
         return self.get_solution()
 
@@ -96,11 +96,11 @@ class LitsSolver(GameSolver):
         for region in self._regions.values():
             non_zero_cells = []
             for position in region:
-                non_zero_cell = self._model.NewBoolVar(f"non_zero_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(non_zero_cell)
-                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(non_zero_cell.Not())
+                non_zero_cell = self._model.new_bool_var(f"non_zero_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] != 0).only_enforce_if(non_zero_cell)
+                self._model.add(self._grid_vars[position] == 0).only_enforce_if(non_zero_cell.Not())
                 non_zero_cells.append(non_zero_cell)
-            self._model.Add(sum(non_zero_cells) == 4)
+            self._model.add(sum(non_zero_cells) == 4)
 
     def _add_regions_constraints(self):
         for region in self._regions.values():
@@ -119,7 +119,7 @@ class LitsSolver(GameSolver):
         constraints_s = self._get_constraint_for_lits_type(region_grid, offset_position, LitsType.S)
 
         all_constraints = constraints_l + constraints_i + constraints_t + constraints_s
-        self._model.AddBoolOr(all_constraints)
+        self._model.add_bool_or(all_constraints)
 
     def _get_constraint_for_lits_type(self, region_grid: Grid, offset_position: Position, lits_type: LitsType):
         all_rotation_symetrics_grid = LitsGridBuilder.all(lits_type)
@@ -127,11 +127,11 @@ class LitsSolver(GameSolver):
         for grid in all_rotation_symetrics_grid:
             start_positions = grid.find_all_positions_in(region_grid, 0)
             for start_position in start_positions:
-                config_var = self._model.NewBoolVar(f"config_{lits_type.name}_{start_position.r}_{start_position.c}")
+                config_var = self._model.new_bool_var(f"config_{lits_type.name}_{start_position.r}_{start_position.c}")
 
                 for position, _ in [(position, value) for position, value in grid if value]:
                     grid_pos = position + start_position + offset_position
-                    self._model.Add(self._grid_vars[grid_pos] == lits_type.value).OnlyEnforceIf(config_var)
+                    self._model.add(self._grid_vars[grid_pos] == lits_type.value).only_enforce_if(config_var)
 
                 possible_constraints_l.append(config_var)
         return possible_constraints_l
@@ -142,7 +142,7 @@ class LitsSolver(GameSolver):
 
         if len(counter_r) == 1 or len(counter_c) == 1:
             for position in region:
-                self._model.Add(self._grid_vars[position] == LitsType.I.value)
+                self._model.add(self._grid_vars[position] == LitsType.I.value)
             return
 
         min_counter_c = min(counter_c.values())
@@ -156,40 +156,40 @@ class LitsSolver(GameSolver):
 
         if max_counter_c == 3 and (counter_r[min_r] == 2 or counter_r[max_r] == 2) or max_counter_r == 3 and (counter_c[min_c] == 2 or counter_c[max_c] == 2):
             for position in region:
-                self._model.Add(self._grid_vars[position] == LitsType.L.value)
+                self._model.add(self._grid_vars[position] == LitsType.L.value)
             return
 
         if max_counter_c == 3 and counter_r[(min_r + max_r) / 2] == 2 or max_counter_r == 3 and counter_c[(min_c + max_c) / 2] == 2:
             for position in region:
-                self._model.Add(self._grid_vars[position] == LitsType.T.value)
+                self._model.add(self._grid_vars[position] == LitsType.T.value)
             return
 
         if min_counter_c == 2 and max_counter_c == 2 or min_counter_r == 2 and max_counter_r == 2:
             for position in region:
-                self._model.Add(self._grid_vars[position] == LitsType.S.value)
+                self._model.add(self._grid_vars[position] == LitsType.S.value)
             return
 
     def _add_no_square_constraints(self):
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
-                top_left = self._model.NewBoolVar(f"non_zero_{r}_{c}")
-                top_right = self._model.NewBoolVar(f"non_zero_{r}_{c + 1}")
-                bottom_left = self._model.NewBoolVar(f"non_zero_{r + 1}_{c}")
-                bottom_right = self._model.NewBoolVar(f"non_zero_{r + 1}_{c + 1}")
+                top_left = self._model.new_bool_var(f"non_zero_{r}_{c}")
+                top_right = self._model.new_bool_var(f"non_zero_{r}_{c + 1}")
+                bottom_left = self._model.new_bool_var(f"non_zero_{r + 1}_{c}")
+                bottom_right = self._model.new_bool_var(f"non_zero_{r + 1}_{c + 1}")
 
-                self._model.Add(self._grid_vars[Position(r, c)] != 0).OnlyEnforceIf(top_left)
-                self._model.Add(self._grid_vars[Position(r, c)] == 0).OnlyEnforceIf(top_left.Not())
+                self._model.add(self._grid_vars[Position(r, c)] != 0).only_enforce_if(top_left)
+                self._model.add(self._grid_vars[Position(r, c)] == 0).only_enforce_if(top_left.Not())
 
-                self._model.Add(self._grid_vars[Position(r, c + 1)] != 0).OnlyEnforceIf(top_right)
-                self._model.Add(self._grid_vars[Position(r, c + 1)] == 0).OnlyEnforceIf(top_right.Not())
+                self._model.add(self._grid_vars[Position(r, c + 1)] != 0).only_enforce_if(top_right)
+                self._model.add(self._grid_vars[Position(r, c + 1)] == 0).only_enforce_if(top_right.Not())
 
-                self._model.Add(self._grid_vars[Position(r + 1, c)] != 0).OnlyEnforceIf(bottom_left)
-                self._model.Add(self._grid_vars[Position(r + 1, c)] == 0).OnlyEnforceIf(bottom_left.Not())
+                self._model.add(self._grid_vars[Position(r + 1, c)] != 0).only_enforce_if(bottom_left)
+                self._model.add(self._grid_vars[Position(r + 1, c)] == 0).only_enforce_if(bottom_left.Not())
 
-                self._model.Add(self._grid_vars[Position(r + 1, c + 1)] != 0).OnlyEnforceIf(bottom_right)
-                self._model.Add(self._grid_vars[Position(r + 1, c + 1)] == 0).OnlyEnforceIf(bottom_right.Not())
+                self._model.add(self._grid_vars[Position(r + 1, c + 1)] != 0).only_enforce_if(bottom_right)
+                self._model.add(self._grid_vars[Position(r + 1, c + 1)] == 0).only_enforce_if(bottom_right.Not())
 
-                self._model.AddBoolOr([top_left.Not(), top_right.Not(), bottom_left.Not(), bottom_right.Not()])
+                self._model.add_bool_or([top_left.Not(), top_right.Not(), bottom_left.Not(), bottom_right.Not()])
 
     def _add_touching_constraints(self):
         adjacent_regions_positions_pairs = self._adjacent_regions_positions_pairs()
@@ -200,12 +200,12 @@ class LitsSolver(GameSolver):
 
             non_zero_vars = []
             for position in region_positions:
-                non_zero_var = self._model.NewBoolVar(f"non_zero_region_{region_id}_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] != 0).OnlyEnforceIf(non_zero_var)
-                self._model.Add(self._grid_vars[position] == 0).OnlyEnforceIf(non_zero_var.Not())
+                non_zero_var = self._model.new_bool_var(f"non_zero_region_{region_id}_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] != 0).only_enforce_if(non_zero_var)
+                self._model.add(self._grid_vars[position] == 0).only_enforce_if(non_zero_var.Not())
                 non_zero_vars.append(non_zero_var)
 
-            self._model.AddBoolOr(non_zero_vars)
+            self._model.add_bool_or(non_zero_vars)
 
             for pair in positions_pairs:
                 if pair in used_pairs:
@@ -213,20 +213,20 @@ class LitsSolver(GameSolver):
                 used_pairs.add(pair)
                 pos0, pos1 = pair
 
-                different_values = self._model.NewBoolVar(f"diff_{pos0.r}_{pos0.c}_{pos1.r}_{pos1.c}")
-                pos0_is_zero = self._model.NewBoolVar(f"zero_{pos0.r}_{pos0.c}")
-                pos1_is_zero = self._model.NewBoolVar(f"zero_{pos1.r}_{pos1.c}")
+                different_values = self._model.new_bool_var(f"diff_{pos0.r}_{pos0.c}_{pos1.r}_{pos1.c}")
+                pos0_is_zero = self._model.new_bool_var(f"zero_{pos0.r}_{pos0.c}")
+                pos1_is_zero = self._model.new_bool_var(f"zero_{pos1.r}_{pos1.c}")
 
-                self._model.Add(self._grid_vars[pos0] != self._grid_vars[pos1]).OnlyEnforceIf(different_values)
-                self._model.Add(self._grid_vars[pos0] == self._grid_vars[pos1]).OnlyEnforceIf(different_values.Not())
+                self._model.add(self._grid_vars[pos0] != self._grid_vars[pos1]).only_enforce_if(different_values)
+                self._model.add(self._grid_vars[pos0] == self._grid_vars[pos1]).only_enforce_if(different_values.Not())
 
-                self._model.Add(self._grid_vars[pos0] == 0).OnlyEnforceIf(pos0_is_zero)
-                self._model.Add(self._grid_vars[pos0] != 0).OnlyEnforceIf(pos0_is_zero.Not())
+                self._model.add(self._grid_vars[pos0] == 0).only_enforce_if(pos0_is_zero)
+                self._model.add(self._grid_vars[pos0] != 0).only_enforce_if(pos0_is_zero.Not())
 
-                self._model.Add(self._grid_vars[pos1] == 0).OnlyEnforceIf(pos1_is_zero)
-                self._model.Add(self._grid_vars[pos1] != 0).OnlyEnforceIf(pos1_is_zero.Not())
+                self._model.add(self._grid_vars[pos1] == 0).only_enforce_if(pos1_is_zero)
+                self._model.add(self._grid_vars[pos1] != 0).only_enforce_if(pos1_is_zero.Not())
 
-                self._model.AddBoolOr([different_values, pos0_is_zero, pos1_is_zero])
+                self._model.add_bool_or([different_values, pos0_is_zero, pos1_is_zero])
 
     def _adjacent_regions_positions_pairs(self) -> dict[int, Set[tuple[Position, Position]]]:
         adjacents_pairs_dict = collections.defaultdict(set)

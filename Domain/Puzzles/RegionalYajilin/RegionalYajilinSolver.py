@@ -27,7 +27,7 @@ class RegionalYajilinSolver(GameSolver):
 
     def _init_model(self):
         self._island_bridges_vars = {
-            island.position: {direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
+            island.position: {direction: self._model.new_int_var(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values() if island.bridges_count > 0
         }
 
@@ -35,9 +35,9 @@ class RegionalYajilinSolver(GameSolver):
             neighbors = self._regions_grid.neighbors_positions(position)
             for neighbor in [neighbor for neighbor in neighbors if neighbor in self._island_bridges_vars]:
                 direction = neighbor.direction_to(position)
-                self._model.Add(self._island_bridges_vars[neighbor][direction] == 0)
+                self._model.add(self._island_bridges_vars[neighbor][direction] == 0)
 
-        self._black_cells_vars = {position: self._model.NewBoolVar(f"p{position}") for position, _ in self._regions_grid if position in self._island_bridges_vars}
+        self._black_cells_vars = {position: self._model.new_bool_var(f"p{position}") for position, _ in self._regions_grid if position in self._island_bridges_vars}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
@@ -51,7 +51,7 @@ class RegionalYajilinSolver(GameSolver):
         solver = cp_model.CpSolver()
 
         while True:
-            status = solver.Solve(self._model)
+            status = solver.solve(self._model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 return IslandGrid.empty(), proposition_count
 
@@ -61,14 +61,14 @@ class RegionalYajilinSolver(GameSolver):
                 for direction, var in direction_bridges.items():
                     next_pos = position.after(direction)
                     if next_pos in self._island_bridges_vars:
-                        bridges_number = solver.Value(var)
+                        bridges_number = solver.value(var)
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 for position, var in self._black_cells_vars.items():
-                    if solver.BooleanValue(var):
+                    if solver.boolean_value(var):
                         self._island_grid.set_value(position, '■')
 
                 self._previous_solution = self._island_grid
@@ -107,10 +107,10 @@ class RegionalYajilinSolver(GameSolver):
             if value == 1:
                 matches.append(var)
             else:
-                one_minus = self._model.NewIntVar(0, 1, f"one_minus_prev_{var.Name()}")
-                self._model.Add(one_minus + var == 1)
+                one_minus = self._model.new_int_var(0, 1, f"one_minus_prev_{var.Name()}")
+                self._model.add(one_minus + var == 1)
                 matches.append(one_minus)
-        self._model.Add(sum(matches) <= len(matches) - 1)
+        self._model.add(sum(matches) <= len(matches) - 1)
 
     def _add_constraints(self):
         self._add_initial_constraints()
@@ -123,19 +123,19 @@ class RegionalYajilinSolver(GameSolver):
         for c in range(self._island_grid.columns_number):
             pos = Position(0, c)
             if pos in self._island_bridges_vars:
-                self._model.Add(self._island_bridges_vars[pos][Direction.up()] == 0)
+                self._model.add(self._island_bridges_vars[pos][Direction.up()] == 0)
         for c in range(self._island_grid.columns_number):
             pos = Position(self._island_grid.rows_number - 1, c)
             if pos in self._island_bridges_vars:
-                self._model.Add(self._island_bridges_vars[pos][Direction.down()] == 0)
+                self._model.add(self._island_bridges_vars[pos][Direction.down()] == 0)
         for r in range(self._island_grid.rows_number):
             pos = Position(r, self._island_grid.columns_number - 1)
             if pos in self._island_bridges_vars:
-                self._model.Add(self._island_bridges_vars[pos][Direction.right()] == 0)
+                self._model.add(self._island_bridges_vars[pos][Direction.right()] == 0)
         for r in range(self._island_grid.rows_number):
             pos = Position(r, 0)
             if pos in self._island_bridges_vars:
-                self._model.Add(self._island_bridges_vars[pos][Direction.left()] == 0)
+                self._model.add(self._island_bridges_vars[pos][Direction.left()] == 0)
 
     def _add_opposite_bridges_constraints(self):
         for island in [island for island in self._island_grid.islands.values() if island.position in self._island_bridges_vars]:
@@ -145,9 +145,9 @@ class RegionalYajilinSolver(GameSolver):
                     other_position, _ = position_bridges
                     if other_position not in self._island_bridges_vars:
                         continue
-                    self._model.Add(self._island_bridges_vars[island.position][direction] == self._island_bridges_vars[other_position][direction.opposite])
+                    self._model.add(self._island_bridges_vars[island.position][direction] == self._island_bridges_vars[other_position][direction.opposite])
                 else:
-                    self._model.Add(self._island_bridges_vars[island.position][direction] == 0)
+                    self._model.add(self._island_bridges_vars[island.position][direction] == 0)
 
     def _add_black_cell_constraints(self):
         for position, blacks_count in [(position, value) for position, value in self._blacks_count_grid if value >= 0]:
@@ -155,7 +155,7 @@ class RegionalYajilinSolver(GameSolver):
             region_positions = self._positions_by_region_id[region_id]
             vars_in_region = [self._black_cells_vars[position] for position in region_positions if position in self._island_bridges_vars.keys()]
             if vars_in_region:
-                self._model.Add(sum(vars_in_region) == blacks_count)
+                self._model.add(sum(vars_in_region) == blacks_count)
 
     def _add_bridges_sum_constraints(self):
         for position in [position for position, _ in self._regions_grid]:
@@ -163,8 +163,8 @@ class RegionalYajilinSolver(GameSolver):
                 continue
             sum_dirs = sum([self._island_bridges_vars[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]])
             black_cell = self._black_cells_vars[position]
-            self._model.Add(sum_dirs == 0).OnlyEnforceIf(black_cell)
-            self._model.Add(sum_dirs == 2).OnlyEnforceIf(black_cell.Not())
+            self._model.add(sum_dirs == 0).only_enforce_if(black_cell)
+            self._model.add(sum_dirs == 2).only_enforce_if(black_cell.Not())
 
     def _add_no_adjacent_black_constraint(self):
         for position in [position for position, _ in self._regions_grid]:
@@ -173,4 +173,4 @@ class RegionalYajilinSolver(GameSolver):
             for neighbor_position in self._regions_grid.neighbors_positions(position):
                 if neighbor_position not in self._island_bridges_vars or neighbor_position not in self._black_cells_vars:
                     continue
-                self._model.AddBoolOr([self._black_cells_vars[position].Not(), self._black_cells_vars[neighbor_position].Not()])
+                self._model.add_bool_or([self._black_cells_vars[position].Not(), self._black_cells_vars[neighbor_position].Not()])

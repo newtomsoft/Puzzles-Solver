@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from ortools.sat.python import cp_model
 
@@ -41,7 +41,7 @@ class RenkatsuSolver(GameSolver):
         self._grid_vars = {}
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                self._grid_vars[(r, c)] = self._model.NewIntVar(1, self._regions_count, f"grid_{r}_{c}")
+                self._grid_vars[(r, c)] = self._model.new_int_var(1, self._regions_count, f"grid_{r}_{c}")
 
         self._add_constraints()
         return self._compute_solution()
@@ -61,32 +61,32 @@ class RenkatsuSolver(GameSolver):
                 pos0 = current_region_positions[0]
                 posi = current_region_positions[i]
                 same_value_literals.append(
-                    self._model.NewBoolVar(f"same_value_{region_id}_{i}")
+                    self._model.new_bool_var(f"same_value_{region_id}_{i}")
                 )
-                self._model.Add(
+                self._model.add(
                     self._grid_vars[(pos0.r, pos0.c)] == self._grid_vars[(posi.r, posi.c)]
-                ).OnlyEnforceIf(same_value_literals[-1])
-                self._model.Add(
+                ).only_enforce_if(same_value_literals[-1])
+                self._model.add(
                     self._grid_vars[(pos0.r, pos0.c)] != self._grid_vars[(posi.r, posi.c)]
-                ).OnlyEnforceIf(same_value_literals[-1].Not())
+                ).only_enforce_if(same_value_literals[-1].Not())
 
             if same_value_literals:
-                not_all_same = self._model.NewBoolVar(f"not_all_same_{region_id}")
-                self._model.AddBoolAnd(same_value_literals).OnlyEnforceIf(not_all_same.Not())
-                self._model.AddBoolOr([lit.Not() for lit in same_value_literals]).OnlyEnforceIf(not_all_same)
+                not_all_same = self._model.new_bool_var(f"not_all_same_{region_id}")
+                self._model.add_bool_and(same_value_literals).only_enforce_if(not_all_same.Not())
+                self._model.add_bool_or([lit.Not() for lit in same_value_literals]).only_enforce_if(not_all_same)
                 constraints.append(not_all_same)
 
         if constraints:
-            self._model.AddBoolOr(constraints)
+            self._model.add_bool_or(constraints)
 
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
             return Grid.empty()
 
-        non_ordered_solution = Grid([[self._solver.Value(self._grid_vars[(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        non_ordered_solution = Grid([[self._solver.value(self._grid_vars[(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         solution = self._order_values_by_position(non_ordered_solution)
         self._previous_solution = solution
         return solution
@@ -104,19 +104,19 @@ class RenkatsuSolver(GameSolver):
                     for j in range(i + 1, len(positions)):
                         pos_i = positions[i]
                         pos_j = positions[j]
-                        self._model.Add(self._grid_vars[(pos_i.r, pos_i.c)] != self._grid_vars[(pos_j.r, pos_j.c)])
+                        self._model.add(self._grid_vars[(pos_i.r, pos_i.c)] != self._grid_vars[(pos_j.r, pos_j.c)])
 
     def _add_regions_size_constraints(self):
         for region_id, region_size in self._region_size_by_id.items():
             region_cells = []
             for r in range(self.rows_number):
                 for c in range(self.columns_number):
-                    is_in_region = self._model.NewBoolVar(f"is_in_region_{region_id}_{r}_{c}")
-                    self._model.Add(self._grid_vars[(r, c)] == region_id).OnlyEnforceIf(is_in_region)
-                    self._model.Add(self._grid_vars[(r, c)] != region_id).OnlyEnforceIf(is_in_region.Not())
+                    is_in_region = self._model.new_bool_var(f"is_in_region_{region_id}_{r}_{c}")
+                    self._model.add(self._grid_vars[(r, c)] == region_id).only_enforce_if(is_in_region)
+                    self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.Not())
                     region_cells.append(is_in_region)
 
-            self._model.Add(sum(region_cells) == region_size)
+            self._model.add(sum(region_cells) == region_size)
 
     def _add_connected_cells_regions_constraints(self):
         for region_id in range(1, self._regions_count + 1):
@@ -127,59 +127,59 @@ class RenkatsuSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 max_step = self.rows_number * self.columns_number
-                step_vars[(r, c)] = self._model.NewIntVar(0, max_step, f"step_{region_id}_{r}_{c}")
+                step_vars[(r, c)] = self._model.new_int_var(0, max_step, f"step_{region_id}_{r}_{c}")
 
-                is_in_region = self._model.NewBoolVar(f"is_in_region_{region_id}_{r}_{c}")
-                self._model.Add(self._grid_vars[(r, c)] == region_id).OnlyEnforceIf(is_in_region)
-                self._model.Add(self._grid_vars[(r, c)] != region_id).OnlyEnforceIf(is_in_region.Not())
+                is_in_region = self._model.new_bool_var(f"is_in_region_{region_id}_{r}_{c}")
+                self._model.add(self._grid_vars[(r, c)] == region_id).only_enforce_if(is_in_region)
+                self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.Not())
 
-                self._model.Add(step_vars[(r, c)] >= 1).OnlyEnforceIf(is_in_region)
-                self._model.Add(step_vars[(r, c)] == 0).OnlyEnforceIf(is_in_region.Not())
+                self._model.add(step_vars[(r, c)] >= 1).only_enforce_if(is_in_region)
+                self._model.add(step_vars[(r, c)] == 0).only_enforce_if(is_in_region.Not())
 
         root_cells = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                is_root = self._model.NewBoolVar(f"is_root_{region_id}_{r}_{c}")
-                self._model.Add(step_vars[(r, c)] == 1).OnlyEnforceIf(is_root)
-                self._model.Add(step_vars[(r, c)] != 1).OnlyEnforceIf(is_root.Not())
+                is_root = self._model.new_bool_var(f"is_root_{region_id}_{r}_{c}")
+                self._model.add(step_vars[(r, c)] == 1).only_enforce_if(is_root)
+                self._model.add(step_vars[(r, c)] != 1).only_enforce_if(is_root.Not())
                 root_cells.append(is_root)
 
         self._model.AddExactlyOne(root_cells)
 
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                is_non_root_in_region = self._model.NewBoolVar(f"is_non_root_{region_id}_{r}_{c}")
-                self._model.Add(step_vars[(r, c)] > 1).OnlyEnforceIf(is_non_root_in_region)
-                self._model.Add(step_vars[(r, c)] <= 1).OnlyEnforceIf(is_non_root_in_region.Not())
+                is_non_root_in_region = self._model.new_bool_var(f"is_non_root_{region_id}_{r}_{c}")
+                self._model.add(step_vars[(r, c)] > 1).only_enforce_if(is_non_root_in_region)
+                self._model.add(step_vars[(r, c)] <= 1).only_enforce_if(is_non_root_in_region.Not())
 
                 adjacent_constraints = []
 
                 if r > 0:
-                    is_connected_up = self._model.NewBoolVar(f"is_connected_up_{region_id}_{r}_{c}")
-                    self._model.Add(self._grid_vars[(r - 1, c)] == region_id).OnlyEnforceIf(is_connected_up)
-                    self._model.Add(step_vars[(r - 1, c)] == step_vars[(r, c)] - 1).OnlyEnforceIf(is_connected_up)
+                    is_connected_up = self._model.new_bool_var(f"is_connected_up_{region_id}_{r}_{c}")
+                    self._model.add(self._grid_vars[(r - 1, c)] == region_id).only_enforce_if(is_connected_up)
+                    self._model.add(step_vars[(r - 1, c)] == step_vars[(r, c)] - 1).only_enforce_if(is_connected_up)
                     adjacent_constraints.append(is_connected_up)
 
                 if r < self.rows_number - 1:
-                    is_connected_down = self._model.NewBoolVar(f"is_connected_down_{region_id}_{r}_{c}")
-                    self._model.Add(self._grid_vars[(r + 1, c)] == region_id).OnlyEnforceIf(is_connected_down)
-                    self._model.Add(step_vars[(r + 1, c)] == step_vars[(r, c)] - 1).OnlyEnforceIf(is_connected_down)
+                    is_connected_down = self._model.new_bool_var(f"is_connected_down_{region_id}_{r}_{c}")
+                    self._model.add(self._grid_vars[(r + 1, c)] == region_id).only_enforce_if(is_connected_down)
+                    self._model.add(step_vars[(r + 1, c)] == step_vars[(r, c)] - 1).only_enforce_if(is_connected_down)
                     adjacent_constraints.append(is_connected_down)
 
                 if c > 0:
-                    is_connected_left = self._model.NewBoolVar(f"is_connected_left_{region_id}_{r}_{c}")
-                    self._model.Add(self._grid_vars[(r, c - 1)] == region_id).OnlyEnforceIf(is_connected_left)
-                    self._model.Add(step_vars[(r, c - 1)] == step_vars[(r, c)] - 1).OnlyEnforceIf(is_connected_left)
+                    is_connected_left = self._model.new_bool_var(f"is_connected_left_{region_id}_{r}_{c}")
+                    self._model.add(self._grid_vars[(r, c - 1)] == region_id).only_enforce_if(is_connected_left)
+                    self._model.add(step_vars[(r, c - 1)] == step_vars[(r, c)] - 1).only_enforce_if(is_connected_left)
                     adjacent_constraints.append(is_connected_left)
 
                 if c < self.columns_number - 1:
-                    is_connected_right = self._model.NewBoolVar(f"is_connected_right_{region_id}_{r}_{c}")
-                    self._model.Add(self._grid_vars[(r, c + 1)] == region_id).OnlyEnforceIf(is_connected_right)
-                    self._model.Add(step_vars[(r, c + 1)] == step_vars[(r, c)] - 1).OnlyEnforceIf(is_connected_right)
+                    is_connected_right = self._model.new_bool_var(f"is_connected_right_{region_id}_{r}_{c}")
+                    self._model.add(self._grid_vars[(r, c + 1)] == region_id).only_enforce_if(is_connected_right)
+                    self._model.add(step_vars[(r, c + 1)] == step_vars[(r, c)] - 1).only_enforce_if(is_connected_right)
                     adjacent_constraints.append(is_connected_right)
 
                 if adjacent_constraints:
-                    self._model.AddBoolOr(adjacent_constraints).OnlyEnforceIf(is_non_root_in_region)
+                    self._model.add_bool_or(adjacent_constraints).only_enforce_if(is_non_root_in_region)
 
     def _order_values_by_position(self, old_grid: Grid) -> Grid:
         new_value_by_old_value = {}

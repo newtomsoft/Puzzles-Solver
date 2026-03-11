@@ -1,4 +1,4 @@
-﻿from typing import Collection
+from typing import Collection
 
 from Domain.Board.Position import Position
 

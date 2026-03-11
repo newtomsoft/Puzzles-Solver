@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -26,13 +26,13 @@ class MeadowsSolver(GameSolver):
         max_value = max(given_values)
 
         # Create IntVar grid
-        self._vars = Grid([[self._model.NewIntVar(min_value, max_value, f"cell_{r}_{c}") for c in range(self._columns_number)]
+        self._vars = Grid([[self._model.new_int_var(min_value, max_value, f"cell_{r}_{c}") for c in range(self._columns_number)]
                            for r in range(self._rows_number)])
 
         # Fix given cells
         for position, value in self._grid:
             if value is not self.empty:
-                self._model.Add(self._vars[position] == value)
+                self._model.add(self._vars[position] == value)
 
         # Add shape constraints
         self._add_all_shapes_are_squares_constraints()
@@ -44,11 +44,11 @@ class MeadowsSolver(GameSolver):
             return Grid.empty()
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.Value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = Grid([[solver.value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
@@ -66,27 +66,27 @@ class MeadowsSolver(GameSolver):
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 prev_val = self._previous_solution.value(r, c)
-                b_eq = self._model.NewBoolVar(f"eq_prev_{r}_{c}")
+                b_eq = self._model.new_bool_var(f"eq_prev_{r}_{c}")
                 var = self._vars.value(r, c)
-                self._model.Add(var == prev_val).OnlyEnforceIf(b_eq)
+                self._model.add(var == prev_val).only_enforce_if(b_eq)
                 # Not equal when b_eq is false
                 # Encode var != prev_val as (var <= prev_val - 1) OR (var >= prev_val + 1)
-                b_le = self._model.NewBoolVar(f"le_prev_{r}_{c}")
-                b_ge = self._model.NewBoolVar(f"ge_prev_{r}_{c}")
-                self._model.Add(var <= prev_val - 1).OnlyEnforceIf(b_le)
-                self._model.Add(var >= prev_val + 1).OnlyEnforceIf(b_ge)
+                b_le = self._model.new_bool_var(f"le_prev_{r}_{c}")
+                b_ge = self._model.new_bool_var(f"ge_prev_{r}_{c}")
+                self._model.add(var <= prev_val - 1).only_enforce_if(b_le)
+                self._model.add(var >= prev_val + 1).only_enforce_if(b_ge)
                 # If b_eq is false, at least one of b_le or b_ge must be true
-                self._model.AddBoolOr([b_le, b_ge, b_eq])
+                self._model.add_bool_or([b_le, b_ge, b_eq])
                 eq_bools.append(b_eq)
         # Not all equal
-        self._model.Add(sum(eq_bools) <= self._rows_number * self._columns_number - 1)
+        self._model.add(sum(eq_bools) <= self._rows_number * self._columns_number - 1)
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.Value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = Grid([[solver.value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
@@ -136,20 +136,20 @@ class MeadowsSolver(GameSolver):
                     if not (r0 <= position.r <= r1 and c0 <= position.c <= c1):
                         continue
 
-                    selector = self._model.NewBoolVar(f"sq_{square_area}_{pr}_{pc}_{r0}_{c0}_{size}")
+                    selector = self._model.new_bool_var(f"sq_{square_area}_{pr}_{pc}_{r0}_{c0}_{size}")
 
                     # Inside cells equal to the value when selector is true
                     for r in range(r0, r1 + 1):
                         for c in range(c0, c1 + 1):
                             pos = Position(r, c)
-                            self._model.Add(self._vars[pos] == square_area).OnlyEnforceIf(selector)
+                            self._model.add(self._vars[pos] == square_area).only_enforce_if(selector)
                             pos_to_selectors.setdefault((r, c), []).append(selector)
 
                     candidates.append(selector)
 
         if not candidates:
             # Impossible: no candidate squares; force infeasibility
-            self._model.Add(False)
+            self._model.add(False)
             return
 
         # Exactly one candidate selected
@@ -163,17 +163,17 @@ class MeadowsSolver(GameSolver):
                 var = self._vars.value(r, c)
                 if key in covered_positions:
                     # Create b_eq: channel var == cell_value without using reified != directly
-                    b_eq = self._model.NewBoolVar(f"eq_{square_area}_{r}_{c}")
-                    self._model.Add(var == square_area).OnlyEnforceIf(b_eq)
+                    b_eq = self._model.new_bool_var(f"eq_{square_area}_{r}_{c}")
+                    self._model.add(var == square_area).only_enforce_if(b_eq)
                     # Not equal when b_eq is false via two bounds
-                    b_le = self._model.NewBoolVar(f"le_{square_area}_{r}_{c}")
-                    b_ge = self._model.NewBoolVar(f"ge_{square_area}_{r}_{c}")
-                    self._model.Add(var <= square_area - 1).OnlyEnforceIf(b_le)
-                    self._model.Add(var >= square_area + 1).OnlyEnforceIf(b_ge)
+                    b_le = self._model.new_bool_var(f"le_{square_area}_{r}_{c}")
+                    b_ge = self._model.new_bool_var(f"ge_{square_area}_{r}_{c}")
+                    self._model.add(var <= square_area - 1).only_enforce_if(b_le)
+                    self._model.add(var >= square_area + 1).only_enforce_if(b_ge)
                     # If not equal then at least one of b_le or b_ge holds
-                    self._model.AddBoolOr([b_le, b_ge, b_eq])
+                    self._model.add_bool_or([b_le, b_ge, b_eq])
                     # b_eq -> Or(selectors)
-                    self._model.AddBoolOr(pos_to_selectors[key] + [b_eq.Not()])
+                    self._model.add_bool_or(pos_to_selectors[key] + [b_eq.Not()])
                 else:
                     # Can never be part of this square
-                    self._model.Add(var != square_area)
+                    self._model.add(var != square_area)

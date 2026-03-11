@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from z3 import Solver, Not, And, Or, Implies, Int, sat, If
 

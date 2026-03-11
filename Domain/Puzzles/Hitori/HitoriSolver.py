@@ -16,7 +16,7 @@ class HitoriSolver(GameSolver):
 
     def _init_solver(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = Grid([[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -28,13 +28,13 @@ class HitoriSolver(GameSolver):
              return self.get_solution()
 
         previous_black_cells = [pos for pos, val in self._previous_solution if not val]
-        self._model.AddBoolOr([self._grid_vars[p] for p in previous_black_cells])
+        self._model.add_bool_or([self._grid_vars[p] for p in previous_black_cells])
 
         return self._solve_and_ensure_connectivity()
 
     def _solve_and_ensure_connectivity(self):
         while True:
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
             if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
                  boolean_grid = self._build_boolean_grid_from_solution()
                  white_shapes = boolean_grid.get_all_shapes()
@@ -48,7 +48,7 @@ class HitoriSolver(GameSolver):
                  return Grid.empty()
 
     def _build_boolean_grid_from_solution(self):
-        return Grid([[self._solver.BooleanValue(self._grid_vars[r][c]) for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        return Grid([[self._solver.boolean_value(self._grid_vars[r][c]) for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
 
     def _build_solution_grid(self, boolean_grid):
         return Grid([[self._grid.value(r, c) if boolean_grid.value(r, c) else False for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
@@ -61,16 +61,16 @@ class HitoriSolver(GameSolver):
             around_white = ShapeGenerator.around_shape(white_shape)
             valid_around = [p for p in around_white if p in self._grid]
             if valid_around:
-                 self._model.AddBoolOr([self._grid_vars[p] for p in valid_around])
+                 self._model.add_bool_or([self._grid_vars[p] for p in valid_around])
 
     def _add_constraints(self):
          # No adjacent black cells
          for r in range(self._grid.rows_number):
              for c in range(self._grid.columns_number):
                  if r + 1 < self._grid.rows_number:
-                      self._model.Add(self._grid_vars[r][c] + self._grid_vars[r+1][c] >= 1)
+                      self._model.add(self._grid_vars[r][c] + self._grid_vars[r+1][c] >= 1)
                  if c + 1 < self._grid.columns_number:
-                      self._model.Add(self._grid_vars[r][c] + self._grid_vars[r][c+1] >= 1)
+                      self._model.add(self._grid_vars[r][c] + self._grid_vars[r][c+1] >= 1)
 
          # No duplicate numbers in row/col
          for r in range(self._grid.rows_number):
@@ -82,7 +82,7 @@ class HitoriSolver(GameSolver):
              for val, cols in vals.items():
                  if len(cols) > 1:
                       # At most one can be white (1)
-                      self._model.Add(sum(self._grid_vars[r][c] for c in cols) <= 1)
+                      self._model.add(sum(self._grid_vars[r][c] for c in cols) <= 1)
 
          # Same for columns
          for c in range(self._grid.columns_number):
@@ -93,4 +93,4 @@ class HitoriSolver(GameSolver):
                  vals[val].append(r)
              for val, rows in vals.items():
                  if len(rows) > 1:
-                      self._model.Add(sum(self._grid_vars[r][c] for r in rows) <= 1)
+                      self._model.add(sum(self._grid_vars[r][c] for r in rows) <= 1)

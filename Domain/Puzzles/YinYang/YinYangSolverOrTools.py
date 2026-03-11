@@ -25,7 +25,7 @@ class YinYangSolver(GameSolver):
         # 1. Grid Variables
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                self._grid_vars[(r, c)] = self._model.NewBoolVar(f"cell_{r}_{c}")
+                self._grid_vars[(r, c)] = self._model.new_bool_var(f"cell_{r}_{c}")
 
         # 2. Base Rules (Fixed values, 2x2, Checkerboard)
         self._add_base_constraints()
@@ -39,9 +39,9 @@ class YinYangSolver(GameSolver):
             for c in range(self.columns_number):
                 val = self._grid[Position(r, c)]
                 if val == 1:  # White
-                    self._model.Add(self._grid_vars[(r, c)] == 1)
+                    self._model.add(self._grid_vars[(r, c)] == 1)
                 elif val == 0:  # Black
-                    self._model.Add(self._grid_vars[(r, c)] == 0)
+                    self._model.add(self._grid_vars[(r, c)] == 0)
 
         # 2x2 Constraints (No solid square)
         for r in range(self.rows_number - 1):
@@ -52,8 +52,8 @@ class YinYangSolver(GameSolver):
                     self._grid_vars[(r, c + 1)],
                     self._grid_vars[(r + 1, c + 1)],
                 ]
-                self._model.Add(sum(cells) > 0)
-                self._model.Add(sum(cells) < 4)
+                self._model.add(sum(cells) > 0)
+                self._model.add(sum(cells) < 4)
 
         # Checkerboard Constraints
         # Forbidden: 1 0 / 0 1 and 0 1 / 1 0
@@ -75,19 +75,19 @@ class YinYangSolver(GameSolver):
         rank_vars = {}
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                rank_vars[(r, c)] = self._model.NewIntVar(0, num_cells - 1, f"rank_{r}_{c}")
+                rank_vars[(r, c)] = self._model.new_int_var(0, num_cells - 1, f"rank_{r}_{c}")
 
         # Root indicators
         root_white = {}
         root_black = {}
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                root_white[(r, c)] = self._model.NewBoolVar(f"root_white_{r}_{c}")
-                root_black[(r, c)] = self._model.NewBoolVar(f"root_black_{r}_{c}")
+                root_white[(r, c)] = self._model.new_bool_var(f"root_white_{r}_{c}")
+                root_black[(r, c)] = self._model.new_bool_var(f"root_black_{r}_{c}")
 
         # Exactly one root per color
-        self._model.Add(sum(root_white.values()) == 1)
-        self._model.Add(sum(root_black.values()) == 1)
+        self._model.add(sum(root_white.values()) == 1)
+        self._model.add(sum(root_black.values()) == 1)
 
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -98,11 +98,11 @@ class YinYangSolver(GameSolver):
                 u_rb = root_black[u_pos]
 
                 # Root implications
-                self._model.Add(u_grid == 1).OnlyEnforceIf(u_rw)
-                self._model.Add(u_rank == 0).OnlyEnforceIf(u_rw)
+                self._model.add(u_grid == 1).only_enforce_if(u_rw)
+                self._model.add(u_rank == 0).only_enforce_if(u_rw)
 
-                self._model.Add(u_grid == 0).OnlyEnforceIf(u_rb)
-                self._model.Add(u_rank == 0).OnlyEnforceIf(u_rb)
+                self._model.add(u_grid == 0).only_enforce_if(u_rb)
+                self._model.add(u_rank == 0).only_enforce_if(u_rb)
 
                 # Neighbors
                 neighbors = []
@@ -118,31 +118,31 @@ class YinYangSolver(GameSolver):
                 for v_pos in neighbors:
                     # Parent White: v is parent of u (white)
                     # Means: grid[u]==1, grid[v]==1, rank[v] == rank[u] - 1
-                    pw = self._model.NewBoolVar(f"pw_{u_pos}_{v_pos}")
+                    pw = self._model.new_bool_var(f"pw_{u_pos}_{v_pos}")
                     v_grid = self._grid_vars[v_pos]
                     v_rank = rank_vars[v_pos]
 
-                    self._model.Add(u_grid == 1).OnlyEnforceIf(pw)
-                    self._model.Add(v_grid == 1).OnlyEnforceIf(pw)
-                    self._model.Add(v_rank == u_rank - 1).OnlyEnforceIf(pw)
+                    self._model.add(u_grid == 1).only_enforce_if(pw)
+                    self._model.add(v_grid == 1).only_enforce_if(pw)
+                    self._model.add(v_rank == u_rank - 1).only_enforce_if(pw)
                     parents_white.append(pw)
 
                     # Parent Black: v is parent of u (black)
                     # Means: grid[u]==0, grid[v]==0, rank[v] == rank[u] - 1
-                    pb = self._model.NewBoolVar(f"pb_{u_pos}_{v_pos}")
-                    self._model.Add(u_grid == 0).OnlyEnforceIf(pb)
-                    self._model.Add(v_grid == 0).OnlyEnforceIf(pb)
-                    self._model.Add(v_rank == u_rank - 1).OnlyEnforceIf(pb)
+                    pb = self._model.new_bool_var(f"pb_{u_pos}_{v_pos}")
+                    self._model.add(u_grid == 0).only_enforce_if(pb)
+                    self._model.add(v_grid == 0).only_enforce_if(pb)
+                    self._model.add(v_rank == u_rank - 1).only_enforce_if(pb)
                     parents_black.append(pb)
 
                 # If u is White, (u is root) OR (exists white parent)
-                self._model.AddBoolOr([u_rw] + parents_white).OnlyEnforceIf(u_grid)
+                self._model.add_bool_or([u_rw] + parents_white).only_enforce_if(u_grid)
 
                 # If u is Black, (u is root) OR (exists black parent)
-                self._model.AddBoolOr([u_rb] + parents_black).OnlyEnforceIf(u_grid.Not())
+                self._model.add_bool_or([u_rb] + parents_black).only_enforce_if(u_grid.Not())
 
     def get_solution(self) -> Grid:
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
             solution_grid = self._build_grid_from_solution()
             self._previous_solution = solution_grid
@@ -164,7 +164,7 @@ class YinYangSolver(GameSolver):
                 else:
                     constraints.append(self._grid_vars[(r, c)])
 
-        self._model.AddBoolOr(constraints)
+        self._model.add_bool_or(constraints)
 
         return self.get_solution()
 
@@ -173,7 +173,7 @@ class YinYangSolver(GameSolver):
         for r in range(self.rows_number):
             row_data = []
             for c in range(self.columns_number):
-                val = self._solver.Value(self._grid_vars[(r, c)])
+                val = self._solver.value(self._grid_vars[(r, c)])
                 row_data.append(int(val))
             data.append(row_data)
         return Grid(data)

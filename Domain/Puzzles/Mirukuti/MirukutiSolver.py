@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
@@ -46,7 +46,7 @@ class MirukutiSolver(GameSolver):
         
         solver = cp_model.CpSolver()
         # solver.parameters.log_search_progress = True
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             self._last_solver = solver
@@ -63,8 +63,8 @@ class MirukutiSolver(GameSolver):
             island_grid.biscuits = []
             
             for b_idx, biscuit_pos in enumerate(self.biscuits):
-                j_r = solver.Value(self._j_r[b_idx])
-                j_c = solver.Value(self._j_c[b_idx])
+                j_r = solver.value(self._j_r[b_idx])
+                j_c = solver.value(self._j_c[b_idx])
                 junction_pos = Position(j_r, j_c)
                 
                 biscuit_info = {
@@ -91,7 +91,7 @@ class MirukutiSolver(GameSolver):
                 # Find which Milk corresponds to which end
                 for e in [0, 1]:
                     for m_idx, m_pos in enumerate(self.milks):
-                        if solver.Value(self._milk_assigned[m_idx][b_idx][e]):
+                        if solver.value(self._milk_assigned[m_idx][b_idx][e]):
                             biscuit_info['milks'].append(m_pos)
                             curr = m_pos
                             d_bar = m_pos.direction_to(junction_pos)
@@ -119,11 +119,11 @@ class MirukutiSolver(GameSolver):
         all_circle_positions_set = set((p.r, p.c) for p in (self.milks + self.biscuits))
 
         # Decision variables
-        self._j_r = [self._model.NewIntVar(0, self.rows - 1, f'j_r_{i}') for i in range(num_biscuits)]
-        self._j_c = [self._model.NewIntVar(0, self.cols - 1, f'j_c_{i}') for i in range(num_biscuits)]
+        self._j_r = [self._model.new_int_var(0, self.rows - 1, f'j_r_{i}') for i in range(num_biscuits)]
+        self._j_c = [self._model.new_int_var(0, self.cols - 1, f'j_c_{i}') for i in range(num_biscuits)]
         
         # milk_assigned[m_idx][b_idx][end_idx] where end_idx is 0 or 1
-        self._milk_assigned = [[[self._model.NewBoolVar(f'm_{m}_b_{b}_e_{e}') 
+        self._milk_assigned = [[[self._model.new_bool_var(f'm_{m}_b_{b}_e_{e}') 
                                  for e in range(2)] 
                                 for b in range(num_biscuits)] 
                                for m in range(num_milks)]
@@ -188,14 +188,14 @@ class MirukutiSolver(GameSolver):
                         if not self._is_path_clear(Position(jr, jc), self.milks[m1_idx], all_circle_positions_set): continue
                         
                         # This is a valid configuration
-                        cv = self._model.NewBoolVar(f'conf_{b_idx}_{jr}_{jc}_{m0_idx}_{m1_idx}')
+                        cv = self._model.new_bool_var(f'conf_{b_idx}_{jr}_{jc}_{m0_idx}_{m1_idx}')
                         config_vars.append(cv)
                         
                         # Link config to junction and milks
-                        self._model.Add(self._j_r[b_idx] == jr).OnlyEnforceIf(cv)
-                        self._model.Add(self._j_c[b_idx] == jc).OnlyEnforceIf(cv)
-                        self._model.Add(self._milk_assigned[m0_idx][b_idx][0] == 1).OnlyEnforceIf(cv)
-                        self._model.Add(self._milk_assigned[m1_idx][b_idx][1] == 1).OnlyEnforceIf(cv)
+                        self._model.add(self._j_r[b_idx] == jr).only_enforce_if(cv)
+                        self._model.add(self._j_c[b_idx] == jc).only_enforce_if(cv)
+                        self._model.add(self._milk_assigned[m0_idx][b_idx][0] == 1).only_enforce_if(cv)
+                        self._model.add(self._milk_assigned[m1_idx][b_idx][1] == 1).only_enforce_if(cv)
                         
                         # Segments for this configuration
                         # Stem segments
@@ -206,18 +206,18 @@ class MirukutiSolver(GameSolver):
                         self._add_segments(Position(jr, jc), self.milks[m1_idx], cv, seg_h, seg_v)
 
             # Exactly one configuration must be chosen for each biscuit
-            self._model.Add(sum(config_vars) == 1)
+            self._model.add(sum(config_vars) == 1)
 
         # Global constraints (unchanged logic, applied to optimized segment lists)
         for m_idx in range(num_milks):
-            self._model.Add(sum(self._milk_assigned[m_idx][b][e] for b in range(num_biscuits) for e in range(2)) <= 1)
+            self._model.add(sum(self._milk_assigned[m_idx][b][e] for b in range(num_biscuits) for e in range(2)) <= 1)
         
         for r in range(self.rows):
             for c in range(self.cols - 1):
-                if seg_h[r][c]: self._model.Add(sum(seg_h[r][c]) <= 1)
+                if seg_h[r][c]: self._model.add(sum(seg_h[r][c]) <= 1)
         for r in range(self.rows - 1):
             for c in range(self.cols):
-                if seg_v[r][c]: self._model.Add(sum(seg_v[r][c]) <= 1)
+                if seg_v[r][c]: self._model.add(sum(seg_v[r][c]) <= 1)
 
         # Degree and circle constraints
         for r in range(self.rows):
@@ -229,27 +229,27 @@ class MirukutiSolver(GameSolver):
                 if r < self.rows - 1 and seg_v[r][c]: incident.extend(seg_v[r][c])
                 
                 if not incident: continue
-                self._model.Add(sum(incident) <= 3)
+                self._model.add(sum(incident) <= 3)
                 
                 val = self._grid.value(r, c)
                 char = getattr(val, 'type_char', str(val).strip())
                 
                 if char == self.MILK:
                     m_idx = next(i for i, p in enumerate(self.milks) if p.r == r and p.c == c)
-                    is_used = self._model.NewBoolVar(f'm_used_{r}_{c}')
-                    self._model.Add(sum(self._milk_assigned[m_idx][b][e] for b in range(num_biscuits) for e in range(2)) == is_used)
-                    self._model.Add(sum(incident) == 1).OnlyEnforceIf(is_used)
-                    self._model.Add(sum(incident) == 0).OnlyEnforceIf(is_used.Not())
+                    is_used = self._model.new_bool_var(f'm_used_{r}_{c}')
+                    self._model.add(sum(self._milk_assigned[m_idx][b][e] for b in range(num_biscuits) for e in range(2)) == is_used)
+                    self._model.add(sum(incident) == 1).only_enforce_if(is_used)
+                    self._model.add(sum(incident) == 0).only_enforce_if(is_used.Not())
                 elif char == self.COOKIE:
                     b_idx = next(i for i, p in enumerate(self.biscuits) if p.r == r and p.c == c)
-                    is_j = self._model.NewBoolVar(f'b_is_j_{b_idx}')
-                    self._model.Add(self._j_r[b_idx] == r).OnlyEnforceIf(is_j)
-                    self._model.Add(self._j_c[b_idx] == c).OnlyEnforceIf(is_j)
+                    is_j = self._model.new_bool_var(f'b_is_j_{b_idx}')
+                    self._model.add(self._j_r[b_idx] == r).only_enforce_if(is_j)
+                    self._model.add(self._j_c[b_idx] == c).only_enforce_if(is_j)
                     # Use a trick to find if it's the junction: if junction is (r,c), bridges = 3, else 1
-                    self._model.Add(sum(incident) == 3).OnlyEnforceIf(is_j)
-                    self._model.Add(sum(incident) == 1).OnlyEnforceIf(is_j.Not())
+                    self._model.add(sum(incident) == 3).only_enforce_if(is_j)
+                    self._model.add(sum(incident) == 1).only_enforce_if(is_j.Not())
                 else:
-                    self._model.Add(sum(incident) != 1)
+                    self._model.add(sum(incident) != 1)
 
     def _is_path_clear(self, p1, p2, circles):
         d = p1.direction_to(p2)
@@ -289,7 +289,7 @@ class MirukutiSolver(GameSolver):
             for b in range(num_biscuits):
                 for e in range(2):
                     var = self._milk_assigned[m][b][e]
-                    val = self._last_solver.Value(var)
+                    val = self._last_solver.value(var)
                     if val:
                         exclusion_elements.append(var.Not())
                     else:
@@ -297,28 +297,28 @@ class MirukutiSolver(GameSolver):
 
         # Junction positions
         for b in range(num_biscuits):
-            val_r = self._last_solver.Value(self._j_r[b])
-            val_c = self._last_solver.Value(self._j_c[b])
+            val_r = self._last_solver.value(self._j_r[b])
+            val_c = self._last_solver.value(self._j_c[b])
             
             # We want to add a literal that is true IF (j_r[b] != val_r OR j_c[b] != val_c)
             # which is equivalent to NOT (j_r[b] == val_r AND j_c[b] == val_c)
             
-            is_different_j = self._model.NewBoolVar(f'diff_j_{b}_{val_r}_{val_c}')
-            j_r_same = self._model.NewBoolVar(f'j_r_same_{b}_{val_r}')
-            j_c_same = self._model.NewBoolVar(f'j_c_same_{b}_{val_c}')
+            is_different_j = self._model.new_bool_var(f'diff_j_{b}_{val_r}_{val_c}')
+            j_r_same = self._model.new_bool_var(f'j_r_same_{b}_{val_r}')
+            j_c_same = self._model.new_bool_var(f'j_c_same_{b}_{val_c}')
             
-            self._model.Add(self._j_r[b] == val_r).OnlyEnforceIf(j_r_same)
-            self._model.Add(self._j_r[b] != val_r).OnlyEnforceIf(j_r_same.Not())
-            self._model.Add(self._j_c[b] == val_c).OnlyEnforceIf(j_c_same)
-            self._model.Add(self._j_c[b] != val_c).OnlyEnforceIf(j_c_same.Not())
+            self._model.add(self._j_r[b] == val_r).only_enforce_if(j_r_same)
+            self._model.add(self._j_r[b] != val_r).only_enforce_if(j_r_same.Not())
+            self._model.add(self._j_c[b] == val_c).only_enforce_if(j_c_same)
+            self._model.add(self._j_c[b] != val_c).only_enforce_if(j_c_same.Not())
             
             # is_different_j is true if NOT (j_r_same AND j_c_same)
-            self._model.AddBoolOr([j_r_same.Not(), j_c_same.Not()]).OnlyEnforceIf(is_different_j)
-            self._model.AddBoolAnd([j_r_same, j_c_same]).OnlyEnforceIf(is_different_j.Not())
+            self._model.add_bool_or([j_r_same.Not(), j_c_same.Not()]).only_enforce_if(is_different_j)
+            self._model.add_bool_and([j_r_same, j_c_same]).only_enforce_if(is_different_j.Not())
             
             exclusion_elements.append(is_different_j)
             
         # To exclude the solution, at least one decision must change.
-        self._model.AddBoolOr(exclusion_elements)
+        self._model.add_bool_or(exclusion_elements)
 
         return self.get_solution()

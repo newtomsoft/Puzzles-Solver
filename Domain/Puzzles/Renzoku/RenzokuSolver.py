@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -21,18 +21,18 @@ class RenzokuSolver(GameSolver):
         self._previous_solution_grid: Grid | None = None
 
     def _init_solver(self):
-        self._grid_vars = Grid([[self._model.NewIntVar(1, self.rows_number, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(1, self.rows_number, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._grid_vars is None:
             self._init_solver()
 
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
 
-        grid = Grid([[self._solver.Value(self._grid_vars[r][c]) for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[r][c]) for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._previous_solution_grid = grid
         return grid
 
@@ -45,12 +45,12 @@ class RenzokuSolver(GameSolver):
             for c in range(self.columns_number):
                 previous_value = self._previous_solution_grid.value(r, c)
                 if previous_value != -1:
-                    diff_cell = self._model.NewBoolVar(f"diff_cell_{r}_{c}")
-                    self._model.Add(self._grid_vars[r][c] != previous_value).OnlyEnforceIf(diff_cell)
-                    self._model.Add(self._grid_vars[r][c] == previous_value).OnlyEnforceIf(diff_cell.Not())
+                    diff_cell = self._model.new_bool_var(f"diff_cell_{r}_{c}")
+                    self._model.add(self._grid_vars[r][c] != previous_value).only_enforce_if(diff_cell)
+                    self._model.add(self._grid_vars[r][c] == previous_value).only_enforce_if(diff_cell.Not())
                     different_cells.append(diff_cell)
 
-        self._model.AddBoolOr(different_cells)
+        self._model.add_bool_or(different_cells)
         return self.get_solution()
 
     def _number(self, position: Position):
@@ -64,36 +64,36 @@ class RenzokuSolver(GameSolver):
 
     def _add_distinct_constraints(self):
         for row in self._grid_vars.matrix:
-            self._model.AddAllDifferent(row)
+            self._model.add_all_different(row)
 
         for c in range(self.columns_number):
             column = [self._grid_vars[r][c] for r in range(self.rows_number)]
-            self._model.AddAllDifferent(column)
+            self._model.add_all_different(column)
 
     def _add_initial_constraints(self):
         for position, value in [(position, value) for position, value in self._grid if value != -1]:
-            self._model.Add(self._number(position) == value)
+            self._model.add(self._number(position) == value)
 
     def _add_consecutive_constraints(self):
         for first_position, second_position in self._consecutive_positions:
-            consecutive = self._model.NewBoolVar(f"consecutive_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
+            consecutive = self._model.new_bool_var(f"consecutive_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
 
             a = self._number(first_position)
             b = self._number(second_position)
 
-            a_minus_b_eq_1 = self._model.NewBoolVar(f"a_minus_b_eq_1_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
-            b_minus_a_eq_1 = self._model.NewBoolVar(f"b_minus_a_eq_1_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
+            a_minus_b_eq_1 = self._model.new_bool_var(f"a_minus_b_eq_1_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
+            b_minus_a_eq_1 = self._model.new_bool_var(f"b_minus_a_eq_1_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
 
-            self._model.Add(a - b == 1).OnlyEnforceIf(a_minus_b_eq_1)
-            self._model.Add(a - b != 1).OnlyEnforceIf(a_minus_b_eq_1.Not())
+            self._model.add(a - b == 1).only_enforce_if(a_minus_b_eq_1)
+            self._model.add(a - b != 1).only_enforce_if(a_minus_b_eq_1.Not())
 
-            self._model.Add(b - a == 1).OnlyEnforceIf(b_minus_a_eq_1)
-            self._model.Add(b - a != 1).OnlyEnforceIf(b_minus_a_eq_1.Not())
+            self._model.add(b - a == 1).only_enforce_if(b_minus_a_eq_1)
+            self._model.add(b - a != 1).only_enforce_if(b_minus_a_eq_1.Not())
 
-            self._model.AddBoolOr([a_minus_b_eq_1, b_minus_a_eq_1]).OnlyEnforceIf(consecutive)
-            self._model.AddBoolAnd([a_minus_b_eq_1.Not(), b_minus_a_eq_1.Not()]).OnlyEnforceIf(consecutive.Not())
+            self._model.add_bool_or([a_minus_b_eq_1, b_minus_a_eq_1]).only_enforce_if(consecutive)
+            self._model.add_bool_and([a_minus_b_eq_1.Not(), b_minus_a_eq_1.Not()]).only_enforce_if(consecutive.Not())
 
-            self._model.Add(consecutive == 1)
+            self._model.add(consecutive == 1)
 
     def _add_non_consecutive_constraints(self):
         non_consecutive_positions = (
@@ -109,5 +109,5 @@ class RenzokuSolver(GameSolver):
             a = self._number(first_position)
             b = self._number(second_position)
 
-            self._model.Add(a - b != 1)
-            self._model.Add(b - a != 1)
+            self._model.add(a - b != 1)
+            self._model.add(b - a != 1)

@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, unsat, Int
+from z3 import Solver, Not, And, unsat, Int
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver

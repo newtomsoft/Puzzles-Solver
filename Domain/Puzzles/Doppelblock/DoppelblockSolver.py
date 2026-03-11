@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -25,7 +25,7 @@ class DoppelblockSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         n = self.rows_number
-        self._grid_vars = Grid([[self._model.NewIntVar(0, n - 2, f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(0, n - 2, f"cell_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -40,20 +40,20 @@ class DoppelblockSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 prev_val = self._previous_solution.value(r, c)
-                diff = self._model.NewBoolVar(f"diff_r{r}_c{c}")
-                self._model.Add(self._grid_vars[Position(r, c)] != prev_val).OnlyEnforceIf(diff)
-                self._model.Add(self._grid_vars[Position(r, c)] == prev_val).OnlyEnforceIf(diff.Not())
+                diff = self._model.new_bool_var(f"diff_r{r}_c{c}")
+                self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff)
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.Not())
                 bool_vars.append(diff)
-        self._model.AddBoolOr(bool_vars)
+        self._model.add_bool_or(bool_vars)
 
         return self._compute_solution()
 
     def _compute_solution(self):
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        grid = Grid([[solver.Value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -64,50 +64,50 @@ class DoppelblockSolver(GameSolver):
     def _add_initials_constraints(self):
         for position, value in self._grid:
             if value != self.empty:
-                self._model.Add(self._grid_vars[position] == value)
+                self._model.add(self._grid_vars[position] == value)
 
     def _add_two_black_cells_and_distincts_numbers_constraints(self):
         n = self.rows_number
         max_num = n - 2
 
-        is_black_row = [[self._model.NewBoolVar(f"is_black_r{r}_c{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        is_black_row = [[self._model.new_bool_var(f"is_black_r{r}_c{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         is_black_col = [[is_black_row[r][c] for r in range(self.rows_number)] for c in range(self.columns_number)]
 
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 v = self._grid_vars[Position(r, c)]
                 b = is_black_row[r][c]
-                self._model.Add(v == self.black_value).OnlyEnforceIf(b)
-                self._model.Add(v != self.black_value).OnlyEnforceIf(b.Not())
+                self._model.add(v == self.black_value).only_enforce_if(b)
+                self._model.add(v != self.black_value).only_enforce_if(b.Not())
 
         for r in range(self.rows_number):
-            self._model.Add(sum(is_black_row[r][c] for c in range(self.columns_number)) == 2)
+            self._model.add(sum(is_black_row[r][c] for c in range(self.columns_number)) == 2)
         for c in range(self.columns_number):
-            self._model.Add(sum(is_black_col[c][r] for r in range(self.rows_number)) == 2)
+            self._model.add(sum(is_black_col[c][r] for r in range(self.rows_number)) == 2)
 
         for r in range(self.rows_number):
             transformed = []
             for c in range(self.columns_number):
                 v = self._grid_vars[Position(r, c)]
                 b = is_black_row[r][c]
-                t = self._model.NewIntVar(-self.columns_number, max_num, f"t_row_{r}_{c}")
+                t = self._model.new_int_var(-self.columns_number, max_num, f"t_row_{r}_{c}")
                 neg_const = -c - 1
-                self._model.Add(t == neg_const).OnlyEnforceIf(b)
-                self._model.Add(t == v).OnlyEnforceIf(b.Not())
+                self._model.add(t == neg_const).only_enforce_if(b)
+                self._model.add(t == v).only_enforce_if(b.Not())
                 transformed.append(t)
-            self._model.AddAllDifferent(transformed)
+            self._model.add_all_different(transformed)
 
         for c in range(self.columns_number):
             transformed = []
             for r in range(self.rows_number):
                 v = self._grid_vars[Position(r, c)]
                 b = is_black_col[c][r]
-                t = self._model.NewIntVar(-self.rows_number, max_num, f"t_col_{c}_{r}")
+                t = self._model.new_int_var(-self.rows_number, max_num, f"t_col_{c}_{r}")
                 neg_const = -r - 1
-                self._model.Add(t == neg_const).OnlyEnforceIf(b)
-                self._model.Add(t == v).OnlyEnforceIf(b.Not())
+                self._model.add(t == neg_const).only_enforce_if(b)
+                self._model.add(t == v).only_enforce_if(b.Not())
                 transformed.append(t)
-            self._model.AddAllDifferent(transformed)
+            self._model.add_all_different(transformed)
 
         self._is_black_bools_rows = is_black_row
         self._is_black_bools_cols = is_black_col
@@ -134,22 +134,22 @@ class DoppelblockSolver(GameSolver):
             for j in range(i + 1, length):
                 bi = is_black_bools[i]
                 bj = is_black_bools[j]
-                pair_black = self._model.NewBoolVar(f"pair_{axis}{index}_{i}_{j}")
+                pair_black = self._model.new_bool_var(f"pair_{axis}{index}_{i}_{j}")
                 # Enforce pair == (bi AND bj) using linear constraints on Booleans
-                self._model.Add(pair_black <= bi)
-                self._model.Add(pair_black <= bj)
-                self._model.Add(pair_black >= bi + bj - 1)
+                self._model.add(pair_black <= bi)
+                self._model.add(pair_black <= bj)
+                self._model.add(pair_black >= bi + bj - 1)
 
                 between = [line_vars[k] for k in range(i + 1, j)]
-                s = self._model.NewIntVar(0, max_between_sum, f"between_{axis}{index}_{i}_{j}")
+                s = self._model.new_int_var(0, max_between_sum, f"between_{axis}{index}_{i}_{j}")
                 if between:
-                    self._model.Add(sum(between) == s).OnlyEnforceIf(pair_black)
+                    self._model.add(sum(between) == s).only_enforce_if(pair_black)
                 else:
-                    self._model.Add(s == 0).OnlyEnforceIf(pair_black)
-                self._model.Add(s == 0).OnlyEnforceIf(pair_black.Not())
+                    self._model.add(s == 0).only_enforce_if(pair_black)
+                self._model.add(s == 0).only_enforce_if(pair_black.Not())
                 sum_vars.append(s)
 
         if sum_vars:
-            self._model.Add(sum(sum_vars) == clue)
+            self._model.add(sum(sum_vars) == clue)
         else:
-            self._model.Add(clue == 0)
+            self._model.add(clue == 0)
