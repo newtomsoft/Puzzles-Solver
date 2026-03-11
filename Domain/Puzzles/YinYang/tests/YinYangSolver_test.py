@@ -1,4 +1,4 @@
-﻿import unittest
+import unittest
 from unittest import TestCase
 
 from Domain.Board.Grid import Grid

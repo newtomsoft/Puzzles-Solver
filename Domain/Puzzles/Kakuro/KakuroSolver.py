@@ -18,14 +18,14 @@ class KakuroSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewIntVar(1, 9, f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_vars = [[self._model.new_int_var(1, 9, f"grid_{r}_{c}") if not isinstance(self._grid.value(r, c), list) else None for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -43,29 +43,15 @@ class KakuroSolver(GameSolver):
             for c in range(self.columns_number):
                 var = self._grid_vars[r][c]
                 if var is not None:
-                    val = self._solver.Value(var)
-                    # We want: Not(All(var == val)) => Or(Any(var != val))
-                    # OrTools requires booleans for AddBoolOr.
-                    # Create b <=> var != val
-                    # Actually, better: Create b.
-                    # b => var != val.
-                    # And we want AtLeastOne(b).
-                    # Wait, simpler:
-                    # b <=> (var == val).
-                    # We want Not(And(b_i)).
-                    # => Or(Not(b_i)).
-                    # b_i is true if var == val.
-                    # We want at least one var != val.
-
-                    # Reified constraint:
-                    bool_diff = self._model.NewBoolVar(f"diff_{r}_{c}")
-                    self._model.Add(var != val).OnlyEnforceIf(bool_diff)
-                    self._model.Add(var == val).OnlyEnforceIf(bool_diff.Not())
+                    val = self._solver.value(var)
+                    bool_diff = self._model.new_bool_var(f"diff_{r}_{c}")
+                    self._model.add(var != val).only_enforce_if(bool_diff)
+                    self._model.add(var == val).only_enforce_if(bool_diff.Not())
                     constraints.append(bool_diff)
 
-        self._model.AddBoolOr(constraints)
+        self._model.add_bool_or(constraints)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -74,7 +60,7 @@ class KakuroSolver(GameSolver):
         return solution_grid
 
     def _create_solution_grid(self) -> Grid:
-        return Grid([[self._solver.Value(self._grid_vars[r][c]) if self._grid_vars[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
+        return Grid([[self._solver.value(self._grid_vars[r][c]) if self._grid_vars[r][c] is not None else 0 for c in range(self.columns_number)] for r in range(self.rows_number)])
 
     def _add_constraints(self):
         self._add_rows_constraint()
@@ -121,7 +107,7 @@ class KakuroSolver(GameSolver):
         if not segment_cells:
             return
 
-        self._model.Add(sum(segment_cells) == target_sum)
+        self._model.add(sum(segment_cells) == target_sum)
 
         if len(segment_cells) > 1:
-            self._model.AddAllDifferent(segment_cells)
+            self._model.add_all_different(segment_cells)

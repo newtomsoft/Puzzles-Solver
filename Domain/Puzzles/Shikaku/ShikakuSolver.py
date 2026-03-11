@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.GameSolver import GameSolver
@@ -26,18 +26,18 @@ class ShikakuSolver(GameSolver):
         return rectangles
 
     def get_solution(self) -> Grid:
-        self._matrix_vars = [[self._model.NewIntVar(0, len(self._position_number_by_rectangle_index) - 1, f"grid_{r}_{c}") 
+        self._matrix_vars = [[self._model.new_int_var(0, len(self._position_number_by_rectangle_index) - 1, f"grid_{r}_{c}") 
                              for c in range(self.columns_number)] 
                              for r in range(self.rows_number)]
         self._add_constraints()
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        grid = Grid([[solver.Value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         self._previous_solution = grid
         return grid
 
@@ -54,15 +54,15 @@ class ShikakuSolver(GameSolver):
             for c in range(self.columns_number):
                 prev_val = self._previous_solution.value(r, c)
                 literals.append(self._matrix_vars[r][c] != prev_val)
-        self._model.AddBoolOr(literals)
+        self._model.add_bool_or(literals)
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.Value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = Grid([[solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def _add_constraints(self):
@@ -85,14 +85,14 @@ class ShikakuSolver(GameSolver):
                         if position not in rectangle_cells or len(rectangle_cells) != width * height:
                             continue
 
-                        is_this_rectangle = self._model.NewBoolVar(f"is_rectangle_{rectangle_index}_{r}_{c}_{height}_{width}")
+                        is_this_rectangle = self._model.new_bool_var(f"is_rectangle_{rectangle_index}_{r}_{c}_{height}_{width}")
 
                         for cell_r, cell_c in rectangle_cells:
-                            self._model.Add(self._matrix_vars[cell_r][cell_c] == rectangle_index).OnlyEnforceIf(is_this_rectangle)
+                            self._model.add(self._matrix_vars[cell_r][cell_c] == rectangle_index).only_enforce_if(is_this_rectangle)
 
                         current_rectangle_constraints.append(is_this_rectangle)
 
-            self._model.AddBoolOr(current_rectangle_constraints)
+            self._model.add_bool_or(current_rectangle_constraints)
 
     @staticmethod
     def _get_all_rectangles_size(cells_number) -> set[tuple[int, int]]:

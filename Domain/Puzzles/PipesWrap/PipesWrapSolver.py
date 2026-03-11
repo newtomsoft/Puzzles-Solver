@@ -20,10 +20,10 @@ class PipesWrapSolver(PipesSolver):
         self._grid_vars = WrappedGrid([
             [
                 {
-                    Direction.up(): self._model.NewBoolVar(f"{r}_{c}_up"),
-                    Direction.left(): self._model.NewBoolVar(f"{r}_{c}_left"),
-                    Direction.down(): self._model.NewBoolVar(f"{r}_{c}_down"),
-                    Direction.right(): self._model.NewBoolVar(f"{r}_{c}_right"),
+                    Direction.up(): self._model.new_bool_var(f"{r}_{c}_up"),
+                    Direction.left(): self._model.new_bool_var(f"{r}_{c}_left"),
+                    Direction.down(): self._model.new_bool_var(f"{r}_{c}_down"),
+                    Direction.right(): self._model.new_bool_var(f"{r}_{c}_right"),
                 }
                 for c in range(self._columns_number)
             ]
@@ -34,7 +34,7 @@ class PipesWrapSolver(PipesSolver):
 
     def get_solution_when_all_pipes_connected(self):
         proposition_count = 0
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
 
         while status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
@@ -65,15 +65,15 @@ class PipesWrapSolver(PipesSolver):
                     (Direction.left(), Direction.left() in connected_to),
                     (Direction.right(), Direction.right() in connected_to)
                 ]:
-                    temp_var = self._model.NewBoolVar(f"excl_{position}_{direction}")
-                    self._model.Add(self._grid_vars[position][direction] == is_connected).OnlyEnforceIf(temp_var)
-                    self._model.Add(self._grid_vars[position][direction] != is_connected).OnlyEnforceIf(temp_var.Not())
+                    temp_var = self._model.new_bool_var(f"excl_{position}_{direction}")
+                    self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
+                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
                     exclusion_literals.append(temp_var)
 
             if exclusion_literals:
-                self._model.AddBoolOr([lit.Not() for lit in exclusion_literals])
+                self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
 
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
 
         return WrappedGrid.empty(), proposition_count
 
@@ -86,7 +86,7 @@ class PipesWrapSolver(PipesSolver):
             position_down = self._grid_vars.neighbor_down(position)
             position_left = self._grid_vars.neighbor_left(position)
             position_right = self._grid_vars.neighbor_right(position)
-            self._model.Add(self._grid_vars[position][Direction.up()] == self._grid_vars[position_up][Direction.down()])
-            self._model.Add(self._grid_vars[position][Direction.down()] == self._grid_vars[position_down][Direction.up()])
-            self._model.Add(self._grid_vars[position][Direction.left()] == self._grid_vars[position_left][Direction.right()])
-            self._model.Add(self._grid_vars[position][Direction.right()] == self._grid_vars[position_right][Direction.left()])
+            self._model.add(self._grid_vars[position][Direction.up()] == self._grid_vars[position_up][Direction.down()])
+            self._model.add(self._grid_vars[position][Direction.down()] == self._grid_vars[position_down][Direction.up()])
+            self._model.add(self._grid_vars[position][Direction.left()] == self._grid_vars[position_left][Direction.right()])
+            self._model.add(self._grid_vars[position][Direction.right()] == self._grid_vars[position_right][Direction.left()])

@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Int, And, Not, Implies, If, Sum, sat
+from z3 import Solver, Int, And, Not, Implies, If, Sum, sat
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position

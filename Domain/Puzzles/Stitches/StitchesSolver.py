@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -32,16 +32,16 @@ class StitchesSolver(GameSolver):
 
     def _init_solver(self):
         # 0: no connection, 1: right, 2: down, 3: left, 4: up
-        self._grid_connexion_var = Grid([[self._model.NewIntVar(0, 4, f"connexion_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_connexion_var = Grid([[self._model.new_int_var(0, 4, f"connexion_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid | None:
         if self._grid_connexion_var is None:
             self._init_solver()
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
             return Grid.empty()
-        grid = Grid([[self._solver.Value(self._grid_connexion_var[r][c]) for c in range(self.columns_number)] for r in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_connexion_var[r][c]) for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._previous_solution_grid = grid
         return grid
 
@@ -53,13 +53,13 @@ class StitchesSolver(GameSolver):
     def _exclude_solution(self, solution_grid: Grid):
         previous_solution_literals = []
         for position, value in [(position, value) for position, value in self._grid if value > 0]:
-            temp_var = self._model.NewBoolVar(f"prev_{position}")
-            self._model.Add(self._grid_connexion_var[position] == solution_grid[position]).OnlyEnforceIf(temp_var)
-            self._model.Add(self._grid_connexion_var[position] != solution_grid[position]).OnlyEnforceIf(temp_var.Not())
+            temp_var = self._model.new_bool_var(f"prev_{position}")
+            self._model.add(self._grid_connexion_var[position] == solution_grid[position]).only_enforce_if(temp_var)
+            self._model.add(self._grid_connexion_var[position] != solution_grid[position]).only_enforce_if(temp_var.Not())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.AddBoolOr([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
 
     def _add_constraints(self):
         self._add_constraint_dots_in_rows_and_columns()
@@ -89,48 +89,48 @@ class StitchesSolver(GameSolver):
 
             has_connection_vars = []
             for position in all_regions_possible_dot_positions:
-                has_connection_var = self._model.NewBoolVar(f"region_{region_number}_pos_{position}_has_connection")
-                self._model.Add(self._grid_connexion_var[position] > 0).OnlyEnforceIf(has_connection_var)
-                self._model.Add(self._grid_connexion_var[position] == 0).OnlyEnforceIf(has_connection_var.Not())
+                has_connection_var = self._model.new_bool_var(f"region_{region_number}_pos_{position}_has_connection")
+                self._model.add(self._grid_connexion_var[position] > 0).only_enforce_if(has_connection_var)
+                self._model.add(self._grid_connexion_var[position] == 0).only_enforce_if(has_connection_var.Not())
                 has_connection_vars.append(has_connection_var)
 
-            self._model.Add(sum(has_connection_vars) == len(current_region_with_others_regions) * self.regions_connections)
+            self._model.add(sum(has_connection_vars) == len(current_region_with_others_regions) * self.regions_connections)
 
     def _add_constraint_dots_between_regions_at(self, positions: list[tuple[Position, Position]]):
         region0_to_region1_connections = []
         for position0, position1 in positions:
             direction_value = position0.direction_to(position1).value
-            connection_var = self._model.NewBoolVar(f"connection_{position0}_to_{position1}")
-            self._model.Add(self._grid_connexion_var[position0] == direction_value).OnlyEnforceIf(connection_var)
-            self._model.Add(self._grid_connexion_var[position0] != direction_value).OnlyEnforceIf(connection_var.Not())
+            connection_var = self._model.new_bool_var(f"connection_{position0}_to_{position1}")
+            self._model.add(self._grid_connexion_var[position0] == direction_value).only_enforce_if(connection_var)
+            self._model.add(self._grid_connexion_var[position0] != direction_value).only_enforce_if(connection_var.Not())
             region0_to_region1_connections.append(connection_var)
 
-        self._model.Add(sum(region0_to_region1_connections) == self.regions_connections)
+        self._model.add(sum(region0_to_region1_connections) == self.regions_connections)
 
         region1_to_region0_connections = []
         for position0, position1 in positions:
             direction_value = position0.direction_from(position1).value
-            connection_var = self._model.NewBoolVar(f"connection_{position1}_to_{position0}")
-            self._model.Add(self._grid_connexion_var[position1] == direction_value).OnlyEnforceIf(connection_var)
-            self._model.Add(self._grid_connexion_var[position1] != direction_value).OnlyEnforceIf(connection_var.Not())
+            connection_var = self._model.new_bool_var(f"connection_{position1}_to_{position0}")
+            self._model.add(self._grid_connexion_var[position1] == direction_value).only_enforce_if(connection_var)
+            self._model.add(self._grid_connexion_var[position1] != direction_value).only_enforce_if(connection_var.Not())
             region1_to_region0_connections.append(connection_var)
 
-        self._model.Add(sum(region1_to_region0_connections) == self.regions_connections)
+        self._model.add(sum(region1_to_region0_connections) == self.regions_connections)
 
     def _add_constraint_dots_in_rows_and_columns(self):
         for r, row in enumerate(self._grid_connexion_var.matrix):
-            row_has_connection = [self._model.NewBoolVar(f"row_{r}_col_{c}_has_connection") for c in range(self.columns_number)]
+            row_has_connection = [self._model.new_bool_var(f"row_{r}_col_{c}_has_connection") for c in range(self.columns_number)]
             for c, cell in enumerate(row):
-                self._model.Add(cell > 0).OnlyEnforceIf(row_has_connection[c])
-                self._model.Add(cell == 0).OnlyEnforceIf(row_has_connection[c].Not())
-            self._model.Add(sum(row_has_connection) == self._dots_by_row[r])
+                self._model.add(cell > 0).only_enforce_if(row_has_connection[c])
+                self._model.add(cell == 0).only_enforce_if(row_has_connection[c].Not())
+            self._model.add(sum(row_has_connection) == self._dots_by_row[r])
 
         for c in range(self.columns_number):
-            column_has_connection = [self._model.NewBoolVar(f"row_{r}_col_{c}_has_connection") for r in range(self.rows_number)]
+            column_has_connection = [self._model.new_bool_var(f"row_{r}_col_{c}_has_connection") for r in range(self.rows_number)]
             for r in range(self.rows_number):
-                self._model.Add(self._grid_connexion_var.matrix[r][c] > 0).OnlyEnforceIf(column_has_connection[r])
-                self._model.Add(self._grid_connexion_var.matrix[r][c] == 0).OnlyEnforceIf(column_has_connection[r].Not())
-            self._model.Add(sum(column_has_connection) == self._dots_by_column[c])
+                self._model.add(self._grid_connexion_var.matrix[r][c] > 0).only_enforce_if(column_has_connection[r])
+                self._model.add(self._grid_connexion_var.matrix[r][c] == 0).only_enforce_if(column_has_connection[r].Not())
+            self._model.add(sum(column_has_connection) == self._dots_by_column[c])
 
     def _add_constraint_2_dots_crossing_2_regions(self):
         for position, _ in self._grid_connexion_var:
@@ -148,25 +148,25 @@ class StitchesSolver(GameSolver):
 
     def _add_constraint_other_region_dot_positions(self, position: Position, other_region_dot_positions: list[Position]):
         if len(other_region_dot_positions) == 0:
-            self._model.Add(self._grid_connexion_var[position] == 0)
+            self._model.add(self._grid_connexion_var[position] == 0)
             return
 
         direction_vars = []
 
-        no_connection_var = self._model.NewBoolVar(f"pos_{position}_no_connection")
-        self._model.Add(self._grid_connexion_var[position] == Direction.none().value).OnlyEnforceIf(no_connection_var)
+        no_connection_var = self._model.new_bool_var(f"pos_{position}_no_connection")
+        self._model.add(self._grid_connexion_var[position] == Direction.none().value).only_enforce_if(no_connection_var)
         direction_vars.append(no_connection_var)
 
         for other_position in other_region_dot_positions:
             direction = position.direction_to(other_position)
-            direction_var = self._model.NewBoolVar(f"pos_{position}_direction_{direction.value}")
+            direction_var = self._model.new_bool_var(f"pos_{position}_direction_{direction.value}")
 
-            self._model.Add(self._grid_connexion_var[position] == direction.value).OnlyEnforceIf(direction_var)
+            self._model.add(self._grid_connexion_var[position] == direction.value).only_enforce_if(direction_var)
             direction_vars.append(direction_var)
 
-            opposite_direction_var = self._model.NewBoolVar(f"pos_{other_position}_direction_{direction.opposite.value}")
-            self._model.Add(self._grid_connexion_var[other_position] == direction.opposite.value).OnlyEnforceIf(opposite_direction_var)
-            self._model.Add(self._grid_connexion_var[other_position] != direction.opposite.value).OnlyEnforceIf(opposite_direction_var.Not())
+            opposite_direction_var = self._model.new_bool_var(f"pos_{other_position}_direction_{direction.opposite.value}")
+            self._model.add(self._grid_connexion_var[other_position] == direction.opposite.value).only_enforce_if(opposite_direction_var)
+            self._model.add(self._grid_connexion_var[other_position] != direction.opposite.value).only_enforce_if(opposite_direction_var.Not())
 
             self._model.AddImplication(direction_var, opposite_direction_var)
 

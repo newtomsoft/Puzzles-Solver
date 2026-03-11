@@ -35,7 +35,7 @@ class AkariSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._bulbs_vars = Grid([[self._model.NewBoolVar(f'bulb_{r}_{c}') if Position(r, c) not in self._black_cells else None
+        self._bulbs_vars = Grid([[self._model.new_bool_var(f'bulb_{r}_{c}') if Position(r, c) not in self._black_cells else None
                                   for c in range(self.columns_number)]
                                  for r in range(self.rows_number)])
         self._add_constraints()
@@ -44,7 +44,7 @@ class AkariSolver(GameSolver):
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
         if self._status == cp_model.OPTIMAL or self._status == cp_model.FEASIBLE:
             return self._compute_solution()
 
@@ -61,15 +61,15 @@ class AkariSolver(GameSolver):
                 p = Position(r, c)
                 if p not in self._black_cells and self._bulbs_vars[p] is not None:
                     var = self._bulbs_vars[p]
-                    if self._solver.BooleanValue(var):
+                    if self._solver.boolean_value(var):
                         current_vars.append(var.Not())
                     else:
                         current_vars.append(var)
 
         if current_vars:
-            self._model.AddBoolOr(current_vars)
+            self._model.add_bool_or(current_vars)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
         if self._status == cp_model.OPTIMAL or self._status == cp_model.FEASIBLE:
             return self._compute_solution()
 
@@ -81,7 +81,7 @@ class AkariSolver(GameSolver):
             for c in range(self.columns_number):
                 p = Position(r, c)
                 if p not in self._black_cells:
-                     if self._solver.BooleanValue(self._bulbs_vars[p]):
+                     if self._solver.boolean_value(self._bulbs_vars[p]):
                           solution_grid[p] = 1
                      else:
                           solution_grid[p] = 0
@@ -93,7 +93,7 @@ class AkariSolver(GameSolver):
         # 1. Number constraints
         for pos, number in self._number_constraints.items():
             neighbors = [n for n in self._bulbs_vars.neighbors_positions(pos) if n not in self._black_cells]
-            self._model.Add(sum(self._bulbs_vars[n] for n in neighbors) == number)
+            self._model.add(sum(self._bulbs_vars[n] for n in neighbors) == number)
 
         # Precompute segments
         # Horizontal segments
@@ -114,7 +114,7 @@ class AkariSolver(GameSolver):
 
         for seg in h_segments:
             # Constraint: At most one bulb per segment
-            self._model.Add(sum(self._bulbs_vars[p] for p in seg) <= 1)
+            self._model.add(sum(self._bulbs_vars[p] for p in seg) <= 1)
             for p in seg:
                 cell_to_h_segment[p] = seg
 
@@ -135,7 +135,7 @@ class AkariSolver(GameSolver):
                 v_segments.append(current_segment)
 
         for seg in v_segments:
-             self._model.Add(sum(self._bulbs_vars[p] for p in seg) <= 1)
+             self._model.add(sum(self._bulbs_vars[p] for p in seg) <= 1)
              for p in seg:
                  cell_to_v_segment[p] = seg
 
@@ -147,4 +147,4 @@ class AkariSolver(GameSolver):
                     h_seg = cell_to_h_segment.get(p, [])
                     v_seg = cell_to_v_segment.get(p, [])
                     relevant_positions = set(h_seg) | set(v_seg)
-                    self._model.Add(sum(self._bulbs_vars[rp] for rp in relevant_positions) >= 1)
+                    self._model.add(sum(self._bulbs_vars[rp] for rp in relevant_positions) >= 1)

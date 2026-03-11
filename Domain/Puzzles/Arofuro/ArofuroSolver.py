@@ -27,10 +27,10 @@ class ArofuroSolver(GameSolver):
         self._solver: CpSolver | None = None
 
     def _init_solver(self):
-        self._grid_vars = Grid([[self._model.NewIntVar(0, 4, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(0, 4, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
 
         self._rank_vars = Grid(
-            [[self._model.NewIntVar(0, self._rows_number * self._columns_number, f"rank_{r}_{c}") for c in range(self._columns_number)] for r in
+            [[self._model.new_int_var(0, self._rows_number * self._columns_number, f"rank_{r}_{c}") for c in range(self._columns_number)] for r in
              range(self._rows_number)])
 
         self.value_by_region_id = {}
@@ -40,7 +40,7 @@ class ArofuroSolver(GameSolver):
             self._region_id_by_position[position] = index
 
         self._region_id_vars = Grid(
-            [[self._model.NewIntVar(-1, max(self._region_id_by_position.values()), f"region_{r}_{c}") for c in range(self._columns_number)] for r in
+            [[self._model.new_int_var(-1, max(self._region_id_by_position.values()), f"region_{r}_{c}") for c in range(self._columns_number)] for r in
              range(self._rows_number)])
 
         self._add_constraints()
@@ -65,10 +65,10 @@ class ArofuroSolver(GameSolver):
         self._init_solver()
 
         self._solver = cp_model.CpSolver()
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            solution_grid = Grid([[self._solver.Value(self._grid_vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)])
+            solution_grid = Grid([[self._solver.value(self._grid_vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)])
             self._previous_solution = solution_grid
             return solution_grid
         return Grid.empty()
@@ -80,15 +80,15 @@ class ArofuroSolver(GameSolver):
         negated_constraints_bools = []
         for position, _ in self._grid:
             if self._previous_solution[position] != 0:  # Only constrain arrows
-                b = self._model.NewBoolVar(f"neq_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] != self._previous_solution[position]).OnlyEnforceIf(b)
-                self._model.Add(self._grid_vars[position] == self._previous_solution[position]).OnlyEnforceIf(b.Not())
+                b = self._model.new_bool_var(f"neq_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] != self._previous_solution[position]).only_enforce_if(b)
+                self._model.add(self._grid_vars[position] == self._previous_solution[position]).only_enforce_if(b.Not())
                 negated_constraints_bools.append(b)
 
         if not negated_constraints_bools:
             return Grid.empty()
 
-        self._model.AddBoolOr(negated_constraints_bools)
+        self._model.add_bool_or(negated_constraints_bools)
         return self.get_solution()
 
     def _add_constraints(self):
@@ -110,25 +110,25 @@ class ArofuroSolver(GameSolver):
             self._add_number_input_constraint(position)
 
     def _add_input_empty_constraint(self, position: Position):
-        self._model.Add(self._grid_vars[position] >= 1)
-        self._model.Add(self._rank_vars[position] > 0)
+        self._model.add(self._grid_vars[position] >= 1)
+        self._model.add(self._rank_vars[position] > 0)
 
     def _add_input_black_constraint(self, position: Position):
-        self._model.Add(self._grid_vars[position] == 0)
-        self._model.Add(self._rank_vars[position] == 0)
-        self._model.Add(self._region_id_vars[position] == -1)
+        self._model.add(self._grid_vars[position] == 0)
+        self._model.add(self._rank_vars[position] == 0)
+        self._model.add(self._region_id_vars[position] == -1)
 
     def _add_number_input_constraint(self, position: Position):
-        self._model.Add(self._grid_vars[position] == 0)
-        self._model.Add(self._rank_vars[position] == 0)
-        self._model.Add(self._region_id_vars[position] == self._region_id_by_position[position])
+        self._model.add(self._grid_vars[position] == 0)
+        self._model.add(self._rank_vars[position] == 0)
+        self._model.add(self._region_id_vars[position] == self._region_id_by_position[position])
 
     def _add_neighbors_constraints(self):
         for position in [position for position, value in self._grid if value == self.Empty]:
             if (position_right := position.right) in self._grid:
-                self._model.Add(self._grid_vars[position] != self._grid_vars[position_right])
+                self._model.add(self._grid_vars[position] != self._grid_vars[position_right])
             if (position_down := position.down) in self._grid:
-                self._model.Add(self._grid_vars[position] != self._grid_vars[position_down])
+                self._model.add(self._grid_vars[position] != self._grid_vars[position_down])
 
     def _add_flow_constraints(self):
         value_by_direction = {
@@ -143,22 +143,22 @@ class ArofuroSolver(GameSolver):
                 direction = position.direction_to(neighbor_pos)
                 value = value_by_direction[direction]
                 if neighbor_pos not in self._grid:
-                    self._model.Add(self._grid_vars[position] != value)
+                    self._model.add(self._grid_vars[position] != value)
                     continue
 
-                points_direction = self._model.NewBoolVar(f"points_{direction}_{position.r}_{position.c}")
-                self._model.Add(self._grid_vars[position] == value).OnlyEnforceIf(points_direction)
-                self._model.Add(self._grid_vars[position] != value).OnlyEnforceIf(points_direction.Not())
+                points_direction = self._model.new_bool_var(f"points_{direction}_{position.r}_{position.c}")
+                self._model.add(self._grid_vars[position] == value).only_enforce_if(points_direction)
+                self._model.add(self._grid_vars[position] != value).only_enforce_if(points_direction.Not())
 
-                self._model.Add(self._region_id_vars[position] == self._region_id_vars[neighbor_pos]).OnlyEnforceIf(points_direction)
-                self._model.Add(self._rank_vars[position] == self._rank_vars[neighbor_pos] + 1).OnlyEnforceIf(points_direction)
+                self._model.add(self._region_id_vars[position] == self._region_id_vars[neighbor_pos]).only_enforce_if(points_direction)
+                self._model.add(self._rank_vars[position] == self._rank_vars[neighbor_pos] + 1).only_enforce_if(points_direction)
 
     def _add_count_constraints(self):
         for region_id, val in self.value_by_region_id.items():
             region_indicators = []
             for current_position, region_id_var in self._region_id_vars:
-                indicator = self._model.NewBoolVar(f"in_region_{region_id}_{current_position}")
-                self._model.Add(region_id_var == region_id).OnlyEnforceIf(indicator)
-                self._model.Add(region_id_var != region_id).OnlyEnforceIf(indicator.Not())
+                indicator = self._model.new_bool_var(f"in_region_{region_id}_{current_position}")
+                self._model.add(region_id_var == region_id).only_enforce_if(indicator)
+                self._model.add(region_id_var != region_id).only_enforce_if(indicator.Not())
                 region_indicators.append(indicator)
-            self._model.Add(sum(region_indicators) == val + 1)
+            self._model.add(sum(region_indicators) == val + 1)

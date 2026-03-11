@@ -19,7 +19,7 @@ class SlantSolver(GameSolver):
 
     def _init_solver(self):
         self._grid_vars = SlantGrid(
-            [[self._model.NewBoolVar(f'cell_{r}_{c}') for c in range(self._columns_number)] for r in
+            [[self._model.new_bool_var(f'cell_{r}_{c}') for c in range(self._columns_number)] for r in
              range(self._rows_number)])
         self._add_constraints()
 
@@ -38,14 +38,14 @@ class SlantSolver(GameSolver):
         for position, val in self._previous_solution:
             blocking_clause.append(self._grid_vars[position].Not()) if val else blocking_clause.append(self._grid_vars[position])
 
-        self._model.AddBoolOr(blocking_clause)
+        self._model.add_bool_or(blocking_clause)
         return self.get_solution()
 
     def _ensure_no_loop(self) -> tuple[SlantGrid, int]:
         attempt_count = 0
-        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self._solver.solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             attempt_count += 1
-            current_grid = SlantGrid([[bool(self._solver.Value(self._grid_vars[r][c])) for c in range(self._columns_number)] for r in range(self._rows_number)])
+            current_grid = SlantGrid([[bool(self._solver.value(self._grid_vars[r][c])) for c in range(self._columns_number)] for r in range(self._rows_number)])
 
             loops = current_grid.get_all_loops()
             if len(loops) == 0:
@@ -58,7 +58,7 @@ class SlantSolver(GameSolver):
                         loop_literals.append(self._grid_vars[position].Not())
                     else:
                         loop_literals.append(self._grid_vars[position])
-                self._model.AddBoolOr(loop_literals)
+                self._model.add_bool_or(loop_literals)
 
         return SlantGrid.empty(), attempt_count
 
@@ -78,7 +78,7 @@ class SlantSolver(GameSolver):
             if position in self._grid_vars:
                 connections.append(self._grid_vars[position])
 
-            self._model.Add(sum(connections) == clue)
+            self._model.add(sum(connections) == clue)
 
     def _add_not_minimal_loop_constraint(self):
         for position, value in [(pos, val) for pos, val in self._grid_vars if pos not in self._grid_vars.edge_down_positions() + self._grid_vars.edge_right_positions()]:
@@ -87,4 +87,4 @@ class SlantSolver(GameSolver):
             down_left = self._grid_vars[position.down]
             down_right = self._grid_vars[position.down_right]
 
-            self._model.AddBoolOr([up_left, up_right.Not(), down_left.Not(), down_right])
+            self._model.add_bool_or([up_left, up_right.Not(), down_left.Not(), down_right])

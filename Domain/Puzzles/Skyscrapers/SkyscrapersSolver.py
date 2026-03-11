@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -32,17 +32,17 @@ class SkyscrapersSolver(GameSolver):
         self._previous_solution_grid = None
 
     def _init_solver(self):
-        self._grid_vars = Grid([[self._model.NewIntVar(1, self.columns_number, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(1, self.columns_number, f"grid{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if not self._model.Proto().constraints:
             self._init_solver()
 
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            grid = Grid([[self._solver.Value(self._level_at(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
+            grid = Grid([[self._solver.value(self._level_at(Position(r, c))) for c in range(self.columns_number)] for r in range(self.rows_number)])
             self._previous_solution_grid = grid
             return grid
         else:
@@ -56,16 +56,16 @@ class SkyscrapersSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._previous_solution_grid.value(r, c) != self._no_value:
-                    is_same = self._model.NewBoolVar(f"is_same_{r}_{c}")
-                    self._model.Add(self._level_at(Position(r, c)) == self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_same)
-                    self._model.Add(self._level_at(Position(r, c)) != self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_same.Not())
+                    is_same = self._model.new_bool_var(f"is_same_{r}_{c}")
+                    self._model.add(self._level_at(Position(r, c)) == self._previous_solution_grid.value(r, c)).only_enforce_if(is_same)
+                    self._model.add(self._level_at(Position(r, c)) != self._previous_solution_grid.value(r, c)).only_enforce_if(is_same.Not())
                     previous_solution_bools.append(is_same)
 
         if previous_solution_bools:
-            all_same = self._model.NewBoolVar("all_same")
-            self._model.AddBoolAnd(previous_solution_bools).OnlyEnforceIf(all_same)
-            self._model.AddBoolOr([b.Not() for b in previous_solution_bools]).OnlyEnforceIf(all_same.Not())
-            self._model.Add(all_same == 0)
+            all_same = self._model.new_bool_var("all_same")
+            self._model.add_bool_and(previous_solution_bools).only_enforce_if(all_same)
+            self._model.add_bool_or([b.Not() for b in previous_solution_bools]).only_enforce_if(all_same.Not())
+            self._model.add(all_same == 0)
 
         return self.get_solution()
 
@@ -80,16 +80,16 @@ class SkyscrapersSolver(GameSolver):
     def _add_initials_levels_constraint(self):
         for position, level_value in self._grid:
             if level_value != self._no_value:
-                self._model.Add(self._level_at(position) == level_value)
+                self._model.add(self._level_at(position) == level_value)
 
     def _add_distinct_level_constraint(self):
         for r in range(self.rows_number):
             row_vars = [self._level_at(Position(r, c)) for c in range(self.columns_number)]
-            self._model.AddAllDifferent(row_vars)
+            self._model.add_all_different(row_vars)
 
         for c in range(self.columns_number):
             col_vars = [self._level_at(Position(r, c)) for r in range(self.rows_number)]
-            self._model.AddAllDifferent(col_vars)
+            self._model.add_all_different(col_vars)
 
     def _add_visible_skyscrapers_constraint(self):
         for index in range(self.rows_number):
@@ -108,25 +108,25 @@ class SkyscrapersSolver(GameSolver):
 
         is_visible = []
         for i in range(len(line)):
-            is_visible.append(self._model.NewBoolVar(f"is_visible_{i}"))
+            is_visible.append(self._model.new_bool_var(f"is_visible_{i}"))
 
-        self._model.Add(is_visible[0] == 1)
+        self._model.add(is_visible[0] == 1)
 
         for i in range(1, len(line)):
             is_taller = []
             for j in range(i):
-                is_taller_than_j = self._model.NewBoolVar(f"is_taller_{i}_{j}")
-                self._model.Add(line[i] > line[j]).OnlyEnforceIf(is_taller_than_j)
-                self._model.Add(line[i] <= line[j]).OnlyEnforceIf(is_taller_than_j.Not())
+                is_taller_than_j = self._model.new_bool_var(f"is_taller_{i}_{j}")
+                self._model.add(line[i] > line[j]).only_enforce_if(is_taller_than_j)
+                self._model.add(line[i] <= line[j]).only_enforce_if(is_taller_than_j.Not())
                 is_taller.append(is_taller_than_j)
 
-            all_taller = self._model.NewBoolVar(f"all_taller_{i}")
-            self._model.AddBoolAnd(is_taller).OnlyEnforceIf(all_taller)
-            self._model.AddBoolOr([b.Not() for b in is_taller]).OnlyEnforceIf(all_taller.Not())
+            all_taller = self._model.new_bool_var(f"all_taller_{i}")
+            self._model.add_bool_and(is_taller).only_enforce_if(all_taller)
+            self._model.add_bool_or([b.Not() for b in is_taller]).only_enforce_if(all_taller.Not())
 
-            self._model.Add(is_visible[i] == all_taller)
+            self._model.add(is_visible[i] == all_taller)
 
-        self._model.Add(sum(is_visible) == visible_count)
+        self._model.add(sum(is_visible) == visible_count)
 
     @staticmethod
     def _reversed(line: list) -> list:

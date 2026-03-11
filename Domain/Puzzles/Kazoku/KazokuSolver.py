@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Int, And, Or, sat, Distinct, If, Sum
+from z3 import Solver, Int, And, Or, sat, Distinct, If, Sum
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver

@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -17,7 +17,7 @@ class LookAirSolver(GameSolver):
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_vars = Grid([[self._model.NewBoolVar(f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -42,7 +42,7 @@ class LookAirSolver(GameSolver):
                 literals = []
                 for position in positions:
                     literals.append(self._grid_vars[position].Not()) if solution[position] == 1 else literals.append(self._grid_vars[position])
-                self._model.AddBoolOr(literals)
+                self._model.add_bool_or(literals)
 
             solution = self._compute_solution()
 
@@ -59,18 +59,18 @@ class LookAirSolver(GameSolver):
                     literals.append(self._grid_vars[Position(r, c)].Not())
                 else:
                     literals.append(self._grid_vars[Position(r, c)])
-        self._model.AddBoolOr(literals)
+        self._model.add_bool_or(literals)
 
         solution, _ = self._ensure_squares_visibility()
         return solution
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.Value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         return self._previous_solution
 
     def _add_constraints(self):
@@ -80,7 +80,7 @@ class LookAirSolver(GameSolver):
     def _add_neighbors_constraints(self):
         for position, number in [(position, value) for position, value in self._grid if value >= 0]:
             concerned_positions = list(self._grid.neighbors_positions(position)) + [position]
-            self._model.Add(sum([self._grid_vars[position] for position in concerned_positions]) == number)
+            self._model.add(sum([self._grid_vars[position] for position in concerned_positions]) == number)
 
     def _add_all_shapes_are_squares_constraints(self):
         # Variables pour représenter les coins supérieurs gauches des carrés
@@ -90,7 +90,7 @@ class LookAirSolver(GameSolver):
             for c in range(self._columns_number):
                 for s in range(min(self._rows_number, self._columns_number)):
                     if r + s < self._rows_number and c + s < self._columns_number:
-                        squares[(r, c, s)] = self._model.NewBoolVar(f'square_{r}_{c}_{s}')
+                        squares[(r, c, s)] = self._model.new_bool_var(f'square_{r}_{c}_{s}')
 
         for r in range(self._rows_number):
             for c in range(self._columns_number):
@@ -106,7 +106,7 @@ class LookAirSolver(GameSolver):
 
                 # Si cell_values[(r, c)] = 1, le pixel doit appartenir à exactement un carré
                 # Si cell_values[(r, c)] = 0, le pixel ne doit appartenir à aucun carré
-                self._model.Add(sum(squares_containing_pixel) == self._grid_vars[Position(r, c)])
+                self._model.add(sum(squares_containing_pixel) == self._grid_vars[Position(r, c)])
 
         # Contrainte : les carrés ne doivent pas être adjacents
         # Deux carrés sont adjacents s'ils se touchent horizontalement ou verticalement
@@ -141,7 +141,7 @@ class LookAirSolver(GameSolver):
 
                                         if adjacent:
                                             # Les carrés ne peuvent pas être tous les deux présents
-                                            self._model.AddBoolOr([
+                                            self._model.add_bool_or([
                                                 squares[(r1, c1, s1)].Not(),
                                                 squares[(r2, c2, s2)].Not()
                                             ])

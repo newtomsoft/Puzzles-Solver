@@ -1,4 +1,4 @@
-﻿import os
+import os
 import pickle
 import random
 import time

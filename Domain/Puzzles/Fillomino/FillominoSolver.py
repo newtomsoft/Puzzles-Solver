@@ -17,16 +17,16 @@ class FillominoSolver(GameSolver):
         self._previous_solution = Grid.empty()
 
     def _init_solver(self):
-        self.cell_vars = Grid([[self.model.NewIntVar(1, self.max_val, f"cell_{r}_{c}") for c in range(self.cols)] for r in range(self.rows)])
+        self.cell_vars = Grid([[self.model.new_int_var(1, self.max_val, f"cell_{r}_{c}") for c in range(self.cols)] for r in range(self.rows)])
 
         for cell_var_pos, val in [(self.cell_vars[pos], val) for pos, val in self.grid if isinstance(val, int) and val > 0]:
-            self.model.Add(cell_var_pos == val)
+            self.model.add(cell_var_pos == val)
 
     def get_solution(self) -> Grid:
         iteration = 0
-        while self.solver.Solve(self.model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self.solver.solve(self.model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             iteration += 1
-            current_solution = Grid([[self.solver.Value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+            current_solution = Grid([[self.solver.value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
             if self._validate_and_add_constraints(current_solution, iteration):
                 self._previous_solution = current_solution
                 return current_solution
@@ -42,12 +42,12 @@ class FillominoSolver(GameSolver):
             for c in range(self.cols):
                 val = self._previous_solution[r][c]
                 # Create a boolean variable that is true if the cell is different from previous value
-                is_diff = self.model.NewBoolVar(f'diff_{r}_{c}_sol')
-                self.model.Add(self.cell_vars[(r, c)] != val).OnlyEnforceIf(is_diff)
-                self.model.Add(self.cell_vars[(r, c)] == val).OnlyEnforceIf(is_diff.Not())
+                is_diff = self.model.new_bool_var(f'diff_{r}_{c}_sol')
+                self.model.add(self.cell_vars[(r, c)] != val).only_enforce_if(is_diff)
+                self.model.add(self.cell_vars[(r, c)] == val).only_enforce_if(is_diff.Not())
                 literals.append(is_diff)
 
-        self.model.AddBoolOr(literals)
+        self.model.add_bool_or(literals)
 
         return self.get_solution()
 
@@ -87,9 +87,9 @@ class FillominoSolver(GameSolver):
                     if size < value:
                         literals = []
                         for cr, cc in component:
-                            is_val = self.model.NewBoolVar(f'is_{cr}_{cc}_{value}_iter{iteration}_{cuts_added}')
-                            self.model.Add(self.cell_vars[(cr, cc)] == value).OnlyEnforceIf(is_val)
-                            self.model.Add(self.cell_vars[(cr, cc)] != value).OnlyEnforceIf(is_val.Not())
+                            is_val = self.model.new_bool_var(f'is_{cr}_{cc}_{value}_iter{iteration}_{cuts_added}')
+                            self.model.add(self.cell_vars[(cr, cc)] == value).only_enforce_if(is_val)
+                            self.model.add(self.cell_vars[(cr, cc)] != value).only_enforce_if(is_val.Not())
                             # We want NOT is_val to be in the OR clause
                             literals.append(is_val.Not())
 
@@ -102,12 +102,12 @@ class FillominoSolver(GameSolver):
                                         potential_neighbors.add((nr, nc))
 
                         for nr, nc in potential_neighbors:
-                            is_neighbor_val = self.model.NewBoolVar(f'is_n_{nr}_{nc}_{value}_iter{iteration}_{cuts_added}')
-                            self.model.Add(self.cell_vars[(nr, nc)] == value).OnlyEnforceIf(is_neighbor_val)
-                            self.model.Add(self.cell_vars[(nr, nc)] != value).OnlyEnforceIf(is_neighbor_val.Not())
+                            is_neighbor_val = self.model.new_bool_var(f'is_n_{nr}_{nc}_{value}_iter{iteration}_{cuts_added}')
+                            self.model.add(self.cell_vars[(nr, nc)] == value).only_enforce_if(is_neighbor_val)
+                            self.model.add(self.cell_vars[(nr, nc)] != value).only_enforce_if(is_neighbor_val.Not())
                             literals.append(is_neighbor_val)
 
-                        self.model.AddBoolOr(literals)
+                        self.model.add_bool_or(literals)
 
                     else:  # size > value
                         internal_edges = []
@@ -126,26 +126,26 @@ class FillominoSolver(GameSolver):
                             vr, vc = v
 
                             if u not in cell_is_val_vars:
-                                b_u = self.model.NewBoolVar(f'is_{ur}_{uc}_{value}_iter{iteration}_{cuts_added}')
-                                self.model.Add(self.cell_vars[(ur, uc)] == value).OnlyEnforceIf(b_u)
-                                self.model.Add(self.cell_vars[(ur, uc)] != value).OnlyEnforceIf(b_u.Not())
+                                b_u = self.model.new_bool_var(f'is_{ur}_{uc}_{value}_iter{iteration}_{cuts_added}')
+                                self.model.add(self.cell_vars[(ur, uc)] == value).only_enforce_if(b_u)
+                                self.model.add(self.cell_vars[(ur, uc)] != value).only_enforce_if(b_u.Not())
                                 cell_is_val_vars[u] = b_u
 
                             if v not in cell_is_val_vars:
-                                b_v = self.model.NewBoolVar(f'is_{vr}_{vc}_{value}_iter{iteration}_{cuts_added}')
-                                self.model.Add(self.cell_vars[(vr, vc)] == value).OnlyEnforceIf(b_v)
-                                self.model.Add(self.cell_vars[(vr, vc)] != value).OnlyEnforceIf(b_v.Not())
+                                b_v = self.model.new_bool_var(f'is_{vr}_{vc}_{value}_iter{iteration}_{cuts_added}')
+                                self.model.add(self.cell_vars[(vr, vc)] == value).only_enforce_if(b_v)
+                                self.model.add(self.cell_vars[(vr, vc)] != value).only_enforce_if(b_v.Not())
                                 cell_is_val_vars[v] = b_v
 
                             b_u = cell_is_val_vars[u]
                             b_v = cell_is_val_vars[v]
 
-                            b_edge = self.model.NewBoolVar(f'edge_{ur}_{uc}_{vr}_{vc}_iter{iteration}_{cuts_added}')
-                            self.model.AddBoolAnd([b_u, b_v]).OnlyEnforceIf(b_edge)
-                            self.model.AddBoolOr([b_u.Not(), b_v.Not()]).OnlyEnforceIf(b_edge.Not())
+                            b_edge = self.model.new_bool_var(f'edge_{ur}_{uc}_{vr}_{vc}_iter{iteration}_{cuts_added}')
+                            self.model.add_bool_and([b_u, b_v]).only_enforce_if(b_edge)
+                            self.model.add_bool_or([b_u.Not(), b_v.Not()]).only_enforce_if(b_edge.Not())
                             edge_bools.append(b_edge)
 
                         if internal_edges:
-                            self.model.Add(sum(edge_bools) <= len(internal_edges) - 1)
+                            self.model.add(sum(edge_bools) <= len(internal_edges) - 1)
 
         return all_valid

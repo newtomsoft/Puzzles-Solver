@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+from Domain.Board.Grid import Grid
 
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Sudoku.SudokuBaseSolver import SudokuBaseSolver

@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 from ortools.sat.python.cp_model import BoolVarT
 
 from Domain.Board.Direction import Direction
@@ -29,7 +29,7 @@ class DetourSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
+            island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
@@ -43,13 +43,13 @@ class DetourSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._solver.Solve(self._model) == cp_model.OPTIMAL:
+        while self._solver.solve(self._model) == cp_model.OPTIMAL:
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = self._solver.Value(bridges)
+                    bridges_number = self._solver.value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number
@@ -72,7 +72,7 @@ class DetourSolver(GameSolver):
                             literals_for_this_component.append(var.Not())
                         else:
                             literals_for_this_component.append(var)
-                self._model.AddBoolOr(literals_for_this_component)
+                self._model.add_bool_or(literals_for_this_component)
             self._init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -86,7 +86,7 @@ class DetourSolver(GameSolver):
                     literals_for_disjunction.append(var.Not())
                 else:
                     literals_for_disjunction.append(var)
-        self._model.AddBoolOr(literals_for_disjunction)
+        self._model.add_bool_or(literals_for_disjunction)
 
         self._init_island_grid()
         return self.get_solution()
@@ -108,22 +108,22 @@ class DetourSolver(GameSolver):
         constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
 
         for constraint in constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left:
-            self._model.Add(constraint)
+            self._model.add(constraint)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._model.Add(
+                    self._model.add(
                         self._island_bridges_z3[island.position][direction] ==
                         self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite]
                     )
                 else:
-                    self._model.Add(self._island_bridges_z3[island.position][direction] == 0)
+                    self._model.add(self._island_bridges_z3[island.position][direction] == 0)
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            self._model.Add(sum([self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonal_directions()]) == 2)
+            self._model.add(sum([self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonal_directions()]) == 2)
 
     def _add_clues_turn_regions_constraints(self):
         for region in self._regions.values():
@@ -140,7 +140,7 @@ class DetourSolver(GameSolver):
             is_turn = self._create_turn_variable(position)
             turn_variables.append(is_turn)
 
-        self._model.Add(sum(turn_variables) == turn_clue)
+        self._model.add(sum(turn_variables) == turn_clue)
 
     def _create_turn_variable(self, position: Position) -> BoolVarT:
         up = self._island_bridges_z3[position][Direction.up()]
@@ -148,24 +148,24 @@ class DetourSolver(GameSolver):
         down = self._island_bridges_z3[position][Direction.down()]
         left = self._island_bridges_z3[position][Direction.left()]
 
-        turn_up_right = self._model.NewBoolVar("turn_up_right")
-        self._model.AddBoolAnd([up, right, down.Not(), left.Not()]).OnlyEnforceIf(turn_up_right)
-        self._model.AddBoolOr([up.Not(), right.Not(), down, left]).OnlyEnforceIf(turn_up_right.Not())
+        turn_up_right = self._model.new_bool_var("turn_up_right")
+        self._model.add_bool_and([up, right, down.Not(), left.Not()]).only_enforce_if(turn_up_right)
+        self._model.add_bool_or([up.Not(), right.Not(), down, left]).only_enforce_if(turn_up_right.Not())
 
-        turn_right_down = self._model.NewBoolVar("turn_right_down")
-        self._model.AddBoolAnd([right, down, left.Not(), up.Not()]).OnlyEnforceIf(turn_right_down)
-        self._model.AddBoolOr([right.Not(), down.Not(), left, up]).OnlyEnforceIf(turn_right_down.Not())
+        turn_right_down = self._model.new_bool_var("turn_right_down")
+        self._model.add_bool_and([right, down, left.Not(), up.Not()]).only_enforce_if(turn_right_down)
+        self._model.add_bool_or([right.Not(), down.Not(), left, up]).only_enforce_if(turn_right_down.Not())
 
-        turn_down_left = self._model.NewBoolVar("turn_down_left")
-        self._model.AddBoolAnd([down, left, up.Not(), right.Not()]).OnlyEnforceIf(turn_down_left)
-        self._model.AddBoolOr([down.Not(), left.Not(), up, right]).OnlyEnforceIf(turn_down_left.Not())
+        turn_down_left = self._model.new_bool_var("turn_down_left")
+        self._model.add_bool_and([down, left, up.Not(), right.Not()]).only_enforce_if(turn_down_left)
+        self._model.add_bool_or([down.Not(), left.Not(), up, right]).only_enforce_if(turn_down_left.Not())
 
-        turn_left_up = self._model.NewBoolVar("turn_left_up")
-        self._model.AddBoolAnd([left, up, right.Not(), down.Not()]).OnlyEnforceIf(turn_left_up)
-        self._model.AddBoolOr([left.Not(), up.Not(), right, down]).OnlyEnforceIf(turn_left_up.Not())
+        turn_left_up = self._model.new_bool_var("turn_left_up")
+        self._model.add_bool_and([left, up, right.Not(), down.Not()]).only_enforce_if(turn_left_up)
+        self._model.add_bool_or([left.Not(), up.Not(), right, down]).only_enforce_if(turn_left_up.Not())
 
-        is_turn = self._model.NewBoolVar("is_turn")
-        self._model.AddBoolOr([turn_up_right, turn_right_down, turn_down_left, turn_left_up]).OnlyEnforceIf(is_turn)
-        self._model.AddBoolAnd([turn_up_right.Not(), turn_right_down.Not(), turn_down_left.Not(), turn_left_up.Not()]).OnlyEnforceIf(is_turn.Not())
+        is_turn = self._model.new_bool_var("is_turn")
+        self._model.add_bool_or([turn_up_right, turn_right_down, turn_down_left, turn_left_up]).only_enforce_if(is_turn)
+        self._model.add_bool_and([turn_up_right.Not(), turn_right_down.Not(), turn_down_left.Not(), turn_left_up.Not()]).only_enforce_if(is_turn.Not())
 
         return is_turn

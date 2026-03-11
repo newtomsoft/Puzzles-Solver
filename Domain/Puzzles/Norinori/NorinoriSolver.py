@@ -30,14 +30,14 @@ class NorinoriSolver(GameSolver):
 
     def _init_model(self):
         self._model = cp_model.CpModel()
-        self._grid_vars = [[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._grid_vars = [[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._add_constraints()
 
     def get_solution(self) -> Grid:
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -52,13 +52,13 @@ class NorinoriSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 var = self._grid_vars[r][c]
-                if self._solver.BooleanValue(var):
+                if self._solver.boolean_value(var):
                     current_vars.append(var.Not())
                 else:
                     current_vars.append(var)
-        self._model.AddBoolOr(current_vars)
+        self._model.add_bool_or(current_vars)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             return Grid.empty()
@@ -66,7 +66,7 @@ class NorinoriSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        grid = Grid([[1 if self._solver.Value(self._grid_vars[i][j]) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[1 if self._solver.value(self._grid_vars[i][j]) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def queen(self, position):
@@ -82,8 +82,8 @@ class NorinoriSolver(GameSolver):
                 p = Position(r, c)
                 neighbors = self._grid.neighbors_positions(p)
                 neighbor_vars = [self.queen(n) for n in neighbors]
-                self._model.Add(sum(neighbor_vars) == 1).OnlyEnforceIf(self.queen(p))
+                self._model.add(sum(neighbor_vars) == 1).only_enforce_if(self.queen(p))
 
     def _add_constraint_regions(self):
         for region in self._regions.values():
-            self._model.Add(sum([self.queen(position) for position in region]) == 2)
+            self._model.add(sum([self.queen(position) for position in region]) == 2)

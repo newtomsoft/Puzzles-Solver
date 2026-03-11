@@ -26,7 +26,7 @@ class TasukueaSolver(GameSolver):
         self._squares_built = False
 
     def _init_solver(self):
-        self._grid_var = Grid([[self._model.NewBoolVar(f"cell_{r}-{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_var = Grid([[self._model.new_bool_var(f"cell_{r}-{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
         self._add_constraints()
         self._initialized = True
 
@@ -41,13 +41,13 @@ class TasukueaSolver(GameSolver):
     def _ensure_all_white_connected(self):
         proposition_count = 0
         while True:
-            status = self._solver.Solve(self._model)
+            status = self._solver.solve(self._model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 break
             proposition_count += 1
             current_grid = Grid([[None] * self._columns_number for _ in range(self._rows_number)])
             for position, var in self._grid_var:
-                current_grid[position] = bool(self._solver.Value(var))
+                current_grid[position] = bool(self._solver.value(var))
             white_shapes = current_grid.get_all_shapes(value=False)
             if len(white_shapes) == 1:
                 return current_grid, proposition_count
@@ -60,7 +60,7 @@ class TasukueaSolver(GameSolver):
                 w_literals = [self._grid_var[position] for position in white_shape]
                 boundary_positions = [position for position in ShapeGenerator.around_shape(white_shape) if position in self._grid_var]
                 b_literals = [self._grid_var[position].Not() for position in boundary_positions]
-                self._model.AddBoolOr(w_literals + b_literals)
+                self._model.add_bool_or(w_literals + b_literals)
 
         return Grid.empty(), proposition_count
 
@@ -70,7 +70,7 @@ class TasukueaSolver(GameSolver):
             for position, value in self._previous_solution:
                 var = self._grid_var[position]
                 diff_literals.append(var if value is False else var.Not())
-            self._model.AddBoolOr(diff_literals)
+            self._model.add_bool_or(diff_literals)
         return self.get_solution()
 
     def _add_constraints(self):
@@ -81,7 +81,7 @@ class TasukueaSolver(GameSolver):
         for position, value in self._grid:
             if value != self.empty:
                 # Clue cells are forced to white (False)
-                self._model.Add(self._grid_var[position] == 0)
+                self._model.add(self._grid_var[position] == 0)
 
     def _add_all_squares_constraints(self):
         # Build the global square model once
@@ -104,7 +104,7 @@ class TasukueaSolver(GameSolver):
         for size in range(1, max_size + 1):
             for r0 in range(0, rows - size + 1):
                 for c0 in range(0, cols - size + 1):
-                    selector = self._model.NewBoolVar(f"sq_{r0}_{c0}_{size}")
+                    selector = self._model.new_bool_var(f"sq_{r0}_{c0}_{size}")
                     area = size * size
                     self._square_selectors.append(selector)
                     self._selector_areas[selector] = area
@@ -135,7 +135,7 @@ class TasukueaSolver(GameSolver):
                     if adjacent_found:
                         break
                 if not adjacent_found:
-                    self._model.Add(s == 0)
+                    self._model.add(s == 0)
 
         # Non-overlap on cells and coverage completeness
         for position, var in self._grid_var:
@@ -143,12 +143,12 @@ class TasukueaSolver(GameSolver):
             selectors = self._coverage.get(key, [])
             if selectors:
                 # If cell is black (True), it must come from a selected square: var => Or(selectors)
-                self._model.AddBoolOr(selectors + [var.Not()])
+                self._model.add_bool_or(selectors + [var.Not()])
                 # At most one square covers a cell
                 self._model.AddAtMostOne(selectors)
             else:
                 # No square can cover this cell => force white (False)
-                self._model.Add(var == 0)
+                self._model.add(var == 0)
 
         # Forbid orthogonal edge-touching between distinct squares (diagonal touching allowed)
         n = len(self._square_bounds)
@@ -164,7 +164,7 @@ class TasukueaSolver(GameSolver):
                 vertical_touch = (r1_max + 1 == r2_min or r2_max + 1 == r1_min) and not (c1_max < c2_min or c2_max < c1_min)
                 if horizontal_touch or vertical_touch:
                     # Not(s1 and s2)
-                    self._model.AddBoolOr([s1.Not(), s2.Not()])
+                    self._model.add_bool_or([s1.Not(), s2.Not()])
 
         self._squares_built = True
 
@@ -179,13 +179,13 @@ class TasukueaSolver(GameSolver):
 
         if not adjacent_selectors:
             # Impossible to satisfy this clue
-            self._model.Add(False)
+            self._model.add(False)
             return
 
         terms = [s * self._selector_areas[s] for s in adjacent_selectors]
         if sum_squares_area != self.unknown:
-            self._model.Add(sum(terms) == int(sum_squares_area))
+            self._model.add(sum(terms) == int(sum_squares_area))
         else:
             # Unknown clue: only enforce a non-trivial bound (strict inequalities -> use >= / <=)
-            self._model.Add(sum(terms) >= 1)
-            self._model.Add(sum(terms) <= self._rows_number * self._columns_number - 1)
+            self._model.add(sum(terms) >= 1)
+            self._model.add(sum(terms) <= self._rows_number * self._columns_number - 1)

@@ -1,4 +1,4 @@
-﻿from typing import Generator
+from typing import Generator
 
 from z3 import Solver, Not, And, Or, Bool, is_true, sat
 

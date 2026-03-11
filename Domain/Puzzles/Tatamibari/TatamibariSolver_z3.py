@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from z3 import And, Distinct, Int, Not, Solver, sat
 

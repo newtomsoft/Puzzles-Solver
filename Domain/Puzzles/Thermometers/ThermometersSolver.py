@@ -98,7 +98,7 @@ class ThermometersSolver(GameSolver):
 
     def _init_solver(self):
         self._model = cp_model.CpModel()
-        self._matrix_ortools = [[self._model.NewBoolVar(f"t_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
+        self._matrix_ortools = [[self._model.new_bool_var(f"t_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)]
         self._grid_ortools = Grid(self._matrix_ortools)
         self._add_constraints()
 
@@ -107,10 +107,10 @@ class ThermometersSolver(GameSolver):
             self._init_solver()
 
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            grid_data = [[solver.Value(self._matrix_ortools[r][c]) == 1 for c in range(self.columns_number)] for r in range(self.rows_number)]
+            grid_data = [[solver.value(self._matrix_ortools[r][c]) == 1 for c in range(self.columns_number)] for r in range(self.rows_number)]
             grid = Grid(grid_data)
             self._previous_solution_grid = grid
             return grid
@@ -134,7 +134,7 @@ class ThermometersSolver(GameSolver):
                     literals.append(var.Not())
                 else:
                     literals.append(var)
-        self._model.AddBoolOr(literals)
+        self._model.add_bool_or(literals)
 
     def _add_constraints(self):
         self._add_sum_constraints()
@@ -142,9 +142,9 @@ class ThermometersSolver(GameSolver):
 
     def _add_sum_constraints(self):
         for i, row in enumerate(self._grid_ortools.matrix):
-            self._model.Add(sum(row) == self.rows_full_numbers[i])
+            self._model.add(sum(row) == self.rows_full_numbers[i])
         for i, column in enumerate(zip(*self._grid_ortools.matrix)):
-            self._model.Add(sum(column) == self.columns_full_numbers[i])
+            self._model.add(sum(column) == self.columns_full_numbers[i])
 
     def _add_thermometers_constraints(self):
         for positions in self._thermometers_positions:
@@ -154,7 +154,7 @@ class ThermometersSolver(GameSolver):
         for i in range(1, len(positions)):
             prev_pos = positions[i-1]
             curr_pos = positions[i]
-            self._model.Add(self._grid_ortools[prev_pos] >= self._grid_ortools[curr_pos])
+            self._model.add(self._grid_ortools[prev_pos] >= self._grid_ortools[curr_pos])
 
     def _compute_thermometers_positions(self):
         thermometer_positions = []

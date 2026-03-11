@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -62,7 +62,7 @@ class SurizaSolver(GameSolver):
                         self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.Not())
                         not_all_equal.append(different)
 
-                self._model.AddBoolOr(not_all_equal)
+                self._model.add_bool_or(not_all_equal)
 
             self._init_island_grid()
             status = self._solver.solve(self._model)
@@ -78,7 +78,7 @@ class SurizaSolver(GameSolver):
                 self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.Not())
                 not_all_equal.append(different)
 
-            self._model.AddBoolOr(not_all_equal)
+            self._model.add_bool_or(not_all_equal)
 
         self._init_island_grid()
         return self.get_solution()

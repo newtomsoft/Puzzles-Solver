@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -25,7 +25,7 @@ class TilePaintSolver(GameSolver):
         self._previous_solution = None
 
     def get_solution(self) -> tuple[Grid, dict[int, frozenset[Position]]]:
-        self._grid_vars = Grid([[self._model.NewBoolVar(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._tiles
@@ -33,23 +33,23 @@ class TilePaintSolver(GameSolver):
     def get_other_solution(self) -> tuple[Grid, dict[int, frozenset[Position]]]:
         previous_solution_literals = []
         for position, value in self._previous_solution:
-            temp_var = self._model.NewBoolVar(f"prev_{position.r}_{position.c}")
-            self._model.Add(self._grid_vars[position] == value).OnlyEnforceIf(temp_var)
-            self._model.Add(self._grid_vars[position] != value).OnlyEnforceIf(temp_var.Not())
+            temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
+            self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.AddBoolOr([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
 
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._tiles
 
     def _compute_solution(self) -> Grid :
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
         if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
             return Grid.empty()
 
-        grid = Grid([[self._solver.Value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -60,17 +60,17 @@ class TilePaintSolver(GameSolver):
         for i, row in enumerate(self._grid_vars.matrix):
             if self.row_sums[i] == -1:
                 continue
-            self._model.Add(sum(row) == self.row_sums[i])
+            self._model.add(sum(row) == self.row_sums[i])
 
         for i in range(self.columns_number):
             if self._column_sums[i] == -1:
                 continue
             column_vars = [self._grid_vars[Position(r, i)] for r in range(self.rows_number)]
-            self._model.Add(sum(column_vars) == self._column_sums[i])
+            self._model.add(sum(column_vars) == self._column_sums[i])
 
     def _add_tiles_constraints(self):
         for positions in self._tiles.values():
             positions_list = list(positions)
             first_position = positions_list[0]
             for position in positions_list[1:]:
-                self._model.Add(self._grid_vars[first_position] == self._grid_vars[position])
+                self._model.add(self._grid_vars[first_position] == self._grid_vars[position])

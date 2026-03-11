@@ -1,4 +1,4 @@
-﻿from collections import defaultdict
+from collections import defaultdict
 
 from ortools.sat.python import cp_model
 
@@ -38,11 +38,11 @@ class NumberChainSolver(GameSolver):
 
             # Decision variables: integer grid and positive flags
             grid_vars = Grid([
-                [model.NewIntVar(-self._end_value, self._end_value, f"grid_{r}_{c}") for c in range(self.columns_number)]
+                [model.new_int_var(-self._end_value, self._end_value, f"grid_{r}_{c}") for c in range(self.columns_number)]
                 for r in range(self.rows_number)
             ])
             pos_bools = Grid([
-                [model.NewBoolVar(f"pos_{r}_{c}") for c in range(self.columns_number)]
+                [model.new_bool_var(f"pos_{r}_{c}") for c in range(self.columns_number)]
                 for r in range(self.rows_number)
             ])
 
@@ -50,8 +50,8 @@ class NumberChainSolver(GameSolver):
             for (position, var) in grid_vars:
                 b = pos_bools[position]
                 # var > 0  <=>  b == True
-                model.Add(var >= 1).OnlyEnforceIf(b)
-                model.Add(var <= 0).OnlyEnforceIf(b.Not())
+                model.add(var >= 1).only_enforce_if(b)
+                model.add(var <= 0).only_enforce_if(b.Not())
 
             # Base constraints
             self._add_initial_constraints(model, grid_vars)
@@ -66,21 +66,21 @@ class NumberChainSolver(GameSolver):
                 lits = []
                 for position, value in block:
                     v = grid_vars[position]
-                    eq_lit = model.NewBoolVar(f"block_eq_{position.r}_{position.c}")
-                    model.Add(v == value).OnlyEnforceIf(eq_lit)
-                    model.Add(v != value).OnlyEnforceIf(eq_lit.Not())
+                    eq_lit = model.new_bool_var(f"block_eq_{position.r}_{position.c}")
+                    model.add(v == value).only_enforce_if(eq_lit)
+                    model.add(v != value).only_enforce_if(eq_lit.Not())
                     lits.append(eq_lit)
                 # Not all equalities simultaneously true
-                model.Add(sum(lits) <= len(lits) - 1)
+                model.add(sum(lits) <= len(lits) - 1)
 
             solver = cp_model.CpSolver()
-            status = solver.Solve(model)
+            status = solver.solve(model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 return Grid.empty()
 
             # Extract one candidate solution
             matrix_number = [
-                [solver.Value(grid_vars.value(i, j)) for j in range(self.columns_number)]
+                [solver.value(grid_vars.value(i, j)) for j in range(self.columns_number)]
                 for i in range(self.rows_number)
             ]
             attempt = Grid(matrix_number)
@@ -101,28 +101,28 @@ class NumberChainSolver(GameSolver):
 
     def _add_initial_constraints(self, model: cp_model.CpModel, grid_vars: Grid):
         # Fix the values at start and end
-        model.Add(grid_vars[self._start_position] == self._start_value)
-        model.Add(grid_vars[self._end_position] == self._end_value)
+        model.add(grid_vars[self._start_position] == self._start_value)
+        model.add(grid_vars[self._end_position] == self._end_value)
         # Domains are already set at variable creation
 
     def _add_neighbors_count_constraints(self, model: cp_model.CpModel, pos_bools: Grid):
         # Start and end must have at least one positive neighbor
         start_neighbors_count = sum(pos_bools.neighbors_values(self._start_position))
         end_neighbors_count = sum(pos_bools.neighbors_values(self._end_position))
-        model.Add(start_neighbors_count >= 1)
-        model.Add(end_neighbors_count >= 1)
+        model.add(start_neighbors_count >= 1)
+        model.add(end_neighbors_count >= 1)
 
         # Intermediate positive cells must have exactly 2 or more neighbors in this model: we enforce >=2 when the cell is positive
         for position, _ in self._grid:
             if position == self._start_position or position == self._end_position:
                 continue
             neighbors_count = sum(pos_bools.neighbors_values(position))
-            model.Add(neighbors_count >= 2).OnlyEnforceIf(pos_bools[position])
+            model.add(neighbors_count >= 2).only_enforce_if(pos_bools[position])
 
     def _add_way_cells_count_constraint(self, model: cp_model.CpModel, pos_bools: Grid):
         # Total number of positive cells must match the end value
         all_bools = [b for _, b in pos_bools]
-        model.Add(sum(all_bools) == self._end_value)
+        model.add(sum(all_bools) == self._end_value)
 
     def _add_way_distinct_cells_constraint(self, model: cp_model.CpModel, grid_vars: Grid):
         # For each positive number in the original grid, ensure exactly one cell keeps that value.
@@ -132,15 +132,15 @@ class NumberChainSolver(GameSolver):
 
         for value, positions in values_to_positions.items():
             if len(positions) == 1:
-                model.Add(grid_vars[positions[0]] == value)
+                model.add(grid_vars[positions[0]] == value)
                 continue
             selectors = []
             for index, position in enumerate(positions):
-                sel = model.NewBoolVar(f"pick_{value}_{position.r}_{position.c}")
+                sel = model.new_bool_var(f"pick_{value}_{position.r}_{position.c}")
                 v = grid_vars[position]
                 # If selected, force the true value; otherwise assign a unique negative placeholder
-                model.Add(v == value).OnlyEnforceIf(sel)
-                model.Add(v == -index).OnlyEnforceIf(sel.Not())
+                model.add(v == value).only_enforce_if(sel)
+                model.add(v == -index).only_enforce_if(sel.Not())
                 selectors.append(sel)
             # Exactly one position takes the positive value
-            model.Add(sum(selectors) == 1)
+            model.add(sum(selectors) == 1)

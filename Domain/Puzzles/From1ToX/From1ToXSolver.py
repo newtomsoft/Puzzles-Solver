@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -24,7 +24,7 @@ class From1ToXSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         max_region_size = max(len(region_positions) for region_positions in self._regions.values())
-        self._grid_vars = Grid([[self._model.NewIntVar(1, max_region_size, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_int_var(1, max_region_size, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constrains()
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -39,20 +39,20 @@ class From1ToXSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 prev_val = self._previous_solution.value(r, c)
-                diff = self._model.NewBoolVar(f"diff_r{r}_c{c}")
-                self._model.Add(self._grid_vars[Position(r, c)] != prev_val).OnlyEnforceIf(diff)
-                self._model.Add(self._grid_vars[Position(r, c)] == prev_val).OnlyEnforceIf(diff.Not())
+                diff = self._model.new_bool_var(f"diff_r{r}_c{c}")
+                self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff)
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.Not())
                 bool_vars.append(diff)
-        self._model.AddBoolOr(bool_vars)
+        self._model.add_bool_or(bool_vars)
 
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
-        status = solver.Solve(self._model)
+        status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        grid = Grid([[solver.Value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -63,28 +63,28 @@ class From1ToXSolver(GameSolver):
     def _add_initial_constraints(self):
         for position, number_value in self._grid:
             if number_value != self.empty:
-                self._model.Add(self._grid_vars[position] == number_value)
+                self._model.add(self._grid_vars[position] == number_value)
             else:
-                self._model.Add(self._grid_vars[position] >= 1)
+                self._model.add(self._grid_vars[position] >= 1)
 
     def _add_regions_distinct_and_max_value_constraints(self):
         for region_positions in self._regions.values():
             region_size = len(region_positions)
-            self._model.AddAllDifferent([self._grid_vars[position] for position in region_positions])
+            self._model.add_all_different([self._grid_vars[position] for position in region_positions])
             for position in region_positions:
                 self._add_max_value_constraints(position, region_size)
                 self._add_neighbors_not_same_value_constraint(position)
 
     def _add_max_value_constraints(self, position, region_positions_len: int):
-        self._model.Add(self._grid_vars[position] <= region_positions_len)
+        self._model.add(self._grid_vars[position] <= region_positions_len)
 
     def _add_neighbors_not_same_value_constraint(self, position):
         for neighbor_position in self._grid.neighbors_positions(position, 'orthogonal'):
-            self._model.Add(self._grid_vars[neighbor_position] != self._grid_vars[position])
+            self._model.add(self._grid_vars[neighbor_position] != self._grid_vars[position])
 
     def _add_clues_constraints(self):
         for row, clue in ((row, clue) for row, clue in enumerate(self._rows_clues) if clue != self.empty):
-            self._model.Add(sum((self._grid_vars[Position(row, c)] for c in range(self.columns_number))) == clue)
+            self._model.add(sum((self._grid_vars[Position(row, c)] for c in range(self.columns_number))) == clue)
 
         for col, clue in ((col, clue) for col, clue in enumerate(self._columns_clues) if clue != self.empty):
-            self._model.Add(sum((self._grid_vars[Position(r, col)] for r in range(self.rows_number))) == clue)
+            self._model.add(sum((self._grid_vars[Position(r, col)] for r in range(self.rows_number))) == clue)

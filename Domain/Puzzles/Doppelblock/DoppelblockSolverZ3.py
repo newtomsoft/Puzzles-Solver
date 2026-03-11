@@ -1,4 +1,4 @@
-﻿from z3 import Solver, Not, And, unsat, Int, If, Distinct
+from z3 import Solver, Not, And, unsat, Int, If, Distinct
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position

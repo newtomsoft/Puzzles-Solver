@@ -1,4 +1,4 @@
-﻿from ortools.sat.cp_model_pb2 import CpSolverStatus
+from ortools.sat.cp_model_pb2 import CpSolverStatus
 from ortools.sat.python import cp_model
 from ortools.sat.python.cp_model import IntVar, CpModel, CpSolver
 
@@ -27,7 +27,7 @@ class MasyuSolver(GameSolver):
     def _init_solver(self):
         self._model = cp_model.CpModel()
         self._island_bridges_z3 = {
-            island.position: {direction: self._model.NewBoolVar(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()
+            island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in self._island_grid.islands.values()
         }
         self._add_constraints()
         self._initialized = True
@@ -45,13 +45,13 @@ class MasyuSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._is_feasible(self._solver.Solve(self._model)):
+        while self._is_feasible(self._solver.solve(self._model)):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, var in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = self._solver.Value(var)
+                    bridges_number = self._solver.value(var)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
@@ -70,7 +70,7 @@ class MasyuSolver(GameSolver):
                         if value == 1:
                             literals.append(self._island_bridges_z3[position][direction])
                 if literals:
-                    self._model.AddBoolOr([lit.Not() for lit in literals])
+                    self._model.add_bool_or([lit.Not() for lit in literals])
             self.init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -82,7 +82,7 @@ class MasyuSolver(GameSolver):
                 if value == 1:
                     literals.append(self._island_bridges_z3[island.position][direction])
         if literals:
-            self._model.AddBoolOr([lit.Not() for lit in literals])
+            self._model.add_bool_or([lit.Not() for lit in literals])
 
         self.init_island_grid()
         return self.get_solution()
@@ -97,22 +97,22 @@ class MasyuSolver(GameSolver):
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
                     neighbor_pos = island.direction_position_bridges[direction][0]
-                    self._model.Add(self._island_bridges_z3[island.position][direction] == self._island_bridges_z3[neighbor_pos][direction.opposite])
+                    self._model.add(self._island_bridges_z3[island.position][direction] == self._island_bridges_z3[neighbor_pos][direction.opposite])
                 else:
-                    self._model.Add(self._island_bridges_z3[island.position][direction] == 0)
+                    self._model.add(self._island_bridges_z3[island.position][direction] == 0)
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
             vars_list = [self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]
             s = sum(vars_list)
-            is0 = self._model.NewBoolVar(f"sum0_{island.position}")
-            is2 = self._model.NewBoolVar(f"sum2_{island.position}")
+            is0 = self._model.new_bool_var(f"sum0_{island.position}")
+            is2 = self._model.new_bool_var(f"sum2_{island.position}")
             # s == 0 or s == 2
-            self._model.Add(s == 0).OnlyEnforceIf(is0)
-            self._model.Add(s != 0).OnlyEnforceIf(is0.Not())
-            self._model.Add(s == 2).OnlyEnforceIf(is2)
-            self._model.Add(s != 2).OnlyEnforceIf(is2.Not())
-            self._model.AddBoolOr([is0, is2])
+            self._model.add(s == 0).only_enforce_if(is0)
+            self._model.add(s != 0).only_enforce_if(is0.Not())
+            self._model.add(s == 2).only_enforce_if(is2)
+            self._model.add(s != 2).only_enforce_if(is2.Not())
+            self._model.add_bool_or([is0, is2])
 
     def _add_dots_constraints(self):
         for position, value in self.input_grid:
@@ -122,9 +122,9 @@ class MasyuSolver(GameSolver):
                 v_possible = None
                 # Horizontal case
                 if position.left in self._island_bridges_z3 and position.right in self._island_bridges_z3:
-                    h_possible = self._model.NewBoolVar(f"w_h_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.left()] == 1).OnlyEnforceIf(h_possible)
-                    self._model.Add(self._island_bridges_z3[position][Direction.right()] == 1).OnlyEnforceIf(h_possible)
+                    h_possible = self._model.new_bool_var(f"w_h_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.left()] == 1).only_enforce_if(h_possible)
+                    self._model.add(self._island_bridges_z3[position][Direction.right()] == 1).only_enforce_if(h_possible)
                     turn_literals = []
                     if Direction.up() in self._island_bridges_z3[position.left]:
                         turn_literals.append(self._island_bridges_z3[position.left][Direction.up()])
@@ -135,15 +135,15 @@ class MasyuSolver(GameSolver):
                     if Direction.down() in self._island_bridges_z3[position.right]:
                         turn_literals.append(self._island_bridges_z3[position.right][Direction.down()])
                     if turn_literals:
-                        self._model.AddBoolOr(turn_literals).OnlyEnforceIf(h_possible)
+                        self._model.add_bool_or(turn_literals).only_enforce_if(h_possible)
                     else:
                         # If no possible turn, disable this option
-                        self._model.Add(h_possible == 0)
+                        self._model.add(h_possible == 0)
                 # Vertical case
                 if position.up in self._island_bridges_z3 and position.down in self._island_bridges_z3:
-                    v_possible = self._model.NewBoolVar(f"w_v_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.up()] == 1).OnlyEnforceIf(v_possible)
-                    self._model.Add(self._island_bridges_z3[position][Direction.down()] == 1).OnlyEnforceIf(v_possible)
+                    v_possible = self._model.new_bool_var(f"w_v_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.up()] == 1).only_enforce_if(v_possible)
+                    self._model.add(self._island_bridges_z3[position][Direction.down()] == 1).only_enforce_if(v_possible)
                     turn_literals = []
                     if Direction.left() in self._island_bridges_z3[position.up]:
                         turn_literals.append(self._island_bridges_z3[position.up][Direction.left()])
@@ -154,9 +154,9 @@ class MasyuSolver(GameSolver):
                     if Direction.right() in self._island_bridges_z3[position.down]:
                         turn_literals.append(self._island_bridges_z3[position.down][Direction.right()])
                     if turn_literals:
-                        self._model.AddBoolOr(turn_literals).OnlyEnforceIf(v_possible)
+                        self._model.add_bool_or(turn_literals).only_enforce_if(v_possible)
                     else:
-                        self._model.Add(v_possible == 0)
+                        self._model.add(v_possible == 0)
                 # At least one orientation must be taken
                 choices = []
                 if h_possible is not None:
@@ -164,41 +164,41 @@ class MasyuSolver(GameSolver):
                 if v_possible is not None:
                     choices.append(v_possible)
                 if choices:
-                    self._model.AddBoolOr(choices)
+                    self._model.add_bool_or(choices)
             if value == 'b':
                 # Black: must turn on the dot, and go straight both before and after at least one cell
                 patterns = []
                 # right + down
                 if position.right in self._island_bridges_z3 and position.right.right in self._island_bridges_z3 and position.down in self._island_bridges_z3 and position.down.down in self._island_bridges_z3:
-                    p = self._model.NewBoolVar(f"b_rd_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.right()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.right][Direction.right()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position][Direction.down()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.down][Direction.down()] == 1).OnlyEnforceIf(p)
+                    p = self._model.new_bool_var(f"b_rd_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.right()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.right][Direction.right()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position][Direction.down()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.down][Direction.down()] == 1).only_enforce_if(p)
                     patterns.append(p)
                 # left + down
                 if position.left in self._island_bridges_z3 and position.left.left in self._island_bridges_z3 and position.down in self._island_bridges_z3 and position.down.down in self._island_bridges_z3:
-                    p = self._model.NewBoolVar(f"b_ld_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.left()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.left][Direction.left()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position][Direction.down()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.down][Direction.down()] == 1).OnlyEnforceIf(p)
+                    p = self._model.new_bool_var(f"b_ld_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.left()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.left][Direction.left()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position][Direction.down()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.down][Direction.down()] == 1).only_enforce_if(p)
                     patterns.append(p)
                 # right + up
                 if position.right in self._island_bridges_z3 and position.right.right in self._island_bridges_z3 and position.up in self._island_bridges_z3 and position.up.up in self._island_bridges_z3:
-                    p = self._model.NewBoolVar(f"b_ru_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.right()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.right][Direction.right()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position][Direction.up()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.up][Direction.up()] == 1).OnlyEnforceIf(p)
+                    p = self._model.new_bool_var(f"b_ru_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.right()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.right][Direction.right()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position][Direction.up()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.up][Direction.up()] == 1).only_enforce_if(p)
                     patterns.append(p)
                 # left + up
                 if position.left in self._island_bridges_z3 and position.left.left in self._island_bridges_z3 and position.up in self._island_bridges_z3 and position.up.up in self._island_bridges_z3:
-                    p = self._model.NewBoolVar(f"b_lu_{position}")
-                    self._model.Add(self._island_bridges_z3[position][Direction.left()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.left][Direction.left()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position][Direction.up()] == 1).OnlyEnforceIf(p)
-                    self._model.Add(self._island_bridges_z3[position.up][Direction.up()] == 1).OnlyEnforceIf(p)
+                    p = self._model.new_bool_var(f"b_lu_{position}")
+                    self._model.add(self._island_bridges_z3[position][Direction.left()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.left][Direction.left()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position][Direction.up()] == 1).only_enforce_if(p)
+                    self._model.add(self._island_bridges_z3[position.up][Direction.up()] == 1).only_enforce_if(p)
                     patterns.append(p)
                 if patterns:
-                    self._model.AddBoolOr(patterns)
+                    self._model.add_bool_or(patterns)

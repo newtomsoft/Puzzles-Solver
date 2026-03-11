@@ -1,4 +1,4 @@
-﻿from typing import List
+from typing import List
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -22,7 +22,7 @@ class JigsawSudokuSolver(SudokuBaseSolver, GameSolver):
 
     def _add_distinct_in_jigsaw_regions_constraints(self):
         for region in self._regions:
-            self._model.AddAllDifferent([self._grid_vars[position] for position in region])
+            self._model.add_all_different([self._grid_vars[position] for position in region])
 
     def _are_regions_cells_count_compliant(self):
         return False if any(len(region) != self.rows_number for region in self._regions) else True

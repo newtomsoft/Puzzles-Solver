@@ -1,4 +1,4 @@
-﻿from ortools.sat.python import cp_model
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -25,7 +25,7 @@ class FutoshikiSolver(GameSolver):
         self._grid_vars = {}
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                self._grid_vars[(r, c)] = self._model.NewIntVar(1, self.columns_number, f'grid_{r}_{c}')
+                self._grid_vars[(r, c)] = self._model.new_int_var(1, self.columns_number, f'grid_{r}_{c}')
         self._add_constraints()
 
     def get_solution(self) -> Grid:
@@ -33,10 +33,10 @@ class FutoshikiSolver(GameSolver):
             self._init_solver()
 
         self._solver = cp_model.CpSolver()
-        status = self._solver.Solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            grid = Grid([[self._solver.Value(self._number(Position(r, c))) for c in range(self.columns_number)] 
+            grid = Grid([[self._solver.value(self._number(Position(r, c))) for c in range(self.columns_number)] 
                          for r in range(self.rows_number)])
             self._previous_solution_grid = grid
             return grid
@@ -51,13 +51,13 @@ class FutoshikiSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._previous_solution_grid.value(r, c) != -1:
-                    is_different = self._model.NewBoolVar(f'diff_{r}_{c}')
-                    self._model.Add(self._number(Position(r, c)) != self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_different)
-                    self._model.Add(self._number(Position(r, c)) == self._previous_solution_grid.value(r, c)).OnlyEnforceIf(is_different.Not())
+                    is_different = self._model.new_bool_var(f'diff_{r}_{c}')
+                    self._model.add(self._number(Position(r, c)) != self._previous_solution_grid.value(r, c)).only_enforce_if(is_different)
+                    self._model.add(self._number(Position(r, c)) == self._previous_solution_grid.value(r, c)).only_enforce_if(is_different.Not())
                     different_cells.append(is_different)
 
         if different_cells:
-            self._model.AddBoolOr(different_cells)
+            self._model.add_bool_or(different_cells)
 
         return self.get_solution()
 
@@ -71,16 +71,16 @@ class FutoshikiSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, value in [(p, v) for p, v in self._grid if v != -1]:
-            self._model.Add(self._number(position) == value)
+            self._model.add(self._number(position) == value)
 
     def _add_distinct_constraints(self):
         for r in range(self.rows_number):
             row_vars = [self._number(Position(r, c)) for c in range(self.columns_number)]
-            self._model.AddAllDifferent(row_vars)
+            self._model.add_all_different(row_vars)
 
         for c in range(self.columns_number):
             col_vars = [self._number(Position(r, c)) for r in range(self.rows_number)]
-            self._model.AddAllDifferent(col_vars)
+            self._model.add_all_different(col_vars)
 
     def _add_higher_constraints(self):
         for item in self._higher_positions:
@@ -91,4 +91,4 @@ class FutoshikiSolver(GameSolver):
                 first_position = Position(first_pos_tuple[0], first_pos_tuple[1])
                 second_position = Position(second_pos_tuple[0], second_pos_tuple[1])
 
-            self._model.Add(self._number(first_position) > self._number(second_position))
+            self._model.add(self._number(first_position) > self._number(second_position))
