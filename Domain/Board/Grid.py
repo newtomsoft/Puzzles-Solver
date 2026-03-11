@@ -59,6 +59,8 @@ class Grid[T](GridBase[T]):
             return int(grid_element)
         if element_type is type(Island):
             return Island.from_str(Position(row, column), grid_element)
+        if element_type is str:
+            return grid_element.strip()
         raise ValueError(f"Unsupported element type: {element_type}")
 
     @property
