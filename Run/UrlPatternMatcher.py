@@ -47,6 +47,7 @@ import Run.Games.LinesweeperConfig
 import Run.Games.LitsConfig
 import Run.Games.LookAirConfig
 import Run.Games.MasyuConfig
+import Run.Games.MathraxConfig
 import Run.Games.MeadowsConfig
 import Run.Games.MidLoopConfig
 import Run.Games.MinesweeperConfig
@@ -170,6 +171,7 @@ class UrlPatternMatcher:
         Run.Games.LitsConfig.register()
         Run.Games.LookAirConfig.register()
         Run.Games.MasyuConfig.register()
+        Run.Games.MathraxConfig.register()
         Run.Games.MeadowsConfig.register()
         Run.Games.MidLoopConfig.register()
         Run.Games.MinesweeperConfig.register()
