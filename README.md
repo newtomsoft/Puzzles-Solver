@@ -18,6 +18,7 @@ The different sizes and difficulties are handled
 https://gridpuzzle.com/balance-loop/evil-12  
 https://gridpuzzle.com/bodaburokku/evil-10  
 https://gridpuzzle.com/bridges/size-12  
+https://gridpuzzle.com/calcudoku/evil-95  
 https://gridpuzzle.com/chocona/evil-9  
 https://gridpuzzle.com/clouds/size-15  
 https://gridpuzzle.com/cocktail-lamp/evil-15  
@@ -42,6 +43,7 @@ https://gridpuzzle.com/kuroshiro/size-10
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
 https://gridpuzzle.com/masyu/evil-12  
+https://gridpuzzle.com/mathrax/evil-9  
 https://gridpuzzle.com/meadows/size-15  
 https://gridpuzzle.com/mid-loop/hard-12  
 https://gridpuzzle.com/minesweeper/evil-12  
