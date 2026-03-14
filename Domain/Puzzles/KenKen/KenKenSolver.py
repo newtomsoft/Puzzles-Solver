@@ -1,8 +1,6 @@
-import math
-import re
-from collections import defaultdict
+import uuid
 
-from z3 import Solver, Not, And, unsat, Or, Int, Distinct, Abs
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -10,74 +8,47 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KenKenSolver(GameSolver):
-    def __init__(self, regions_grid: Grid, operations_grid: Grid):
-        self.rows_number = regions_grid.rows_number
-        self.columns_number = regions_grid.columns_number
+    def __init__(self, regions_operators_results: list):
+        self._regions_operators_results = regions_operators_results
+        self.rows_number, self.columns_number = self._get_rows_columns_number()
         if self.rows_number != self.columns_number:
             raise ValueError("KenKen grid must be square")
-        if operations_grid.rows_number != self.rows_number or operations_grid.columns_number != self.columns_number:
-            raise ValueError("Regions grid and operations grid must have the same dimensions")
+        self._grid_vars = None
+        self._model = cp_model.CpModel()
+        self._previous_solution = None
 
-        self._regions_operators_results = self._parse_grids(regions_grid, operations_grid)
-        self._grid_z3 = None
-        self._solver = Solver()
-        self._previous_solution: Grid | None = None
-
-    def _parse_grids(self, regions_grid: Grid, operations_grid: Grid) -> list[tuple[list[Position], str, int]]:
-        regions_map = defaultdict(list)
-        for r in range(self.rows_number):
-            for c in range(self.columns_number):
-                region_id = regions_grid[r][c]
-                regions_map[region_id].append(Position(r, c))
-
-        results = []
-        for positions in regions_map.values():
-            top_left = sorted(positions, key=lambda p: (p.r, p.c))[0]
-            op_value = operations_grid[top_left]
-
-            if op_value is None:
-                # If no operation is present at the top-left, we assume it's just a number
-                # which implies a sum constraint (or equality for single cell)
-                # However, usually we expect a value. If it's completely missing, that's an issue.
-                # But let's look at the regex handling.
-                pass
-
-            s_val = str(op_value).strip()
-            if not s_val:
-                 raise ValueError(f"No operation defined for region at {top_left}")
-
-            # Match number then optional operator
-            match = re.match(r"^(\d+)([+\-x÷]?)$", s_val)
-            if not match:
-                raise ValueError(f"Invalid operation format '{s_val}' at {top_left}")
-
-            result_num = int(match.group(1))
-            operator = match.group(2)
-
-            if not operator:
-                operator = '+'
-
-            results.append((positions, operator, result_num))
-
-        return results
-
-    def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+    def get_solution(self) -> tuple[Grid | None, int]:
+        self._grid_vars = Grid([[self._model.new_int_var(1, self.rows_number, f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        if self._solver.check() == unsat:
+        solver = cp_model.CpSolver()
+        status = solver.solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        model = self._solver.model()
-        self._previous_solution = Grid([[model.eval(self._grid_z3.value(i, j)).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)])
+
+        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):
-        constraints = []
-        for position, value in self._previous_solution:
-            constraints.append(self._grid_z3[position] == value)
-        self._solver.add(Not(And(constraints)))
+        if self._previous_solution is None:
+            return self.get_solution()
+        if self._previous_solution.is_empty():
+            return Grid.empty()
+
+        uuid_str = str(uuid.uuid4())
+        bool_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                prev_val = self._previous_solution.value(r, c)
+                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}_{uuid_str}")
+                self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
+                bool_vars.append(diff_var)
+
+        self._model.add_bool_or(bool_vars)
+
         return self._compute_solution()
 
     def _add_constraints(self):
@@ -89,39 +60,79 @@ class KenKenSolver(GameSolver):
         self._add_operations_div_constraints()
 
     def _initials_constraints(self):
-        for position, value in self._grid_z3:
-            self._solver.add(self._grid_z3[position] >= 1)
-            self._solver.add(self._grid_z3[position] <= self.rows_number)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                self._model.add(self._grid_vars[Position(r, c)] >= 1)
+                self._model.add(self._grid_vars[Position(r, c)] <= self.rows_number)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
-            self._solver.add(Distinct([self._grid_z3[Position(r, c)] for c in range(self.columns_number)]))
+            self._model.add_all_different([self._grid_vars[Position(r, c)] for c in range(self.columns_number)])
         for c in range(self.columns_number):
-            self._solver.add(Distinct([self._grid_z3[Position(r, c)] for r in range(self.rows_number)]))
-
-    def _add_operations_mul_constraints(self):
-        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == 'x']:
-            constraint = math.prod([self._grid_z3[position] for position in region]) == result
-            self._solver.add(constraint)
-
-    def _add_operations_div_constraints(self):
-        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '÷']:
-            if len(region) != 2:
-                raise ValueError("Division can only be applied to two positions")
-            constraint = Or(
-                self._grid_z3[region[0]] * result == self._grid_z3[region[1]],
-                self._grid_z3[region[1]] * result == self._grid_z3[region[0]]
-            )
-            self._solver.add(constraint)
+            self._model.add_all_different([self._grid_vars[Position(r, c)] for r in range(self.rows_number)])
 
     def _add_operations_add_constraints(self):
-        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '+']:
-            constraint = sum([self._grid_z3[position] for position in region]) == result
-            self._solver.add(constraint)
+        for region, operator_str, result in self._regions_operators_results:
+            if operator_str == '+':
+                self._model.add(sum([self._grid_vars[position] for position in region]) == result)
 
     def _add_operations_sub_constraints(self):
-        for region, _, result in [(region, operator_str, result) for region, operator_str, result in self._regions_operators_results if operator_str == '-']:
-            if len(region) != 2:
-                raise ValueError("Subtraction can only be applied to two positions")
-            constraint = Abs(self._grid_z3[region[0]] - self._grid_z3[region[1]]) == result
-            self._solver.add(constraint)
+        for region, operator_str, result in self._regions_operators_results:
+            if operator_str == '-':
+                if len(region) != 2:
+                    raise ValueError("Subtraction can only be applied to two positions")
+
+                a = self._grid_vars[region[0]]
+                b = self._grid_vars[region[1]]
+
+                case1 = self._model.new_bool_var(f"sub_case1_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+                case2 = self._model.new_bool_var(f"sub_case2_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+
+                self._model.add(a - b == result).only_enforce_if(case1)
+                self._model.add(b - a == result).only_enforce_if(case2)
+
+                self._model.add(case1 + case2 == 1)
+
+    def _add_operations_mul_constraints(self):
+        for region, operator_str, result in self._regions_operators_results:
+            if operator_str in ('x', '*'):
+                vars_in_region = [self._grid_vars[position] for position in region]
+                if len(vars_in_region) == 1:
+                    self._model.add(vars_in_region[0] == result)
+                elif len(vars_in_region) == 2:
+                    self._model.add_multiplication_equality(result, vars_in_region[0], vars_in_region[1])
+                else:
+                    # For more than 2 variables, we need intermediate variables
+                    current_product = vars_in_region[0]
+                    for i in range(1, len(vars_in_region)):
+                        next_product = self._model.new_int_var(1, self.rows_number**len(region), f"mul_inter_{i}_{uuid.uuid4()}")
+                        self._model.add_multiplication_equality(next_product, current_product, vars_in_region[i])
+                        current_product = next_product
+                    self._model.add(current_product == result)
+
+    def _add_operations_div_constraints(self):
+        for region, operator_str, result in self._regions_operators_results:
+            if operator_str in ('/', ':', '÷'):
+                if len(region) != 2:
+                    raise ValueError("Division can only be applied to two positions")
+
+                a = self._grid_vars[region[0]]
+                b = self._grid_vars[region[1]]
+
+                case1 = self._model.new_bool_var(f"div_case1_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+                case2 = self._model.new_bool_var(f"div_case2_{region[0].r}_{region[0].c}_{region[1].r}_{region[1].c}")
+
+                # a / b = result => a = b * result
+                self._model.add_multiplication_equality(a, b, result).only_enforce_if(case1)
+                # b / a = result => b = a * result
+                self._model.add_multiplication_equality(b, a, result).only_enforce_if(case2)
+
+                self._model.add_bool_or([case1, case2])
+
+    def _get_rows_columns_number(self) -> tuple[int, int]:
+        all_positions = [pos for sublist, _, _ in self._regions_operators_results for pos in sublist]
+        min_r = min(pos.r for pos in all_positions)
+        max_r = max(pos.r for pos in all_positions)
+        min_c = min(pos.c for pos in all_positions)
+        max_c = max(pos.c for pos in all_positions)
+        return max_r - min_r + 1, max_c - min_c + 1
