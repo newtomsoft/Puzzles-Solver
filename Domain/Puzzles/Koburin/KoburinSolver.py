@@ -169,7 +169,7 @@ class KoburinSolver(GameSolver):
             for neighbor_position in self.input_grid.neighbors_positions(position):
                 if neighbor_position not in self._island_bridges_z3:
                     continue
-                self._model.AddImplication(self._black_cells_z3[position], self._black_cells_z3[neighbor_position].Not())
+                self._model.add_implication(self._black_cells_z3[position], self._black_cells_z3[neighbor_position].Not())
 
     def _set_walls_around_digit(self):
         for position in [position for position, value in self.input_grid if value >= 0]:

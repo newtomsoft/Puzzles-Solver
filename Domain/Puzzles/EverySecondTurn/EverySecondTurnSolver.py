@@ -131,8 +131,8 @@ class EverySecondTurnSolver(GameSolver):
 
             link_ok = self._model.new_bool_var(f"link_{circle_pos}_to_{other_circle_pos}")
             self._model.add_bool_or([hor_path_ok, vert_path_ok]).only_enforce_if(link_ok)
-            self._model.AddImplication(hor_path_ok, link_ok)
-            self._model.AddImplication(vert_path_ok, link_ok)
+            self._model.add_implication(hor_path_ok, link_ok)
+            self._model.add_implication(vert_path_ok, link_ok)
 
             constraints.append(link_ok)
 
@@ -182,6 +182,6 @@ class EverySecondTurnSolver(GameSolver):
             self._model.add(b == 1)
             return b
         for lit in literals:
-            self._model.AddImplication(b, lit)
+            self._model.add_implication(b, lit)
         self._model.add_bool_or([l.Not() for l in literals] + [b])
         return b

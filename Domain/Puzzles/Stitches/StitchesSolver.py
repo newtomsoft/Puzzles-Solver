@@ -168,6 +168,6 @@ class StitchesSolver(GameSolver):
             self._model.add(self._grid_connexion_var[other_position] == direction.opposite.value).only_enforce_if(opposite_direction_var)
             self._model.add(self._grid_connexion_var[other_position] != direction.opposite.value).only_enforce_if(opposite_direction_var.Not())
 
-            self._model.AddImplication(direction_var, opposite_direction_var)
+            self._model.add_implication(direction_var, opposite_direction_var)
 
-        self._model.AddExactlyOne(direction_vars)
+        self._model.add_exactly_one(direction_vars)

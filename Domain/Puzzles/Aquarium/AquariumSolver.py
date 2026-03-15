@@ -87,11 +87,11 @@ class AquariumSolver(GameSolver):
                 down_cells = [position for position in positions if position[0] > row]
                 for down_cell in down_cells:
                     down_cell_var = self._grid_vars[down_cell]
-                    self._model.AddImplication(cell_var, down_cell_var)
+                    self._model.add_implication(cell_var, down_cell_var)
 
                 up_cells = [position for position in positions if position[0] < row]
                 for up_cell in up_cells:
                     up_cell_var = self._grid_vars[up_cell]
                     not_cell_var = self._model.new_bool_var(f"not_cell_{row}_{column}")
-                    self._model.AddBoolXOr([cell_var, not_cell_var])
-                    self._model.AddImplication(not_cell_var, up_cell_var.Not())
+                    self._model.add_bool_xor([cell_var, not_cell_var])
+                    self._model.add_implication(not_cell_var, up_cell_var.Not())

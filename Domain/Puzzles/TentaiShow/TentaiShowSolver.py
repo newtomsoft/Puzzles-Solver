@@ -139,8 +139,8 @@ class TentaiShowSolver(GameSolver):
                     self._model.add(self._grid_vars[symmetric_position] == circle_value).only_enforce_if(sym_equals_circle)
                     self._model.add(self._grid_vars[symmetric_position] != circle_value).only_enforce_if(sym_equals_circle.Not())
 
-                    self._model.AddImplication(pos_equals_circle, sym_equals_circle)
-                    self._model.AddImplication(pos_equals_circle.Not(), sym_equals_circle.Not())
+                    self._model.add_implication(pos_equals_circle, sym_equals_circle)
+                    self._model.add_implication(pos_equals_circle.Not(), sym_equals_circle.Not())
                 else:
                     self._model.add(self._grid_vars[position] != circle_value)
 

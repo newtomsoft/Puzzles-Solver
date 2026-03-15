@@ -29,10 +29,10 @@ class DominosaSolver(GameSolver):
     def _init_model(self):
         self._model = cp_model.CpModel()
         self._dominoes_positions = {
-            (value0, value1): [(self._model.NewIntVar(0, self.rows_number - 1, f"{value0}_{value1}_r0"), 
-                               self._model.NewIntVar(0, self.columns_number - 1, f"{value0}_{value1}_c0")), 
-                              (self._model.NewIntVar(0, self.rows_number - 1, f"{value0}_{value1}_r1"), 
-                               self._model.NewIntVar(0, self.columns_number - 1, f"{value0}_{value1}_c1"))]
+            (value0, value1): [(self._model.new_int_var(0, self.rows_number - 1, f"{value0}_{value1}_r0"), 
+                               self._model.new_int_var(0, self.columns_number - 1, f"{value0}_{value1}_c0")), 
+                              (self._model.new_int_var(0, self.rows_number - 1, f"{value0}_{value1}_r1"), 
+                               self._model.new_int_var(0, self.columns_number - 1, f"{value0}_{value1}_c1"))]
             for value0 in range(self.min_number_on_domino, self.max_number_on_domino + 1)
             for value1 in range(self.min_number_on_domino, value0 + 1)
         }
@@ -42,7 +42,7 @@ class DominosaSolver(GameSolver):
         if self._model is None:
             self._init_model()
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
         if self._status != cp_model.OPTIMAL and self._status != cp_model.FEASIBLE:
             return Grid.empty()
 
@@ -50,7 +50,7 @@ class DominosaSolver(GameSolver):
 
     def _compute_solution(self):
         dominoes_positions = {
-            (value0, value1): [Position(self._solver.Value(r), self._solver.Value(c)) for r, c in positions]
+            (value0, value1): [Position(self._solver.value(r), self._solver.value(c)) for r, c in positions]
             for (value0, value1), positions in self._dominoes_positions.items()
         }
         solution_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
@@ -68,13 +68,13 @@ class DominosaSolver(GameSolver):
         if self._domino_position_bool_vars:
             for domino_values, vars_positions in self._domino_position_bool_vars.items():
                 for bool_var, _, _ in vars_positions:
-                    if self._solver.BooleanValue(bool_var):
+                    if self._solver.boolean_value(bool_var):
                         constraints.append(bool_var.Not())
                     else:
                         constraints.append(bool_var)
-        self._model.AddBoolOr(constraints)
+        self._model.add_bool_or(constraints)
 
-        self._status = self._solver.Solve(self._model)
+        self._status = self._solver.solve(self._model)
         if self._status != cp_model.OPTIMAL and self._status != cp_model.FEASIBLE:
             return Grid.empty()
 
@@ -91,11 +91,11 @@ class DominosaSolver(GameSolver):
         for domino_values, possible_positions in possibles_dominoes_positions_by_value.items():
             self._domino_position_bool_vars[domino_values] = []
             for i, ((r0, c0), (r1, c1)) in enumerate(possible_positions):
-                bool_var = self._model.NewBoolVar(f"domino_{domino_values[0]}_{domino_values[1]}_pos_{i}")
+                bool_var = self._model.new_bool_var(f"domino_{domino_values[0]}_{domino_values[1]}_pos_{i}")
                 self._domino_position_bool_vars[domino_values].append((bool_var, (r0, c0), (r1, c1)))
 
         for domino_values, vars_positions in self._domino_position_bool_vars.items():
-            self._model.AddExactlyOne([var for var, _, _ in vars_positions])
+            self._model.add_exactly_one([var for var, _, _ in vars_positions])
 
         cell_usage = {}
         for domino_values, vars_positions in self._domino_position_bool_vars.items():
@@ -108,17 +108,17 @@ class DominosaSolver(GameSolver):
                 cell_usage[(r1, c1)].append(bool_var)
 
         for cell, bool_vars in cell_usage.items():
-            self._model.AddAtMostOne(bool_vars)
+            self._model.add_at_most_one(bool_vars)
 
         for domino_values, vars_positions in self._domino_position_bool_vars.items():
             r0, c0 = self._dominoes_positions[domino_values][0]
             r1, c1 = self._dominoes_positions[domino_values][1]
 
             for bool_var, (pos_r0, pos_c0), (pos_r1, pos_c1) in vars_positions:
-                self._model.Add(r0 == pos_r0).OnlyEnforceIf(bool_var)
-                self._model.Add(c0 == pos_c0).OnlyEnforceIf(bool_var)
-                self._model.Add(r1 == pos_r1).OnlyEnforceIf(bool_var)
-                self._model.Add(c1 == pos_c1).OnlyEnforceIf(bool_var)
+                self._model.add(r0 == pos_r0).only_enforce_if(bool_var)
+                self._model.add(c0 == pos_c0).only_enforce_if(bool_var)
+                self._model.add(r1 == pos_r1).only_enforce_if(bool_var)
+                self._model.add(c1 == pos_c1).only_enforce_if(bool_var)
 
     def _get_all_possible_domino_positions_by_value(self):
         directions = [(0, 1), (1, 0)]
@@ -153,10 +153,10 @@ class DominosaSolver(GameSolver):
                     (r0, c0), (r1, c1) = possibles_dominoes_positions_by_value[(domino_value_0, domino_value_1)][0]
                     r0_var, c0_var = self._dominoes_positions[(domino_value_0, domino_value_1)][0]
                     r1_var, c1_var = self._dominoes_positions[(domino_value_0, domino_value_1)][1]
-                    self._model.Add(r0_var == r0)
-                    self._model.Add(c0_var == c0)
-                    self._model.Add(r1_var == r1)
-                    self._model.Add(c1_var == c1)
+                    self._model.add(r0_var == r0)
+                    self._model.add(c0_var == c0)
+                    self._model.add(r1_var == r1)
+                    self._model.add(c1_var == c1)
 
                     possibles_neighbors = self._remove_position_from_possibles_neighbors((r0, c0), possibles_neighbors)
                     possibles_neighbors = self._remove_position_from_possibles_neighbors((r1, c1), possibles_neighbors)
