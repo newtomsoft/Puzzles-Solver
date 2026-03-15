@@ -144,7 +144,7 @@ class RenkatsuSolver(GameSolver):
                 self._model.add(step_vars[(r, c)] != 1).only_enforce_if(is_root.Not())
                 root_cells.append(is_root)
 
-        self._model.AddExactlyOne(root_cells)
+        self._model.add_exactly_one(root_cells)
 
         for r in range(self.rows_number):
             for c in range(self.columns_number):
