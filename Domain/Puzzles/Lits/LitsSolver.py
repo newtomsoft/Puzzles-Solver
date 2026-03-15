@@ -27,9 +27,8 @@ class LitsSolver(GameSolver):
         self._model = cp_model.CpModel()
 
     def get_solution(self) -> Grid:
-        max_value = max(LitsType, key=lambda x: x.value).value
-        self._grid_vars = Grid([[self._model.new_int_var(0, max_value, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
-        self._add_constraints()
+        if self._grid_vars is None:
+            self._init_solver()
 
         solver = cp_model.CpSolver()
 
@@ -69,15 +68,23 @@ class LitsSolver(GameSolver):
 
             self._model.add_bool_or(literals)
 
+    def _init_solver(self):
+        max_value = max(LitsType, key=lambda x: x.value).value
+        self._grid_vars = Grid([[self._model.new_int_var(0, max_value, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._add_constraints()
+
     def get_other_solution(self):
         if self.previous_solution is None:
             return self.get_solution()
+
+        if self._grid_vars is None:
+            self._init_solver()
 
         bool_vars = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 prev_val = self.previous_solution.value(r, c)
-                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}")
+                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}_{len(self._model.Proto().variables)}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
                 self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
                 bool_vars.append(diff_var)
