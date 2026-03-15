@@ -99,6 +99,7 @@ import Run.Games.TentsConfig
 import Run.Games.ThermometersConfig
 import Run.Games.TilePaintConfig
 import Run.Games.TrilogyConfig
+import Run.Games.UsotatamiConfig
 import Run.Games.VectorsConfig
 import Run.Games.WamazuConfig
 import Run.Games.YajikabeConfig
@@ -223,6 +224,7 @@ class UrlPatternMatcher:
         Run.Games.ThermometersConfig.register()
         Run.Games.TilePaintConfig.register()
         Run.Games.TrilogyConfig.register()
+        Run.Games.UsotatamiConfig.register()
         Run.Games.VectorsConfig.register()
         Run.Games.WamazuConfig.register()
         Run.Games.YajikabeConfig.register()
