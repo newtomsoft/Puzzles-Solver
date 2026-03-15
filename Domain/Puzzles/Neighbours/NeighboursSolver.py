@@ -129,8 +129,8 @@ class NeighboursSolver(GameSolver):
             is_step_one = self._model.new_bool_var(f'step_is_one_{region_id}_{position.r}_{position.c}')
             self._model.add(step[position] == 1).only_enforce_if(is_step_one)
             self._model.add(step[position] != 1).only_enforce_if(is_step_one.Not())
-            self._model.AddImplication(is_root, is_in_region[position])
-            self._model.AddImplication(is_root, is_step_one)
+            self._model.add_implication(is_root, is_in_region[position])
+            self._model.add_implication(is_root, is_step_one)
             self._model.add_bool_or([is_in_region[position].Not(), is_step_one.Not(), is_root])
             roots.append(is_root)
         self._model.add(sum(roots) == 1)
@@ -145,8 +145,8 @@ class NeighboursSolver(GameSolver):
                 self._model.add(current_step <= 1).only_enforce_if(is_step_gt_1.Not())
 
                 implication_condition = self._model.new_bool_var(f"impl_cond_{region_id}_{r}_{c}")
-                self._model.AddImplication(implication_condition, is_in_region[pos])
-                self._model.AddImplication(implication_condition, is_step_gt_1)
+                self._model.add_implication(implication_condition, is_in_region[pos])
+                self._model.add_implication(implication_condition, is_step_gt_1)
                 self._model.add_bool_or([is_in_region[pos].Not(), is_step_gt_1.Not(), implication_condition])
 
                 adjacents_ok = []
@@ -156,8 +156,8 @@ class NeighboursSolver(GameSolver):
                     self._model.add(step[neighbor_pos] != current_step - 1).only_enforce_if(is_neighbor_step_parent.Not())
 
                     b_adj = self._model.new_bool_var(f'adj_{region_id}_{neighbor_pos.r}_{neighbor_pos.c}')
-                    self._model.AddImplication(b_adj, is_in_region[neighbor_pos])
-                    self._model.AddImplication(b_adj, is_neighbor_step_parent)
+                    self._model.add_implication(b_adj, is_in_region[neighbor_pos])
+                    self._model.add_implication(b_adj, is_neighbor_step_parent)
                     self._model.add_bool_or([is_in_region[neighbor_pos].Not(), is_neighbor_step_parent.Not(), b_adj])
                     adjacents_ok.append(b_adj)
 
@@ -226,17 +226,17 @@ class NeighboursSolver(GameSolver):
                     self._model.add(self._grid_ortools[v] != i).only_enforce_if(b_vi.Not())
 
                     b_term1 = self._model.new_bool_var(f'b_term1_{u.r}{u.c}_{v.r}{v.c}_{i}{j}')
-                    self._model.AddImplication(b_term1, b_ui)
-                    self._model.AddImplication(b_term1, b_vj)
+                    self._model.add_implication(b_term1, b_ui)
+                    self._model.add_implication(b_term1, b_vj)
                     self._model.add_bool_or([b_ui.Not(), b_vj.Not(), b_term1])
 
                     b_term2 = self._model.new_bool_var(f'b_term2_{u.r}{u.c}_{v.r}{v.c}_{i}{j}')
-                    self._model.AddImplication(b_term2, b_uj)
-                    self._model.AddImplication(b_term2, b_vi)
+                    self._model.add_implication(b_term2, b_uj)
+                    self._model.add_implication(b_term2, b_vi)
                     self._model.add_bool_or([b_uj.Not(), b_vi.Not(), b_term2])
 
-                    self._model.AddImplication(b_term1, b_edge)
-                    self._model.AddImplication(b_term2, b_edge)
+                    self._model.add_implication(b_term1, b_edge)
+                    self._model.add_implication(b_term2, b_edge)
                     self._model.add_bool_or([b_term1, b_term2, b_edge.Not()])
 
                     edge_connects_ij_bools.append(b_edge)
@@ -244,7 +244,7 @@ class NeighboursSolver(GameSolver):
                 if edge_connects_ij_bools:
                     self._model.add_bool_or(edge_connects_ij_bools).only_enforce_if(adj_bool)
                     for b in edge_connects_ij_bools:
-                        self._model.AddImplication(b, adj_bool)
+                        self._model.add_implication(b, adj_bool)
                 else:
                     self._model.add(adj_bool == 0)
 

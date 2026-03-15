@@ -171,7 +171,7 @@ class PipesSolver(GameSolver):
         self._model.add(self._grid_vars[pos][Direction.up()] == False).only_enforce_if(l3)
 
         # Exactly one of the L shapes must be true
-        self._model.AddExactlyOne([l0, l1, l2, l3])
+        self._model.add_exactly_one([l0, l1, l2, l3])
 
     def add_shape_i_constraint(self, position):
         # Create boolean variables for each I shape orientation
@@ -191,7 +191,7 @@ class PipesSolver(GameSolver):
         self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(i1)
 
         # Exactly one of the I shapes must be true
-        self._model.AddExactlyOne([i0, i1])
+        self._model.add_exactly_one([i0, i1])
 
     def add_shape_t_constraint(self, position):
         # Create boolean variables for each T shape orientation
@@ -225,7 +225,7 @@ class PipesSolver(GameSolver):
         self._model.add(self._grid_vars[position][Direction.right()] == False).only_enforce_if(t3)
 
         # Exactly one of the T shapes must be true
-        self._model.AddExactlyOne([t0, t1, t2, t3])
+        self._model.add_exactly_one([t0, t1, t2, t3])
 
     def add_shape_e_constraint(self, position):
         # Create boolean variables for each E shape orientation (endpoint)
@@ -259,7 +259,7 @@ class PipesSolver(GameSolver):
         self._model.add(self._grid_vars[position][Direction.down()] == False).only_enforce_if(e3)
 
         # Exactly one of the E shapes must be true
-        self._model.AddExactlyOne([e0, e1, e2, e3])
+        self._model.add_exactly_one([e0, e1, e2, e3])
 
     def _add_connected_constraints(self):
         for position, value in self._grid_vars:

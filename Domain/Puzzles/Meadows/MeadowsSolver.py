@@ -153,7 +153,7 @@ class MeadowsSolver(GameSolver):
             return
 
         # Exactly one candidate selected
-        self._model.AddExactlyOne(candidates)
+        self._model.add_exactly_one(candidates)
 
         # Coverage constraints: if a cell equals this value, it must be covered by one of the selected candidates
         covered_positions = set(pos_to_selectors.keys())

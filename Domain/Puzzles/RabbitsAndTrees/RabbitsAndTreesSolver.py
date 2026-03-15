@@ -32,8 +32,8 @@ class RabbitsAndTreesSolver(GameSolver):
                 self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[c].Not())
                 self._model.add(self._grid_vars.value(r, c) == self.TREE).only_enforce_if(trees[c])
                 self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[c].Not())
-            self._model.AddExactlyOne(rabbits)
-            self._model.AddExactlyOne(trees)
+            self._model.add_exactly_one(rabbits)
+            self._model.add_exactly_one(trees)
 
         for c in range(self._columns_number):
             rabbits = [self._model.new_bool_var(f"r_c_{r}_{c}") for r in range(self._rows_number)]
@@ -43,8 +43,8 @@ class RabbitsAndTreesSolver(GameSolver):
                 self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[r].Not())
                 self._model.add(self._grid_vars.value(r, c) == self.TREE).only_enforce_if(trees[r])
                 self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[r].Not())
-            self._model.AddExactlyOne(rabbits)
-            self._model.AddExactlyOne(trees)
+            self._model.add_exactly_one(rabbits)
+            self._model.add_exactly_one(trees)
 
         # Visibility constraints
         for pos, value in self._grid:

@@ -118,7 +118,7 @@ class TasukueaSolver(GameSolver):
                             if key not in self._coverage:
                                 self._coverage[key] = []
                             self._coverage[key].append(selector)
-                            self._model.AddImplication(selector, self._grid_var[pos])
+                            self._model.add_implication(selector, self._grid_var[pos])
 
         # Prune squares that aren't orthogonally adjacent to any clue
         clue_positions = [p for (p, v) in self._grid if v != self.empty]
@@ -145,7 +145,7 @@ class TasukueaSolver(GameSolver):
                 # If cell is black (True), it must come from a selected square: var => Or(selectors)
                 self._model.add_bool_or(selectors + [var.Not()])
                 # At most one square covers a cell
-                self._model.AddAtMostOne(selectors)
+                self._model.add_at_most_one(selectors)
             else:
                 # No square can cover this cell => force white (False)
                 self._model.add(var == 0)

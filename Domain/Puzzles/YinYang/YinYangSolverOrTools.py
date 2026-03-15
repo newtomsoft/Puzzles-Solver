@@ -59,7 +59,7 @@ class YinYangSolver(GameSolver):
         # Forbidden: 1 0 / 0 1 and 0 1 / 1 0
         for r in range(self.rows_number - 1):
             for c in range(self.columns_number - 1):
-                self._model.AddForbiddenAssignments(
+                self._model.add_forbidden_assignments(
                     [
                         self._grid_vars[(r, c)],
                         self._grid_vars[(r, c + 1)],
