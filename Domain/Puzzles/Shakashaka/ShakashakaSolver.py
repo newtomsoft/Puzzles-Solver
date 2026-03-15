@@ -51,7 +51,7 @@ class ShakashakaSolver(GameSolver):
             previous_values.append(value)
             all_vars.append(self._grid_vars[position])
 
-        self._model.AddForbiddenAssignments(all_vars, [previous_values])
+        self._model.add_forbidden_assignments(all_vars, [previous_values])
 
         return self.get_solution()
 
