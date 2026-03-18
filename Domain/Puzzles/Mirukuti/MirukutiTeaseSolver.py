@@ -35,7 +35,7 @@ class MirukutiTeaseSolver(GameSolver):
         self._last_solver = None
         self._previous_solution = None
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> IslandGrid:
         if not self.circles:
             return IslandGrid.empty()
             
@@ -53,7 +53,7 @@ class MirukutiTeaseSolver(GameSolver):
             for circle in self.circles:
                 island_matrix[circle['pos'].r][circle['pos'].c].type_char = circle['color']
                 
-            island_grid = Grid(island_matrix)
+            island_grid = IslandGrid(island_matrix)
             island_grid.biscuits = []
             
             for jr, jc, stem_end_idx, bar_end1_idx, bar_end2_idx, cv in self._all_configs:
@@ -256,7 +256,7 @@ class MirukutiTeaseSolver(GameSolver):
                 seg_v[min(curr.r, nxt.r)][curr.c].append(cond)
             curr = nxt
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution or self._previous_solution.is_empty():
             return self.get_solution()
 
