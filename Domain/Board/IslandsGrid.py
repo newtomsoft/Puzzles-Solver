@@ -249,7 +249,7 @@ class IslandGrid(Grid[Island]):
                 return new_visited_positions
         return visited_positions
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         if self.is_empty():
             return 'IslandGrid.empty()'
         current_row = 0
@@ -259,12 +259,15 @@ class IslandGrid(Grid[Island]):
                 result += '\n'
                 current_row = position.r
             if isinstance(item, Island):
-                result += repr(item)
+                result += str(item)
             elif isinstance(item, int) or isinstance(item, str):
                 result += f' {item} '
             else:
                 result += self.get_str(position)
         return result
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def get_str(self, position: Position) -> str:
         island = Island(position, 0)

@@ -143,7 +143,7 @@ class Island:
     def __hash__(self):
         return hash(self.position)
 
-    def __repr__(self):
+    def __str__(self):
         center_char = None
         if self.type_char:
             center_char = self.type_char
@@ -243,6 +243,9 @@ class Island:
                 center_char = "X"
 
         return f"{left_char}{center_char}{right_char}"
+
+    def __repr__(self):
+        return str(self)
 
     def bridges_number(self, direction: Direction):
         return self.direction_position_bridges.get(direction, (0, 0))[1]

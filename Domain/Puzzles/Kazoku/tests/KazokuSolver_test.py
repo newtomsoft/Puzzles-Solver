@@ -1,9 +1,7 @@
 ﻿from unittest import TestCase
 from Domain.Board.Grid import Grid
+from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Puzzles.Kazoku.KazokuSolver import KazokuSolver
-from Utils.GridUtils import region_grid_to_string
-
-from Domain.Board.Position import Position
 
 _ = None
 C = KazokuSolver.Circle
@@ -39,7 +37,8 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertEqual(expected_string, region_grid_to_string(solution))
+        self.assertIsInstance(solution, RegionsGrid)
+        self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_kazoku_lz47n(self):
@@ -71,7 +70,8 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertEqual(expected_string, region_grid_to_string(solution))
+        self.assertIsInstance(solution, RegionsGrid)
+        self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_kazoku_p6n1r(self):
@@ -112,7 +112,8 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertEqual(expected_string, region_grid_to_string(solution))
+        self.assertIsInstance(solution, RegionsGrid)
+        self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_kazoku_nwrkk(self):
@@ -158,7 +159,8 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertEqual(expected_string, region_grid_to_string(solution))
+        self.assertIsInstance(solution, RegionsGrid)
+        self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_kazoku_1xnv9(self):
@@ -210,5 +212,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertEqual(expected_string, region_grid_to_string(solution))
+        self.assertIsInstance(solution, RegionsGrid)
+        self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
+

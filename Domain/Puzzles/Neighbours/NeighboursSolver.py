@@ -2,6 +2,7 @@ from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Puzzles.GameSolver import GameSolver
 
 
@@ -58,8 +59,8 @@ class NeighboursSolver(GameSolver):
         self._possible_positions_by_region_id = {}
         for region_id, root in self._clue_position_by_region_id.items():
             possible = []
-            for r in range(self._rows_number):
-                for c in range(self._columns_number):
+            for r in range(max(0, root.r - self._area + 1), min(self._rows_number, root.r + self._area)):
+                for c in range(max(0, root.c - self._area + 1), min(self._columns_number, root.c + self._area)):
                     pos = Position(r, c)
                     if abs(pos.r - root.r) + abs(pos.c - root.c) < self._area:
                         possible.append(pos)
@@ -115,7 +116,7 @@ class NeighboursSolver(GameSolver):
         status = self._solver.solve(self._model)
         if status == cp_model.INFEASIBLE or status == cp_model.UNKNOWN:
             return Grid.empty()
-        solution = Grid([[self._solver.value(self._grid_ortools.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = RegionsGrid([[self._solver.value(self._grid_ortools.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
@@ -135,66 +136,60 @@ class NeighboursSolver(GameSolver):
             self._model.add(sum(bool_vars) == self._area)
 
     def _add_connected_cells_regions_constraints(self):
-        steps = [Grid([[self._model.new_int_var(0, self._rows_number * self._columns_number, f'step{region_id}_{r}_{c}')
-                        for c in range(self._columns_number)] for r in range(self._rows_number)]) for region_id in
-                 range(1, self._regions_count + 1)]
         for region_id in self._clue_position_by_region_id.keys():
-            self._add_connected_cells_region_constraints(steps[region_id - 1], region_id)
+            step = Grid([[self._model.new_int_var(0, self._area, f'step{region_id}_{r}_{c}')
+                          if Position(r, c) in self._possible_positions_by_region_id[region_id] else self._model.new_constant(0)
+                          for c in range(self._columns_number)] for r in range(self._rows_number)])
+            self._add_connected_cells_region_constraints(step, region_id)
 
     def _add_connected_cells_region_constraints(self, step: Grid, region_id: int):
         possible_positions = self._possible_positions_by_region_id[region_id]
         is_in_region = {pos: self._get_is_in_region_var(region_id, pos) for pos in possible_positions}
 
-        for position, _ in self._clues_grid:
-            if position in possible_positions:
-                self._model.add(step[position] >= 1).only_enforce_if(is_in_region[position])
-                self._model.add(step[position] == 0).only_enforce_if(is_in_region[position].Not())
-            else:
-                self._model.add(step[position] == 0)
+        for position in possible_positions:
+            self._model.add(step[position] >= 1).only_enforce_if(is_in_region[position])
+            self._model.add(step[position] == 0).only_enforce_if(is_in_region[position].Not())
 
         roots = []
+        clue_pos = self._clue_position_by_region_id[region_id]
         for position in possible_positions:
-            is_root = self._model.new_bool_var(f'root_{region_id}_{position.r}_{position.c}')
             is_step_one = self._model.new_bool_var(f'step_is_one_{region_id}_{position.r}_{position.c}')
             self._model.add(step[position] == 1).only_enforce_if(is_step_one)
             self._model.add(step[position] != 1).only_enforce_if(is_step_one.Not())
-            self._model.add_implication(is_root, is_in_region[position])
-            self._model.add_implication(is_root, is_step_one)
-            self._model.add_bool_or([is_in_region[position].Not(), is_step_one.Not(), is_root])
-            roots.append(is_root)
-        self._model.add(sum(roots) == 1)
+            if position == clue_pos:
+                self._model.add(is_step_one == 1)
+            else:
+                self._model.add(is_step_one == 0)
 
         for pos in possible_positions:
             r, c = pos.r, pos.c
             current_step = step[pos]
 
-            is_step_gt_1 = self._model.new_bool_var(f"step_gt_1_{region_id}_{r}_{c}")
-            self._model.add(current_step > 1).only_enforce_if(is_step_gt_1)
-            self._model.add(current_step <= 1).only_enforce_if(is_step_gt_1.Not())
+            if pos == clue_pos:
+                continue
 
-            implication_condition = self._model.new_bool_var(f"impl_cond_{region_id}_{r}_{c}")
-            self._model.add_implication(implication_condition, is_in_region[pos])
-            self._model.add_implication(implication_condition, is_step_gt_1)
-            self._model.add_bool_or([is_in_region[pos].Not(), is_step_gt_1.Not(), implication_condition])
+            # If cell is in region, it must have a parent (current_step > 1 and neighbor has current_step - 1)
+            # This is only possible if current_step > 1.
+            self._model.add(current_step > 1).only_enforce_if(is_in_region[pos])
 
             adjacents_ok = []
             for neighbor_pos in self._clues_grid.neighbors_positions(pos):
                 if neighbor_pos not in possible_positions:
                     continue
-                is_neighbor_step_parent = self._model.new_bool_var(f'parent_{region_id}_{neighbor_pos.r}_{neighbor_pos.c}')
-                self._model.add(step[neighbor_pos] == current_step - 1).only_enforce_if(is_neighbor_step_parent)
-                self._model.add(step[neighbor_pos] != current_step - 1).only_enforce_if(is_neighbor_step_parent.Not())
-
-                b_adj = self._model.new_bool_var(f'adj_{region_id}_{neighbor_pos.r}_{neighbor_pos.c}')
-                self._model.add_implication(b_adj, is_in_region[neighbor_pos])
-                self._model.add_implication(b_adj, is_neighbor_step_parent)
-                self._model.add_bool_or([is_in_region[neighbor_pos].Not(), is_neighbor_step_parent.Not(), b_adj])
-                adjacents_ok.append(b_adj)
+                
+                is_parent = self._model.new_bool_var(f'parent_{region_id}_{pos.r}_{pos.c}_{neighbor_pos.r}_{neighbor_pos.c}')
+                # neighbor is parent if it's in the region and has step = current_step - 1
+                self._model.add(step[neighbor_pos] == current_step - 1).only_enforce_if(is_parent)
+                self._model.add(step[neighbor_pos] != current_step - 1).only_enforce_if(is_parent.Not())
+                
+                b_parent_ok = self._model.new_bool_var('')
+                self._model.add_bool_and([is_in_region[neighbor_pos], is_parent]).only_enforce_if(b_parent_ok)
+                adjacents_ok.append(b_parent_ok)
 
             if adjacents_ok:
-                self._model.add_bool_or(adjacents_ok).only_enforce_if(implication_condition)
+                self._model.add_bool_or(adjacents_ok).only_enforce_if(is_in_region[pos])
             else:
-                self._model.add(implication_condition == 0)
+                self._model.add(is_in_region[pos] == 0)
 
     def _add_shape_based_connectivity_constraint(self, region_id: int, area: int):
         possible_placements = []
@@ -238,31 +233,36 @@ class NeighboursSolver(GameSolver):
                     adj_between_regions[(i, j)] = self._model.new_constant(0)
 
         # 2. For each possible pair, find if they are adjacent
+        # Pre-filter edges by region pair
+        edges_by_region_pair = {}
+        for u, v in adjacent_edges:
+            regs_u = self._possible_regions_by_position[u]
+            regs_v = self._possible_regions_by_position[v]
+            for ri in regs_u:
+                for rj in regs_v:
+                    if ri == rj: continue
+                    pair = (ri, rj) if ri < rj else (rj, ri)
+                    if pair not in edges_by_region_pair:
+                        edges_by_region_pair[pair] = []
+                    # Keep track of which region is at which position
+                    edges_by_region_pair[pair].append((u, v, ri, rj))
+
         for i, j in possible_adj_pairs:
             adj_bool = self._model.new_bool_var(f'adj_{i}_{j}')
             adj_between_regions[(i, j)] = adj_bool
+            
             all_term_bools = []
-            for u, v in adjacent_edges:
-                # Check if u could be i and v could be j
-                if i in self._possible_regions_by_position[u] and j in self._possible_regions_by_position[v]:
-                    b_ui = self._get_is_in_region_var(i, u)
-                    b_vj = self._get_is_in_region_var(j, v)
-                    # Force adj_bool to 1 if these cells are i and j
-                    self._model.add(adj_bool == 1).only_enforce_if([b_ui, b_vj])
-                    # Variable to justify adj_bool == 1
-                    b_term = self._model.new_bool_var('')
-                    self._model.add_bool_and([b_ui, b_vj]).only_enforce_if(b_term)
-                    all_term_bools.append(b_term)
-                # Check if u could be j and v could be i
-                if j in self._possible_regions_by_position[u] and i in self._possible_regions_by_position[v]:
-                    b_uj = self._get_is_in_region_var(j, u)
-                    b_vi = self._get_is_in_region_var(i, v)
-                    # Force adj_bool to 1 if these cells are j and i
-                    self._model.add(adj_bool == 1).only_enforce_if([b_uj, b_vi])
-                    # Variable to justify adj_bool == 1
-                    b_term = self._model.new_bool_var('')
-                    self._model.add_bool_and([b_uj, b_vi]).only_enforce_if(b_term)
-                    all_term_bools.append(b_term)
+            for u, v, ri, rj in edges_by_region_pair.get((i, j), []):
+                b_uri = self._get_is_in_region_var(ri, u)
+                b_vrj = self._get_is_in_region_var(rj, v)
+                
+                # Force adj_bool to 1 if these cells are ri and rj
+                self._model.add(adj_bool == 1).only_enforce_if([b_uri, b_vrj])
+                
+                # Variable to justify adj_bool == 1
+                b_term = self._model.new_bool_var('')
+                self._model.add_bool_and([b_uri, b_vrj]).only_enforce_if(b_term)
+                all_term_bools.append(b_term)
 
             if not all_term_bools:
                 self._model.add(adj_bool == 0)

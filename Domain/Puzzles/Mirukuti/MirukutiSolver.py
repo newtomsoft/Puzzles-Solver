@@ -36,7 +36,7 @@ class MirukutiSolver(GameSolver):
         self._constraints_added = False
         self._previous_solution = None
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> IslandGrid:
         if not self.biscuits:
             return IslandGrid.empty()
             
@@ -59,7 +59,7 @@ class MirukutiSolver(GameSolver):
             for b_pos in self.biscuits:
                 island_matrix[b_pos.r][b_pos.c].type_char = self.COOKIE
                 
-            island_grid = Grid(island_matrix)
+            island_grid = IslandGrid(island_matrix)
             island_grid.biscuits = []
             
             for b_idx, biscuit_pos in enumerate(self.biscuits):
@@ -273,7 +273,7 @@ class MirukutiSolver(GameSolver):
                 seg_v[min(curr.r, nxt.r)][curr.c].append(cond)
             curr = nxt
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution or self._previous_solution.is_empty():
             return self.get_solution()
 
