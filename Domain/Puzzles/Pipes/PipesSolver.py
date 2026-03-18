@@ -20,18 +20,20 @@ class PipesSolver(GameSolver):
         self._previous_solution: GridBase[Pipe] | None = None
 
     def _init_solver(self):
-        self._grid_vars = GridBase([
+        self._grid_vars = GridBase(
             [
-                {
-                    Direction.up(): self._model.new_bool_var(f"{r}_{c}_up"),
-                    Direction.left(): self._model.new_bool_var(f"{r}_{c}_left"),
-                    Direction.down(): self._model.new_bool_var(f"{r}_{c}_down"),
-                    Direction.right(): self._model.new_bool_var(f"{r}_{c}_right"),
-                }
-                for c in range(self._columns_number)
+                [
+                    {
+                        Direction.up(): self._model.new_bool_var(f"{r}_{c}_up"),
+                        Direction.left(): self._model.new_bool_var(f"{r}_{c}_left"),
+                        Direction.down(): self._model.new_bool_var(f"{r}_{c}_down"),
+                        Direction.right(): self._model.new_bool_var(f"{r}_{c}_right"),
+                    }
+                    for c in range(self._columns_number)
+                ]
+                for r in range(self._rows_number)
             ]
-            for r in range(self._rows_number)
-        ])
+        )
 
         self._add_constraints()
 
@@ -48,18 +50,14 @@ class PipesSolver(GameSolver):
 
         while status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
-            current_grid = PipesGrid([[
-                self._create_pipe_from_model(Position(r, c))
-                for c in range(self._columns_number)]
-                for r in range(self._rows_number)])
+            current_grid = PipesGrid([[self._create_pipe_from_model(Position(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
 
             connected_positions, is_loop = current_grid.get_connected_positions_and_is_loop()
             if len(connected_positions) == 1 and not is_loop:
                 self._previous_solution = current_grid
-                transition_grid = GridBase([[
-                    PipeShapeTransition(self._input_grid[Position(r, c)], current_grid[Position(r, c)])
-                    for c in range(self._columns_number)]
-                    for r in range(self._rows_number)])
+                transition_grid = GridBase(
+                    [[PipeShapeTransition(self._input_grid[Position(r, c)], current_grid[Position(r, c)]) for c in range(self._columns_number)] for r in range(self._rows_number)]
+                )
                 return transition_grid, proposition_count
 
             if len(connected_positions) > 1:
@@ -74,7 +72,7 @@ class PipesSolver(GameSolver):
                     (Direction.up(), Direction.up() in connected_to),
                     (Direction.down(), Direction.down() in connected_to),
                     (Direction.left(), Direction.left() in connected_to),
-                    (Direction.right(), Direction.right() in connected_to)
+                    (Direction.right(), Direction.right() in connected_to),
                 ]:
                     temp_var = self._model.new_bool_var(f"excl_{position}_{direction}")
                     self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
@@ -99,7 +97,7 @@ class PipesSolver(GameSolver):
                 (Direction.up(), Direction.up() in connected_to),
                 (Direction.down(), Direction.down() in connected_to),
                 (Direction.left(), Direction.left() in connected_to),
-                (Direction.right(), Direction.right() in connected_to)
+                (Direction.right(), Direction.right() in connected_to),
             ]:
                 temp_var = self._model.new_bool_var(f"prev_{position}_{direction}")
                 self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
@@ -114,6 +112,69 @@ class PipesSolver(GameSolver):
     def _add_constraints(self):
         self._add_possible_rotations_constraints()
         self._add_connected_constraints()
+        self._add_tree_constraints()
+
+    def _add_tree_constraints(self):
+        # A tree with N nodes must have N-1 edges
+        total_edges = []
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                # Each edge is shared between two cells.
+                # To avoid double counting, only count right and down connections.
+                pos_right = self._grid_vars.neighbor_right(pos)
+                if pos_right is not None:
+                    total_edges.append(self._grid_vars[pos][Direction.right()])
+                pos_down = self._grid_vars.neighbor_down(pos)
+                if pos_down is not None:
+                    total_edges.append(self._grid_vars[pos][Direction.down()])
+
+        self._model.add(sum(total_edges) == self._rows_number * self._columns_number - 1)
+
+        # Potential constraints to avoid cycles and ensure connectivity (Spanning Tree)
+        # We use a potential function: if (u,v) is an edge, then |pot[u] - pot[v]| = 1
+        # This is a bit complex for a grid, let's use a flow-based approach instead.
+        # Or a simpler distance-from-root approach.
+        potentials = GridBase(
+            [[self._model.new_int_var(0, self._rows_number * self._columns_number, f"pot_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)]
+        )
+
+        # Pick one root (0,0) and set its potential to 0
+        self._model.add(potentials[Position(0, 0)] == 0)
+
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                for direction in [Direction.up(), Direction.down(), Direction.left(), Direction.right()]:
+                    neighbor_pos = pos.after(direction)
+                    if neighbor_pos in self._grid_vars:
+                        is_connected = self._grid_vars[pos][direction]
+                        # If connected, potential of neighbor = potential of current + 1 OR vice versa
+                        # Actually, to avoid cycles, we want a DAG structure from the root.
+                        # so pot[neighbor] == pot[pos] + 1 IF pos is closer to root.
+                        # But we don't know which one is closer.
+                        # Let's say: if connected, pot[neighbor] != pot[pos]
+                        self._model.add(potentials[pos] != potentials[neighbor_pos]).only_enforce_if(is_connected)
+                        # To ensure it's a tree rooted at (0,0), every non-root node must have exactly
+                        # one neighbor with potential = my_potential - 1.
+
+                if pos != Position(0, 0):
+                    # For each non-root node, there must be at least one incoming edge from a node with lower potential
+                    incoming_edges = []
+                    for direction in [Direction.up(), Direction.down(), Direction.left(), Direction.right()]:
+                        neighbor_pos = pos.after(direction)
+                        if neighbor_pos in self._grid_vars:
+                            is_conn = self._grid_vars[pos][direction]
+                            is_parent = self._model.new_bool_var(f"parent_{pos}_{direction}")
+                            self._model.add(potentials[neighbor_pos] == potentials[pos] - 1).only_enforce_if(is_parent)
+                            self._model.add(potentials[neighbor_pos] != potentials[pos] - 1).only_enforce_if(is_parent.Not())
+
+                            parent_and_conn = self._model.new_bool_var(f"p_and_c_{pos}_{direction}")
+                            self._model.add_bool_and([is_conn, is_parent]).only_enforce_if(parent_and_conn)
+                            self._model.add_bool_or([is_conn.Not(), is_parent.Not()]).only_enforce_if(parent_and_conn.Not())
+                            incoming_edges.append(parent_and_conn)
+
+                    self._model.add_bool_or(incoming_edges)
 
     def _add_possible_rotations_constraints(self):
         for position, pipe_shape in self._input_grid:
