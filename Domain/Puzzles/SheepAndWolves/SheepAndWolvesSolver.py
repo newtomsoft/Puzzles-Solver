@@ -18,8 +18,8 @@ class SheepAndWolvesSolver(GameSolver):
         self._init_island_grid()
         self._model = cp_model.CpModel()
         self._solver = cp_model.CpSolver()
-        self._island_bridges: dict[Position, dict[Direction, cp_model.BoolVar]] = {}
-        self._cell_inside: dict[Position, cp_model.BoolVar] = {}
+        self._island_bridges: dict[Position, dict[Direction, cp_model.IntVar]] = {}
+        self._cell_inside: dict[Position, cp_model.IntVar] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
@@ -128,12 +128,12 @@ class SheepAndWolvesSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for col in range(self._island_grid.columns_number):
-            self._model.add_bool_and(self._island_bridges[Position(0, col)][Direction.up()].Not())
-            self._model.add_bool_and(self._island_bridges[Position(self._island_grid.rows_number - 1, col)][Direction.down()].Not())
+            self._model.add_bool_and(self._island_bridges[Position(0, col)][Direction.up()].negated())
+            self._model.add_bool_and(self._island_bridges[Position(self._island_grid.rows_number - 1, col)][Direction.down()].negated())
 
         for row in range(self._island_grid.rows_number):
-            self._model.add_bool_and(self._island_bridges[Position(row, self._island_grid.columns_number - 1)][Direction.right()].Not())
-            self._model.add_bool_and(self._island_bridges[Position(row, 0)][Direction.left()].Not())
+            self._model.add_bool_and(self._island_bridges[Position(row, self._island_grid.columns_number - 1)][Direction.right()].negated())
+            self._model.add_bool_and(self._island_bridges[Position(row, 0)][Direction.left()].negated())
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
@@ -142,7 +142,7 @@ class SheepAndWolvesSolver(GameSolver):
                 if neighbor_pos in self._island_bridges:
                     self._model.add(self._island_bridges[island.position][direction] == self._island_bridges[neighbor_pos][direction.opposite])
                 else:
-                    self._model.add_bool_and(self._island_bridges[island.position][direction].Not())
+                    self._model.add_bool_and(self._island_bridges[island.position][direction].negated())
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
@@ -172,7 +172,7 @@ class SheepAndWolvesSolver(GameSolver):
             if value == self.S:
                 self._model.add_bool_or(inside)
             elif value == self.W:
-                self._model.add_bool_and(inside.Not())
+                self._model.add_bool_and(inside.negated())
             
             # Right neighbor
             if pos.c + 1 < self.input_grid.columns_number:

@@ -69,7 +69,7 @@ class DominosaSolver(GameSolver):
             for domino_values, vars_positions in self._domino_position_bool_vars.items():
                 for bool_var, _, _ in vars_positions:
                     if self._solver.boolean_value(bool_var):
-                        constraints.append(bool_var.Not())
+                        constraints.append(bool_var.negated())
                     else:
                         constraints.append(bool_var)
         self._model.add_bool_or(constraints)

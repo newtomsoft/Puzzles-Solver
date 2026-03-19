@@ -36,7 +36,7 @@ class SlantSolver(GameSolver):
 
         blocking_clause = []
         for position, val in self._previous_solution:
-            blocking_clause.append(self._grid_vars[position].Not()) if val else blocking_clause.append(self._grid_vars[position])
+            blocking_clause.append(self._grid_vars[position].negated()) if val else blocking_clause.append(self._grid_vars[position])
 
         self._model.add_bool_or(blocking_clause)
         return self.get_solution()
@@ -55,7 +55,7 @@ class SlantSolver(GameSolver):
                 loop_literals = []
                 for position in loop:
                     if current_grid[position]:
-                        loop_literals.append(self._grid_vars[position].Not())
+                        loop_literals.append(self._grid_vars[position].negated())
                     else:
                         loop_literals.append(self._grid_vars[position])
                 self._model.add_bool_or(loop_literals)
@@ -72,9 +72,9 @@ class SlantSolver(GameSolver):
             if (up_left := position.up_left) in self._grid_vars:
                 connections.append(self._grid_vars[up_left])
             if (up := position.up) in self._grid_vars:
-                connections.append(self._grid_vars[up].Not())
+                connections.append(self._grid_vars[up].negated())
             if (left := position.left) in self._grid_vars:
-                connections.append(self._grid_vars[left].Not())
+                connections.append(self._grid_vars[left].negated())
             if position in self._grid_vars:
                 connections.append(self._grid_vars[position])
 
@@ -87,4 +87,4 @@ class SlantSolver(GameSolver):
             down_left = self._grid_vars[position.down]
             down_right = self._grid_vars[position.down_right]
 
-            self._model.add_bool_or([up_left, up_right.Not(), down_left.Not(), down_right])
+            self._model.add_bool_or([up_left, up_right.negated(), down_left.negated(), down_right])

@@ -41,7 +41,7 @@ class LookAirSolver(GameSolver):
             for positions in impossible_segments:
                 literals = []
                 for position in positions:
-                    literals.append(self._grid_vars[position].Not()) if solution[position] == 1 else literals.append(self._grid_vars[position])
+                    literals.append(self._grid_vars[position].negated()) if solution[position] == 1 else literals.append(self._grid_vars[position])
                 self._model.add_bool_or(literals)
 
             solution = self._compute_solution()
@@ -56,7 +56,7 @@ class LookAirSolver(GameSolver):
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 if self._previous_solution[r][c] == 1:
-                    literals.append(self._grid_vars[Position(r, c)].Not())
+                    literals.append(self._grid_vars[Position(r, c)].negated())
                 else:
                     literals.append(self._grid_vars[Position(r, c)])
         self._model.add_bool_or(literals)
@@ -142,8 +142,8 @@ class LookAirSolver(GameSolver):
                                         if adjacent:
                                             # Les carrés ne peuvent pas être tous les deux présents
                                             self._model.add_bool_or([
-                                                squares[(r1, c1, s1)].Not(),
-                                                squares[(r2, c2, s2)].Not()
+                                                squares[(r1, c1, s1)].negated(),
+                                                squares[(r2, c2, s2)].negated()
                                             ])
 
     def _impossible_segments(self, proposition: Grid) -> list[list[Position]]:

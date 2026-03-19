@@ -70,7 +70,7 @@ class MasyuSolver(GameSolver):
                         if value == 1:
                             literals.append(self._island_bridges_z3[position][direction])
                 if literals:
-                    self._model.add_bool_or([lit.Not() for lit in literals])
+                    self._model.add_bool_or([lit.negated() for lit in literals])
             self.init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -82,7 +82,7 @@ class MasyuSolver(GameSolver):
                 if value == 1:
                     literals.append(self._island_bridges_z3[island.position][direction])
         if literals:
-            self._model.add_bool_or([lit.Not() for lit in literals])
+            self._model.add_bool_or([lit.negated() for lit in literals])
 
         self.init_island_grid()
         return self.get_solution()
@@ -109,9 +109,9 @@ class MasyuSolver(GameSolver):
             is2 = self._model.new_bool_var(f"sum2_{island.position}")
             # s == 0 or s == 2
             self._model.add(s == 0).only_enforce_if(is0)
-            self._model.add(s != 0).only_enforce_if(is0.Not())
+            self._model.add(s != 0).only_enforce_if(is0.negated())
             self._model.add(s == 2).only_enforce_if(is2)
-            self._model.add(s != 2).only_enforce_if(is2.Not())
+            self._model.add(s != 2).only_enforce_if(is2.negated())
             self._model.add_bool_or([is0, is2])
 
     def _add_dots_constraints(self):

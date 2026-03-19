@@ -53,7 +53,7 @@ class FutoshikiSolver(GameSolver):
                 if self._previous_solution_grid.value(r, c) != -1:
                     is_different = self._model.new_bool_var(f'diff_{r}_{c}')
                     self._model.add(self._number(Position(r, c)) != self._previous_solution_grid.value(r, c)).only_enforce_if(is_different)
-                    self._model.add(self._number(Position(r, c)) == self._previous_solution_grid.value(r, c)).only_enforce_if(is_different.Not())
+                    self._model.add(self._number(Position(r, c)) == self._previous_solution_grid.value(r, c)).only_enforce_if(is_different.negated())
                     different_cells.append(is_different)
 
         if different_cells:

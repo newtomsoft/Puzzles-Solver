@@ -84,7 +84,7 @@ class NeighboursSolver(GameSolver):
             else:
                 b = self._model.new_bool_var(f'is_in_region_{region_id}_{pos.r}_{pos.c}')
                 self._model.add(self._grid_ortools[pos] == region_id).only_enforce_if(b)
-                self._model.add(self._grid_ortools[pos] != region_id).only_enforce_if(b.Not())
+                self._model.add(self._grid_ortools[pos] != region_id).only_enforce_if(b.negated())
                 self._is_in_region_vars[(region_id, pos)] = b
         return self._is_in_region_vars[(region_id, pos)]
 
@@ -107,7 +107,7 @@ class NeighboursSolver(GameSolver):
         for position, value in self._previous_solution:
             b = self._model.new_bool_var('')
             self._model.add(self._grid_ortools[position] != value).only_enforce_if(b)
-            self._model.add(self._grid_ortools[position] == value).only_enforce_if(b.Not())
+            self._model.add(self._grid_ortools[position] == value).only_enforce_if(b.negated())
             bool_vars.append(b)
         self._model.add(sum(bool_vars) > 0)
         return self._compute_solution()
@@ -148,14 +148,14 @@ class NeighboursSolver(GameSolver):
 
         for position in possible_positions:
             self._model.add(step[position] >= 1).only_enforce_if(is_in_region[position])
-            self._model.add(step[position] == 0).only_enforce_if(is_in_region[position].Not())
+            self._model.add(step[position] == 0).only_enforce_if(is_in_region[position].negated())
 
         roots = []
         clue_pos = self._clue_position_by_region_id[region_id]
         for position in possible_positions:
             is_step_one = self._model.new_bool_var(f'step_is_one_{region_id}_{position.r}_{position.c}')
             self._model.add(step[position] == 1).only_enforce_if(is_step_one)
-            self._model.add(step[position] != 1).only_enforce_if(is_step_one.Not())
+            self._model.add(step[position] != 1).only_enforce_if(is_step_one.negated())
             if position == clue_pos:
                 self._model.add(is_step_one == 1)
             else:
@@ -180,7 +180,7 @@ class NeighboursSolver(GameSolver):
                 is_parent = self._model.new_bool_var(f'parent_{region_id}_{pos.r}_{pos.c}_{neighbor_pos.r}_{neighbor_pos.c}')
                 # neighbor is parent if it's in the region and has step = current_step - 1
                 self._model.add(step[neighbor_pos] == current_step - 1).only_enforce_if(is_parent)
-                self._model.add(step[neighbor_pos] != current_step - 1).only_enforce_if(is_parent.Not())
+                self._model.add(step[neighbor_pos] != current_step - 1).only_enforce_if(is_parent.negated())
                 
                 b_parent_ok = self._model.new_bool_var('')
                 self._model.add_bool_and([is_in_region[neighbor_pos], is_parent]).only_enforce_if(b_parent_ok)

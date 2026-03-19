@@ -58,13 +58,13 @@ class SkyscrapersSolver(GameSolver):
                 if self._previous_solution_grid.value(r, c) != self._no_value:
                     is_same = self._model.new_bool_var(f"is_same_{r}_{c}")
                     self._model.add(self._level_at(Position(r, c)) == self._previous_solution_grid.value(r, c)).only_enforce_if(is_same)
-                    self._model.add(self._level_at(Position(r, c)) != self._previous_solution_grid.value(r, c)).only_enforce_if(is_same.Not())
+                    self._model.add(self._level_at(Position(r, c)) != self._previous_solution_grid.value(r, c)).only_enforce_if(is_same.negated())
                     previous_solution_bools.append(is_same)
 
         if previous_solution_bools:
             all_same = self._model.new_bool_var("all_same")
             self._model.add_bool_and(previous_solution_bools).only_enforce_if(all_same)
-            self._model.add_bool_or([b.Not() for b in previous_solution_bools]).only_enforce_if(all_same.Not())
+            self._model.add_bool_or([b.negated() for b in previous_solution_bools]).only_enforce_if(all_same.negated())
             self._model.add(all_same == 0)
 
         return self.get_solution()
@@ -117,12 +117,12 @@ class SkyscrapersSolver(GameSolver):
             for j in range(i):
                 is_taller_than_j = self._model.new_bool_var(f"is_taller_{i}_{j}")
                 self._model.add(line[i] > line[j]).only_enforce_if(is_taller_than_j)
-                self._model.add(line[i] <= line[j]).only_enforce_if(is_taller_than_j.Not())
+                self._model.add(line[i] <= line[j]).only_enforce_if(is_taller_than_j.negated())
                 is_taller.append(is_taller_than_j)
 
             all_taller = self._model.new_bool_var(f"all_taller_{i}")
             self._model.add_bool_and(is_taller).only_enforce_if(all_taller)
-            self._model.add_bool_or([b.Not() for b in is_taller]).only_enforce_if(all_taller.Not())
+            self._model.add_bool_or([b.negated() for b in is_taller]).only_enforce_if(all_taller.negated())
 
             self._model.add(is_visible[i] == all_taller)
 

@@ -41,7 +41,7 @@ class NonogramSolver:
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 if self._previous_solution.value(r, c) == 1:
-                    literals.append(self._grid_ortools[r][c].Not())
+                    literals.append(self._grid_ortools[r][c].negated())
                 else:
                     literals.append(self._grid_ortools[r][c])
         self._model.add_bool_or(literals)

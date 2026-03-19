@@ -76,11 +76,11 @@ class PipesSolver(GameSolver):
                 ]:
                     temp_var = self._model.new_bool_var(f"excl_{position}_{direction}")
                     self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
-                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
+                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.negated())
                     exclusion_literals.append(temp_var)
 
             if exclusion_literals:
-                self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
+                self._model.add_bool_or([lit.negated() for lit in exclusion_literals])
 
             status = self._solver.solve(self._model)
 
@@ -101,11 +101,11 @@ class PipesSolver(GameSolver):
             ]:
                 temp_var = self._model.new_bool_var(f"prev_{position}_{direction}")
                 self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
-                self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
+                self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.negated())
                 exclusion_literals.append(temp_var)
 
         if exclusion_literals:
-            self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
+            self._model.add_bool_or([lit.negated() for lit in exclusion_literals])
 
         return self.get_solution()
 
@@ -167,11 +167,11 @@ class PipesSolver(GameSolver):
                             is_conn = self._grid_vars[pos][direction]
                             is_parent = self._model.new_bool_var(f"parent_{pos}_{direction}")
                             self._model.add(potentials[neighbor_pos] == potentials[pos] - 1).only_enforce_if(is_parent)
-                            self._model.add(potentials[neighbor_pos] != potentials[pos] - 1).only_enforce_if(is_parent.Not())
+                            self._model.add(potentials[neighbor_pos] != potentials[pos] - 1).only_enforce_if(is_parent.negated())
 
                             parent_and_conn = self._model.new_bool_var(f"p_and_c_{pos}_{direction}")
                             self._model.add_bool_and([is_conn, is_parent]).only_enforce_if(parent_and_conn)
-                            self._model.add_bool_or([is_conn.Not(), is_parent.Not()]).only_enforce_if(parent_and_conn.Not())
+                            self._model.add_bool_or([is_conn.negated(), is_parent.negated()]).only_enforce_if(parent_and_conn.negated())
                             incoming_edges.append(parent_and_conn)
 
                     self._model.add_bool_or(incoming_edges)

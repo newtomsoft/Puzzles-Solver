@@ -131,7 +131,7 @@ class ThermometersSolver(GameSolver):
                 val = solution_grid.value(r, c)
                 var = self._matrix_ortools[r][c]
                 if val:
-                    literals.append(var.Not())
+                    literals.append(var.negated())
                 else:
                     literals.append(var)
         self._model.add_bool_or(literals)

@@ -85,7 +85,7 @@ class YinYangSolver(GameSolver):
             c2 = border_cells[(i + 1) % len(border_cells)]
             diff = self._model.new_bool_var(f"diff_border_{i}")
             self._model.add(c1 != c2).only_enforce_if(diff)
-            self._model.add(c1 == c2).only_enforce_if(diff.Not())
+            self._model.add(c1 == c2).only_enforce_if(diff.negated())
             transitions.append(diff)
         self._model.add(sum(transitions) == 2)
 
@@ -109,7 +109,7 @@ class YinYangSolver(GameSolver):
             self._model.add(is_root[pos] == 0)
 
         for pos in self._grid.get_positions():
-            u_is_color = self._grid_vars[pos] if color == 1 else self._grid_vars[pos].Not()
+            u_is_color = self._grid_vars[pos] if color == 1 else self._grid_vars[pos].negated()
             u_rank = ranks[pos]
             u_is_root = is_root[pos]
 
@@ -124,7 +124,7 @@ class YinYangSolver(GameSolver):
                 nr, nc = pos.r + dr, pos.c + dc
                 if 0 <= nr < self.rows_number and 0 <= nc < self.columns_number:
                     v_pos = Position(nr, nc)
-                    v_is_color = self._grid_vars[v_pos] if color == 1 else self._grid_vars[v_pos].Not()
+                    v_is_color = self._grid_vars[v_pos] if color == 1 else self._grid_vars[v_pos].negated()
                     v_rank = ranks[v_pos]
 
                     p = self._model.new_bool_var(f"p_color_{color}_{pos}_{v_pos}")
@@ -133,7 +133,7 @@ class YinYangSolver(GameSolver):
                     has_parent.append(p)
 
             # If u is this color and not root, it must have a parent
-            self._model.add_bool_or(has_parent).only_enforce_if([u_is_color, u_is_root.Not()])
+            self._model.add_bool_or(has_parent).only_enforce_if([u_is_color, u_is_root.negated()])
 
     def get_solution(self) -> Grid:
         status = self._solver.solve(self._model)
@@ -151,7 +151,7 @@ class YinYangSolver(GameSolver):
         constraints = []
         for pos, val in self._previous_solution:
             if val == 1:
-                constraints.append(self._grid_vars[pos].Not())
+                constraints.append(self._grid_vars[pos].negated())
             else:
                 constraints.append(self._grid_vars[pos])
 

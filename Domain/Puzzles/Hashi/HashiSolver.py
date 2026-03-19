@@ -61,11 +61,11 @@ class HashiSolver(GameSolver):
                 for direction, (_, value) in island.direction_position_bridges.items():
                     temp_var = self._model.new_bool_var(f"excl_{island.position}_{direction}")
                     self._model.add(self._island_bridges[island.position][direction] == value).only_enforce_if(temp_var)
-                    self._model.add(self._island_bridges[island.position][direction] != value).only_enforce_if(temp_var.Not())
+                    self._model.add(self._island_bridges[island.position][direction] != value).only_enforce_if(temp_var.negated())
                     exclusion_literals.append(temp_var)
 
             if exclusion_literals:
-                self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
+                self._model.add_bool_or([lit.negated() for lit in exclusion_literals])
 
             status = self._solver.solve(self._model)
 
@@ -80,11 +80,11 @@ class HashiSolver(GameSolver):
             for direction, (_, value) in island.direction_position_bridges.items():
                 temp_var = self._model.new_bool_var(f"prev_{island.position}_{direction}")
                 self._model.add(self._island_bridges[island.position][direction] == value).only_enforce_if(temp_var)
-                self._model.add(self._island_bridges[island.position][direction] != value).only_enforce_if(temp_var.Not())
+                self._model.add(self._island_bridges[island.position][direction] != value).only_enforce_if(temp_var.negated())
                 exclusion_literals.append(temp_var)
 
         if exclusion_literals:
-            self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
+            self._model.add_bool_or([lit.negated() for lit in exclusion_literals])
 
         self.init_island_grid()
         return self.get_solution()
@@ -120,10 +120,10 @@ class HashiSolver(GameSolver):
 
             first_has_bridge = self._model.new_bool_var(f"first_{first_position}_{first_direction}")
             self._model.add(self._island_bridges[first_position][first_direction] > 0).only_enforce_if(first_has_bridge)
-            self._model.add(self._island_bridges[first_position][first_direction] == 0).only_enforce_if(first_has_bridge.Not())
+            self._model.add(self._island_bridges[first_position][first_direction] == 0).only_enforce_if(first_has_bridge.negated())
             self._model.add(self._island_bridges[second_position][second_direction] == 0).only_enforce_if(first_has_bridge)
 
             second_has_bridge = self._model.new_bool_var(f"second_{second_position}_{second_direction}")
             self._model.add(self._island_bridges[second_position][second_direction] > 0).only_enforce_if(second_has_bridge)
-            self._model.add(self._island_bridges[second_position][second_direction] == 0).only_enforce_if(second_has_bridge.Not())
+            self._model.add(self._island_bridges[second_position][second_direction] == 0).only_enforce_if(second_has_bridge.negated())
             self._model.add(self._island_bridges[first_position][first_direction] == 0).only_enforce_if(second_has_bridge)
