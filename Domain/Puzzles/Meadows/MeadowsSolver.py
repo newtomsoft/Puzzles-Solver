@@ -62,7 +62,7 @@ class MeadowsSolver(GameSolver):
             return Grid.empty()
 
         # Add constraint: at least one cell differs from previous solution
-        eq_bools: list[cp_model.BoolVar] = []
+        eq_bools: list[cp_model.IntVar] = []
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 prev_val = self._previous_solution.value(r, c)
@@ -106,7 +106,7 @@ class MeadowsSolver(GameSolver):
         max_size = min(rows, cols)
 
         candidates: list[cp_model.IntVar] = []
-        pos_to_selectors: dict[tuple[int, int], list[cp_model.BoolVar]] = {}
+        pos_to_selectors: dict[tuple[int, int], list[cp_model.IntVar]] = {}
 
         for size in range(min_size, max_size + 1):
             r0_min = max(0, position.r - size + 1)
@@ -173,7 +173,7 @@ class MeadowsSolver(GameSolver):
                     # If not equal then at least one of b_le or b_ge holds
                     self._model.add_bool_or([b_le, b_ge, b_eq])
                     # b_eq -> Or(selectors)
-                    self._model.add_bool_or(pos_to_selectors[key] + [b_eq.Not()])
+                    self._model.add_bool_or(pos_to_selectors[key] + [b_eq.negated()])
                 else:
                     # Can never be part of this square
                     self._model.add(var != square_area)

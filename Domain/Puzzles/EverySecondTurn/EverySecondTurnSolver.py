@@ -17,7 +17,7 @@ class EverySecondTurnSolver(GameSolver):
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
         self._model = cp_model.CpModel()
-        self._island_bridges: dict[Position, dict[Direction, cp_model.BoolVar]] = {}
+        self._island_bridges: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def init_island_grid(self):
@@ -71,7 +71,7 @@ class EverySecondTurnSolver(GameSolver):
                         cell_constraints.append(self._island_bridges[position][direction])
                 not_loop_constraints.append(cell_constraints)
             for constraint in not_loop_constraints:
-                self._model.add_bool_or([c.Not() for c in constraint])
+                self._model.add_bool_or([c.negated() for c in constraint])
             self.init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -81,7 +81,7 @@ class EverySecondTurnSolver(GameSolver):
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
                 previous_solution_constraints.append(self._island_bridges[island.position][direction])
-        self._model.add_bool_or([c.Not() for c in previous_solution_constraints])
+        self._model.add_bool_or([c.negated() for c in previous_solution_constraints])
 
         self.init_island_grid()
         return self.get_solution()
@@ -170,10 +170,10 @@ class EverySecondTurnSolver(GameSolver):
             down = self._island_bridges[position][Direction.down()]
 
             self._model.add_bool_or([
-                self.new_and([right, up, left.Not(), down.Not()]),
-                self.new_and([right, up.Not(), left.Not(), down]),
-                self.new_and([right.Not(), up.Not(), left, down]),
-                self.new_and([right.Not(), up, left, down.Not()])
+                self.new_and([right, up, left.negated(), down.negated()]),
+                self.new_and([right, up.negated(), left.negated(), down]),
+                self.new_and([right.negated(), up.negated(), left, down]),
+                self.new_and([right.negated(), up, left, down.negated()])
             ])
 
     def new_and(self, literals):
@@ -183,5 +183,5 @@ class EverySecondTurnSolver(GameSolver):
             return b
         for lit in literals:
             self._model.add_implication(b, lit)
-        self._model.add_bool_or([l.Not() for l in literals] + [b])
+        self._model.add_bool_or([l.negated() for l in literals] + [b])
         return b

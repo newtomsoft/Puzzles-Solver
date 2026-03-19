@@ -47,7 +47,7 @@ class RenzokuSolver(GameSolver):
                 if previous_value != -1:
                     diff_cell = self._model.new_bool_var(f"diff_cell_{r}_{c}")
                     self._model.add(self._grid_vars[r][c] != previous_value).only_enforce_if(diff_cell)
-                    self._model.add(self._grid_vars[r][c] == previous_value).only_enforce_if(diff_cell.Not())
+                    self._model.add(self._grid_vars[r][c] == previous_value).only_enforce_if(diff_cell.negated())
                     different_cells.append(diff_cell)
 
         self._model.add_bool_or(different_cells)
@@ -85,13 +85,13 @@ class RenzokuSolver(GameSolver):
             b_minus_a_eq_1 = self._model.new_bool_var(f"b_minus_a_eq_1_{first_position.r}_{first_position.c}_{second_position.r}_{second_position.c}")
 
             self._model.add(a - b == 1).only_enforce_if(a_minus_b_eq_1)
-            self._model.add(a - b != 1).only_enforce_if(a_minus_b_eq_1.Not())
+            self._model.add(a - b != 1).only_enforce_if(a_minus_b_eq_1.negated())
 
             self._model.add(b - a == 1).only_enforce_if(b_minus_a_eq_1)
-            self._model.add(b - a != 1).only_enforce_if(b_minus_a_eq_1.Not())
+            self._model.add(b - a != 1).only_enforce_if(b_minus_a_eq_1.negated())
 
             self._model.add_bool_or([a_minus_b_eq_1, b_minus_a_eq_1]).only_enforce_if(consecutive)
-            self._model.add_bool_and([a_minus_b_eq_1.Not(), b_minus_a_eq_1.Not()]).only_enforce_if(consecutive.Not())
+            self._model.add_bool_and([a_minus_b_eq_1.negated(), b_minus_a_eq_1.negated()]).only_enforce_if(consecutive.negated())
 
             self._model.add(consecutive == 1)
 

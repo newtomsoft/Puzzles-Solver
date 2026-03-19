@@ -96,7 +96,7 @@ class KoburinSolver(GameSolver):
                             literals.append(self._island_bridges_z3[position][direction])
                 if literals:
                     # At least one active edge in the component must be turned off
-                    self._model.add_bool_or([lit.Not() for lit in literals])
+                    self._model.add_bool_or([lit.negated() for lit in literals])
             self._init_island_grid()
 
         return IslandGrid.empty(), proposition_count
@@ -107,9 +107,9 @@ class KoburinSolver(GameSolver):
         for island in [island for island in self._previous_solution.islands.values() if island.position in self._island_bridges_z3]:
             for direction, (_, value) in island.direction_position_bridges.items():
                 var = self._island_bridges_z3[island.position][direction]
-                literals.append(var if value == 1 else var.Not())
+                literals.append(var if value == 1 else var.negated())
         if literals:
-            self._model.add_bool_or([lit.Not() for lit in literals])
+            self._model.add_bool_or([lit.negated() for lit in literals])
 
         self._init_island_grid()
         return self.get_solution()
@@ -159,9 +159,9 @@ class KoburinSolver(GameSolver):
             black_cell = self._black_cells_z3[position]
             # If black then s == 0
             self._model.add(s == 0).only_enforce_if(black_cell)
-            self._model.add(s != 0).only_enforce_if(black_cell.Not())
+            self._model.add(s != 0).only_enforce_if(black_cell.negated())
             # If path cell (not black) then s == 2
-            self._model.add(s == 2).only_enforce_if(black_cell.Not())
+            self._model.add(s == 2).only_enforce_if(black_cell.negated())
             self._model.add(s != 2).only_enforce_if(black_cell)
 
     def _add_no_adjacent_black_constraint(self):
@@ -169,7 +169,7 @@ class KoburinSolver(GameSolver):
             for neighbor_position in self.input_grid.neighbors_positions(position):
                 if neighbor_position not in self._island_bridges_z3:
                     continue
-                self._model.add_implication(self._black_cells_z3[position], self._black_cells_z3[neighbor_position].Not())
+                self._model.add_implication(self._black_cells_z3[position], self._black_cells_z3[neighbor_position].negated())
 
     def _set_walls_around_digit(self):
         for position in [position for position, value in self.input_grid if value >= 0]:

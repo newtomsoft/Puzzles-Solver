@@ -29,9 +29,9 @@ class RabbitsAndTreesSolver(GameSolver):
             trees = [self._model.new_bool_var(f"t_{r}_{c}") for c in range(self._columns_number)]
             for c in range(self._columns_number):
                 self._model.add(self._grid_vars.value(r, c) == self.RABBIT).only_enforce_if(rabbits[c])
-                self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[c].Not())
+                self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[c].negated())
                 self._model.add(self._grid_vars.value(r, c) == self.TREE).only_enforce_if(trees[c])
-                self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[c].Not())
+                self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[c].negated())
             self._model.add_exactly_one(rabbits)
             self._model.add_exactly_one(trees)
 
@@ -40,9 +40,9 @@ class RabbitsAndTreesSolver(GameSolver):
             trees = [self._model.new_bool_var(f"t_c_{r}_{c}") for r in range(self._rows_number)]
             for r in range(self._rows_number):
                 self._model.add(self._grid_vars.value(r, c) == self.RABBIT).only_enforce_if(rabbits[r])
-                self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[r].Not())
+                self._model.add(self._grid_vars.value(r, c) != self.RABBIT).only_enforce_if(rabbits[r].negated())
                 self._model.add(self._grid_vars.value(r, c) == self.TREE).only_enforce_if(trees[r])
-                self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[r].Not())
+                self._model.add(self._grid_vars.value(r, c) != self.TREE).only_enforce_if(trees[r].negated())
             self._model.add_exactly_one(rabbits)
             self._model.add_exactly_one(trees)
 
@@ -74,25 +74,25 @@ class RabbitsAndTreesSolver(GameSolver):
         for i, rabbit_pos in enumerate(path):
             is_rabbit = self._model.new_bool_var(f"is_rabbit_{pos.r}_{pos.c}_{rabbit_pos.r}_{rabbit_pos.c}")
             self._model.add(self._grid_vars[rabbit_pos] == self.RABBIT).only_enforce_if(is_rabbit)
-            self._model.add(self._grid_vars[rabbit_pos] != self.RABBIT).only_enforce_if(is_rabbit.Not())
+            self._model.add(self._grid_vars[rabbit_pos] != self.RABBIT).only_enforce_if(is_rabbit.negated())
 
             no_tree_before = self._model.new_bool_var(f"no_tree_before_{pos.r}_{pos.c}_{rabbit_pos.r}_{rabbit_pos.c}")
             trees_before = []
             for j in range(i):
                 tree_at_j = self._model.new_bool_var(f"tree_at_{pos.r}_{pos.c}_{path[j].r}_{path[j].c}_before_{rabbit_pos.r}_{rabbit_pos.c}")
                 self._model.add(self._grid_vars[path[j]] == self.TREE).only_enforce_if(tree_at_j)
-                self._model.add(self._grid_vars[path[j]] != self.TREE).only_enforce_if(tree_at_j.Not())
+                self._model.add(self._grid_vars[path[j]] != self.TREE).only_enforce_if(tree_at_j.negated())
                 trees_before.append(tree_at_j)
 
             if trees_before:
                 self._model.add(sum(trees_before) == 0).only_enforce_if(no_tree_before)
-                self._model.add(sum(trees_before) > 0).only_enforce_if(no_tree_before.Not())
+                self._model.add(sum(trees_before) > 0).only_enforce_if(no_tree_before.negated())
             else:
                 self._model.add(no_tree_before == 1)
 
             is_visible = self._model.new_bool_var(f"visible_{pos.r}_{pos.c}_{rabbit_pos.r}_{rabbit_pos.c}")
             self._model.add_bool_and([is_rabbit, no_tree_before]).only_enforce_if(is_visible)
-            self._model.add_bool_or([is_rabbit.Not(), no_tree_before.Not()]).only_enforce_if(is_visible.Not())
+            self._model.add_bool_or([is_rabbit.negated(), no_tree_before.negated()]).only_enforce_if(is_visible.negated())
             visible_vars.append(is_visible)
 
         return visible_vars
@@ -119,14 +119,14 @@ class RabbitsAndTreesSolver(GameSolver):
         if self._previous_solution.is_empty():
             return Grid.empty()
 
-        diff_bools: list[cp_model.BoolVar] = []
+        diff_bools: list[cp_model.IntVar] = []
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 prev_val = self._previous_solution.value(r, c)
                 b_not_eq = self._model.new_bool_var(f"not_eq_{r}_{c}_{id(self._previous_solution)}")
                 var = self._grid_vars.value(r, c)
                 self._model.add(var != prev_val).only_enforce_if(b_not_eq)
-                self._model.add(var == prev_val).only_enforce_if(b_not_eq.Not())
+                self._model.add(var == prev_val).only_enforce_if(b_not_eq.negated())
                 diff_bools.append(b_not_eq)
 
         self._model.add_bool_or(diff_bools)

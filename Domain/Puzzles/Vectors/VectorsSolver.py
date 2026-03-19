@@ -34,7 +34,7 @@ class VectorsSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 not_same_val = self._model.new_bool_var(f"cell_{r}_{c}_not_same_as_prev")
                 self._model.add(self._grid_vars[r][c] != prev_val).only_enforce_if(not_same_val)
-                self._model.add(self._grid_vars[r][c] == prev_val).only_enforce_if(not_same_val.Not())
+                self._model.add(self._grid_vars[r][c] == prev_val).only_enforce_if(not_same_val.negated())
                 literals.append(not_same_val)
         self._model.add_bool_or(literals)
 
@@ -76,7 +76,7 @@ class VectorsSolver(GameSolver):
                     positions_possible_region_values[position] = []
                 bool_var = self._model.new_bool_var(f"pos_{position.r}_{position.c}_is_region_{region_number}")
                 self._model.add(self._grid_vars[position.r][position.c] == region_number).only_enforce_if(bool_var)
-                self._model.add(self._grid_vars[position.r][position.c] != region_number).only_enforce_if(bool_var.Not())
+                self._model.add(self._grid_vars[position.r][position.c] != region_number).only_enforce_if(bool_var.negated())
                 positions_possible_region_values[position].append(bool_var)
         for position, possible_region_values in positions_possible_region_values.items():
             self._model.add_bool_or(possible_region_values)
@@ -89,7 +89,7 @@ class VectorsSolver(GameSolver):
                 for c in range(self.columns_number):
                     is_region = self._model.new_bool_var(f"cell_{r}_{c}_is_region_{region_number}")
                     self._model.add(self._grid_vars[r][c] == region_number).only_enforce_if(is_region)
-                    self._model.add(self._grid_vars[r][c] != region_number).only_enforce_if(is_region.Not())
+                    self._model.add(self._grid_vars[r][c] != region_number).only_enforce_if(is_region.negated())
                     count_vars.append(is_region)
             self._model.add(sum(count_vars) == count_for_this_region)
 
@@ -100,41 +100,41 @@ class VectorsSolver(GameSolver):
                 down_is_region = self._model.new_bool_var(f"down_{up_position.down.r}_{up_position.down.c}_is_region_{region_number}")
 
                 self._model.add(self._grid_vars[up_position.r][up_position.c] == region_number).only_enforce_if(up_is_region)
-                self._model.add(self._grid_vars[up_position.r][up_position.c] != region_number).only_enforce_if(up_is_region.Not())
+                self._model.add(self._grid_vars[up_position.r][up_position.c] != region_number).only_enforce_if(up_is_region.negated())
                 self._model.add(self._grid_vars[up_position.down.r][up_position.down.c] == region_number).only_enforce_if(down_is_region)
-                self._model.add(self._grid_vars[up_position.down.r][up_position.down.c] != region_number).only_enforce_if(down_is_region.Not())
+                self._model.add(self._grid_vars[up_position.down.r][up_position.down.c] != region_number).only_enforce_if(down_is_region.negated())
 
-                self._model.add_bool_or([up_is_region.Not(), down_is_region])
+                self._model.add_bool_or([up_is_region.negated(), down_is_region])
 
             for down_position in self._grid.all_positions_down(position)[-1:0:-1]:
                 down_is_region = self._model.new_bool_var(f"down_{down_position.r}_{down_position.c}_is_region_{region_number}")
                 up_is_region = self._model.new_bool_var(f"up_{down_position.up.r}_{down_position.up.c}_is_region_{region_number}")
 
                 self._model.add(self._grid_vars[down_position.r][down_position.c] == region_number).only_enforce_if(down_is_region)
-                self._model.add(self._grid_vars[down_position.r][down_position.c] != region_number).only_enforce_if(down_is_region.Not())
+                self._model.add(self._grid_vars[down_position.r][down_position.c] != region_number).only_enforce_if(down_is_region.negated())
                 self._model.add(self._grid_vars[down_position.up.r][down_position.up.c] == region_number).only_enforce_if(up_is_region)
-                self._model.add(self._grid_vars[down_position.up.r][down_position.up.c] != region_number).only_enforce_if(up_is_region.Not())
+                self._model.add(self._grid_vars[down_position.up.r][down_position.up.c] != region_number).only_enforce_if(up_is_region.negated())
 
-                self._model.add_bool_or([down_is_region.Not(), up_is_region])
+                self._model.add_bool_or([down_is_region.negated(), up_is_region])
 
             for left_position in self._grid.all_positions_left(position)[-1:0:-1]:
                 left_is_region = self._model.new_bool_var(f"left_{left_position.r}_{left_position.c}_is_region_{region_number}")
                 right_is_region = self._model.new_bool_var(f"right_{left_position.right.r}_{left_position.right.c}_is_region_{region_number}")
 
                 self._model.add(self._grid_vars[left_position.r][left_position.c] == region_number).only_enforce_if(left_is_region)
-                self._model.add(self._grid_vars[left_position.r][left_position.c] != region_number).only_enforce_if(left_is_region.Not())
+                self._model.add(self._grid_vars[left_position.r][left_position.c] != region_number).only_enforce_if(left_is_region.negated())
                 self._model.add(self._grid_vars[left_position.right.r][left_position.right.c] == region_number).only_enforce_if(right_is_region)
-                self._model.add(self._grid_vars[left_position.right.r][left_position.right.c] != region_number).only_enforce_if(right_is_region.Not())
+                self._model.add(self._grid_vars[left_position.right.r][left_position.right.c] != region_number).only_enforce_if(right_is_region.negated())
 
-                self._model.add_bool_or([left_is_region.Not(), right_is_region])
+                self._model.add_bool_or([left_is_region.negated(), right_is_region])
 
             for right_position in self._grid.all_positions_right(position)[-1:0:-1]:
                 right_is_region = self._model.new_bool_var(f"right_{right_position.r}_{right_position.c}_is_region_{region_number}")
                 left_is_region = self._model.new_bool_var(f"left_{right_position.left.r}_{right_position.left.c}_is_region_{region_number}")
 
                 self._model.add(self._grid_vars[right_position.r][right_position.c] == region_number).only_enforce_if(right_is_region)
-                self._model.add(self._grid_vars[right_position.r][right_position.c] != region_number).only_enforce_if(right_is_region.Not())
+                self._model.add(self._grid_vars[right_position.r][right_position.c] != region_number).only_enforce_if(right_is_region.negated())
                 self._model.add(self._grid_vars[right_position.left.r][right_position.left.c] == region_number).only_enforce_if(left_is_region)
-                self._model.add(self._grid_vars[right_position.left.r][right_position.left.c] != region_number).only_enforce_if(left_is_region.Not())
+                self._model.add(self._grid_vars[right_position.left.r][right_position.left.c] != region_number).only_enforce_if(left_is_region.negated())
 
-                self._model.add_bool_or([right_is_region.Not(), left_is_region])
+                self._model.add_bool_or([right_is_region.negated(), left_is_region])

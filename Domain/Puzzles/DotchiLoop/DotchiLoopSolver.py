@@ -45,13 +45,13 @@ class DotchiLoopSolver:
         proposition_count = 0
         solver = cp_model.CpSolver()
         directions = Direction.orthogonal_directions()
-        while solver.Solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+        while solver.solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
             for r in range(self._rows_number):
                 for c in range(self._columns_number):
                     pos = Position(r, c)
                     for d in directions:
-                        val = solver.Value(self._bridges_vars[r, c][d])
+                        val = solver.value(self._bridges_vars[r, c][d])
                         if val > 0:
                             self._island_grid[pos].set_bridge_to_position(self._island_grid[pos].direction_position_bridges[d][0], val)
                         elif d in self._island_grid[pos].direction_position_bridges:
@@ -72,10 +72,10 @@ class DotchiLoopSolver:
                         var = self._bridges_vars[p.r, p.c][d]
                         if p.after(d) not in comp_set:
                             boundary.append(var)
-                        elif active is None and solver.Value(var) > 0:
+                        elif active is None and solver.value(var) > 0:
                             active = var
                 if boundary and active is not None:
-                    self._model.add(sum(boundary) >= 2).OnlyEnforceIf(active)
+                    self._model.add(sum(boundary) >= 2).only_enforce_if(active)
             self.init_island_grid()
         return IslandGrid.empty(), proposition_count
 
@@ -89,7 +89,7 @@ class DotchiLoopSolver:
                 for d in directions:
                     var = self._bridges_vars[r, c][d]
                     if d in self._previous_solution[pos].direction_position_bridges:
-                        vars_list.append(var.Not())
+                        vars_list.append(var.negated())
                     else:
                         vars_list.append(var)
         self._model.add_bool_or(vars_list)
@@ -122,8 +122,8 @@ class DotchiLoopSolver:
                     self._model.add(sum(vars_list) == 2)
                 else:
                     is_used = self._model.new_bool_var(f"u_{r}_{c}")
-                    self._model.add(sum(vars_list) == 2).OnlyEnforceIf(is_used)
-                    self._model.add(sum(vars_list) == 0).OnlyEnforceIf(is_used.Not())
+                    self._model.add(sum(vars_list) == 2).only_enforce_if(is_used)
+                    self._model.add(sum(vars_list) == 0).only_enforce_if(is_used.negated())
 
         # Region constraints
         L_dir, R_dir = Direction.left(), Direction.right()
@@ -133,5 +133,5 @@ class DotchiLoopSolver:
             is_st = self._model.new_bool_var(f"st_{region_id}")
             for p in white_pos:
                 L, R = self._bridges_vars[p.r, p.c][L_dir], self._bridges_vars[p.r, p.c][R_dir]
-                self._model.add(L == R).OnlyEnforceIf(is_st)
-                self._model.add(L != R).OnlyEnforceIf(is_st.Not())
+                self._model.add(L == R).only_enforce_if(is_st)
+                self._model.add(L != R).only_enforce_if(is_st.negated())

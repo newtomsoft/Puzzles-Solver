@@ -42,7 +42,7 @@ class DoppelblockSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff = self._model.new_bool_var(f"diff_r{r}_c{c}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff)
-                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.Not())
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.negated())
                 bool_vars.append(diff)
         self._model.add_bool_or(bool_vars)
 
@@ -78,7 +78,7 @@ class DoppelblockSolver(GameSolver):
                 v = self._grid_vars[Position(r, c)]
                 b = is_black_row[r][c]
                 self._model.add(v == self.black_value).only_enforce_if(b)
-                self._model.add(v != self.black_value).only_enforce_if(b.Not())
+                self._model.add(v != self.black_value).only_enforce_if(b.negated())
 
         for r in range(self.rows_number):
             self._model.add(sum(is_black_row[r][c] for c in range(self.columns_number)) == 2)
@@ -93,7 +93,7 @@ class DoppelblockSolver(GameSolver):
                 t = self._model.new_int_var(-self.columns_number, max_num, f"t_row_{r}_{c}")
                 neg_const = -c - 1
                 self._model.add(t == neg_const).only_enforce_if(b)
-                self._model.add(t == v).only_enforce_if(b.Not())
+                self._model.add(t == v).only_enforce_if(b.negated())
                 transformed.append(t)
             self._model.add_all_different(transformed)
 
@@ -105,7 +105,7 @@ class DoppelblockSolver(GameSolver):
                 t = self._model.new_int_var(-self.rows_number, max_num, f"t_col_{c}_{r}")
                 neg_const = -r - 1
                 self._model.add(t == neg_const).only_enforce_if(b)
-                self._model.add(t == v).only_enforce_if(b.Not())
+                self._model.add(t == v).only_enforce_if(b.negated())
                 transformed.append(t)
             self._model.add_all_different(transformed)
 
@@ -146,7 +146,7 @@ class DoppelblockSolver(GameSolver):
                     self._model.add(sum(between) == s).only_enforce_if(pair_black)
                 else:
                     self._model.add(s == 0).only_enforce_if(pair_black)
-                self._model.add(s == 0).only_enforce_if(pair_black.Not())
+                self._model.add(s == 0).only_enforce_if(pair_black.negated())
                 sum_vars.append(s)
 
         if sum_vars:

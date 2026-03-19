@@ -47,7 +47,7 @@ class UsotatamiSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff_var = self._model.new_bool_var(f"diff_{r}_{c}_{len(self._model.Proto().variables)}")
                 self._model.add(self._grid_vars.value(r, c) != prev_val).only_enforce_if(diff_var)
-                self._model.add(self._grid_vars.value(r, c) == prev_val).only_enforce_if(diff_var.Not())
+                self._model.add(self._grid_vars.value(r, c) == prev_val).only_enforce_if(diff_var.negated())
                 bool_vars.append(diff_var)
         self._model.add_bool_or(bool_vars)
 
@@ -109,19 +109,19 @@ class UsotatamiSolver(GameSolver):
                     c_le_max = self._model.new_bool_var(f"c_le_max_{i}_{r}_{c}")
 
                     self._model.add(r >= r_min).only_enforce_if(r_ge_min)
-                    self._model.add(r < r_min).only_enforce_if(r_ge_min.Not())
+                    self._model.add(r < r_min).only_enforce_if(r_ge_min.negated())
                     self._model.add(r <= r_max).only_enforce_if(r_le_max)
-                    self._model.add(r > r_max).only_enforce_if(r_le_max.Not())
+                    self._model.add(r > r_max).only_enforce_if(r_le_max.negated())
                     self._model.add(c >= c_min).only_enforce_if(c_ge_min)
-                    self._model.add(c < c_min).only_enforce_if(c_ge_min.Not())
+                    self._model.add(c < c_min).only_enforce_if(c_ge_min.negated())
                     self._model.add(c <= c_max).only_enforce_if(c_le_max)
-                    self._model.add(c > c_max).only_enforce_if(c_le_max.Not())
+                    self._model.add(c > c_max).only_enforce_if(c_le_max.negated())
 
                     self._model.add_bool_and([r_ge_min, r_le_max, c_ge_min, c_le_max]).only_enforce_if(in_rect)
-                    self._model.add_bool_or([r_ge_min.Not(), r_le_max.Not(), c_ge_min.Not(), c_le_max.Not()]).only_enforce_if(in_rect.Not())
+                    self._model.add_bool_or([r_ge_min.negated(), r_le_max.negated(), c_ge_min.negated(), c_le_max.negated()]).only_enforce_if(in_rect.negated())
 
                     self._model.add(self._grid_vars.value(r, c) == i).only_enforce_if(in_rect)
-                    self._model.add(self._grid_vars.value(r, c) != i).only_enforce_if(in_rect.Not())
+                    self._model.add(self._grid_vars.value(r, c) != i).only_enforce_if(in_rect.negated())
 
     def _add_no_four_corners_shared_constraint(self):
         for r in range(self._rows_number - 1):
@@ -139,16 +139,16 @@ class UsotatamiSolver(GameSolver):
                 de_eq = self._model.new_bool_var(f"de_eq_{r}_{c}")
 
                 self._model.add(a == b).only_enforce_if(ab_eq)
-                self._model.add(a != b).only_enforce_if(ab_eq.Not())
+                self._model.add(a != b).only_enforce_if(ab_eq.negated())
                 self._model.add(a == d).only_enforce_if(ad_eq)
-                self._model.add(a != d).only_enforce_if(ad_eq.Not())
+                self._model.add(a != d).only_enforce_if(ad_eq.negated())
                 self._model.add(a == e).only_enforce_if(ae_eq)
-                self._model.add(a != e).only_enforce_if(ae_eq.Not())
+                self._model.add(a != e).only_enforce_if(ae_eq.negated())
                 self._model.add(b == d).only_enforce_if(bd_eq)
-                self._model.add(b != d).only_enforce_if(bd_eq.Not())
+                self._model.add(b != d).only_enforce_if(bd_eq.negated())
                 self._model.add(b == e).only_enforce_if(be_eq)
-                self._model.add(b != e).only_enforce_if(be_eq.Not())
+                self._model.add(b != e).only_enforce_if(be_eq.negated())
                 self._model.add(d == e).only_enforce_if(de_eq)
-                self._model.add(d != e).only_enforce_if(de_eq.Not())
+                self._model.add(d != e).only_enforce_if(de_eq.negated())
 
                 self._model.add_bool_or([ab_eq, ad_eq, ae_eq, bd_eq, be_eq, de_eq])

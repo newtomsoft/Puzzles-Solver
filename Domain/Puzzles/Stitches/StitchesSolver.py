@@ -55,11 +55,11 @@ class StitchesSolver(GameSolver):
         for position, value in [(position, value) for position, value in self._grid if value > 0]:
             temp_var = self._model.new_bool_var(f"prev_{position}")
             self._model.add(self._grid_connexion_var[position] == solution_grid[position]).only_enforce_if(temp_var)
-            self._model.add(self._grid_connexion_var[position] != solution_grid[position]).only_enforce_if(temp_var.Not())
+            self._model.add(self._grid_connexion_var[position] != solution_grid[position]).only_enforce_if(temp_var.negated())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.negated() for lit in previous_solution_literals])
 
     def _add_constraints(self):
         self._add_constraint_dots_in_rows_and_columns()
@@ -91,7 +91,7 @@ class StitchesSolver(GameSolver):
             for position in all_regions_possible_dot_positions:
                 has_connection_var = self._model.new_bool_var(f"region_{region_number}_pos_{position}_has_connection")
                 self._model.add(self._grid_connexion_var[position] > 0).only_enforce_if(has_connection_var)
-                self._model.add(self._grid_connexion_var[position] == 0).only_enforce_if(has_connection_var.Not())
+                self._model.add(self._grid_connexion_var[position] == 0).only_enforce_if(has_connection_var.negated())
                 has_connection_vars.append(has_connection_var)
 
             self._model.add(sum(has_connection_vars) == len(current_region_with_others_regions) * self.regions_connections)
@@ -102,7 +102,7 @@ class StitchesSolver(GameSolver):
             direction_value = position0.direction_to(position1).value
             connection_var = self._model.new_bool_var(f"connection_{position0}_to_{position1}")
             self._model.add(self._grid_connexion_var[position0] == direction_value).only_enforce_if(connection_var)
-            self._model.add(self._grid_connexion_var[position0] != direction_value).only_enforce_if(connection_var.Not())
+            self._model.add(self._grid_connexion_var[position0] != direction_value).only_enforce_if(connection_var.negated())
             region0_to_region1_connections.append(connection_var)
 
         self._model.add(sum(region0_to_region1_connections) == self.regions_connections)
@@ -112,7 +112,7 @@ class StitchesSolver(GameSolver):
             direction_value = position0.direction_from(position1).value
             connection_var = self._model.new_bool_var(f"connection_{position1}_to_{position0}")
             self._model.add(self._grid_connexion_var[position1] == direction_value).only_enforce_if(connection_var)
-            self._model.add(self._grid_connexion_var[position1] != direction_value).only_enforce_if(connection_var.Not())
+            self._model.add(self._grid_connexion_var[position1] != direction_value).only_enforce_if(connection_var.negated())
             region1_to_region0_connections.append(connection_var)
 
         self._model.add(sum(region1_to_region0_connections) == self.regions_connections)
@@ -122,14 +122,14 @@ class StitchesSolver(GameSolver):
             row_has_connection = [self._model.new_bool_var(f"row_{r}_col_{c}_has_connection") for c in range(self.columns_number)]
             for c, cell in enumerate(row):
                 self._model.add(cell > 0).only_enforce_if(row_has_connection[c])
-                self._model.add(cell == 0).only_enforce_if(row_has_connection[c].Not())
+                self._model.add(cell == 0).only_enforce_if(row_has_connection[c].negated())
             self._model.add(sum(row_has_connection) == self._dots_by_row[r])
 
         for c in range(self.columns_number):
             column_has_connection = [self._model.new_bool_var(f"row_{r}_col_{c}_has_connection") for r in range(self.rows_number)]
             for r in range(self.rows_number):
                 self._model.add(self._grid_connexion_var.matrix[r][c] > 0).only_enforce_if(column_has_connection[r])
-                self._model.add(self._grid_connexion_var.matrix[r][c] == 0).only_enforce_if(column_has_connection[r].Not())
+                self._model.add(self._grid_connexion_var.matrix[r][c] == 0).only_enforce_if(column_has_connection[r].negated())
             self._model.add(sum(column_has_connection) == self._dots_by_column[c])
 
     def _add_constraint_2_dots_crossing_2_regions(self):
@@ -166,7 +166,7 @@ class StitchesSolver(GameSolver):
 
             opposite_direction_var = self._model.new_bool_var(f"pos_{other_position}_direction_{direction.opposite.value}")
             self._model.add(self._grid_connexion_var[other_position] == direction.opposite.value).only_enforce_if(opposite_direction_var)
-            self._model.add(self._grid_connexion_var[other_position] != direction.opposite.value).only_enforce_if(opposite_direction_var.Not())
+            self._model.add(self._grid_connexion_var[other_position] != direction.opposite.value).only_enforce_if(opposite_direction_var.negated())
 
             self._model.add_implication(direction_var, opposite_direction_var)
 

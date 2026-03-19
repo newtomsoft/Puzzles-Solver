@@ -52,9 +52,9 @@ class NurikabeSolver(GameSolver):
         for r in range(self.rows):
             for c in range(self.cols):
                 self._model.add(self._island_id[r, c] > 0).only_enforce_if(self._is_white[r, c])
-                self._model.add(self._island_id[r, c] == 0).only_enforce_if(self._is_white[r, c].Not())
+                self._model.add(self._island_id[r, c] == 0).only_enforce_if(self._is_white[r, c].negated())
 
-                self._model.add(self._dist[r, c] == 0).only_enforce_if(self._is_white[r, c].Not())
+                self._model.add(self._dist[r, c] == 0).only_enforce_if(self._is_white[r, c].negated())
 
     def _add_seed_constraints(self):
         for i, (sr, sc, size) in enumerate(self._seeds):
@@ -68,7 +68,7 @@ class NurikabeSolver(GameSolver):
                 for c in range(self.cols):
                     b = self._model.new_bool_var(f"in_{seed_idx}_{r}_{c}")
                     self._model.add(self._island_id[r, c] == seed_idx).only_enforce_if(b)
-                    self._model.add(self._island_id[r, c] != seed_idx).only_enforce_if(b.Not())
+                    self._model.add(self._island_id[r, c] != seed_idx).only_enforce_if(b.negated())
                     cells_in_k.append(b)
             self._model.add(sum(cells_in_k) == size)
 
@@ -132,8 +132,8 @@ class NurikabeSolver(GameSolver):
                 if val == self.island:
                     match_bools.append(self._is_white[r, c])
                 else:  # River
-                    match_bools.append(self._is_white[r, c].Not())
-        self._model.add_bool_or([b.Not() for b in match_bools])
+                    match_bools.append(self._is_white[r, c].negated())
+        self._model.add_bool_or([b.negated() for b in match_bools])
 
     def _solve_and_check_river_connectivity(self) -> Grid:
         while True:

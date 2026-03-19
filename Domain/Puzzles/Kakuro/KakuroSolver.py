@@ -46,7 +46,7 @@ class KakuroSolver(GameSolver):
                     val = self._solver.value(var)
                     bool_diff = self._model.new_bool_var(f"diff_{r}_{c}")
                     self._model.add(var != val).only_enforce_if(bool_diff)
-                    self._model.add(var == val).only_enforce_if(bool_diff.Not())
+                    self._model.add(var == val).only_enforce_if(bool_diff.negated())
                     constraints.append(bool_diff)
 
         self._model.add_bool_or(constraints)

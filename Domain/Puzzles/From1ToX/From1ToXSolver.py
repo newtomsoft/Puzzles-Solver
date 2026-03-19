@@ -41,7 +41,7 @@ class From1ToXSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff = self._model.new_bool_var(f"diff_r{r}_c{c}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff)
-                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.Not())
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff.negated())
                 bool_vars.append(diff)
         self._model.add_bool_or(bool_vars)
 

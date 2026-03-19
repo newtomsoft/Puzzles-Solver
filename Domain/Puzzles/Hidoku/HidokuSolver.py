@@ -43,7 +43,7 @@ class HidokuSolver(GameSolver):
             var = self._grid_var[position]
             b = self._model.new_bool_var(f"diff_{position}")
             self._model.add(var != value).only_enforce_if(b)
-            self._model.add(var == value).only_enforce_if(b.Not())
+            self._model.add(var == value).only_enforce_if(b.negated())
             bool_vars.append(b)
 
         self._model.add_bool_or(bool_vars)
@@ -78,7 +78,7 @@ class HidokuSolver(GameSolver):
                 for neighbor_value in neighbors_values:
                     b = self._model.new_bool_var(f"pred_{position}")
                     self._model.add(value == neighbor_value + 1).only_enforce_if(b)
-                    self._model.add(value != neighbor_value + 1).only_enforce_if(b.Not())
+                    self._model.add(value != neighbor_value + 1).only_enforce_if(b.negated())
                     bools.append(b)
                 self._model.add_bool_or(bools)
 
@@ -87,6 +87,6 @@ class HidokuSolver(GameSolver):
                 for neighbor_value in neighbors_values:
                     b = self._model.new_bool_var(f"succ_{position}")
                     self._model.add(value == neighbor_value - 1).only_enforce_if(b)
-                    self._model.add(value != neighbor_value - 1).only_enforce_if(b.Not())
+                    self._model.add(value != neighbor_value - 1).only_enforce_if(b.negated())
                     bools.append(b)
                 self._model.add_bool_or(bools)

@@ -36,11 +36,11 @@ class AquariumSolver(GameSolver):
         for position, value in self._previous_solution:
             temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
             self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
-            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.negated())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.negated() for lit in previous_solution_literals])
 
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -94,4 +94,4 @@ class AquariumSolver(GameSolver):
                     up_cell_var = self._grid_vars[up_cell]
                     not_cell_var = self._model.new_bool_var(f"not_cell_{row}_{column}")
                     self._model.add_bool_xor([cell_var, not_cell_var])
-                    self._model.add_implication(not_cell_var, up_cell_var.Not())
+                    self._model.add_implication(not_cell_var, up_cell_var.negated())

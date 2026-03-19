@@ -54,7 +54,7 @@ class TentaiShowSolver(GameSolver):
                             for position in shape_positions:
                                 temp_var = self._model.new_bool_var(f"shape_{circle_value}_{position.r}_{position.c}")
                                 self._model.add(self._grid_vars[position] == circle_value).only_enforce_if(temp_var)
-                                self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(temp_var.Not())
+                                self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(temp_var.negated())
                                 shape_literals.append(temp_var)
 
                             around_literals = []
@@ -62,19 +62,19 @@ class TentaiShowSolver(GameSolver):
                                 if position in grid:
                                     temp_var = self._model.new_bool_var(f"around_{circle_value}_{position.r}_{position.c}")
                                     self._model.add(self._grid_vars[position] == grid[position]).only_enforce_if(temp_var)
-                                    self._model.add(self._grid_vars[position] != grid[position]).only_enforce_if(temp_var.Not())
+                                    self._model.add(self._grid_vars[position] != grid[position]).only_enforce_if(temp_var.negated())
                                     around_literals.append(temp_var)
 
                             if shape_literals and around_literals:
                                 all_shape = self._model.new_bool_var(f"all_shape_{circle_value}")
                                 self._model.add_bool_and(shape_literals).only_enforce_if(all_shape)
-                                self._model.add_bool_or([lit.Not() for lit in shape_literals]).only_enforce_if(all_shape.Not())
+                                self._model.add_bool_or([lit.negated() for lit in shape_literals]).only_enforce_if(all_shape.negated())
 
                                 all_around = self._model.new_bool_var(f"all_around_{circle_value}")
                                 self._model.add_bool_and(around_literals).only_enforce_if(all_around)
-                                self._model.add_bool_or([lit.Not() for lit in around_literals]).only_enforce_if(all_around.Not())
+                                self._model.add_bool_or([lit.negated() for lit in around_literals]).only_enforce_if(all_around.negated())
 
-                                self._model.add_bool_or([all_shape.Not(), all_around.Not()])
+                                self._model.add_bool_or([all_shape.negated(), all_around.negated()])
 
                 status = self._solver.solve(self._model)
                 if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
@@ -101,11 +101,11 @@ class TentaiShowSolver(GameSolver):
         for position, value in self._previous_solution:
             temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
             self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
-            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.negated())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.negated() for lit in previous_solution_literals])
 
     def _add_constraints(self):
         self._add_circles_initial_constraints()
@@ -135,12 +135,12 @@ class TentaiShowSolver(GameSolver):
                     sym_equals_circle = self._model.new_bool_var(f"sym_equals_circle_{symmetric_position.r}_{symmetric_position.c}_{circle_value}")
 
                     self._model.add(self._grid_vars[position] == circle_value).only_enforce_if(pos_equals_circle)
-                    self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(pos_equals_circle.Not())
+                    self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(pos_equals_circle.negated())
                     self._model.add(self._grid_vars[symmetric_position] == circle_value).only_enforce_if(sym_equals_circle)
-                    self._model.add(self._grid_vars[symmetric_position] != circle_value).only_enforce_if(sym_equals_circle.Not())
+                    self._model.add(self._grid_vars[symmetric_position] != circle_value).only_enforce_if(sym_equals_circle.negated())
 
                     self._model.add_implication(pos_equals_circle, sym_equals_circle)
-                    self._model.add_implication(pos_equals_circle.Not(), sym_equals_circle.Not())
+                    self._model.add_implication(pos_equals_circle.negated(), sym_equals_circle.negated())
                 else:
                     self._model.add(self._grid_vars[position] != circle_value)
 
@@ -153,7 +153,7 @@ class TentaiShowSolver(GameSolver):
                     for neighbor in neighbors:
                         same_value = self._model.new_bool_var(f"same_value_{position.r}_{position.c}_{neighbor.r}_{neighbor.c}")
                         self._model.add(self._grid_vars[position] == self._grid_vars[neighbor]).only_enforce_if(same_value)
-                        self._model.add(self._grid_vars[position] != self._grid_vars[neighbor]).only_enforce_if(same_value.Not())
+                        self._model.add(self._grid_vars[position] != self._grid_vars[neighbor]).only_enforce_if(same_value.negated())
                         same_value_neighbors.append(same_value)
 
                     if same_value_neighbors:

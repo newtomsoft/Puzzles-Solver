@@ -67,11 +67,11 @@ class PipesWrapSolver(PipesSolver):
                 ]:
                     temp_var = self._model.new_bool_var(f"excl_{position}_{direction}")
                     self._model.add(self._grid_vars[position][direction] == is_connected).only_enforce_if(temp_var)
-                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.Not())
+                    self._model.add(self._grid_vars[position][direction] != is_connected).only_enforce_if(temp_var.negated())
                     exclusion_literals.append(temp_var)
 
             if exclusion_literals:
-                self._model.add_bool_or([lit.Not() for lit in exclusion_literals])
+                self._model.add_bool_or([lit.negated() for lit in exclusion_literals])
 
             status = self._solver.solve(self._model)
 

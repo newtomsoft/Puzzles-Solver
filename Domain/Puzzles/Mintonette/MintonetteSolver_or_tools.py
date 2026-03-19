@@ -91,9 +91,9 @@ class MintonetteSolver(GameSolver):
                 if is_bridge:
                     no_clue_constraints.append(var)
                 else:
-                    no_clue_constraints.append(var.Not())
+                    no_clue_constraints.append(var.negated())
 
-        self._model.add_bool_or([c.Not() for c in no_clue_constraints])
+        self._model.add_bool_or([c.negated() for c in no_clue_constraints])
 
     def _add_constraints(self):
         self._add_initials_constraints()

@@ -51,7 +51,7 @@ class NumberChainSolver(GameSolver):
                 b = pos_bools[position]
                 # var > 0  <=>  b == True
                 model.add(var >= 1).only_enforce_if(b)
-                model.add(var <= 0).only_enforce_if(b.Not())
+                model.add(var <= 0).only_enforce_if(b.negated())
 
             # Base constraints
             self._add_initial_constraints(model, grid_vars)
@@ -68,7 +68,7 @@ class NumberChainSolver(GameSolver):
                     v = grid_vars[position]
                     eq_lit = model.new_bool_var(f"block_eq_{position.r}_{position.c}")
                     model.add(v == value).only_enforce_if(eq_lit)
-                    model.add(v != value).only_enforce_if(eq_lit.Not())
+                    model.add(v != value).only_enforce_if(eq_lit.negated())
                     lits.append(eq_lit)
                 # Not all equalities simultaneously true
                 model.add(sum(lits) <= len(lits) - 1)
@@ -140,7 +140,7 @@ class NumberChainSolver(GameSolver):
                 v = grid_vars[position]
                 # If selected, force the true value; otherwise assign a unique negative placeholder
                 model.add(v == value).only_enforce_if(sel)
-                model.add(v == -index).only_enforce_if(sel.Not())
+                model.add(v == -index).only_enforce_if(sel.negated())
                 selectors.append(sel)
             # Exactly one position takes the positive value
             model.add(sum(selectors) == 1)

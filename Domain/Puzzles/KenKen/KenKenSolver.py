@@ -44,7 +44,7 @@ class KenKenSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}_{uuid_str}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
-                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.negated())
                 bool_vars.append(diff_var)
 
         self._model.add_bool_or(bool_vars)

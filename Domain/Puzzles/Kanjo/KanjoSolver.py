@@ -193,14 +193,14 @@ class KanjoSolver(GameSolver):
                  if c < self._columns_number - 1:
                      has_right = Direction.right() in island.direction_position_bridges and island.direction_position_bridges[Direction.right()][1] > 0
                      if has_right:
-                         constraints.append(self._h_arcs[r][c].Not())
+                         constraints.append(self._h_arcs[r][c].negated())
                      else:
                          constraints.append(self._h_arcs[r][c])
                  
                  if r < self._rows_number - 1:
                      has_down = Direction.down() in island.direction_position_bridges and island.direction_position_bridges[Direction.down()][1] > 0
                      if has_down:
-                         constraints.append(self._v_arcs[r][c].Not())
+                         constraints.append(self._v_arcs[r][c].negated())
                      else:
                          constraints.append(self._v_arcs[r][c])
         self._model.add_bool_or(constraints)
@@ -231,7 +231,7 @@ class KanjoSolver(GameSolver):
                 if arc is not None:
                     val = self._solver.value(arc)
                     if val:
-                        constraints.append(arc.Not())
+                        constraints.append(arc.negated())
                     else:
                         constraints.append(arc)
         
