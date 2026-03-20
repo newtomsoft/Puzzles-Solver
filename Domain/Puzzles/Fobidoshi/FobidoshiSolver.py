@@ -1,4 +1,4 @@
-from z3 import Solver, Bool, Not, And, is_true, sat, Or
+from z3 import Solver, Bool, Not, And, is_true, sat, Or, Implies, Int
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -23,9 +23,13 @@ class FobidoshiSolver(GameSolver):
         if not self._solver.assertions():
             self._init_solver()
 
-        solution, _ = self._ensure_all_circle_connected()
-        self._previous_solution = solution
-        return solution
+        if self._solver.check() == sat:
+            model = self._solver.model()
+            solution = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
+            self._previous_solution = solution
+            return solution
+
+        return Grid.empty()
 
     def get_other_solution(self) -> Grid:
         previous_solution_constraints = []
@@ -35,29 +39,32 @@ class FobidoshiSolver(GameSolver):
 
         return self.get_solution()
 
-    def _ensure_all_circle_connected(self) -> tuple[Grid, int]:
-        proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
-            circles_shapes = current_grid.get_all_shapes()
-            if len(circles_shapes) == 1:
-                return current_grid, proposition_count
-
-            biggest_circles_shapes = max(circles_shapes, key=len)
-            circles_shapes.remove(biggest_circles_shapes)
-            for circles_shape in circles_shapes:
-                in_all_circle = And([self._grid_z3[position] for position in circles_shape])
-                around_all_false = And([Not(self._grid_z3[position]) for position in ShapeGenerator.around_shape(circles_shape) if position in self._grid_z3])
-                constraint = Not(And(around_all_false, in_all_circle))
-                self._solver.add(constraint)
-
-        return Grid.empty(), proposition_count
-
     def _add_constraints(self):
         self._add_initial_constraints()
         self._add_not_same_4_adjacent_constraints()
+        self._add_connectivity_constraints()
+
+    def _add_connectivity_constraints(self):
+        root = None
+        for position, value in self._grid:
+            if value == 1:
+                root = position
+                break
+        if root is None:
+            return
+
+        dist = [[Int(f"dist_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)]
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                is_circle = self._grid_z3[pos]
+                d = dist[r][c]
+                self._solver.add(d >= 0)
+                if pos == root:
+                    self._solver.add(Implies(is_circle, d == 0))
+                else:
+                    neighbors = [p for p in pos.neighbors() if p in self._grid_z3]
+                    self._solver.add(Implies(is_circle, Or([And(self._grid_z3[n], dist[n.r][n.c] < d) for n in neighbors])))
 
     def _add_initial_constraints(self):
         for position, value in self._grid:
