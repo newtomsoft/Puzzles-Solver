@@ -9,14 +9,20 @@ from Domain.Board.Position import Position
 class GridPuzzleProvider:
     @staticmethod
     async def get_html(browser, url, board_selector: str | None = None):
-        page = browser.pages[0]
+        if len(browser.pages) == 0:
+            page = await browser.new_page()
+        else:
+            page = browser.pages[0]
         await page.set_viewport_size({"width": 685, "height": 900})
         await page.goto(url)
+        # Wait for the grid to be loaded
+        await page.wait_for_selector(".g_cell", timeout=10000)
         html_page = await page.content()
         if not board_selector:
             return html_page
         div_to_view = await page.query_selector(board_selector)
-        await div_to_view.scroll_into_view_if_needed()
+        if div_to_view:
+            await div_to_view.scroll_into_view_if_needed()
         return html_page
 
     @staticmethod

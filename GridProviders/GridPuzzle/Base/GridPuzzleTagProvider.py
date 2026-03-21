@@ -36,6 +36,9 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
 
     async def scrap_grid_left_up(self, browser: BrowserContext, url) -> tuple[Grid, list, list]:
         html_page = await self.get_html(browser, url)
+        return self.get_grid_left_up_from_html(html_page)
+
+    def get_grid_left_up_from_html(self, html_page: str) -> tuple[Grid, list, list]:
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
 
         grid = self.make_grid(column_count, matrix, matrix_cells)
