@@ -20,6 +20,7 @@ https://gridpuzzle.com/bodaburokku/evil-10
 https://gridpuzzle.com/bridges/size-12  
 https://gridpuzzle.com/calcudoku/evil-95  
 https://gridpuzzle.com/chocona/evil-9  
+https://gridpuzzle.com/circles-and-squares/evil-12  
 https://gridpuzzle.com/clouds/size-15  
 https://gridpuzzle.com/cocktail-lamp/evil-15  
 https://gridpuzzle.com/country-road/evil-12  
