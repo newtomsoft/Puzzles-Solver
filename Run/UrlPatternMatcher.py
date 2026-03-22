@@ -16,6 +16,7 @@ import Run.Games.DoppelblockConfig
 import Run.Games.DosunFuwariConfig
 import Run.Games.DotchiLoopConfig
 import Run.Games.EverySecondTurnConfig
+import Run.Games.FactorismConfig
 import Run.Games.FobidoshiConfig
 import Run.Games.From1ToXConfig
 import Run.Games.FutoshikiConfig
@@ -143,6 +144,7 @@ class UrlPatternMatcher:
         Run.Games.DosunFuwariConfig.register()
         Run.Games.DotchiLoopConfig.register()
         Run.Games.EverySecondTurnConfig.register()
+        Run.Games.FactorismConfig.register()
         Run.Games.FobidoshiConfig.register()
         Run.Games.From1ToXConfig.register()
         Run.Games.FutoshikiConfig.register()
