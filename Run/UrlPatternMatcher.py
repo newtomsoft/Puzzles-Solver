@@ -91,6 +91,7 @@ import Run.Games.StarsAndArrowsConfig
 import Run.Games.StitchesConfig
 import Run.Games.Str8tsConfig
 import Run.Games.SudokuConfig
+import Run.Games.SutoretoConfig
 import Run.Games.SummandumConfig
 import Run.Games.SumpleteConfig
 import Run.Games.SurizaConfig
@@ -219,6 +220,7 @@ class UrlPatternMatcher:
         Run.Games.StitchesConfig.register()
         Run.Games.Str8tsConfig.register()
         Run.Games.SudokuConfig.register()
+        Run.Games.SutoretoConfig.register()
         Run.Games.SummandumConfig.register()
         Run.Games.SumpleteConfig.register()
         Run.Games.SurizaConfig.register()

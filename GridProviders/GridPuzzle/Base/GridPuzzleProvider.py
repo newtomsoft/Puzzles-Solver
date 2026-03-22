@@ -16,7 +16,7 @@ class GridPuzzleProvider:
         await page.set_viewport_size({"width": 685, "height": 900})
         await page.goto(url)
         # Wait for the grid to be loaded
-        await page.wait_for_selector(".g_cell", timeout=10000)
+        await page.wait_for_selector(".page-body", timeout=10000)
         html_page = await page.content()
         if not board_selector:
             return html_page
