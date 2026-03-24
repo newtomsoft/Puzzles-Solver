@@ -36,12 +36,17 @@ https://gridpuzzle.com/from1tox/evil-9
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
 https://gridpuzzle.com/grades/evil-10  
+https://gridpuzzle.com/grandtour/evil-11  
 https://gridpuzzle.com/gyokuseki/evil-8  
 https://gridpuzzle.com/hakoiri/evil-10  
+https://gridpuzzle.com/hiroimono/size-15  
 https://gridpuzzle.com/kanjo/evil-10  
+https://gridpuzzle.com/kazoku/evil-12  
 https://gridpuzzle.com/koburin/evil-12  
+https://gridpuzzle.com/kohi-gyunyu/size-20  
 https://gridpuzzle.com/konarupu/evil-15  
 https://gridpuzzle.com/kuroshiro/size-10  
+https://gridpuzzle.com/lightup/evil-15  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
 https://gridpuzzle.com/masyu/evil-12  
@@ -82,6 +87,7 @@ https://gridpuzzle.com/tatamibari/evil-10
 https://gridpuzzle.com/tilepaint/evil-12  
 https://gridpuzzle.com/traffic-lights/evil-12  
 https://gridpuzzle.com/trilogy/evil-10  
+https://gridpuzzle.com/usotatami/size-9  
 https://gridpuzzle.com/wamuzu/size-12  
 https://gridpuzzle.com/yajikabe/evil-12  
 https://gridpuzzle.com/yajilin/evil-12  
@@ -95,13 +101,13 @@ https://www.puzzle-bridges.com/?size=18
 https://www.puzzle-dominosa.com/?size=4  
 https://www.puzzle-futoshiki.com/futoshiki-9x9-hard/  
 https://www.puzzle-galaxies.com/?size=5  
-https://gridpuzzle.com/grandtour/evil-11  
 https://www.puzzle-heyawake.com/?size=14  
 https://www.puzzle-hitori.com/?size=11  
 https://www.puzzle-jigsaw-sudoku.com/?size=8  
 https://www.puzzle-kakurasu.com/?size=11  
 https://www.puzzle-kakuro.com/?size=14  
 https://www.puzzle-killer-sudoku.com/?size=8  
+https://www.puzzle-kurodoko.com/?size=4  
 https://www.puzzle-light-up.com/?size=11  
 https://www.puzzle-lits.com/?size=9  
 https://www.puzzle-loop.com/?size=7  
@@ -113,9 +119,11 @@ https://www.puzzle-norinori.com/?size=9
 https://www.puzzle-nurikabe.com/?size=2  
 https://www.puzzle-pipes.com/?size=6  
 https://www.puzzle-pipes.com/?size=16  
+https://www.puzzle-futoshiki.com/renzoku-9x9-hard  
 https://www.puzzle-shikaku.com/?size=5  
 https://www.puzzle-shingoki.com/?size=13  
 https://www.puzzle-skyscrapers.com/?size=8  
+https://www.puzzle-slant.com/?size=9  
 https://www.puzzle-star-battle.com/?size=8  
 https://www.puzzle-stitches.com/?size=15  
 https://www.puzzle-sudoku.com/?size=5  
@@ -137,3 +145,20 @@ https://vectors.puzzlebaron.com/init2.php?sg=7
 https://www.linkedin.com/games/zip/  
 https://www.linkedin.com/games/queens/  
 https://www.linkedin.com/games/tango/  
+
+## Vuqq
+https://vuqq.com/akari/  
+https://vuqq.com/hitori/  
+https://vuqq.com/netwalk/  
+https://vuqq.com/skyscrapers/  
+https://vuqq.com/sudoku/  
+https://vuqq.com/tents/  
+
+## 20 Minutes
+https://www.20minutes.fr/services/jeux/kemaru  
+
+## Play Sumplete
+https://playsumplete.com/  
+
+## Grid Games
+https://gridgames.app/hidoku  
