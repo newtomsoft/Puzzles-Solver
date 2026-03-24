@@ -20,6 +20,7 @@ https://gridpuzzle.com/bodaburokku/evil-10
 https://gridpuzzle.com/bridges/size-12  
 https://gridpuzzle.com/calcudoku/evil-95  
 https://gridpuzzle.com/chocona/evil-9  
+https://gridpuzzle.com/circles-and-squares/evil-12  
 https://gridpuzzle.com/clouds/size-15  
 https://gridpuzzle.com/cocktail-lamp/evil-15  
 https://gridpuzzle.com/country-road/evil-12  
@@ -28,8 +29,9 @@ https://gridpuzzle.com/detour/evil-12
 https://gridpuzzle.com/doppelblock/evil-8  
 https://gridpuzzle.com/dosun-fuwari/size-8  
 https://gridpuzzle.com/dotchiloop/evil-12  
-https://gridpuzzle.com/every-second-turn/size-16  
-https://gridpuzzle.com/fobidoshi/evil-12  
+https://gridpuzzle.com/every-second-turn/size-16
+https://gridpuzzle.com/factorism/evil-5
+https://gridpuzzle.com/fobidoshi/evil-12
 https://gridpuzzle.com/from1tox/evil-9  
 https://gridpuzzle.com/galaxies/size-15  
 https://gridpuzzle.com/gappy/evil-18  
@@ -70,9 +72,11 @@ https://gridpuzzle.com/snake/evil-12
 https://gridpuzzle.com/starbattle/size-10  
 https://gridpuzzle.com/starbattle2/size-11  
 https://gridpuzzle.com/stars-and-arrows/evil-15  
-https://gridpuzzle.com/str8ts/evil-9  
-https://gridpuzzle.com/straight-loop/evil-12  
-https://gridpuzzle.com/sudoku/  
+https://gridpuzzle.com/str8ts/evil-9
+https://gridpuzzle.com/straight-loop/evil-12
+https://gridpuzzle.com/sutoreto/evil-10
+https://gridpuzzle.com/sudoku/
+https://gridpuzzle.com/summandum/evil-20  
 https://gridpuzzle.com/tasukuea/evil-12  
 https://gridpuzzle.com/tatamibari/evil-10  
 https://gridpuzzle.com/tilepaint/evil-12  

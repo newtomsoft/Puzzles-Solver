@@ -59,7 +59,7 @@ class TasukueaSolver(GameSolver):
                 # Encode as clause: (OR w in W: w==1) OR (OR b in B: b==0)
                 w_literals = [self._grid_var[position] for position in white_shape]
                 boundary_positions = [position for position in ShapeGenerator.around_shape(white_shape) if position in self._grid_var]
-                b_literals = [self._grid_var[position].Not() for position in boundary_positions]
+                b_literals = [self._grid_var[position].negated() for position in boundary_positions]
                 self._model.add_bool_or(w_literals + b_literals)
 
         return Grid.empty(), proposition_count
@@ -69,7 +69,7 @@ class TasukueaSolver(GameSolver):
             diff_literals = []
             for position, value in self._previous_solution:
                 var = self._grid_var[position]
-                diff_literals.append(var if value is False else var.Not())
+                diff_literals.append(var if value is False else var.negated())
             self._model.add_bool_or(diff_literals)
         return self.get_solution()
 
@@ -97,9 +97,9 @@ class TasukueaSolver(GameSolver):
         cols = self._columns_number
         max_size = min(rows, cols)
 
-        self._square_selectors = []  # list[BoolVar]
+        self._square_selectors = []  # list[IntVar]
         self._selector_areas = dict()  # selector -> area
-        self._coverage = dict()  # (r,c) -> list[BoolVar]
+        self._coverage = dict()  # (r,c) -> list[IntVar]
 
         for size in range(1, max_size + 1):
             for r0 in range(0, rows - size + 1):
@@ -143,7 +143,7 @@ class TasukueaSolver(GameSolver):
             selectors = self._coverage.get(key, [])
             if selectors:
                 # If cell is black (True), it must come from a selected square: var => Or(selectors)
-                self._model.add_bool_or(selectors + [var.Not()])
+                self._model.add_bool_or(selectors + [var.negated()])
                 # At most one square covers a cell
                 self._model.add_at_most_one(selectors)
             else:
@@ -164,7 +164,7 @@ class TasukueaSolver(GameSolver):
                 vertical_touch = (r1_max + 1 == r2_min or r2_max + 1 == r1_min) and not (c1_max < c2_min or c2_max < c1_min)
                 if horizontal_touch or vertical_touch:
                     # Not(s1 and s2)
-                    self._model.add_bool_or([s1.Not(), s2.Not()])
+                    self._model.add_bool_or([s1.negated(), s2.negated()])
 
         self._squares_built = True
 

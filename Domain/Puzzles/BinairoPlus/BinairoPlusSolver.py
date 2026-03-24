@@ -46,7 +46,7 @@ class BinairoPlusSolver(GameSolver):
             for c in range(self.columns_number):
                 var = self._grid_vars[r][c]
                 if self._solver.boolean_value(var):
-                    current_vars.append(var.Not())
+                    current_vars.append(var.negated())
                 else:
                     current_vars.append(var)
         self._model.add_bool_or(current_vars)

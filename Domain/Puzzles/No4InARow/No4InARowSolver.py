@@ -37,10 +37,10 @@ class No4InARowSolver(GameSolver):
                         solution_as_list.append(self._grid_ortools[(r, c)])
                     else:
                         solution_as_list.append(self._model.new_bool_var("not_" + str(len(self._blocked_solutions))))
-                        self._model.add_bool_and([solution_as_list[-1]]).only_enforce_if(self._grid_ortools[(r, c)].Not())
-                        self._model.add_bool_and([solution_as_list[-1].Not()]).only_enforce_if(self._grid_ortools[(r, c)])
+                        self._model.add_bool_and([solution_as_list[-1]]).only_enforce_if(self._grid_ortools[(r, c)].negated())
+                        self._model.add_bool_and([solution_as_list[-1].negated()]).only_enforce_if(self._grid_ortools[(r, c)])
 
-            self._model.add_bool_or([var.Not() for var in solution_as_list])
+            self._model.add_bool_or([var.negated() for var in solution_as_list])
             self._blocked_solutions.append(solution_as_list)
 
         self._previous_solution = self._compute_solution()
@@ -80,25 +80,25 @@ class No4InARowSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number - 3):
                 cells = [self._grid_ortools[(r, c + i)] for i in range(4)]
-                self._model.add_bool_or([cell.Not() for cell in cells])
+                self._model.add_bool_or([cell.negated() for cell in cells])
                 self._model.add_bool_or(cells)
 
     def _add_not_same_4_adjacent_vertically_constraints(self):
         for c in range(self.columns_number):
             for r in range(self.rows_number - 3):
                 cells = [self._grid_ortools[(r + i, c)] for i in range(4)]
-                self._model.add_bool_or([cell.Not() for cell in cells])
+                self._model.add_bool_or([cell.negated() for cell in cells])
                 self._model.add_bool_or(cells)
 
     def _add_not_same_4_adjacent_diagonally_constraints(self):
         for r in range(self.rows_number - 3):
             for c in range(self.columns_number - 3):
                 cells = [self._grid_ortools[(r + i, c + i)] for i in range(4)]
-                self._model.add_bool_or([cell.Not() for cell in cells])
+                self._model.add_bool_or([cell.negated() for cell in cells])
                 self._model.add_bool_or(cells)
 
         for r in range(self.rows_number - 3):
             for c in range(3, self.columns_number):
                 cells = [self._grid_ortools[(r + i, c - i)] for i in range(4)]
-                self._model.add_bool_or([cell.Not() for cell in cells])
+                self._model.add_bool_or([cell.negated() for cell in cells])
                 self._model.add_bool_or(cells)

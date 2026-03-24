@@ -1,3 +1,4 @@
+import re
 from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
@@ -11,23 +12,18 @@ class GridPuzzleMitiGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasPro
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url: str) -> tuple[list[Position], int]:
-        page = browser.pages[0]
-        await page.goto(url)
+        html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
 
-        data = await page.evaluate("""() => {
-            const gplData = {};
-            if (typeof gpl !== 'undefined') {
-                gplData.dots = gpl.dots;
-                gplData.Size = gpl.Size;
-            }
-            return gplData;
-        }""")
+    def get_grid_from_html(self, html_page: str):
+        size_match = re.search(r'gpl\.Size\s*=\s*(\d+);', html_page)
+        if not size_match:
+            size_match = re.search(r'size\s*:\s*(\d+)', html_page)
+        size = int(size_match.group(1))
 
-        if not data or 'dots' not in data:
-            raise ValueError("Could not retrieve puzzle data (gpl.dots)")
+        dots_match = re.search(r'gpl\.dots\s*=\s*"(.*?)";', html_page)
+        dots_string = dots_match.group(1) if dots_match else ""
 
-        size = int(data['Size'])
-        dots_string = data['dots']
         dots_positions = []
         dots_cols = size + 1
         for i, char in enumerate(dots_string):

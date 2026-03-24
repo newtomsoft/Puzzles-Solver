@@ -9,5 +9,5 @@ class GridProvider(ABC):
     async def get_grid(source: str) -> tuple[Any, BrowserContext, Any]:
         pass
 
-    def get_grid_from_html(self, html: str, url: str) -> Any:
+    def get_grid_from_html(self, html: str) -> Any:
         raise NotImplementedError("This provider does not support extraction from HTML")

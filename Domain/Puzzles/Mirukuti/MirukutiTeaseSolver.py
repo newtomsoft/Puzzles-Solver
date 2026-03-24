@@ -35,7 +35,7 @@ class MirukutiTeaseSolver(GameSolver):
         self._last_solver = None
         self._previous_solution = None
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> IslandGrid:
         if not self.circles:
             return IslandGrid.empty()
             
@@ -53,7 +53,7 @@ class MirukutiTeaseSolver(GameSolver):
             for circle in self.circles:
                 island_matrix[circle['pos'].r][circle['pos'].c].type_char = circle['color']
                 
-            island_grid = Grid(island_matrix)
+            island_grid = IslandGrid(island_matrix)
             island_grid.biscuits = []
             
             for jr, jc, stem_end_idx, bar_end1_idx, bar_end2_idx, cv in self._all_configs:
@@ -119,7 +119,7 @@ class MirukutiTeaseSolver(GameSolver):
             for i in range(num_circles):
                 t_t_c_i = self._model.new_bool_var(f't_{t}_c_{i}')
                 self._model.add(circle_in_t[i] == t).only_enforce_if(t_t_c_i)
-                self._model.add(circle_in_t[i] != t).only_enforce_if(t_t_c_i.Not())
+                self._model.add(circle_in_t[i] != t).only_enforce_if(t_t_c_i.negated())
 
         # Wait, that's not efficient. Let's pre-find potential T-shapes.
         potential_ts = []
@@ -210,7 +210,7 @@ class MirukutiTeaseSolver(GameSolver):
                         self._model.add(is_j == 0)
                     
                     self._model.add(sum(incident) == 3).only_enforce_if(is_j)
-                    self._model.add(sum(incident) == 1).only_enforce_if(is_j.Not())
+                    self._model.add(sum(incident) == 1).only_enforce_if(is_j.negated())
                 else:
                     # Not a circle: either a junction (degree 3) or a pass-through (degree 2) or empty
                     is_j = self._model.new_bool_var(f'not_circle_j_{r}_{c}')
@@ -220,7 +220,7 @@ class MirukutiTeaseSolver(GameSolver):
                     else:
                         self._model.add(is_j == 0)
                     self._model.add(sum(incident) == 3).only_enforce_if(is_j)
-                    self._model.add(sum(incident) != 1).only_enforce_if(is_j.Not())
+                    self._model.add(sum(incident) != 1).only_enforce_if(is_j.negated())
 
         self._all_configs = []
         # Store for extraction
@@ -256,7 +256,7 @@ class MirukutiTeaseSolver(GameSolver):
                 seg_v[min(curr.r, nxt.r)][curr.c].append(cond)
             curr = nxt
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution or self._previous_solution.is_empty():
             return self.get_solution()
 
@@ -267,7 +267,7 @@ class MirukutiTeaseSolver(GameSolver):
         for jr, jc, stem_end_idx, bar_end1_idx, bar_end2_idx, cv in self._all_configs:
             val = self._last_solver.value(cv)
             if val:
-                exclusion_elements.append(cv.Not())
+                exclusion_elements.append(cv.negated())
             else:
                 exclusion_elements.append(cv)
 

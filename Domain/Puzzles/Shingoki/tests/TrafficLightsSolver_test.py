@@ -27,7 +27,7 @@ G6 = 'g6'
 G7 = 'g7'
 # endregion
 
-class ShingokiWithGrayCirclesSolverTests(TestCase):
+class TrafficLightsSolverTests(TestCase):
     def test_solution_7x7(self):
 
         grid = Grid([

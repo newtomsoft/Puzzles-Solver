@@ -1,6 +1,6 @@
 from z3 import Solver, Int, And, Or, sat, Distinct, If, Sum
 from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
+from Domain.Board.RegionsGrid import RegionsGrid
 from Domain.Puzzles.GameSolver import GameSolver
 
 
@@ -19,14 +19,13 @@ class KazokuSolver(GameSolver):
         self._circle_positions = [pos for pos, val in self._circles_grid if val == self.Circle]
         self._regions_count = len(self._hint_positions)
 
-
     def get_solution(self) -> Grid:
         if not self._solver.assertions():
             self._add_constraints()
         if self._solver.check() == sat:
             model = self._solver.model()
             solution_matrix = [[model.eval(self._region_id[r][c]).as_long() for c in range(self._cols)] for r in range(self._rows)]
-            return Grid(solution_matrix)
+            return RegionsGrid(solution_matrix)
         return Grid.empty()
 
     def get_other_solution(self) -> Grid:
@@ -46,7 +45,7 @@ class KazokuSolver(GameSolver):
             if self._solver.check() == sat:
                 model = self._solver.model()
                 new_solution_matrix = [[model.eval(self._region_id[r][c]).as_long() for c in range(self._cols)] for r in range(self._rows)]
-                return Grid(new_solution_matrix)
+                return RegionsGrid(new_solution_matrix)
         return Grid.empty()
 
     def _add_constraints(self):

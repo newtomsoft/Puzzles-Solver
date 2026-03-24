@@ -1,5 +1,4 @@
-from z3 import Solver, Not, And, Int, sat, Or, ArithRef
-
+﻿from ortools.sat.python import cp_model
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
@@ -10,125 +9,129 @@ _ = 0
 B = 1
 W = 2
 
-
 class DotchiLoopSolver:
     def __init__(self, region_grid: Grid[int], value_grid: Grid[int]):
         self._region_grid = region_grid
         self._value_grid = value_grid
         self._rows_number = self._region_grid.rows_number
         self._columns_number = self._region_grid.columns_number
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
-        self._solver = Solver()
-        self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
-        self._previous_solution: IslandGrid | None = None
+        self._bridges_vars = {}
+        self._previous_solution = None
 
     def init_island_grid(self):
         self._island_grid = IslandGrid(
             [[Island(Position(r, c), 2) for c in range(self._value_grid.columns_number)] for r in range(self._value_grid.rows_number)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
-            for island in self._island_grid.islands.values()
+        self._model = cp_model.CpModel()
+        directions = Direction.orthogonal_directions()
+        self._bridges_vars = {
+            (r, c): {d: self._model.new_bool_var(f"b_{r}_{c}_{d}") for d in directions}
+            for r in range(self._rows_number)
+            for c in range(self._columns_number)
         }
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
-        if not self._solver.assertions():
+        if not self._bridges_vars:
             self._init_solver()
-
         solution, _ = self._ensure_all_islands_connected()
         return solution
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
+        solver = cp_model.CpSolver()
+        directions = Direction.orthogonal_directions()
+        while solver.solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
             proposition_count += 1
-            for position, direction_bridges in self._island_bridges_z3.items():
-                for direction, bridges in direction_bridges.items():
-                    if position.after(direction) not in self._island_bridges_z3:
-                        continue
-                    bridges_number = model.eval(bridges).as_long()
-                    if bridges_number > 0:
-                        self._island_grid[position].set_bridge_to_position(
-                            self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
-                    elif position in self._island_grid and direction in self._island_grid[
-                        position].direction_position_bridges:
-                        self._island_grid[position].direction_position_bridges.pop(direction)
-                self._island_grid[position].set_bridges_count_according_to_directions_bridges()
+            for r in range(self._rows_number):
+                for c in range(self._columns_number):
+                    pos = Position(r, c)
+                    for d in directions:
+                        val = solver.value(self._bridges_vars[r, c][d])
+                        if val > 0:
+                            self._island_grid[pos].set_bridge_to_position(self._island_grid[pos].direction_position_bridges[d][0], val)
+                        elif d in self._island_grid[pos].direction_position_bridges:
+                            self._island_grid[pos].direction_position_bridges.pop(d)
+                    self._island_grid[pos].set_bridges_count_according_to_directions_bridges()
+
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count
 
-            not_loop_constraints = []
-            for positions in connected_positions:
-                cell_constraints = []
-                for position in positions:
-                    for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
-                        cell_constraints.append(self._island_bridges_z3[position][direction] == value)
-                not_loop_constraints.append(Not(And(cell_constraints)))
-            self._solver.add(And(not_loop_constraints))
+            for component in connected_positions:
+                comp_set = set(component)
+                boundary = []
+                active = None
+                for p in component:
+                    for d in directions:
+                        var = self._bridges_vars[p.r, p.c][d]
+                        if p.after(d) not in comp_set:
+                            boundary.append(var)
+                        elif active is None and solver.value(var) > 0:
+                            active = var
+                if boundary and active is not None:
+                    self._model.add(sum(boundary) >= 2).only_enforce_if(active)
             self.init_island_grid()
-
         return IslandGrid.empty(), proposition_count
 
     def get_other_solution(self):
-        previous_solution_constraints = []
-        for island in self._previous_solution.islands.values():
-            for direction, (_, value) in island.direction_position_bridges.items():
-                previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(Not(And(previous_solution_constraints)))
-
+        if not self._previous_solution: return IslandGrid.empty()
+        vars_list = []
+        directions = Direction.orthogonal_directions()
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                for d in directions:
+                    var = self._bridges_vars[r, c][d]
+                    if d in self._previous_solution[pos].direction_position_bridges:
+                        vars_list.append(var.negated())
+                    else:
+                        vars_list.append(var)
+        self._model.add_bool_or(vars_list)
         self.init_island_grid()
         return self.get_solution()
 
     def _add_constraints(self):
-        self._add_initial_constraints()
-        self._add_opposite_bridges_constraints()
-        self._add_cell_color_constraints()
-        self._add_same_cross_type_by_region_constraints()
-
-    def _add_initial_constraints(self):
-        for position, direction_bridges in self._island_bridges_z3.items():
-            bridges_count_vars = list(direction_bridges.values())
-            self._solver.add(Or(sum(bridges_count_vars) == 2, sum(bridges_count_vars) == 0))
-            for bridges in direction_bridges.values():
-                self._solver.add(And(bridges >= 0, bridges <= 1))
-
-    def _add_opposite_bridges_constraints(self):
-        for island in self._island_grid.islands.values():
-            for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
-                if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] ==
-                                     self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite])
+        directions = Direction.orthogonal_directions()
+        right, down = Direction.right(), Direction.down()
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                pos = Position(r, c)
+                # Bridges consistency
+                for d in [right, down]:
+                    n = pos.after(d)
+                    if 0 <= n.r < self._rows_number and 0 <= n.c < self._columns_number:
+                        self._model.add(self._bridges_vars[r, c][d] == self._bridges_vars[n.r, n.c][d.opposite])
+                # Grid boundaries
+                if r == 0: self._model.add(self._bridges_vars[r, c][Direction.up()] == 0)
+                if r == self._rows_number - 1: self._model.add(self._bridges_vars[r, c][Direction.down()] == 0)
+                if c == 0: self._model.add(self._bridges_vars[r, c][Direction.left()] == 0)
+                if c == self._columns_number - 1: self._model.add(self._bridges_vars[r, c][Direction.right()] == 0)
+                
+                # Degree constraints
+                val = self._value_grid[r, c]
+                vars_list = list(self._bridges_vars[r, c].values())
+                if val == B:
+                    for v in vars_list: self._model.add(v == 0)
+                elif val == W:
+                    self._model.add(sum(vars_list) == 2)
                 else:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
+                    is_used = self._model.new_bool_var(f"u_{r}_{c}")
+                    self._model.add(sum(vars_list) == 2).only_enforce_if(is_used)
+                    self._model.add(sum(vars_list) == 0).only_enforce_if(is_used.negated())
 
-    def _add_cell_color_constraints(self):
-        for position, value in [(position, value) for position, value in self._value_grid if value != _]:
-            if value == B:
-                for direction in Direction.orthogonal_directions():
-                    self._solver.add(self._island_bridges_z3[position][direction] == 0)
-            if value == W:
-                self._solver.add(sum(self._island_bridges_z3[position].values()) == 2)
-
-    def _add_same_cross_type_by_region_constraints(self):
-        for positions in self._region_grid.get_regions().values():
-            cross_line_constraints = []
-            cross_turn_constraints = []
-            for pos in [pos for pos in positions if self._value_grid[pos] == W]:
-                hor = And(self._island_bridges_z3[pos][Direction.right()] == 1, self._island_bridges_z3[pos][Direction.left()] == 1)
-                ver = And(self._island_bridges_z3[pos][Direction.down()] == 1, self._island_bridges_z3[pos][Direction.up()] == 1)
-                cross_line_constraints.append(Or(hor, ver))
-
-                turn1 = And(self._island_bridges_z3[pos][Direction.right()] == 1, self._island_bridges_z3[pos][Direction.down()] == 1)
-                turn2 = And(self._island_bridges_z3[pos][Direction.right()] == 1, self._island_bridges_z3[pos][Direction.up()] == 1)
-                turn3 = And(self._island_bridges_z3[pos][Direction.left()] == 1, self._island_bridges_z3[pos][Direction.down()] == 1)
-                turn4 = And(self._island_bridges_z3[pos][Direction.left()] == 1, self._island_bridges_z3[pos][Direction.up()] == 1)
-                cross_turn_constraints.append(Or(turn1, turn2, turn3, turn4))
-
-            self._solver.add(Or(And(cross_line_constraints), And(cross_turn_constraints)))
+        # Region constraints
+        L_dir, R_dir = Direction.left(), Direction.right()
+        for region_id, positions in self._region_grid.get_regions().items():
+            white_pos = [p for p in positions if self._value_grid[p] == W]
+            if not white_pos: continue
+            is_st = self._model.new_bool_var(f"st_{region_id}")
+            for p in white_pos:
+                L, R = self._bridges_vars[p.r, p.c][L_dir], self._bridges_vars[p.r, p.c][R_dir]
+                self._model.add(L == R).only_enforce_if(is_st)
+                self._model.add(L != R).only_enforce_if(is_st.negated())

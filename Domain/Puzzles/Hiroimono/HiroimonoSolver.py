@@ -98,11 +98,11 @@ class HiroimonoSolver(GameSolver):
                 move_i = model.new_bool_var(f'm_{i}_{s1}_{s2}')
                 s1_at_i, s2_at_ip1 = model.new_bool_var(f's1_{i}_{s1}'), model.new_bool_var(f's2_{i+1}_{s2}')
                 model.add(next_stone[i] == s1).only_enforce_if(s1_at_i)
-                model.add(next_stone[i] != s1).only_enforce_if(s1_at_i.Not())
+                model.add(next_stone[i] != s1).only_enforce_if(s1_at_i.negated())
                 model.add(next_stone[i+1] == s2).only_enforce_if(s2_at_ip1)
-                model.add(next_stone[i+1] != s2).only_enforce_if(s2_at_ip1.Not())
+                model.add(next_stone[i+1] != s2).only_enforce_if(s2_at_ip1.negated())
                 model.add_bool_and([s1_at_i, s2_at_ip1]).only_enforce_if(move_i)
-                model.add_bool_or([s1_at_i.Not(), s2_at_ip1.Not()]).only_enforce_if(move_i.Not())
+                model.add_bool_or([s1_at_i.negated(), s2_at_ip1.negated()]).only_enforce_if(move_i.negated())
                 for k in intermediate:
                     model.add(order[k] < i).only_enforce_if(move_i)
 

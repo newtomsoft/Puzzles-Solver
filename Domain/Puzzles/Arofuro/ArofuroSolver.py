@@ -82,7 +82,7 @@ class ArofuroSolver(GameSolver):
             if self._previous_solution[position] != 0:  # Only constrain arrows
                 b = self._model.new_bool_var(f"neq_{position.r}_{position.c}")
                 self._model.add(self._grid_vars[position] != self._previous_solution[position]).only_enforce_if(b)
-                self._model.add(self._grid_vars[position] == self._previous_solution[position]).only_enforce_if(b.Not())
+                self._model.add(self._grid_vars[position] == self._previous_solution[position]).only_enforce_if(b.negated())
                 negated_constraints_bools.append(b)
 
         if not negated_constraints_bools:
@@ -148,7 +148,7 @@ class ArofuroSolver(GameSolver):
 
                 points_direction = self._model.new_bool_var(f"points_{direction}_{position.r}_{position.c}")
                 self._model.add(self._grid_vars[position] == value).only_enforce_if(points_direction)
-                self._model.add(self._grid_vars[position] != value).only_enforce_if(points_direction.Not())
+                self._model.add(self._grid_vars[position] != value).only_enforce_if(points_direction.negated())
 
                 self._model.add(self._region_id_vars[position] == self._region_id_vars[neighbor_pos]).only_enforce_if(points_direction)
                 self._model.add(self._rank_vars[position] == self._rank_vars[neighbor_pos] + 1).only_enforce_if(points_direction)
@@ -159,6 +159,6 @@ class ArofuroSolver(GameSolver):
             for current_position, region_id_var in self._region_id_vars:
                 indicator = self._model.new_bool_var(f"in_region_{region_id}_{current_position}")
                 self._model.add(region_id_var == region_id).only_enforce_if(indicator)
-                self._model.add(region_id_var != region_id).only_enforce_if(indicator.Not())
+                self._model.add(region_id_var != region_id).only_enforce_if(indicator.negated())
                 region_indicators.append(indicator)
             self._model.add(sum(region_indicators) == val + 1)

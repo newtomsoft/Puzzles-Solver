@@ -9,20 +9,20 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleAkariGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
-        return self.get_grid_from_html(html_page, url)
+        return self.get_grid_from_html(html_page)
 
-    def get_grid_from_html(self, html: str, url: str) -> dict:
+    def get_grid_from_html(self, html_page: str) -> dict:
         # We implementation a more robust version of _get_canvas_data here
         # to handle variations in the HTML/JS structure.
         
         # Try to find size
-        size_match = re.search(r'(?:gpl\.)?([Ss]ize)\s*=\s*(\d+);', html)
+        size_match = re.search(r'(?:gpl\.)?([Ss]ize)\s*=\s*(\d+);', html_page)
         if not size_match:
             raise ValueError("Could not find puzzle size in HTML")
         size = int(size_match.group(2))
         
         # Try to find pqq or pq data
-        pqq_match = re.search(r'(?:gpl\.)?pq{1,2}\s*=\s*"(.*?)";', html)
+        pqq_match = re.search(r'(?:gpl\.)?pq{1,2}\s*=\s*"(.*?)";', html_page)
         if not pqq_match:
             raise ValueError("Could not find puzzle data (pq/pqq) in HTML")
         pqq_raw = pqq_match.group(1)

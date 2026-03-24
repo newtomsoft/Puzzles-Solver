@@ -185,7 +185,7 @@ class KohiGyunyuSolver(GameSolver):
         ranks = [self._model.new_int_var(0, num_circles - 1, f"rank_{i}") for i in range(num_circles)]
 
         # Directed parent variables
-        parents = {}  # (from, to) -> BoolVar
+        parents = {}  # (from, to) -> IntVar
         for (u, v), conn_var in connections.items():
             p_uv = self._model.new_bool_var(f"p_{u}_{v}")
             p_vu = self._model.new_bool_var(f"p_{v}_{u}")
@@ -254,14 +254,14 @@ class KohiGyunyuSolver(GameSolver):
         exclude = []
         for w_in_g_list in self.milk_in_group:
             for lit in w_in_g_list:
-                exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
+                exclude.append(lit if not self._last_solver.value(lit) else lit.negated())
 
         for b_in_g_list in self.coffee_in_group:
             for lit in b_in_g_list:
-                exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
+                exclude.append(lit if not self._last_solver.value(lit) else lit.negated())
 
         for lit in self._connection_vars:
-            exclude.append(lit if not self._last_solver.value(lit) else lit.Not())
+            exclude.append(lit if not self._last_solver.value(lit) else lit.negated())
 
         if not exclude:
             return IslandGrid.empty()

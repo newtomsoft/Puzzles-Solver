@@ -164,7 +164,7 @@ class RegionalYajilinSolver(GameSolver):
             sum_dirs = sum([self._island_bridges_vars[position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]])
             black_cell = self._black_cells_vars[position]
             self._model.add(sum_dirs == 0).only_enforce_if(black_cell)
-            self._model.add(sum_dirs == 2).only_enforce_if(black_cell.Not())
+            self._model.add(sum_dirs == 2).only_enforce_if(black_cell.negated())
 
     def _add_no_adjacent_black_constraint(self):
         for position in [position for position, _ in self._regions_grid]:
@@ -173,4 +173,4 @@ class RegionalYajilinSolver(GameSolver):
             for neighbor_position in self._regions_grid.neighbors_positions(position):
                 if neighbor_position not in self._island_bridges_vars or neighbor_position not in self._black_cells_vars:
                     continue
-                self._model.add_bool_or([self._black_cells_vars[position].Not(), self._black_cells_vars[neighbor_position].Not()])
+                self._model.add_bool_or([self._black_cells_vars[position].negated(), self._black_cells_vars[neighbor_position].negated()])

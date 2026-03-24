@@ -69,7 +69,7 @@ class DetourSolver(GameSolver):
                     for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
                         var = self._island_bridges_z3[position][direction]
                         if value == 1:
-                            literals_for_this_component.append(var.Not())
+                            literals_for_this_component.append(var.negated())
                         else:
                             literals_for_this_component.append(var)
                 self._model.add_bool_or(literals_for_this_component)
@@ -83,7 +83,7 @@ class DetourSolver(GameSolver):
             for direction, (_, value) in island.direction_position_bridges.items():
                 var = self._island_bridges_z3[island.position][direction]
                 if value == 1:
-                    literals_for_disjunction.append(var.Not())
+                    literals_for_disjunction.append(var.negated())
                 else:
                     literals_for_disjunction.append(var)
         self._model.add_bool_or(literals_for_disjunction)
@@ -149,23 +149,23 @@ class DetourSolver(GameSolver):
         left = self._island_bridges_z3[position][Direction.left()]
 
         turn_up_right = self._model.new_bool_var("turn_up_right")
-        self._model.add_bool_and([up, right, down.Not(), left.Not()]).only_enforce_if(turn_up_right)
-        self._model.add_bool_or([up.Not(), right.Not(), down, left]).only_enforce_if(turn_up_right.Not())
+        self._model.add_bool_and([up, right, down.negated(), left.negated()]).only_enforce_if(turn_up_right)
+        self._model.add_bool_or([up.negated(), right.negated(), down, left]).only_enforce_if(turn_up_right.negated())
 
         turn_right_down = self._model.new_bool_var("turn_right_down")
-        self._model.add_bool_and([right, down, left.Not(), up.Not()]).only_enforce_if(turn_right_down)
-        self._model.add_bool_or([right.Not(), down.Not(), left, up]).only_enforce_if(turn_right_down.Not())
+        self._model.add_bool_and([right, down, left.negated(), up.negated()]).only_enforce_if(turn_right_down)
+        self._model.add_bool_or([right.negated(), down.negated(), left, up]).only_enforce_if(turn_right_down.negated())
 
         turn_down_left = self._model.new_bool_var("turn_down_left")
-        self._model.add_bool_and([down, left, up.Not(), right.Not()]).only_enforce_if(turn_down_left)
-        self._model.add_bool_or([down.Not(), left.Not(), up, right]).only_enforce_if(turn_down_left.Not())
+        self._model.add_bool_and([down, left, up.negated(), right.negated()]).only_enforce_if(turn_down_left)
+        self._model.add_bool_or([down.negated(), left.negated(), up, right]).only_enforce_if(turn_down_left.negated())
 
         turn_left_up = self._model.new_bool_var("turn_left_up")
-        self._model.add_bool_and([left, up, right.Not(), down.Not()]).only_enforce_if(turn_left_up)
-        self._model.add_bool_or([left.Not(), up.Not(), right, down]).only_enforce_if(turn_left_up.Not())
+        self._model.add_bool_and([left, up, right.negated(), down.negated()]).only_enforce_if(turn_left_up)
+        self._model.add_bool_or([left.negated(), up.negated(), right, down]).only_enforce_if(turn_left_up.negated())
 
         is_turn = self._model.new_bool_var("is_turn")
         self._model.add_bool_or([turn_up_right, turn_right_down, turn_down_left, turn_left_up]).only_enforce_if(is_turn)
-        self._model.add_bool_and([turn_up_right.Not(), turn_right_down.Not(), turn_down_left.Not(), turn_left_up.Not()]).only_enforce_if(is_turn.Not())
+        self._model.add_bool_and([turn_up_right.negated(), turn_right_down.negated(), turn_down_left.negated(), turn_left_up.negated()]).only_enforce_if(is_turn.negated())
 
         return is_turn

@@ -8,6 +8,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleCloudsGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url, '.col-lg-12.col-md-12.col-12')
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         sums_v = [self.extract_sum_value('vl', row_count, soup) for row_count in range(1, row_count + 1)]
         sums_h = [self.extract_sum_value('ht', column_count, soup) for column_count in range(1, column_count + 1)]

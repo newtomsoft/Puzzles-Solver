@@ -6,8 +6,11 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleMirukutiGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         pqq_string_list, size = self._get_canvas_data(html_page)
-        
+
         # In Mirukuti, pqq might contain 'W' for milk, 'B' for biscuit, and '.' for empty.
         # Sometimes there might be other characters, let's be robust.
         matrix = []

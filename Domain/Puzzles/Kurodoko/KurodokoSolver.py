@@ -67,11 +67,11 @@ class KurodokoSolver(GameSolver):
                 if val == 1:
                     # grid_var == 0
                     self._model.add(self._grid_vars[r][c] == 0).only_enforce_if(b)
-                    self._model.add(self._grid_vars[r][c] == 1).only_enforce_if(b.Not())
+                    self._model.add(self._grid_vars[r][c] == 1).only_enforce_if(b.negated())
                 else:
                     # grid_var == 1
                     self._model.add(self._grid_vars[r][c] == 1).only_enforce_if(b)
-                    self._model.add(self._grid_vars[r][c] == 0).only_enforce_if(b.Not())
+                    self._model.add(self._grid_vars[r][c] == 0).only_enforce_if(b.negated())
                 diff_vars.append(b)
 
         self._model.add(sum(diff_vars) > 0)
@@ -112,12 +112,12 @@ class KurodokoSolver(GameSolver):
 
                     if previous_term is None:
                         self._model.add(current_visible_var == 1).only_enforce_if(current_cell_var)
-                        self._model.add(current_visible_var == 0).only_enforce_if(current_cell_var.Not())
+                        self._model.add(current_visible_var == 0).only_enforce_if(current_cell_var.negated())
 
                         previous_term = current_visible_var
                         terms.append(current_visible_var)
                     else:
-                        self._model.AddMinEquality(current_visible_var, [current_cell_var, previous_term])
+                        self._model.add_min_equality(current_visible_var, [current_cell_var, previous_term])
                         previous_term = current_visible_var
                         terms.append(current_visible_var)
 

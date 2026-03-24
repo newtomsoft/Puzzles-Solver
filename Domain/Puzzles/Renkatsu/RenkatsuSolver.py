@@ -68,12 +68,12 @@ class RenkatsuSolver(GameSolver):
                 ).only_enforce_if(same_value_literals[-1])
                 self._model.add(
                     self._grid_vars[(pos0.r, pos0.c)] != self._grid_vars[(posi.r, posi.c)]
-                ).only_enforce_if(same_value_literals[-1].Not())
+                ).only_enforce_if(same_value_literals[-1].negated())
 
             if same_value_literals:
                 not_all_same = self._model.new_bool_var(f"not_all_same_{region_id}")
-                self._model.add_bool_and(same_value_literals).only_enforce_if(not_all_same.Not())
-                self._model.add_bool_or([lit.Not() for lit in same_value_literals]).only_enforce_if(not_all_same)
+                self._model.add_bool_and(same_value_literals).only_enforce_if(not_all_same.negated())
+                self._model.add_bool_or([lit.negated() for lit in same_value_literals]).only_enforce_if(not_all_same)
                 constraints.append(not_all_same)
 
         if constraints:
@@ -113,7 +113,7 @@ class RenkatsuSolver(GameSolver):
                 for c in range(self.columns_number):
                     is_in_region = self._model.new_bool_var(f"is_in_region_{region_id}_{r}_{c}")
                     self._model.add(self._grid_vars[(r, c)] == region_id).only_enforce_if(is_in_region)
-                    self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.Not())
+                    self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.negated())
                     region_cells.append(is_in_region)
 
             self._model.add(sum(region_cells) == region_size)
@@ -131,17 +131,17 @@ class RenkatsuSolver(GameSolver):
 
                 is_in_region = self._model.new_bool_var(f"is_in_region_{region_id}_{r}_{c}")
                 self._model.add(self._grid_vars[(r, c)] == region_id).only_enforce_if(is_in_region)
-                self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.Not())
+                self._model.add(self._grid_vars[(r, c)] != region_id).only_enforce_if(is_in_region.negated())
 
                 self._model.add(step_vars[(r, c)] >= 1).only_enforce_if(is_in_region)
-                self._model.add(step_vars[(r, c)] == 0).only_enforce_if(is_in_region.Not())
+                self._model.add(step_vars[(r, c)] == 0).only_enforce_if(is_in_region.negated())
 
         root_cells = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 is_root = self._model.new_bool_var(f"is_root_{region_id}_{r}_{c}")
                 self._model.add(step_vars[(r, c)] == 1).only_enforce_if(is_root)
-                self._model.add(step_vars[(r, c)] != 1).only_enforce_if(is_root.Not())
+                self._model.add(step_vars[(r, c)] != 1).only_enforce_if(is_root.negated())
                 root_cells.append(is_root)
 
         self._model.add_exactly_one(root_cells)
@@ -150,7 +150,7 @@ class RenkatsuSolver(GameSolver):
             for c in range(self.columns_number):
                 is_non_root_in_region = self._model.new_bool_var(f"is_non_root_{region_id}_{r}_{c}")
                 self._model.add(step_vars[(r, c)] > 1).only_enforce_if(is_non_root_in_region)
-                self._model.add(step_vars[(r, c)] <= 1).only_enforce_if(is_non_root_in_region.Not())
+                self._model.add(step_vars[(r, c)] <= 1).only_enforce_if(is_non_root_in_region.negated())
 
                 adjacent_constraints = []
 

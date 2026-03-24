@@ -42,7 +42,7 @@ class NumberCrossSolver(GameSolver):
                 v = self._grid_vars[Position(r, c)]
                 diff = self._model.new_bool_var(f"diff_{r}_{c}")
                 self._model.add(v != prev_val).only_enforce_if(diff)
-                self._model.add(v == prev_val).only_enforce_if(diff.Not())
+                self._model.add(v == prev_val).only_enforce_if(diff.negated())
                 diff_bools.append(diff)
         self._model.add_bool_or(diff_bools)
         self._previous_solution = self._compute_solution()

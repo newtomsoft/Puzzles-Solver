@@ -62,7 +62,7 @@ class AkariSolver(GameSolver):
                 if p not in self._black_cells and self._bulbs_vars[p] is not None:
                     var = self._bulbs_vars[p]
                     if self._solver.boolean_value(var):
-                        current_vars.append(var.Not())
+                        current_vars.append(var.negated())
                     else:
                         current_vars.append(var)
 

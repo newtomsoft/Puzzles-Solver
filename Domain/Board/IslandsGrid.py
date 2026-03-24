@@ -122,32 +122,49 @@ class IslandGrid(Grid[Island]):
         return possible_crossover_bridges
 
     def get_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
-        concerned_islands_count = len(self.islands) if not exclude_without_bridge else sum(1 for island in self.islands.values() if island.bridges_count != 0)
+        islands_to_visit = [island.position for island in self.islands.values()]
+        if exclude_without_bridge:
+            islands_to_visit = [pos for pos in islands_to_visit if self.islands[pos].bridges_count != 0]
+        
+        islands_to_visit_set = set(islands_to_visit)
         visited_list: list[set[Position]] = []
         visited_flat: set[Position] = set()
-        while len(visited_flat) != concerned_islands_count:
-            position = next(island.position for island in self.islands.values() if island.position not in visited_flat) if not exclude_without_bridge else next(
-                (island.position for island in self.islands.values() if island.bridges_count != 0 and island.position not in visited_flat), None)
-            visited = self._depth_first_search_islands(position)
+
+        for start_position in islands_to_visit:
+            if start_position in visited_flat:
+                continue
+            
+            # Iterative DFS
+            visited = set()
+            stack = [start_position]
+            while stack:
+                pos = stack.pop()
+                if pos not in visited:
+                    visited.add(pos)
+                    position_and_bridges = self.islands[pos].direction_position_bridges.values()
+                    for next_pos, bridges_count in position_and_bridges:
+                        if bridges_count > 0 and next_pos in self.islands and next_pos not in visited:
+                            stack.append(next_pos)
+            
             visited_list.append(visited)
             visited_flat.update(visited)
+            
         return visited_list
 
     def _depth_first_search_islands(self, position: Position, visited_positions=None) -> set[Position]:
+        # Keep it for backward compatibility if needed, but we could also make it iterative
         if visited_positions is None:
             visited_positions = set()
-        if position in visited_positions:
-            return visited_positions
-        visited_positions.add(position)
-        position_and_bridges = self.islands[position].direction_position_bridges.values()
-        next_positions = [position for position, bridges_count in position_and_bridges if bridges_count > 0 and position not in visited_positions]
-        for current_position in next_positions:
-            if current_position not in self.islands:
-                continue
-            new_visited_positions = self._depth_first_search_islands(current_position, visited_positions)
-            if new_visited_positions != visited_positions:
-                return new_visited_positions
-
+        
+        stack = [position]
+        while stack:
+            pos = stack.pop()
+            if pos not in visited_positions:
+                visited_positions.add(pos)
+                position_and_bridges = self.islands[pos].direction_position_bridges.values()
+                for next_pos, bridges_count in position_and_bridges:
+                    if bridges_count > 0 and next_pos in self.islands and next_pos not in visited_positions:
+                        stack.append(next_pos)
         return visited_positions
 
     def compute_linear_connected_positions(self, exclude_without_bridge=False) -> list[set[Position]]:
@@ -205,25 +222,29 @@ class IslandGrid(Grid[Island]):
     def _is_loop(self, position: Position | None = None, visited_positions=None, previous_position=None) -> tuple[bool, set[Position]]:
         if position is None:
             position = next(island.position for island in self.islands.values() if island.bridges_count > 0)
+        
+        # Iterative loop detection
+        # We need to track (current, previous) to avoid going back immediately
+        stack = [(position, previous_position)]
+        local_visited = set()
         if visited_positions is None:
             visited_positions = set()
-        if position in visited_positions:
-            return True, visited_positions
-        visited_positions.add(position)
-        position_bridges = self.islands[position].direction_position_bridges.values()
-        for position_bridge in position_bridges:
-            if position_bridge[1] == 0:
-                continue
-            current_position = position_bridge[0]
-            if current_position == previous_position:
-                continue
-            if current_position in visited_positions:
-                return True, visited_positions
-            is_loop, _ = self._is_loop(current_position, visited_positions, position)
-            if is_loop:
-                return True, visited_positions
-
-        return False, visited_positions
+            
+        while stack:
+            curr, prev = stack.pop()
+            if curr in local_visited:
+                return True, local_visited
+            local_visited.add(curr)
+            visited_positions.add(curr)
+            
+            position_bridges = self.islands[curr].direction_position_bridges.values()
+            for next_pos, bridges_count in position_bridges:
+                if bridges_count > 0 and next_pos != prev:
+                    if next_pos in local_visited:
+                        return True, local_visited
+                    stack.append((next_pos, curr))
+                    
+        return False, local_visited
 
     def follow_path(self, position: Position | None = None, previous_position: Position | None = None, visited_positions=None, kept_bridges_by_visited_positions=None) -> list[Position]:
         if position is None:
@@ -249,7 +270,7 @@ class IslandGrid(Grid[Island]):
                 return new_visited_positions
         return visited_positions
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         if self.is_empty():
             return 'IslandGrid.empty()'
         current_row = 0
@@ -259,12 +280,15 @@ class IslandGrid(Grid[Island]):
                 result += '\n'
                 current_row = position.r
             if isinstance(item, Island):
-                result += repr(item)
+                result += str(item)
             elif isinstance(item, int) or isinstance(item, str):
                 result += f' {item} '
             else:
                 result += self.get_str(position)
         return result
+
+    def __repr__(self) -> str:
+        return str(self)
 
     def get_str(self, position: Position) -> str:
         island = Island(position, 0)

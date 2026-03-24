@@ -47,7 +47,7 @@ class TatamibariSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff_var = self._model.new_bool_var(f"diff_{r}_{c}_{len(self._model.Proto().variables)}")
                 self._model.add(self._grid_vars.value(r, c) != prev_val).only_enforce_if(diff_var)
-                self._model.add(self._grid_vars.value(r, c) == prev_val).only_enforce_if(diff_var.Not())
+                self._model.add(self._grid_vars.value(r, c) == prev_val).only_enforce_if(diff_var.negated())
                 bool_vars.append(diff_var)
         self._model.add_bool_or(bool_vars)
 
@@ -95,22 +95,22 @@ class TatamibariSolver(GameSolver):
                 de_eq = self._model.new_bool_var('')
 
                 self._model.add(a == b).only_enforce_if(ab_eq)
-                self._model.add(a != b).only_enforce_if(ab_eq.Not())
+                self._model.add(a != b).only_enforce_if(ab_eq.negated())
 
                 self._model.add(a == d).only_enforce_if(ad_eq)
-                self._model.add(a != d).only_enforce_if(ad_eq.Not())
+                self._model.add(a != d).only_enforce_if(ad_eq.negated())
 
                 self._model.add(a == e).only_enforce_if(ae_eq)
-                self._model.add(a != e).only_enforce_if(ae_eq.Not())
+                self._model.add(a != e).only_enforce_if(ae_eq.negated())
 
                 self._model.add(b == d).only_enforce_if(bd_eq)
-                self._model.add(b != d).only_enforce_if(bd_eq.Not())
+                self._model.add(b != d).only_enforce_if(bd_eq.negated())
 
                 self._model.add(b == e).only_enforce_if(be_eq)
-                self._model.add(b != e).only_enforce_if(be_eq.Not())
+                self._model.add(b != e).only_enforce_if(be_eq.negated())
 
                 self._model.add(d == e).only_enforce_if(de_eq)
-                self._model.add(d != e).only_enforce_if(de_eq.Not())
+                self._model.add(d != e).only_enforce_if(de_eq.negated())
 
                 self._model.add_bool_or([ab_eq, ad_eq, ae_eq, bd_eq, be_eq, de_eq])
 
@@ -144,27 +144,27 @@ class TatamibariSolver(GameSolver):
                 inside_rectangle = self._model.new_bool_var(f"inside_rectangle_{r}_{c}_{region_id}")
 
                 self._model.add(self._grid_vars.value(r, c) == region_id).only_enforce_if(cell_is_region)
-                self._model.add(self._grid_vars.value(r, c) != region_id).only_enforce_if(cell_is_region.Not())
+                self._model.add(self._grid_vars.value(r, c) != region_id).only_enforce_if(cell_is_region.negated())
 
                 # inside_rectangle <=> (left_row <= r < left_row + height) and (top_column <= c < top_column + width)
                 r_in = self._model.new_bool_var('')
                 self._model.add(r >= left_row).only_enforce_if(r_in)
-                self._model.add(r < left_row).only_enforce_if(r_in.Not())
+                self._model.add(r < left_row).only_enforce_if(r_in.negated())
 
                 r_out = self._model.new_bool_var('')
                 self._model.add(r < left_row + height).only_enforce_if(r_out)
-                self._model.add(r >= left_row + height).only_enforce_if(r_out.Not())
+                self._model.add(r >= left_row + height).only_enforce_if(r_out.negated())
 
                 c_in = self._model.new_bool_var('')
                 self._model.add(c >= top_column).only_enforce_if(c_in)
-                self._model.add(c < top_column).only_enforce_if(c_in.Not())
+                self._model.add(c < top_column).only_enforce_if(c_in.negated())
 
                 c_out = self._model.new_bool_var('')
                 self._model.add(c < top_column + width).only_enforce_if(c_out)
-                self._model.add(c >= top_column + width).only_enforce_if(c_out.Not())
+                self._model.add(c >= top_column + width).only_enforce_if(c_out.negated())
 
                 self._model.add_bool_and([r_in, r_out, c_in, c_out]).only_enforce_if(inside_rectangle)
-                self._model.add_bool_or([r_in.Not(), r_out.Not(), c_in.Not(), c_out.Not()]).only_enforce_if(inside_rectangle.Not())
+                self._model.add_bool_or([r_in.negated(), r_out.negated(), c_in.negated(), c_out.negated()]).only_enforce_if(inside_rectangle.negated())
 
                 self._model.add(cell_is_region == inside_rectangle)
 
