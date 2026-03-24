@@ -11,10 +11,10 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleHashiGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url, '.hashi_grid')
-        return self.get_grid_from_html(html_page, url)
+        return self.get_grid_from_html(html_page)
 
-    def get_grid_from_html(self, html: str, url: str) -> Grid:
-        matrix = self._get_grid_data(html)
+    def get_grid_from_html(self, html_page: str) -> Grid:
+        matrix = self._get_grid_data(html_page)
         return Grid(matrix)
 
     @staticmethod

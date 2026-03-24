@@ -1,3 +1,4 @@
+import re
 from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
@@ -11,26 +12,22 @@ class GridPuzzleBorderBlockGridProvider(PlaywrightGridProvider, GridPuzzleGridCa
         return await self.with_playwright(self.scrap_grid, url)
 
     async def scrap_grid(self, browser: BrowserContext, url: str) -> tuple[Grid, list[Position]]:
-        page = browser.pages[0]
-        await page.goto(url)
+        html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
 
-        data = page.evaluate("""() => {
-            const gplData = {};
-            if (typeof gpl !== 'undefined') {
-                gplData.pq = gpl.pq;
-                gplData.dots = gpl.dots;
-                gplData.Size = gpl.Size;
-            }
-            return gplData;
-        }""")
+    def get_grid_from_html(self, html_page: str):
+        size_match = re.search(r'gpl\.Size\s*=\s*(\d+);', html_page)
+        if not size_match:
+            size_match = re.search(r'size\s*:\s*(\d+)', html_page)
+        size = int(size_match.group(1))
 
-        if not data or 'pq' not in data or 'dots' not in data:
-            raise ValueError("Could not retrieve puzzle data (gpl.pq or gpl.dots)")
+        pq_match = re.search(r'gpl\.pq\s*=\s*"(.*?)";', html_page)
+        pq_raw = pq_match.group(1) if pq_match else ""
 
-        size = int(data['Size'])
-        pq_string = self._decode_if_custom_base64(data['pq'])
-        dots_string = data['dots']
+        dots_match = re.search(r'gpl\.dots\s*=\s*"(.*?)";', html_page)
+        dots_string = dots_match.group(1) if dots_match else ""
 
+        pq_string = self._decode_if_custom_base64(pq_raw)
         pq_list = self._split_to_list(pq_string, size)
         matrix = []
         for r in range(size):

@@ -10,6 +10,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleSudokuGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         matrix = self._get_grid_data(html_page)
         return Grid(matrix)
 

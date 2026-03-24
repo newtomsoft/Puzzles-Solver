@@ -11,6 +11,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleCreekGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         soup = BeautifulSoup(html_page, 'html.parser')
         matrix_cells = soup.find_all('div', class_='g_cell')
 
@@ -18,7 +21,7 @@ class GridPuzzleCreekGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
         row_count = int(math.sqrt(cells_count))
         column_count = row_count
 
-        matrix = [[-1 for _ in range(column_count+1)] for _ in range(row_count+1)]
+        matrix = [[-1 for _ in range(column_count + 1)] for _ in range(row_count + 1)]
         tree_cells = soup.find_all('div', class_='tip_q_num')
         for cell in tree_cells:
             parent_div = cell.parent

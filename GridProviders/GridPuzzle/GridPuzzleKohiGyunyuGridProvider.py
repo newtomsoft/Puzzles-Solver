@@ -6,8 +6,11 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleKohiGyunyuGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         pqq_string_list, size = self._get_canvas_data(html_page)
-        
+
         # In Kohi-Gyunyu, pqq contains 'W' for milk, 'B' for coffee, and '.' for empty.
         # Based on MirukutiGridProvider, we handle 'W', 'V', '1' as Milk and 'B', 'C', '2' as Coffee/Biscuit.
         matrix = []

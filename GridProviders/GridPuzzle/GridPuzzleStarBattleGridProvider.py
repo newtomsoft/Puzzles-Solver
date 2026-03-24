@@ -8,6 +8,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleStarBattleGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page, url)
+
+    def get_grid_from_html(self, html_page: str, url: str = ''):
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
 
         opened_grid = self.make_opened_grid(row_count, column_count, matrix_cells)
