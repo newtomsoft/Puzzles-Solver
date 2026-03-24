@@ -59,7 +59,7 @@ class SurizaSolver(GameSolver):
                     for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
                         different = self._model.new_bool_var(f"diff{position}_{direction}")
                         self._model.add(self._island_bridges[position][direction] != value).only_enforce_if(different)
-                        self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.Not())
+                        self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.negated())
                         not_all_equal.append(different)
 
                 self._model.add_bool_or(not_all_equal)
@@ -75,7 +75,7 @@ class SurizaSolver(GameSolver):
             for direction, (position, value) in island.direction_position_bridges.items():
                 different = self._model.new_bool_var(f"diff{position}_{direction}")
                 self._model.add(self._island_bridges[position][direction] != value).only_enforce_if(different)
-                self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.Not())
+                self._model.add(self._island_bridges[position][direction] == value).only_enforce_if(different.negated())
                 not_all_equal.append(different)
 
             self._model.add_bool_or(not_all_equal)
@@ -114,9 +114,9 @@ class SurizaSolver(GameSolver):
 
             self._model.add_bool_or([is_sum_0, is_sum_2])
             self._model.add(bridge_sum == 0).only_enforce_if(is_sum_0)
-            self._model.add(bridge_sum != 0).only_enforce_if(is_sum_0.Not())
+            self._model.add(bridge_sum != 0).only_enforce_if(is_sum_0.negated())
             self._model.add(bridge_sum == 2).only_enforce_if(is_sum_2)
-            self._model.add(bridge_sum != 2).only_enforce_if(is_sum_2.Not())
+            self._model.add(bridge_sum != 2).only_enforce_if(is_sum_2.negated())
 
     def _add_numbers_constraints(self):
         for position, number in [(position, number) for position, number in self.input_grid if number != ' ']:

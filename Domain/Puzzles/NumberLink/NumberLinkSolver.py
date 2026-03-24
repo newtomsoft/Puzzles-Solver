@@ -33,7 +33,7 @@ class NumberLinkSolver(GameSolver):
                 prev_val = self._previous_solution.value(r, c)
                 diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
-                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.Not())
+                self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.negated())
                 bool_vars.append(diff_var)
 
         self._model.add_bool_or(bool_vars)
@@ -66,7 +66,7 @@ class NumberLinkSolver(GameSolver):
             for neighbor_position in self._grid.neighbors_positions(position):
                 same_value = self._model.new_bool_var(f"same_value_{position.r}_{position.c}_{neighbor_position.r}_{neighbor_position.c}")
                 self._model.add(self._grid_vars[position] == self._grid_vars[neighbor_position]).only_enforce_if(same_value)
-                self._model.add(self._grid_vars[position] != self._grid_vars[neighbor_position]).only_enforce_if(same_value.Not())
+                self._model.add(self._grid_vars[position] != self._grid_vars[neighbor_position]).only_enforce_if(same_value.negated())
                 same_value_neighbors.append(same_value)
 
             if position_value >= 0:

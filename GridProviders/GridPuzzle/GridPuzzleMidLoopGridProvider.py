@@ -9,6 +9,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleMidLoopGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         pqq_string_list, matrix_size = self._get_canvas_data(html_page)
         large_size = matrix_size * 2 - 1
         large_matrix = [[False if pqq_string_list[i * large_size + j] == '.' else True for j in range(large_size)] for i in range(large_size)]

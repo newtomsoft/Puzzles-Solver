@@ -44,7 +44,7 @@ class FillominoSolver(GameSolver):
                 # Create a boolean variable that is true if the cell is different from previous value
                 is_diff = self.model.new_bool_var(f'diff_{r}_{c}_sol')
                 self.model.add(self.cell_vars[(r, c)] != val).only_enforce_if(is_diff)
-                self.model.add(self.cell_vars[(r, c)] == val).only_enforce_if(is_diff.Not())
+                self.model.add(self.cell_vars[(r, c)] == val).only_enforce_if(is_diff.negated())
                 literals.append(is_diff)
 
         self.model.add_bool_or(literals)
@@ -89,9 +89,9 @@ class FillominoSolver(GameSolver):
                         for cr, cc in component:
                             is_val = self.model.new_bool_var(f'is_{cr}_{cc}_{value}_iter{iteration}_{cuts_added}')
                             self.model.add(self.cell_vars[(cr, cc)] == value).only_enforce_if(is_val)
-                            self.model.add(self.cell_vars[(cr, cc)] != value).only_enforce_if(is_val.Not())
+                            self.model.add(self.cell_vars[(cr, cc)] != value).only_enforce_if(is_val.negated())
                             # We want NOT is_val to be in the OR clause
-                            literals.append(is_val.Not())
+                            literals.append(is_val.negated())
 
                         potential_neighbors = set()
                         for cr, cc in component:
@@ -104,7 +104,7 @@ class FillominoSolver(GameSolver):
                         for nr, nc in potential_neighbors:
                             is_neighbor_val = self.model.new_bool_var(f'is_n_{nr}_{nc}_{value}_iter{iteration}_{cuts_added}')
                             self.model.add(self.cell_vars[(nr, nc)] == value).only_enforce_if(is_neighbor_val)
-                            self.model.add(self.cell_vars[(nr, nc)] != value).only_enforce_if(is_neighbor_val.Not())
+                            self.model.add(self.cell_vars[(nr, nc)] != value).only_enforce_if(is_neighbor_val.negated())
                             literals.append(is_neighbor_val)
 
                         self.model.add_bool_or(literals)
@@ -128,13 +128,13 @@ class FillominoSolver(GameSolver):
                             if u not in cell_is_val_vars:
                                 b_u = self.model.new_bool_var(f'is_{ur}_{uc}_{value}_iter{iteration}_{cuts_added}')
                                 self.model.add(self.cell_vars[(ur, uc)] == value).only_enforce_if(b_u)
-                                self.model.add(self.cell_vars[(ur, uc)] != value).only_enforce_if(b_u.Not())
+                                self.model.add(self.cell_vars[(ur, uc)] != value).only_enforce_if(b_u.negated())
                                 cell_is_val_vars[u] = b_u
 
                             if v not in cell_is_val_vars:
                                 b_v = self.model.new_bool_var(f'is_{vr}_{vc}_{value}_iter{iteration}_{cuts_added}')
                                 self.model.add(self.cell_vars[(vr, vc)] == value).only_enforce_if(b_v)
-                                self.model.add(self.cell_vars[(vr, vc)] != value).only_enforce_if(b_v.Not())
+                                self.model.add(self.cell_vars[(vr, vc)] != value).only_enforce_if(b_v.negated())
                                 cell_is_val_vars[v] = b_v
 
                             b_u = cell_is_val_vars[u]
@@ -142,7 +142,7 @@ class FillominoSolver(GameSolver):
 
                             b_edge = self.model.new_bool_var(f'edge_{ur}_{uc}_{vr}_{vc}_iter{iteration}_{cuts_added}')
                             self.model.add_bool_and([b_u, b_v]).only_enforce_if(b_edge)
-                            self.model.add_bool_or([b_u.Not(), b_v.Not()]).only_enforce_if(b_edge.Not())
+                            self.model.add_bool_or([b_u.negated(), b_v.negated()]).only_enforce_if(b_edge.negated())
                             edge_bools.append(b_edge)
 
                         if internal_edges:

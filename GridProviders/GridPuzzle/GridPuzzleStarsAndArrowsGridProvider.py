@@ -9,6 +9,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleStarsAndArrowsGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url, '.col-lg-12.col-md-12.col-12')
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         arrow_map = {
             'arrow_1': '→',
@@ -28,7 +31,7 @@ class GridPuzzleStarsAndArrowsGridProvider(PlaywrightGridProvider, GridPuzzleTag
             if div_classes:
                 div_class = div_classes[0]
                 matrix[row][col] = arrow_map.get(div_class, '')
-            else :
+            else:
                 matrix[row][col] = ''
 
         count_left = [self.extract_sum_value('vl', row_count, soup) for row_count in range(1, row_count + 1)]

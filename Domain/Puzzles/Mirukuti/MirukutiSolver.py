@@ -36,7 +36,7 @@ class MirukutiSolver(GameSolver):
         self._constraints_added = False
         self._previous_solution = None
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> IslandGrid:
         if not self.biscuits:
             return IslandGrid.empty()
             
@@ -59,7 +59,7 @@ class MirukutiSolver(GameSolver):
             for b_pos in self.biscuits:
                 island_matrix[b_pos.r][b_pos.c].type_char = self.COOKIE
                 
-            island_grid = Grid(island_matrix)
+            island_grid = IslandGrid(island_matrix)
             island_grid.biscuits = []
             
             for b_idx, biscuit_pos in enumerate(self.biscuits):
@@ -239,7 +239,7 @@ class MirukutiSolver(GameSolver):
                     is_used = self._model.new_bool_var(f'm_used_{r}_{c}')
                     self._model.add(sum(self._milk_assigned[m_idx][b][e] for b in range(num_biscuits) for e in range(2)) == is_used)
                     self._model.add(sum(incident) == 1).only_enforce_if(is_used)
-                    self._model.add(sum(incident) == 0).only_enforce_if(is_used.Not())
+                    self._model.add(sum(incident) == 0).only_enforce_if(is_used.negated())
                 elif char == self.COOKIE:
                     b_idx = next(i for i, p in enumerate(self.biscuits) if p.r == r and p.c == c)
                     is_j = self._model.new_bool_var(f'b_is_j_{b_idx}')
@@ -247,7 +247,7 @@ class MirukutiSolver(GameSolver):
                     self._model.add(self._j_c[b_idx] == c).only_enforce_if(is_j)
                     # Use a trick to find if it's the junction: if junction is (r,c), bridges = 3, else 1
                     self._model.add(sum(incident) == 3).only_enforce_if(is_j)
-                    self._model.add(sum(incident) == 1).only_enforce_if(is_j.Not())
+                    self._model.add(sum(incident) == 1).only_enforce_if(is_j.negated())
                 else:
                     self._model.add(sum(incident) != 1)
 
@@ -273,7 +273,7 @@ class MirukutiSolver(GameSolver):
                 seg_v[min(curr.r, nxt.r)][curr.c].append(cond)
             curr = nxt
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution or self._previous_solution.is_empty():
             return self.get_solution()
 
@@ -291,7 +291,7 @@ class MirukutiSolver(GameSolver):
                     var = self._milk_assigned[m][b][e]
                     val = self._last_solver.value(var)
                     if val:
-                        exclusion_elements.append(var.Not())
+                        exclusion_elements.append(var.negated())
                     else:
                         exclusion_elements.append(var)
 
@@ -308,13 +308,13 @@ class MirukutiSolver(GameSolver):
             j_c_same = self._model.new_bool_var(f'j_c_same_{b}_{val_c}')
             
             self._model.add(self._j_r[b] == val_r).only_enforce_if(j_r_same)
-            self._model.add(self._j_r[b] != val_r).only_enforce_if(j_r_same.Not())
+            self._model.add(self._j_r[b] != val_r).only_enforce_if(j_r_same.negated())
             self._model.add(self._j_c[b] == val_c).only_enforce_if(j_c_same)
-            self._model.add(self._j_c[b] != val_c).only_enforce_if(j_c_same.Not())
+            self._model.add(self._j_c[b] != val_c).only_enforce_if(j_c_same.negated())
             
             # is_different_j is true if NOT (j_r_same AND j_c_same)
-            self._model.add_bool_or([j_r_same.Not(), j_c_same.Not()]).only_enforce_if(is_different_j)
-            self._model.add_bool_and([j_r_same, j_c_same]).only_enforce_if(is_different_j.Not())
+            self._model.add_bool_or([j_r_same.negated(), j_c_same.negated()]).only_enforce_if(is_different_j)
+            self._model.add_bool_and([j_r_same, j_c_same]).only_enforce_if(is_different_j.negated())
             
             exclusion_elements.append(is_different_j)
             

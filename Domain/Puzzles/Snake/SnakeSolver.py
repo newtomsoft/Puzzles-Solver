@@ -30,11 +30,11 @@ class SnakeSolver(GameSolver):
         for position, value in self._previous_solution:
             temp_var = self._model.new_bool_var(f"prev_{position.r}_{position.c}")
             self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
-            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
+            self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.negated())
             previous_solution_literals.append(temp_var)
 
         if previous_solution_literals:
-            self._model.add_bool_or([lit.Not() for lit in previous_solution_literals])
+            self._model.add_bool_or([lit.negated() for lit in previous_solution_literals])
 
         self._previous_solution = self._compute_solution()
         return self._previous_solution
@@ -59,11 +59,11 @@ class SnakeSolver(GameSolver):
             for position, value in attempt:
                 temp_var = self._model.new_bool_var(f"attempt_{attempted_solutions_number}_{position.r}_{position.c}")
                 self._model.add(self._grid_vars[position] == value).only_enforce_if(temp_var)
-                self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.Not())
+                self._model.add(self._grid_vars[position] != value).only_enforce_if(temp_var.negated())
                 solution_literals.append(temp_var)
 
             if solution_literals:
-                self._model.add_bool_or([lit.Not() for lit in solution_literals])
+                self._model.add_bool_or([lit.negated() for lit in solution_literals])
 
             attempted_solutions_number += 1
 
@@ -94,7 +94,7 @@ class SnakeSolver(GameSolver):
             for neighbor_position in self._grid.neighbors_positions(position):
                 equality_var = self._model.new_bool_var(f"eq_{position}_{neighbor_position}")
                 self._model.add(self._grid_vars[position] == self._grid_vars[neighbor_position]).only_enforce_if(equality_var)
-                self._model.add(self._grid_vars[position] != self._grid_vars[neighbor_position]).only_enforce_if(equality_var.Not())
+                self._model.add(self._grid_vars[position] != self._grid_vars[neighbor_position]).only_enforce_if(equality_var.negated())
                 neighbor_equality_vars.append(equality_var)
 
             if position_value == start_or_end_value:
@@ -103,6 +103,6 @@ class SnakeSolver(GameSolver):
 
             cell_is_one = self._model.new_bool_var(f"cell_is_one_{position}")
             self._model.add(self._grid_vars[position] == 1).only_enforce_if(cell_is_one)
-            self._model.add(self._grid_vars[position] == 0).only_enforce_if(cell_is_one.Not())
+            self._model.add(self._grid_vars[position] == 0).only_enforce_if(cell_is_one.negated())
 
             self._model.add(sum(neighbor_equality_vars) == 2).only_enforce_if(cell_is_one)

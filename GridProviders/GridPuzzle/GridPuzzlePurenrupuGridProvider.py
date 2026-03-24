@@ -8,6 +8,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzlePurenrupuGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         pqq_string_list, size = self._get_canvas_data(html_page)
         data_grid = pqq_string_list
         matrix = [[1 if data_grid[i * size + j] == "#" else 0 for j in range(size)] for i in range(size)]

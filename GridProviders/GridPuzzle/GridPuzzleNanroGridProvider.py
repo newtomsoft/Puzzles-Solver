@@ -9,6 +9,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleNanroGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url, "#puzzle_main")
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         _, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         for i, cell in enumerate(matrix_cells):
             row = i // column_count

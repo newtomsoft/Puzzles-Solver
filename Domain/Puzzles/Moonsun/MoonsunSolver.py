@@ -71,7 +71,7 @@ class MoonsunSolver(GameSolver):
                     for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
                         b = self._model.new_bool_var(f'constraint_{i}_{position}_{direction}')
                         self._model.add(self._island_bridges_z3[position][direction] != value).only_enforce_if(b)
-                        self._model.add(self._island_bridges_z3[position][direction] == value).only_enforce_if(b.Not())
+                        self._model.add(self._island_bridges_z3[position][direction] == value).only_enforce_if(b.negated())
                         cell_constraints.append(b)
                 if cell_constraints:
                     self._model.add_bool_or(cell_constraints)
@@ -85,7 +85,7 @@ class MoonsunSolver(GameSolver):
             for direction, (_, value) in island.direction_position_bridges.items():
                 b = self._model.new_bool_var(f'other_solution_{island.position}_{direction}')
                 self._model.add(self._island_bridges_z3[island.position][direction] != value).only_enforce_if(b)
-                self._model.add(self._island_bridges_z3[island.position][direction] == value).only_enforce_if(b.Not())
+                self._model.add(self._island_bridges_z3[island.position][direction] == value).only_enforce_if(b.negated())
                 previous_solution_constraints.append(b)
         if previous_solution_constraints:
             self._model.add_bool_or(previous_solution_constraints)
@@ -143,7 +143,7 @@ class MoonsunSolver(GameSolver):
         for position in region:
             crossed = self._model.new_bool_var(f"crossed_{position}")
             self._model.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) == 2).only_enforce_if(crossed)
-            self._model.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.Not())
+            self._model.add(sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.negated())
             sum_for_positions_constraints.append(crossed)
         self._model.add_bool_or(sum_for_positions_constraints)
 
@@ -157,12 +157,12 @@ class MoonsunSolver(GameSolver):
             for pos in [pos for pos in region if self._circle_grid[pos] == self.white]:
                 crossed = self._model.new_bool_var(f"crossed_{pos}")
                 self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) == 2).only_enforce_if(crossed)
-                self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.Not())
+                self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.negated())
                 self._model.add(colors_regions[region_id] == 1).only_enforce_if(crossed)
             for pos in [pos for pos in region if self._circle_grid[pos] == self.black]:
                 crossed = self._model.new_bool_var(f"crossed_{pos}")
                 self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) == 2).only_enforce_if(crossed)
-                self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.Not())
+                self._model.add(sum(self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions()) != 2).only_enforce_if(crossed.negated())
                 self._model.add(colors_regions[region_id] == 2).only_enforce_if(crossed)
 
             for position in region:
@@ -176,7 +176,7 @@ class MoonsunSolver(GameSolver):
         for region_id in colors_regions:
             is_white = self._model.new_bool_var(f"is_white_{region_id}")
             self._model.add(colors_regions[region_id] == 1).only_enforce_if(is_white)
-            self._model.add(colors_regions[region_id] != 1).only_enforce_if(is_white.Not())
+            self._model.add(colors_regions[region_id] != 1).only_enforce_if(is_white.negated())
             white_regions.append(is_white)
         self._model.add(sum(white_regions) == len(colors_regions) // 2)
 
