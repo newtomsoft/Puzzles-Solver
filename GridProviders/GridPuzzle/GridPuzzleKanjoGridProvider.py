@@ -15,6 +15,9 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 class GridPuzzleKanjoGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
     async def scrap_grid(self, browser: BrowserContext, url):
         html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str):
         pqq_string_list, board_string_list, matrix_size = self._get_canvas_data_kanjo(html_page)
         matrix = [[self._convert(r, c, pqq_string_list[r * matrix_size + c], board_string_list[r * matrix_size + c]) for c in range(matrix_size)] for r in range(matrix_size)]
         grid = Grid(matrix)
@@ -23,12 +26,12 @@ class GridPuzzleKanjoGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasPr
 
     @staticmethod
     def _get_canvas_data_kanjo(html_page: str) -> tuple[list[str], list[str], int]:
-        html_string = BeautifulSoup(html_page, 'html.parser').prettify()
-        size = int(re.search(r'gpl\.([Ss]ize) = (\d+);', html_string).group(2))
-        pqq = re.search(r'gpl\.pq{1,2} = "(.*?)";', html_string).group(1)
-        pqq_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(pqq)
+        size, pqq, pqq_string = GridPuzzleGridCanvasProvider._extract_gpl_data(html_page)
         pqq_string_list = GridPuzzleGridCanvasProvider._split_to_list(pqq_string, size)
-        board = re.search(r'gpl\.board = "(.*?)";', html_string).group(1)
+
+        html_string = BeautifulSoup(html_page, 'html.parser').prettify()
+        board_match = re.search(r'gpl\.board = "(.*?)";', html_string)
+        board = board_match.group(1)
         board_string = GridPuzzleGridCanvasProvider._decode_if_custom_base64(board)
         board_string_list = GridPuzzleGridCanvasProvider._split_to_list(board_string, size)
 
