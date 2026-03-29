@@ -38,6 +38,7 @@ import Run.Games.KazokuConfig
 import Run.Games.KemaruConfig
 import Run.Games.KenKenConfig
 import Run.Games.KillerSudokuConfig
+import Run.Games.KinKonKanConfig
 import Run.Games.KoburinConfig
 import Run.Games.KohiGyunyuConfig
 import Run.Games.KonarupuConfig
@@ -163,6 +164,7 @@ class UrlPatternMatcher:
         Run.Games.KemaruConfig.register()
         Run.Games.KenKenConfig.register()
         Run.Games.KillerSudokuConfig.register()
+        Run.Games.KinKonKanConfig.register()
         Run.Games.KoburinConfig.register()
         Run.Games.KohiGyunyuConfig.register()
         Run.Games.KonarupuConfig.register()

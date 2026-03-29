@@ -42,6 +42,7 @@ https://gridpuzzle.com/hakoiri/evil-10
 https://gridpuzzle.com/hiroimono/size-15  
 https://gridpuzzle.com/kanjo/evil-10  
 https://gridpuzzle.com/kazoku/evil-12  
+https://gridpuzzle.com/kin-kon-kan/evil-10  
 https://gridpuzzle.com/koburin/evil-12  
 https://gridpuzzle.com/kohi-gyunyu/size-20  
 https://gridpuzzle.com/konarupu/evil-15  
