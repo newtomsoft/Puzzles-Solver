@@ -29,6 +29,7 @@ import Run.Games.HeyawakeConfig
 import Run.Games.HidokuConfig
 import Run.Games.HiroimonoConfig
 import Run.Games.HitoriConfig
+import Run.Games.IslandConfig
 import Run.Games.JigsawSudokuConfig
 import Run.Games.KakurasuConfig
 import Run.Games.KakuroConfig
@@ -155,6 +156,7 @@ class UrlPatternMatcher:
         Run.Games.HidokuConfig.register()
         Run.Games.HiroimonoConfig.register()
         Run.Games.HitoriConfig.register()
+        Run.Games.IslandConfig.register()
         Run.Games.JigsawSudokuConfig.register()
         Run.Games.KakurasuConfig.register()
         Run.Games.KakuroConfig.register()

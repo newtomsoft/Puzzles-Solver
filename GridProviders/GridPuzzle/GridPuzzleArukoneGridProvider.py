@@ -1,0 +1,3 @@
+﻿from GridProviders.GridPuzzle.GridPuzzleArukoneNo2x2GridProvider import GridPuzzleArukoneNo2x2GridProvider
+
+GridPuzzleArukoneGridProvider = GridPuzzleArukoneNo2x2GridProvider

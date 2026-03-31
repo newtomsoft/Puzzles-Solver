@@ -15,6 +15,8 @@
 The different sizes and difficulties are handled
 
 ## GridPuzzle
+https://gridpuzzle.com/arukone/size-15  
+https://gridpuzzle.com/arukone-no-2x2/size-18  
 https://gridpuzzle.com/balance-loop/evil-12  
 https://gridpuzzle.com/bodaburokku/evil-10  
 https://gridpuzzle.com/bridges/size-12  
