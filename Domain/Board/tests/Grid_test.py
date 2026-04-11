@@ -638,5 +638,17 @@ class GridTest(TestCase):
 
         self.assertEqual(expected_shapes_len, shapes_len)
 
+    def test_get_shape_from_position_value_0(self):
+        o = -1
+        grid = Grid([
+            [1, o, 1],
+            [0, o, 0],
+            [2, 0, 2],
+        ])
+        for position, expected_shapes_len in ((position, value) for position, value in grid if value > 0):
+            shape = grid.get_shape_from_position(position, 0) - {position}
+            shapes_len = len(shape)
+            self.assertEqual(expected_shapes_len, shapes_len)
+
 if __name__ == '__main__':
     unittest.main()
