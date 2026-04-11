@@ -148,6 +148,12 @@ class Grid[T](GridBase[T]):
             excluded.append(position)
         return shapes
 
+    def get_shape_from_position(self, position: Position, value=True, mode='orthogonal') -> set[Position]:
+        shape = set()
+        for neighbor in self.neighbors_positions(position, mode):
+            shape.update(self._depth_first_search(neighbor, value, mode))
+        return shape
+
     def are_min_2_connected_cells_touch_border(self, position, mode='orthogonal') -> tuple[bool, set[Position]]:
         value = self.value(position)
         visited = self._depth_first_search(position, value, mode)
