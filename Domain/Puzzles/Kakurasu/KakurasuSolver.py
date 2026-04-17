@@ -1,9 +1,8 @@
-from typing import Any, List, Union
+from typing import List, Union
 
 from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
 
