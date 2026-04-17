@@ -98,3 +98,7 @@ class RegionsGrid(Grid):
             result.append("".join(line_chars))
 
         return "".join(result)
+
+    @staticmethod
+    def empty() -> 'RegionsGrid':
+        return RegionsGrid([[]])

@@ -74,6 +74,7 @@ https://gridpuzzle.com/rabbits-and-trees/evil-12
 https://gridpuzzle.com/regional-yajilin/evil-10  
 https://gridpuzzle.com/renkatsu/size-6  
 https://gridpuzzle.com/round-trip/evil-12  
+https://gridpuzzle.com/sashikazune/evil-9  
 https://gridpuzzle.com/seethrough/evil-10  
 https://gridpuzzle.com/sheep-and-wolves/evil-12  
 https://gridpuzzle.com/slitherlink/evil-12  
