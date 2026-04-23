@@ -84,6 +84,7 @@ import Run.Games.SeeThroughConfig
 import Run.Games.ShakashakaConfig
 import Run.Games.SheepAndWolvesConfig
 import Run.Games.ShikakuConfig
+import Run.Games.ShimaguniConfig
 import Run.Games.ShingokiConfig
 import Run.Games.ShirokuroConfig
 import Run.Games.SkyscrapersConfig
@@ -214,8 +215,9 @@ class UrlPatternMatcher:
         Run.Games.ShakashakaConfig.register()
         Run.Games.SheepAndWolvesConfig.register()
         Run.Games.ShikakuConfig.register()
-        Run.Games.ShirokuroConfig.register()
+        Run.Games.ShimaguniConfig.register()
         Run.Games.ShingokiConfig.register()
+        Run.Games.ShirokuroConfig.register()
         Run.Games.SkyscrapersConfig.register()
         Run.Games.SlantConfig.register()
         Run.Games.SnakeConfig.register()
@@ -246,7 +248,8 @@ class UrlPatternMatcher:
 
     @staticmethod
     def get_components_for_url(url: str) -> tuple[type[GameSolver], type[GridProvider], type[GridPlayer] | None]:
-        if not url or url.strip() == "":
+        url = url.strip()
+        if not url or url == "":
             raise ValueError("Please enter a valid URL")
 
         return GameRegistry.get_components_for_url(url)

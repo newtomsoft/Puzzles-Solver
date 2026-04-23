@@ -77,6 +77,7 @@ https://gridpuzzle.com/round-trip/evil-12
 https://gridpuzzle.com/sashikazune/evil-9  
 https://gridpuzzle.com/seethrough/evil-10  
 https://gridpuzzle.com/sheep-and-wolves/evil-12  
+https://gridpuzzle.com/shimaguni/evil-12  
 https://gridpuzzle.com/slitherlink/evil-12  
 https://gridpuzzle.com/snake/evil-12  
 https://gridpuzzle.com/starbattle/size-10  
