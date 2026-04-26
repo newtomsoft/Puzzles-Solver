@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest Domain/Puzzles/KinKonKan/tests/KinKonKanSolver_test.py -v)"
+    ]
+  }
+}

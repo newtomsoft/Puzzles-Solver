@@ -69,6 +69,7 @@ import Run.Games.NorinoriConfig
 import Run.Games.NumberChainConfig
 import Run.Games.NumberCrossConfig
 import Run.Games.NumberLinkConfig
+import Run.Games.NuribouConfig
 import Run.Games.NurikabeConfig
 import Run.Games.PipelinkConfig
 import Run.Games.PipesConfig
@@ -200,6 +201,7 @@ class UrlPatternMatcher:
         Run.Games.NumberChainConfig.register()
         Run.Games.NumberCrossConfig.register()
         Run.Games.NumberLinkConfig.register()
+        Run.Games.NuribouConfig.register()
         Run.Games.NurikabeConfig.register()
         Run.Games.PipelinkConfig.register()
         Run.Games.PipesConfig.register()

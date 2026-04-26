@@ -1,0 +1,20 @@
+﻿import unittest
+from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
+from Domain.Board.Grid import Grid
+from GridProviders.GridPuzzle.GridPuzzleRabbitsAndTreesGridProvider import GridPuzzleRabbitsAndTreesGridProvider
+
+class GridPuzzleRabbitsAndTreesGridProviderTests(GridPuzzleProviderTestBase):
+    async def test_scrap_grid_with_mock(self):
+        T = True
+        T = True
+        expected_grid = Grid([
+            ['RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 1, 'RabbitsAndTreesSolver.EMPTY'],
+            ['RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY'],
+            ['RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY'],
+            ['RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY', 'RabbitsAndTreesSolver.EMPTY'],
+        ])
+        grid = await self.run_scrap_test(GridPuzzleRabbitsAndTreesGridProvider, "rabbitsandtrees_sample.html", "scrap_grid")
+        self.assert_grid_equals(expected_grid, grid)
+
+if __name__ == '__main__':
+    unittest.main()
