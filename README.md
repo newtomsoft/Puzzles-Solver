@@ -21,6 +21,7 @@ https://gridpuzzle.com/balance-loop/evil-12
 https://gridpuzzle.com/bodaburokku/evil-10  
 https://gridpuzzle.com/bridges/size-12  
 https://gridpuzzle.com/calcudoku/evil-95  
+https://gridpuzzle.com/cave/expert-12  
 https://gridpuzzle.com/chocona/evil-9  
 https://gridpuzzle.com/circles-and-squares/evil-12  
 https://gridpuzzle.com/clouds/size-15  
@@ -50,6 +51,7 @@ https://gridpuzzle.com/koburin/evil-12
 https://gridpuzzle.com/kohi-gyunyu/size-20  
 https://gridpuzzle.com/konarupu/evil-15  
 https://gridpuzzle.com/kuroshiro/size-10  
+https://gridpuzzle.com/kuroshuto/evil-15  
 https://gridpuzzle.com/lightup/evil-15  
 https://gridpuzzle.com/linesweeper/evil-12  
 https://gridpuzzle.com/look-air/evil-12  
@@ -66,6 +68,7 @@ https://gridpuzzle.com/moonsun/evil-12
 https://gridpuzzle.com/nanro/evil-12  
 https://gridpuzzle.com/neighbours/evil-12  
 https://gridpuzzle.com/no-four-in-row/evil-12  
+https://gridpuzzle.com/nuribou/size-10  
 https://gridpuzzle.com/number-chain/size-10  
 https://gridpuzzle.com/number-cross/evil-10  
 https://gridpuzzle.com/pipelink/evil-15  
