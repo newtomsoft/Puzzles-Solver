@@ -47,6 +47,7 @@ import Run.Games.KohiGyunyuConfig
 import Run.Games.KonarupuConfig
 import Run.Games.KurodokoConfig
 import Run.Games.KuroshiroConfig
+import Run.Games.KuroshutoConfig
 import Run.Games.LinesweeperConfig
 import Run.Games.LitsConfig
 import Run.Games.LookAirConfig
@@ -179,6 +180,7 @@ class UrlPatternMatcher:
         Run.Games.KonarupuConfig.register()
         Run.Games.KurodokoConfig.register()
         Run.Games.KuroshiroConfig.register()
+        Run.Games.KuroshutoConfig.register()
         Run.Games.LinesweeperConfig.register()
         Run.Games.LitsConfig.register()
         Run.Games.LookAirConfig.register()
