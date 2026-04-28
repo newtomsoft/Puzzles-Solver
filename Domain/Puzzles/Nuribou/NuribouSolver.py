@@ -19,14 +19,18 @@ class NuribouSolver(GameSolver):
         self._status = None
 
     def _init_model(self):
-        self._create_variables()
+        self._create_grid_variables()
         self._add_initial_clues()
-
         self._create_segment_variables()
         self._create_region_variables()
         self._add_constraints()
 
     def _create_variables(self):
+        self._create_grid_variables()
+        self._create_segment_variables()
+        self._create_region_variables()
+
+    def _create_grid_variables(self):
         self._grid_vars = {}
         for r in range(self.rows_number):
             for c in range(self.columns_number):
@@ -35,12 +39,10 @@ class NuribouSolver(GameSolver):
 
     def _add_initial_clues(self):
         for position, clue in self._values_grid:
-            if clue is None or clue == self.EMPTY:
-                continue
-
-            self._model.add(self._grid_vars[position] == 0).WithName(f"clue_white_{position.r}_{position.c}")
-            clue_val = int(clue)
-            self._clues[position] = clue_val
+            clue_val = int(clue) if clue else 0
+            if clue_val > 0:
+                self._model.add(self._grid_vars[position] == 0)
+                self._clues[position] = clue_val
 
         self._num_clues = len(self._clues)
 
