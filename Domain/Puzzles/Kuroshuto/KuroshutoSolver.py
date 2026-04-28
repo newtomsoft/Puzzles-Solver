@@ -37,7 +37,6 @@ class KuroshutoSolver(GameSolver):
             if clue is None or clue == 0:
                 continue
 
-            # Clue cells must be WHITE
             self._model.add(self._grid_vars[position] == 0)
             clue_val = int(clue)
             self._clues[position] = clue_val
@@ -48,15 +47,10 @@ class KuroshutoSolver(GameSolver):
         self._add_white_connectivity_constraint()
 
     def _add_distance_clue_constraint(self):
-        """
-        For each clue, there must be exactly one black cell at a horizontal or vertical distance
-        equal to the value of the clue.
-        """
         for position, clue_val in self._clues.items():
             r, c = position.r, position.c
             candidates = []
 
-            # Check all 4 directions at distance clue_val
             potential_positions = [
                 Position(r + clue_val, c),
                 Position(r - clue_val, c),
@@ -68,17 +62,12 @@ class KuroshutoSolver(GameSolver):
                 if 0 <= p.r < self.rows_number and 0 <= p.c < self.columns_number:
                     candidates.append(self._grid_vars[p])
 
-            if candidates:
-                self._model.add(sum(candidates) == 1)
+            self._model.add(sum(candidates) == 1)
 
     def _add_no_adjacent_black_cells_constraint(self):
-        """
-        Black cells must not be orthogonal neighbors.
-        """
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 pos = Position(r, c)
-                # Only check right and down to avoid redundant constraints
                 for dr, dc in [(0, 1), (1, 0)]:
                     nr, nc = r + dr, c + dc
                     if 0 <= nr < self.rows_number and 0 <= nc < self.columns_number:
@@ -86,9 +75,6 @@ class KuroshutoSolver(GameSolver):
                         self._model.add(self._grid_vars[pos] + self._grid_vars[npos] <= 1)
 
     def _add_white_connectivity_constraint(self):
-        """
-        All white cells must be connected in a single component.
-        """
         total_cells = self.rows_number * self.columns_number
         self._rank_vars = {}
         for r in range(self.rows_number):
@@ -96,7 +82,6 @@ class KuroshutoSolver(GameSolver):
                 pos = Position(r, c)
                 self._rank_vars[pos] = self._model.new_int_var(0, total_cells - 1, f"rank_{r}_{c}")
 
-        # Pick the first clue as the root of the white component
         clue_positions = list(self._clues.keys())
         if not clue_positions:
             return
@@ -114,17 +99,14 @@ class KuroshutoSolver(GameSolver):
                 parent_literals = []
 
                 for neighbor in self._values_grid.neighbors_positions(pos):
-                    # A neighbor is a potential parent if it is white and has a lower rank
                     parent = self._model.new_bool_var(f"parent_{r}_{c}_{neighbor.r}_{neighbor.c}")
                     self._model.add(self._grid_vars[neighbor] == 0).OnlyEnforceIf(parent)
                     self._model.add(self._rank_vars[neighbor] < self._rank_vars[pos]).OnlyEnforceIf(parent)
                     parent_literals.append(parent)
 
                 if parent_literals:
-                    # If the cell is white, it MUST have at least one parent
                     self._model.add_bool_or(parent_literals).OnlyEnforceIf(is_white)
                 else:
-                    # If no neighbors are possible parents, the cell cannot be white
                     self._model.add(is_white == 0)
 
     def get_solution(self) -> Grid:

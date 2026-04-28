@@ -2,9 +2,10 @@ import unittest
 from Domain.Board.Grid import Grid
 from Domain.Puzzles.Kuroshuto.KuroshutoSolver import KuroshutoSolver
 
-_ = None
+_ = KuroshutoSolver.EMPTY
 B = KuroshutoSolver.BLACK
 W = KuroshutoSolver.WHITE
+
 
 class KuroshutoSolverTests(unittest.IsolatedAsyncioTestCase):
     def test_solve_5x5_easy_3eqd2(self):
