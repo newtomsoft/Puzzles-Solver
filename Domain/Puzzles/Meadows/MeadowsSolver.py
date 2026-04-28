@@ -13,80 +13,41 @@ class MeadowsSolver(GameSolver):
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._vars: Grid | None = None
-        self._previous_solution: Grid | None = None
+        self._grid_vars = Grid.empty()
+        self._previous_solution = Grid.empty()
 
-    def _init_model(self):
-        # Determine domain bounds from given numbers
+    def _initialize_grid_vars(self):
         given_values = [value for _, value in self._grid if value is not self.empty]
-        if not given_values:
-            # No numbers? empty grid has no solution in this puzzle definition
-            return
         min_value = min(given_values)
         max_value = max(given_values)
+        self._grid_vars = Grid([[self._model.new_int_var(min_value, max_value, f"cell_{r}_{c}") for c in range(self._columns_number)]
+                                for r in range(self._rows_number)])
 
-        # Create IntVar grid
-        self._vars = Grid([[self._model.new_int_var(min_value, max_value, f"cell_{r}_{c}") for c in range(self._columns_number)]
-                           for r in range(self._rows_number)])
-
-        # Fix given cells
-        for position, value in self._grid:
-            if value is not self.empty:
-                self._model.add(self._vars[position] == value)
-
-        # Add shape constraints
+    def _add_constraints(self):
+        self._add_init_constraints()
         self._add_all_shapes_are_squares_constraints()
 
+    def _add_init_constraints(self):
+        for position, value in self._grid:
+            if value is not self.empty:
+                self._model.add(self._grid_vars[position] == value)
+
     def get_solution(self) -> Grid:
-        if self._vars is None:
-            self._init_model()
-        if self._vars is None:
-            return Grid.empty()
-
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
-        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-            return Grid.empty()
-
-        solution = Grid([[solver.value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
-        self._previous_solution = solution
-        return solution
+        self._initialize_grid_vars()
+        self._add_constraints()
+        return self._solve()
 
     def get_other_solution(self):
-        # Ensure we have a first solution
-        if self._previous_solution is None:
-            first = self.get_solution()
-            self._previous_solution = first
-            return first
-        if self._previous_solution.is_empty():
-            return Grid.empty()
+        self._add_different_solution_constraint()
+        return self._solve()
 
-        # Add constraint: at least one cell differs from previous solution
-        eq_bools: list[cp_model.IntVar] = []
-        for r in range(self._rows_number):
-            for c in range(self._columns_number):
-                prev_val = self._previous_solution.value(r, c)
-                b_eq = self._model.new_bool_var(f"eq_prev_{r}_{c}")
-                var = self._vars.value(r, c)
-                self._model.add(var == prev_val).only_enforce_if(b_eq)
-                # Not equal when b_eq is false
-                # Encode var != prev_val as (var <= prev_val - 1) OR (var >= prev_val + 1)
-                b_le = self._model.new_bool_var(f"le_prev_{r}_{c}")
-                b_ge = self._model.new_bool_var(f"ge_prev_{r}_{c}")
-                self._model.add(var <= prev_val - 1).only_enforce_if(b_le)
-                self._model.add(var >= prev_val + 1).only_enforce_if(b_ge)
-                # If b_eq is false, at least one of b_le or b_ge must be true
-                self._model.add_bool_or([b_le, b_ge, b_eq])
-                eq_bools.append(b_eq)
-        # Not all equal
-        self._model.add(sum(eq_bools) <= self._rows_number * self._columns_number - 1)
-
+    def _solve(self) -> Grid[int]:
         solver = cp_model.CpSolver()
         status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.value(self._vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
@@ -97,83 +58,63 @@ class MeadowsSolver(GameSolver):
     def _add_square_constraint(self, position: Position, square_area: int):
         rows = self._rows_number
         cols = self._columns_number
-        pr, pc = position.r, position.c
 
-        # Pre-filled cells different from this value
         fixed_other = [pos for pos, val in self._grid if val is not None and val != square_area]
-
-        min_size = 1
-        max_size = min(rows, cols)
+        max_size: int = min(rows, cols)
 
         candidates: list[cp_model.IntVar] = []
         pos_to_selectors: dict[tuple[int, int], list[cp_model.IntVar]] = {}
 
-        for size in range(min_size, max_size + 1):
+        for size in range(1, max_size + 1):
             r0_min = max(0, position.r - size + 1)
             c0_min = max(0, position.c - size + 1)
             r0_max = min(position.r, rows - size)
             c0_max = min(position.c, cols - size)
-            if r0_min > r0_max or c0_min > c0_max:
-                continue
 
             for r0 in range(r0_min, r0_max + 1):
                 r1 = r0 + size - 1
-                if not (r0 <= pr <= r1):
-                    continue
                 for c0 in range(c0_min, c0_max + 1):
                     c1 = c0 + size - 1
-                    if not (c0 <= pc <= c1):
+
+                    if any(r0 <= p.r <= r1 and c0 <= p.c <= c1 for p in fixed_other):
                         continue
 
-                    conflict = False
-                    for p in fixed_other:
-                        if r0 <= p.r <= r1 and c0 <= p.c <= c1:
-                            conflict = True
-                            break
-                    if conflict:
-                        continue
+                    selector = self._model.new_bool_var(f"sq_{square_area}_{position.r}_{position.c}_{r0}_{c0}_{size}")
 
-                    if not (r0 <= position.r <= r1 and c0 <= position.c <= c1):
-                        continue
-
-                    selector = self._model.new_bool_var(f"sq_{square_area}_{pr}_{pc}_{r0}_{c0}_{size}")
-
-                    # Inside cells equal to the value when selector is true
                     for r in range(r0, r1 + 1):
                         for c in range(c0, c1 + 1):
                             pos = Position(r, c)
-                            self._model.add(self._vars[pos] == square_area).only_enforce_if(selector)
+                            self._model.add(self._grid_vars[pos] == square_area).only_enforce_if(selector)
                             pos_to_selectors.setdefault((r, c), []).append(selector)
 
                     candidates.append(selector)
 
         if not candidates:
-            # Impossible: no candidate squares; force infeasibility
             self._model.add(False)
             return
 
-        # Exactly one candidate selected
         self._model.add_exactly_one(candidates)
 
-        # Coverage constraints: if a cell equals this value, it must be covered by one of the selected candidates
         covered_positions = set(pos_to_selectors.keys())
-        for r in range(rows):
-            for c in range(cols):
-                key = (r, c)
-                var = self._vars.value(r, c)
-                if key in covered_positions:
-                    # Create b_eq: channel var == cell_value without using reified != directly
-                    b_eq = self._model.new_bool_var(f"eq_{square_area}_{r}_{c}")
-                    self._model.add(var == square_area).only_enforce_if(b_eq)
-                    # Not equal when b_eq is false via two bounds
-                    b_le = self._model.new_bool_var(f"le_{square_area}_{r}_{c}")
-                    b_ge = self._model.new_bool_var(f"ge_{square_area}_{r}_{c}")
-                    self._model.add(var <= square_area - 1).only_enforce_if(b_le)
-                    self._model.add(var >= square_area + 1).only_enforce_if(b_ge)
-                    # If not equal then at least one of b_le or b_ge holds
-                    self._model.add_bool_or([b_le, b_ge, b_eq])
-                    # b_eq -> Or(selectors)
-                    self._model.add_bool_or(pos_to_selectors[key] + [b_eq.negated()])
-                else:
-                    # Can never be part of this square
-                    self._model.add(var != square_area)
+        for pos, var in self._grid_vars:
+            key = (pos.r, pos.c)
+            if key in covered_positions:
+                b_eq = self._model.new_bool_var(f"eq_{square_area}_{pos.r}_{pos.c}")
+                self._model.add(var == square_area).only_enforce_if(b_eq)
+                b_ne = self._model.new_bool_var(f"ne_{square_area}_{pos.r}_{pos.c}")
+                self._model.add(var != square_area).only_enforce_if(b_ne)
+                self._model.add_bool_or([b_eq, b_ne])
+                self._model.add_bool_or(pos_to_selectors[key] + [b_eq.negated()])
+            else:
+                self._model.add(var != square_area)
+
+    def _add_different_solution_constraint(self):
+        diffs = []
+        for position, previous_value in self._previous_solution:
+            value = self._grid_vars[position]
+            diff = self._model.new_bool_var(f"diff_{position.r}_{position.c}")
+            self._model.add(value != previous_value).only_enforce_if(diff)
+            self._model.add(value == previous_value).only_enforce_if(diff.negated())
+            diffs.append(diff)
+
+        self._model.add_at_least_one(diffs)

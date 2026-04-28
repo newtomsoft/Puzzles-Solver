@@ -15,17 +15,17 @@ class MeadowsSolverTests(TestCase):
             [4, 5, 6],
         ])
 
-        game_solver = MeadowsSolver(grid)
+        solver = MeadowsSolver(grid)
 
-        solution = game_solver.get_solution()
+        solution = solver.get_solution()
         expected_solution = Grid([
             [1, 1, 2],
             [1, 1, 3],
             [4, 5, 6],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(solver.get_other_solution().is_empty())
+
 
     def test_solution_squares2x2_contraints(self):
         grid = Grid([
@@ -34,17 +34,17 @@ class MeadowsSolverTests(TestCase):
             [4, 5, 6],
         ])
 
-        game_solver = MeadowsSolver(grid)
+        solver = MeadowsSolver(grid)
 
-        solution = game_solver.get_solution()
+        solution = solver.get_solution()
         expected_solution = Grid([
             [1, 1, 2],
             [1, 1, 3],
             [4, 5, 6],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(solver.get_other_solution().is_empty())
+
 
     def test_solution_6x6_3w762(self):
         """https://gridpuzzle.com/meadows/3w762"""
@@ -57,9 +57,9 @@ class MeadowsSolverTests(TestCase):
             [_, 9, 10, 11, _, 12],
         ])
 
-        game_solver = MeadowsSolver(grid)
+        solver = MeadowsSolver(grid)
 
-        solution = game_solver.get_solution()
+        solution = solver.get_solution()
         expected_solution = Grid([
             [1, 1, 3, 3, 2, 2],
             [1, 1, 3, 3, 2, 2],
@@ -69,8 +69,8 @@ class MeadowsSolverTests(TestCase):
             [9, 9, 10, 11, 12, 12],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(solver.get_other_solution().is_empty())
+
 
     def test_solution_10x10_g4kvm(self):
         """https://gridpuzzle.com/meadows/g4kvm"""
@@ -87,9 +87,9 @@ class MeadowsSolverTests(TestCase):
             [_, _, _, 13, _, _, _, 14, _, _],
         ])
 
-        game_solver = MeadowsSolver(grid)
+        solver = MeadowsSolver(grid)
 
-        solution = game_solver.get_solution()
+        solution = solver.get_solution()
         expected_solution = Grid([
             [3, 3, 3, 1, 1, 1, 2, 2, 2, 2],
             [3, 3, 3, 1, 1, 1, 2, 2, 2, 2],
@@ -103,8 +103,8 @@ class MeadowsSolverTests(TestCase):
             [10, 10, 13, 13, 11, 11, 14, 14, 12, 12],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(solver.get_other_solution().is_empty())
+
 
     def test_solution_15x15_5k7xr(self):
         """https://gridpuzzle.com/meadows/5k7xr"""
@@ -126,9 +126,9 @@ class MeadowsSolverTests(TestCase):
             [ _,  _, 27,  _, 28, 29,  _,  _,  _,  _,  _,  _,  _,  _,  _],
         ])
 
-        game_solver = MeadowsSolver(grid)
+        solver = MeadowsSolver(grid)
 
-        solution = game_solver.get_solution()
+        solution = solver.get_solution()
         expected_solution = Grid([
             [ 1 , 1,  7,  7,  7,  3,  3,  3,  3,  2,  2,  2,  2,  4,  4],
             [ 1 , 1,  7,  7,  7,  3,  3,  3,  3,  2,  2,  2,  2,  4,  4],
@@ -147,8 +147,7 @@ class MeadowsSolverTests(TestCase):
             [27, 27, 27, 28, 28, 29, 29, 24, 24, 24, 24, 25, 25, 26, 26],
         ])
         self.assertEqual(expected_solution, solution)
-        other_solution = game_solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_solution)
+        self.assertTrue(solver.get_other_solution().is_empty())
 
 
 if __name__ == '__main__':
