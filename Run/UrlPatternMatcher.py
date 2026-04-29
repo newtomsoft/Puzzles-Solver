@@ -104,6 +104,7 @@ import Run.Games.SurizaConfig
 import Run.Games.TapaConfig
 import Run.Games.TasukueaConfig
 import Run.Games.TatamibariConfig
+import Run.Games.ToichikaConfig
 import Run.Games.TentaiShowConfig
 import Run.Games.TentsConfig
 import Run.Games.ThermometersConfig
@@ -238,6 +239,7 @@ class UrlPatternMatcher:
         Run.Games.TapaConfig.register()
         Run.Games.TasukueaConfig.register()
         Run.Games.TatamibariConfig.register()
+        Run.Games.ToichikaConfig.register()
         Run.Games.TentaiShowConfig.register()
         Run.Games.TentsConfig.register()
         Run.Games.ThermometersConfig.register()
