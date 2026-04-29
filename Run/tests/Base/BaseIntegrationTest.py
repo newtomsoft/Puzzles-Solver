@@ -1,13 +1,10 @@
 ﻿import asyncio
-import os
-import sys
 import time
 from io import StringIO
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from Run.PuzzleMainConsole import PuzzleMainConsole
 
 class BaseIntegrationTest:

@@ -1,40 +1,40 @@
-﻿import os
+import os
 import sys
 import unittest
 from unittest.mock import patch, AsyncMock
 
 # Ajout des chemins nécessaires
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from Run.PuzzleMainConsole import PuzzleMainConsole
-from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
+from GridProviders.GridPuzzle.GridPuzzleKnossosGridProvider import GridPuzzleKnossosGridProvider
 
-class CloudsRunIntegrationTest(unittest.IsolatedAsyncioTestCase):
-    async def test_clouds_via_run_console(self):
+class KnossosRunIntegrationTest(unittest.IsolatedAsyncioTestCase):
+    async def test_knossos_via_run_console(self):
         # On simule l'entrée utilisateur pour l'URL
-        url = "https://gridpuzzle.com/clouds/2674y"
+        url = "https://gridpuzzle.com/knossos/3164k"
         
         # On lit le contenu HTML du sample pour mocker la réponse du provider
         current_dir = os.path.dirname(__file__)
-        asset_path = os.path.join(current_dir, "..", "..", "GridProviders", "GridPuzzle", "tests", "assets", "clouds_sample.html")
+        asset_path = os.path.join(current_dir, "../..", "..", "GridProviders", "GridPuzzle", "tests", "assets", "knossos_3164k.html")
         with open(asset_path, "r", encoding='utf-8') as f:
             html_content = f.read()
 
-        # On instancie le provider pour extraire les données
-        provider = GridPuzzleCloudsGridProvider()
-        sums_v, sums_h = provider.get_grid_from_html(html_content)
+        # On instancie le provider pour extraire la grille
+        provider = GridPuzzleKnossosGridProvider()
+        grid = provider.get_grid_from_html(html_content)
 
         # On patch input pour l'URL
         # On patch get_grid du provider pour ne pas ouvrir de vrai navigateur
-        # On patch GridPuzzleCloudsPlayer.play pour ne pas essayer de jouer
+        # On patch GridPuzzleKnossosPlayer.play pour ne pas essayer de jouer
         
         with patch('builtins.input', return_value=url), \
-             patch.object(GridPuzzleCloudsGridProvider, 'get_grid', new_callable=AsyncMock) as mock_get_grid, \
-             patch('GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer.GridPuzzleCloudsPlayer.play', new_callable=AsyncMock) as mock_play:
+             patch.object(GridPuzzleKnossosGridProvider, 'get_grid', new_callable=AsyncMock) as mock_get_grid, \
+             patch('GridPlayers.GridPuzzle.GridPuzzleKnossosPlayer.GridPuzzleKnossosPlayer.play', new_callable=AsyncMock) as mock_play:
             
             # mock_get_grid doit retourner (game_data, browser_context, playwright)
-            mock_get_grid.return_value = ((sums_v, sums_h), AsyncMock(), AsyncMock())
+            mock_get_grid.return_value = (grid, AsyncMock(), AsyncMock())
             mock_play.return_value = "SUCCESS"
 
             # On capture la sortie standard pour vérifier les prints
@@ -50,8 +50,8 @@ class CloudsRunIntegrationTest(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Solution found in", output)
         self.assertIn("Game played successfully", output)
         
-        self.assertIn("False False False False", output)
-        self.assertIn("False True True True", output)
+        self.assertIn("2 0 0 3 1", output)
+        self.assertIn("8 9 9 10 10", output)
 
 if __name__ == '__main__':
     unittest.main()

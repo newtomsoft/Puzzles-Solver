@@ -4,8 +4,8 @@ from unittest.mock import patch, AsyncMock
 
 import pytest
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Root
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))  # Run
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))  # Root
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))  # Run
 
 from Run.tests.Base.BaseIntegrationTest import BaseIntegrationTest
 

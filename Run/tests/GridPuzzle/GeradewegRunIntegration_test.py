@@ -4,8 +4,8 @@ import unittest
 from unittest.mock import patch, AsyncMock
 
 # Ajout des chemins nécessaires
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
 
 from Run.PuzzleMainConsole import PuzzleMainConsole
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
@@ -17,7 +17,7 @@ class GeradewegRunIntegrationTest(unittest.IsolatedAsyncioTestCase):
         
         # On lit le contenu HTML du sample pour mocker la réponse du provider
         current_dir = os.path.dirname(__file__)
-        asset_path = os.path.join(current_dir, "..", "..", "GridProviders", "GridPuzzle", "tests", "assets", "geradeweg_sample.html")
+        asset_path = os.path.join(current_dir, "../..", "..", "GridProviders", "GridPuzzle", "tests", "assets", "geradeweg_sample.html")
         with open(asset_path, "r", encoding='utf-8') as f:
             html_content = f.read()
 
