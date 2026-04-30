@@ -1,0 +1,40 @@
+﻿from playwright.async_api import BrowserContext
+
+from Domain.Board.Grid import Grid
+from Domain.Puzzles.Araf.ArafSolver import ArafSolver
+from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
+from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
+
+_ = ArafSolver.empty
+
+
+class GridPuzzleArafGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
+    """
+    Araf puzzle provider.
+    Each region contains exactly two numbers. The region size must be strictly between the two numbers.
+    """
+
+    async def scrap_grid(self, browser: BrowserContext, url):
+        html_page = await self.get_html(browser, url)
+        return self.get_grid_from_html(html_page)
+
+    def get_grid_from_html(self, html_page: str) -> Grid:
+        """
+        Parse Araf puzzle data from HTML.
+        Returns a Grid with numbers for clues and -1 for empty cells.
+        """
+        pqq_string_list, size = self._get_canvas_data(html_page)
+
+        matrix = [[ArafSolver.empty for _c in range(size)] for _r in range(size)]
+        for i, cell_str in enumerate(pqq_string_list):
+            if i >= size * size:
+                break
+            if cell_str and cell_str.strip() and cell_str != '|':
+                try:
+                    num_value = int(cell_str)
+                    r, c = divmod(i, size)
+                    matrix[r][c] = num_value
+                except ValueError:
+                    pass
+
+        return Grid(matrix)
