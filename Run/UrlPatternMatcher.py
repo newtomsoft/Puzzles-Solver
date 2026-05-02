@@ -7,6 +7,7 @@ import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
 import Run.Games.BorderBlockConfig
+import Run.Games.BuraitoraitoConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
 import Run.Games.CountryRoadConfig
@@ -139,12 +140,14 @@ class UrlPatternMatcher:
         Run.Games.AkariConfig.register()
         Run.Games.AquariumConfig.register()
         Run.Games.ArafConfig.register()
+        Run.Games.ArrowWebConfig.register()
         Run.Games.ArofuroConfig.register()
         Run.Games.BalanceLoopConfig.register()
         Run.Games.BimaruConfig.register()
         Run.Games.BinairoPlusConfig.register()
         Run.Games.BinairoConfig.register()
         Run.Games.BorderBlockConfig.register()
+        Run.Games.BuraitoraitoConfig.register()
         Run.Games.ChoconaConfig.register()
         Run.Games.CloudsConfig.register()
         Run.Games.CountryRoadConfig.register()
