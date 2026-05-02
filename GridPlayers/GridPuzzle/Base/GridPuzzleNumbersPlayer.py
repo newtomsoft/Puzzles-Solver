@@ -15,7 +15,7 @@ class GridPuzzleNumbersPlayer(PlaywrightPlayer):
             else:
                 columns_number = 0
 
-        for position, solution_value in solution:
+        for position, solution_value in [(pos, value) for pos, value, in solution if value is not None]:
             index = position.r * columns_number + position.c
             if index >= len(cells):
                 break
