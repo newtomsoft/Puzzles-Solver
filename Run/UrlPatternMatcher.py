@@ -2,6 +2,7 @@
 import Run.Games.AquariumConfig
 import Run.Games.ArafConfig
 import Run.Games.ArofuroConfig
+import Run.Games.ArrowWebConfig
 import Run.Games.BalanceLoopConfig
 import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
