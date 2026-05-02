@@ -30,7 +30,7 @@ class Grid[T](GridBase[T]):
             return 'Grid.empty()'
         if isinstance(self[Position(0, 0)], PipeShapeTransition | Island):
             return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
-        return '\n'.join(' '.join(str(cell) for cell in row) for row in self._matrix)
+        return '\n'.join(' '.join(str(cell) if cell is not None else '_' for cell in row) for row in self._matrix)
 
     def __hash__(self):
         return hash(str(self._matrix))
