@@ -120,6 +120,7 @@ import Run.Games.WamazuConfig
 import Run.Games.YajikabeConfig
 import Run.Games.YajilinConfig
 import Run.Games.YinYangConfig
+import Run.Games.YonmasuConfig
 import Run.Games.ZipConfig
 from Domain.Puzzles.GameSolver import GameSolver
 from GridPlayers.Base.GridPlayer import GridPlayer
@@ -260,6 +261,7 @@ class UrlPatternMatcher:
         Run.Games.YajikabeConfig.register()
         Run.Games.YajilinConfig.register()
         Run.Games.YinYangConfig.register()
+        Run.Games.YonmasuConfig.register()
         Run.Games.ZipConfig.register()
 
         cls._initialized = True
