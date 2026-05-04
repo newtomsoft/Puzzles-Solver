@@ -147,30 +147,30 @@ class PlaywrightPlayer(GridPlayer):
     async def _process_video(cls, video_file: VideoFile, rect: Rectangle, start_time: float = 0) -> str | None:
         if video_file is None or rect is None:
             return None
-        
+
         video_path = await video_file.path()
         await cls._crop_video(video_path, cls.game_name, rect, start_time)
         return video_path
 
     @classmethod
     async def _crop_video(cls, input_video_path: str, name: str, rect: Rectangle, start_time: float):
-        video_name = os.path.basename(input_video_path)
-        video_path = os.path.dirname(input_video_path)
-        _, video_name_extension = os.path.splitext(video_name)
+        video_dir = os.path.dirname(input_video_path)
+        video_name_extension = os.path.splitext(os.path.basename(input_video_path))[1]
         clip = VideoFileClip(input_video_path, audio=False)
         clip = clip.subclipped(start_time=start_time)
         cropped_clip = clip.cropped(x1=rect.x1, y1=rect.y1, x2=rect.x2, y2=rect.y2)
         date_time_format = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         new_video_name = f'{name}_{date_time_format}{video_name_extension}'
-        output_path = os.path.join(video_path, new_video_name)
-        cropped_clip.write_videofile(
+        output_path = os.path.join(video_dir, new_video_name)
+        await asyncio.to_thread(
+            cropped_clip.write_videofile,
             output_path,
             codec='libvpx-vp9',
             fps=30,
             bitrate=None,
             preset='medium',
-            threads=8,
-            ffmpeg_params=['-crf', '36', '-b:v', '0']
+            threads=os.cpu_count() or 4,
+            ffmpeg_params=['-crf', '36', '-b:v', '0'],
         )
         clip.close()
         cropped_clip.close()
