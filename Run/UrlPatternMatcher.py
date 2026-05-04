@@ -14,6 +14,7 @@ import Run.Games.CloudsConfig
 import Run.Games.CountryRoadConfig
 import Run.Games.CorralConfig
 import Run.Games.CreekConfig
+import Run.Games.DeddoanguruConfig
 import Run.Games.DominosaConfig
 import Run.Games.DoppelblockConfig
 import Run.Games.DosunFuwariConfig
@@ -156,6 +157,7 @@ class UrlPatternMatcher:
         Run.Games.CountryRoadConfig.register()
         Run.Games.CorralConfig.register()
         Run.Games.CreekConfig.register()
+        Run.Games.DeddoanguruConfig.register()
         Run.Games.DominosaConfig.register()
         Run.Games.DoppelblockConfig.register()
         Run.Games.DosunFuwariConfig.register()
