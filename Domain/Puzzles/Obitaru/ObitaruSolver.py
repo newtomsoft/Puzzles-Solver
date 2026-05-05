@@ -1,4 +1,6 @@
-﻿from ortools.sat.python import cp_model
+﻿from typing import Union
+
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
@@ -7,8 +9,11 @@ from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
 
+ObitaruCell = Union[str, int, None]
+
 class ObitaruSolver(GameSolver):
-    White = 'w'
+    white = 'w'
+    empty = None
 
     def __init__(self, grid: Grid):
         self._grid = grid
@@ -16,8 +21,6 @@ class ObitaruSolver(GameSolver):
         self._cols = grid.columns_number
         self._model = cp_model.CpModel()
         self._solver = cp_model.CpSolver()
-        self._solver.parameters.max_time_in_seconds = 30
-        self._solver.parameters.num_search_workers = 8
         self._previous_solution = None
         self._previous_rectangles = []
 
@@ -71,9 +74,9 @@ class ObitaruSolver(GameSolver):
         for r in range(self._rows):
             for c in range(self._cols):
                 val = self._grid[r, c]
-                if val == self.White:
+                if val == self.white:
                     white_positions.append((r, c))
-                elif isinstance(val, int):
+                elif val != self.empty:
                     black_positions.append((r, c))
                     black_numbers[(r, c)] = val
 
@@ -124,7 +127,7 @@ class ObitaruSolver(GameSolver):
                         continue
                     nr, nc = r + dr, c + dc
                     if 0 <= nr < self._rows and 0 <= nc < self._cols:
-                        if self._grid[nr, nc] == self.White:
+                        if self._grid[nr, nc] == self.white:
                             neighbors.append((nr, nc))
             # The number should equal the count of white neighbors
             # This is a puzzle input validation, not a rectangle selection constraint

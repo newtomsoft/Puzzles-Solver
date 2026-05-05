@@ -1,16 +1,16 @@
 ﻿import unittest
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Obitaru.ObitaruSolver import ObitaruSolver
+from Domain.Puzzles.Obitaru.ObitaruSolver import ObitaruSolver, ObitaruCell
 
 _ = None
-W = 'w'
+W = ObitaruSolver.white
 
 
 class ObitaruSolverTests(unittest.TestCase):
     def test_obitaru_5x5_easy_37py9(self):
         """https://gridpuzzle.com/obitaru/37py9"""
-        grid = Grid([
+        grid = Grid[ObitaruCell]([
             [_, W, _, _, W],
             [W, _, W, _, _],
             [_, _, _, 2, _],
