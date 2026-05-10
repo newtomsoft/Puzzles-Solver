@@ -33,10 +33,8 @@ Thumbs.db
 # Project specific
 /GridProviders/Linkedin/QueensGridProvider.ini
 /GridProviders/Linkedin/ZipGridProvider.ini
-/GridProviders/Browsers/Chromium/*
-!/GridProviders/Browsers/Chromium/extensions/
-/GridProviders/Browsers/Firefox/*
-!/GridProviders/Browsers/Firefox/extensions/
+/GridProviders/Browsers/Chromium/user
+/GridProviders/Browsers/Firefox/user
 /Run/videos/
 /videos/
 *.ini
@@ -63,3 +61,7 @@ Thumbs.db
 /build/
 /dist/BrowserExtension/node_modules
 BrowserExtension/node_modules/
+
+# Secrets
+client_secrets.json
+youtube_credentials.json
