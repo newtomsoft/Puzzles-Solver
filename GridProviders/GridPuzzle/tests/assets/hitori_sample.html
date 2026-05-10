@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="http://www.facebook.com/2008/fbml">
+<head>
+    <meta charset="utf-8"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1 , viewport-fit=cover, minimum-scale=1.0,maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>  4x4 Hitori Puzzles - Play Online | GridPuzzle</title>
+    <meta name="description" content="Challenge yourself with   4x4 Hitori puzzles. Solve online and track your time against other players!">
+    <meta name="keywords" content="Hitori (from Japanese &quot;Hitori ni shite kure&quot;; literally &quot;let me alone&quot;) is a type of logic puzzle. 4x4">
+    <link rel="shortcut icon" href="/static/fav/favicon64.ico">
+
+    <link rel="canonical" href="https://gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="zh-Hans" href="https://cn.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="zh-Hant" href="https://zh.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="en" href="https://gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="de" href="https://de.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="fr" href="https://fr.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="es" href="https://es.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="ru" href="https://ru.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="ja" href="https://jp.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="ko" href="https://ko.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="sv" href="https://sv.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="fi" href="https://fi.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="nl" href="https://nl.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="pt" href="https://pt.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="cs" href="https://cs.gridpuzzle.com/hitori/size-4" />
+    <link rel="alternate" hreflang="x-default" href="https://gridpuzzle.com/hitori/size-4" />
+    <meta property="og:url" content="https://gridpuzzle.com/hitori/size-4"/>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="  4x4 Hitori Puzzles - Play Online | GridPuzzle"/>
+    <meta property="og:description" content="Challenge yourself with   4x4 Hitori puzzles. Solve online and track your time against other players!"/>
+    <meta property="og:image" content="https://gridpuzzle.com/static/pztype/hitori/hitori_a320.png"/>
+    <meta property="og:site_name" content="gridpuzzle.com"/>
+    <meta property="og:image:alt" content=""/>
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/fav/logo_ico144.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/fav/logo_ico144.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/fav/logo_ico144.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/fav/logo_ico144.png" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-title" content="gridpuzzle.com">
+    <meta name="author" content="gridpuzzle.com">
+    <meta name="Copyright" content="gridpuzzle.com">
+    <meta name="ROBOTS" CONTENT="INDEX,FOLLOW">
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-K3JVG3MK');</script>
+    <!-- End Google Tag Manager -->
+    <link id="sweetalert" href="/static/js/plugins/sweetalert/sweetalert2.min.css" rel="stylesheet">
+    <link href="/static/js/spectrum/spectrum.min.css" rel="stylesheet">
+
+    <link href="/static/tabler/v1.4.0/tabler.min.css?v=98fd2ec8ac2fd8b0e15c1679a4a85e079f24cbcbb098c292b80b97e74ee62498c59a86a49c7d081b0e4954d89fc1d6b90422557dde06d92eec6a840cbb7ddfa0" rel="stylesheet"/>
+
+
+    <style>
+        :root,[data-bs-theme=light] {
+            --gp-black_cell_bg: #000;
+            --gp-black_cell_txt: #fff;
+            --gp-empty-cell-bg: #fff;
+            --gp-light: #ff9;
+        }
+        [data-bs-theme=dark], body[data-bs-theme=dark] [data-bs-theme=light] {
+            --gp-black_cell_bg: #242726;
+            --gp-black_cell_txt: #ccc;
+            --gp-empty-cell-bg: #7b889e;
+            --gp-light: #ff9;
+            --tblr-purple:#151f2c;
+            --tblr-green:#151f2c;
+            --tblr-pink:#151f2c;
+            --tblr-orange:#151f2c;
+            --tblr-yellow:#151f2c;
+            --tblr-lime:#151f2c;
+        }
+        .puzzle_main { display: grid; grid-template-columns: repeat(4,1fr); grid-gap: 1px; background-color: #666; border: 2px solid #000; margin: 30px auto; }
+        .pm_4 { width: 300px; height: 300px; }
+        .pm_5 { width: 300px; height: 300px; }
+        .pm_6 { width: 320px; height: 320px; }
+        .pm_7 { width: 350px; height: 350px; }
+        .pm_8 { width: 380px; height: 380px; }
+        .pm_9 { width: 450px;height: 450px;}
+        .pm_10 { width: 480px;height: 480px;}
+        .pm_12 { width: 520px; height: 520px;}
+        .pm_15 { width: 600px; height: 600px;}
+        @media only screen and (max-width: 768px) {
+            .puzzle_main {
+                margin: 6px auto;
+            }
+        }
+        .cell { display: flex; aspect-ratio: 1; cursor: pointer; font-size: 180%; justify-content: center; align-items: center; }
+        .gray { background-color: #aaa; }
+        .gray:hover {background-color: #e8e9eb; opacity: 0.9;}
+        .success {background: rgb(102, 255, 102)!important;}
+        .error {background-color: #ff6363!important;}
+        .white {background-color: #fff!important; color:#000;}
+        .white:hover { color: gray; }
+        .black {background-color: #000!important; color:gray;}
+        .black:hover {opacity: 0.9}
+    </style>
+
+</head>
+
+<body >
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K3JVG3MK"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="page">
+
+    <header class="navbar navbar-expand-md d-print-none" >
+        <div class="container-xl">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+                <a href="/">
+                    <img src="/static/img/logo.png" style="width: 120px;" alt="GridPuzzle.com" class="navbar-brand-image">
+                </a>
+            </div>
+            <div class="navbar-nav flex-row order-md-last">
+                <div class="d-flex">
+
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#Language" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                            <svg aria-label="Language" title="Language" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-world" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                                <path d="M3.6 9h16.8"></path>
+                                <path d="M3.6 15h16.8"></path>
+                                <path d="M11.5 3a17 17 0 0 0 0 18"></path>
+                                <path d="M12.5 3a17 17 0 0 1 0 18"></path>
+                            </svg>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="https://gridpuzzle.com">English</a>
+                            <a class="dropdown-item" href="https://cn.gridpuzzle.com">&#x7B80;&#x4F53;&#x4E2D;&#x6587;</a>
+                            <a class="dropdown-item" href="https://zh.gridpuzzle.com">&#x7E41;&#x4F53;&#x4E2D;&#x6587;</a>
+                            <a class="dropdown-item" href="https://jp.gridpuzzle.com">&#x65E5;&#x672C;&#x8A9E;</a>
+                            <a class="dropdown-item" href="https://de.gridpuzzle.com">Deutsch</a>
+                            <a class="dropdown-item" href="https://fr.gridpuzzle.com">Français</a>
+                            <a class="dropdown-item" href="https://es.gridpuzzle.com">Español</a>
+                            <a class="dropdown-item" href="https://ru.gridpuzzle.com">Русский язык</a>
+                            <a class="dropdown-item" href="https://ko.gridpuzzle.com">한국어</a>
+                            <a class="dropdown-item" href="https://fi.gridpuzzle.com">Suomi</a>
+                            <a class="dropdown-item" href="https://sv.gridpuzzle.com">Svenska</a>
+                            <a class="dropdown-item" href="https://nl.gridpuzzle.com">Nederlands</a>
+                            <a class="dropdown-item" href="https://pt.gridpuzzle.com">Português</a>
+                            <a class="dropdown-item" href="https://cs.gridpuzzle.com">Čeština</a>
+                            <a class="dropdown-item" href="https://hi.gridpuzzle.com">हिंदी</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown d-none d-md-flex me-3">
+                        <a href="#" class="nav-link px-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" tabindex="-1" aria-label="Show notifications">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                            <span class="badge bg-purple"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-item dropdown">
+
+                    <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                        <span class="avatar avatar-sm" >ne</span>
+
+                        <div class="d-none d-xl-block ps-2 text-truncate" style="max-width: 60px;">
+                            <div>newtom</div>
+
+                        </div>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                        <a href="/my/solved" class="dropdown-item">My Solved & Replays</a>
+                        <a href="/my/unsolved" class="dropdown-item">My Unsolved Puzzles</a>
+                        <a href="/my/history" class="dropdown-item">My History</a>
+                        <a href="/my/relay" class="dropdown-item">My Help Requests</a>
+
+
+                        <div class="dropdown-divider"></div>
+                        <a href="/user/me" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3e3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-user"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg> Profile</a>
+                        <a href="/setting/profile" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3e3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg> Settings</a>
+                        <a href="/logout" class="dropdown-item"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3e3838" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-logout"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" /><path d="M9 12h12l-3 -3" /><path d="M18 15l3 -3" /></svg> Log Out</a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <div class="d-flex flex-column flex-md-row flex-fill align-items-stretch align-items-md-center">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/" >
+<span class="nav-link-title">
+Home
+</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown" id="sudoku_puzzles">
+                            <a class="nav-link dropdown-toggle" href="/sudoku-puzzles" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+<span class="nav-link-title">
+Sudoku
+</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-menu-columns">
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Classic Sudoku" href="/sudoku" >Classic Sudoku</a>
+
+                                        <a class="dropdown-item" title="Evil sudoku" href="/evil-sudoku" >Evil sudoku</a>
+
+                                        <a class="dropdown-item" title="Sudoku for kids" href="/sudoku4x4" >Sudoku for kids</a>
+
+                                        <a class="dropdown-item" title="sudoku 6x6" href="/sudoku6x6" >sudoku 6x6</a>
+
+                                        <a class="dropdown-item" title="sudoku 8x8" href="/sudoku8x8" >sudoku 8x8</a>
+
+                                        <a class="dropdown-item" title="Sudoku 17 clues" href="/sudoku-17-clues" >Sudoku 17 clues</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Diagonal sudoku" href="/diagonal-sudoku" >Diagonal sudoku</a>
+
+                                        <a class="dropdown-item" title="Anti-King sudoku" href="/anti-king-sudoku" >Anti-King sudoku</a>
+
+                                        <a class="dropdown-item" title="Anti-knight Sudoku" href="/anti-knight-sudoku" >Anti-knight Sudoku</a>
+
+                                        <a class="dropdown-item" title="Center Dot Sudoku" href="/center-dot-sudoku" >Center Dot Sudoku</a>
+
+                                        <a class="dropdown-item" title="Asterisk Sudoku" href="/asterisk-sudoku" >Asterisk Sudoku</a>
+
+                                        <a class="dropdown-item" title="Hyper Sudoku" href="/windoku" >Hyper Sudoku</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Jigsaw sudoku" href="/jigsaw-sudoku" >Jigsaw sudoku</a>
+
+                                        <a class="dropdown-item" title="Even-Odd Sudoku" href="/even-odd-sudoku" >Even-Odd Sudoku</a>
+
+                                        <a class="dropdown-item" title="Kropki Sudoku" href="/kropki-sudoku" >Kropki Sudoku</a>
+
+                                        <a class="dropdown-item" title="Sudoku XV" href="/vx-sudoku" >Sudoku XV</a>
+
+                                        <a class="dropdown-item" title="Consecutive Sudoku" href="/consecutive-sudoku" >Consecutive Sudoku</a>
+
+                                        <a class="dropdown-item" title="Skyscraper sudoku" href="/skyscraper-sudoku" >Skyscraper sudoku</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Killer sudoku" href="/killer-sudoku" >Killer sudoku</a>
+
+                                        <a class="dropdown-item" title="Sandwich sudoku" href="/sandwich-sudoku" >Sandwich sudoku</a>
+
+                                        <a class="dropdown-item" title="Vudoku Sudoku" href="/vsudoku" >Vudoku Sudoku</a>
+
+                                        <a class="dropdown-item" title="Outside Sudoku" href="/outside-sudoku" >Outside Sudoku</a>
+
+                                        <a class="dropdown-item" title="Greater Than Sudoku" href="/gtsudoku9x9" >Greater Than Sudoku</a>
+
+                                        <a class="dropdown-item" title="Rossini Sudoku" href="/rossini-sudoku" >Rossini Sudoku</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Twin Corresponding Sudoku" href="/twin-sudoku" >Twin Corresponding Sudoku</a>
+
+                                        <a class="dropdown-item" title="Twin Corresponding Diagonal Sudoku" href="/twin-xsudoku" >Twin Corresponding Diagonal Sudoku</a>
+
+                                        <a class="dropdown-item" title="Twin Corresponding Jigsaw Sudoku" href="/twin-jigsaw" >Twin Corresponding Jigsaw Sudoku</a>
+
+                                        <a class="dropdown-item" title="Twin Corresponding Hyper Sudoku" href="/twin-windoku" >Twin Corresponding Hyper Sudoku</a>
+
+                                        <a class="dropdown-item" title="Twin Corresponding Cener dot Sudoku" href="/twin-center-dot" >Twin Corresponding Cener dot Sudoku</a>
+
+                                        <a class="dropdown-item" title="Twin Corresponding Jigsaw Hyper Sudoku" href="/twin-jigsaw-windoku" >Twin Corresponding Jigsaw Hyper Sudoku</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" title="Butterfly Sudoku" href="/butterfly-sudoku" >Butterfly Sudoku</a>
+
+                                        <a class="dropdown-item" title="Cross Sudoku" href="/cross-sudoku" >Cross Sudoku</a>
+
+                                        <a class="dropdown-item" title="Flower Sudoku" href="/flower-sudoku" >Flower Sudoku</a>
+
+                                        <a class="dropdown-item" title="Samurai Sudoku" href="/samurai-sudoku" >Samurai Sudoku</a>
+
+                                        <a class="dropdown-item" title=" Kazaguruma Sudoku" href="/windmill-sudoku" > Kazaguruma Sudoku</a>
+
+                                        <a class="dropdown-item" href="/sudoku-puzzles" style="color:red">Sudoku ...</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown" id="logic_puzzles">
+                            <a class="nav-link dropdown-toggle" href="/logic-puzzles" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+<span class="nav-link-title">
+Logic Puzzles
+</span>
+                            </a>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-menu-columns">
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" href="/calcudoku" >Calcudoku</a>
+
+                                        <a class="dropdown-item" href="/futoshiki" >Futoshiki</a>
+
+                                        <a class="dropdown-item" href="/kakuro" >Kakuro</a>
+
+                                        <a class="dropdown-item" href="/str8ts" >Str8ts</a>
+
+                                        <a class="dropdown-item" href="/sutoreto" >Sutoreto</a>
+
+                                        <a class="dropdown-item" href="/skyscrapers" >Skyscrapers</a>
+
+                                        <a class="dropdown-item" href="/easy-as-abc" >Easy as ABC</a>
+
+                                        <a class="dropdown-item" href="/signin" >Sign In</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" href="/tents" >Tents</a>
+
+                                        <a class="dropdown-item" href="/bridges" >Hashi</a>
+
+                                        <a class="dropdown-item" href="/fourwinds" >Four Winds</a>
+
+                                        <a class="dropdown-item" href="/lightup" >Light up</a>
+
+                                        <a class="dropdown-item" href="/fillomino" >Fillomino</a>
+
+                                        <a class="dropdown-item" href="/nurikabe" >Nurikabe</a>
+
+                                        <a class="dropdown-item" href="/irasuto" >Irasuto</a>
+
+                                        <a class="dropdown-item" href="/hitori" >Hitori</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" href="/battleships" >Battleships</a>
+
+                                        <a class="dropdown-item" href="/lighthouses" >Lighthouses</a>
+
+                                        <a class="dropdown-item" href="/battleships-minesweeper" >Battleships minesweeper</a>
+
+                                        <a class="dropdown-item" href="/tapa" >Tapa</a>
+
+                                        <a class="dropdown-item" href="/heyawake" >Heyawake</a>
+
+                                        <a class="dropdown-item" href="/kuroshuto" >Kuroshuto</a>
+
+                                        <a class="dropdown-item" href="/look-air" >Look-Air</a>
+
+                                        <a class="dropdown-item" href="/minesweeper" >Minesweeper</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" href="/pure-loop" >Pure Loop</a>
+
+                                        <a class="dropdown-item" href="/pipelink" >Pipelink</a>
+
+                                        <a class="dropdown-item" href="/masyu" >Masyu</a>
+
+                                        <a class="dropdown-item" href="/slitherlink" >Slitherlink</a>
+
+                                        <a class="dropdown-item" href="/shikaku" >Shikaku</a>
+
+                                        <a class="dropdown-item" href="/traffic-lights" >Traffic lights</a>
+
+                                        <a class="dropdown-item" href="/tatamibari" >Tatamibari</a>
+
+                                        <a class="dropdown-item" href="/yokibunkatsu" >Container Division</a>
+
+                                    </div>
+                                    <div class="dropdown-menu-column">
+
+                                        <a class="dropdown-item" href="/aquarium" >Aquarium</a>
+
+                                        <a class="dropdown-item" href="/yajikabe" >Yajikabe</a>
+
+                                        <a class="dropdown-item" href="/tilepaint" >Tile Paint</a>
+
+                                        <a class="dropdown-item" href="/starbattle" >Star Battle</a>
+
+                                        <a class="dropdown-item" href="/creek" >Creek</a>
+
+                                        <a class="dropdown-item" href="/squaro" >SquarO</a>
+
+                                        <a class="dropdown-item" href="/no-four-in-row" >No Four in a Row</a>
+
+                                        <a class="dropdown-item" href="/logic-puzzles" style="color:red">Logic Puzzles ...</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link " href="/multiplayer">
+                                <!-- badge-blink -->
+                                <span class="nav-link-icon d-md-none d-lg-inline-block text-purple">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-vs"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M2 12c0 5.523 4.477 10 10 10s10 -4.477 10 -10s-4.477 -10 -10 -10s-10 4.477 -10 10" /><path d="M14 14.25c0 .414 .336 .75 .75 .75h1.25a1 1 0 0 0 1 -1v-1a1 1 0 0 0 -1 -1h-1a1 1 0 0 1 -1 -1v-1a1 1 0 0 1 1 -1h1.25a.75 .75 0 0 1 .75 .75" /><path d="M7 9l2 6l2 -6" /></svg>
+</span>
+                                <span class="nav-link-title position-relative text-purple">
+<span class="badge bg-purple badge-notification"></span>
+Multiplayer</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/replay">
+<span class="nav-link-icon d-md-none d-lg-inline-block text-primary">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-refresh-dot"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
+</span>
+                                <span class="nav-link-title">Replays</span></a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/relay">
+<span class="nav-link-icon d-md-none d-lg-inline-block text-red">
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icons-tabler-outline icon-tabler-heart-handshake" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /><path d="M12 6l-3.293 3.293a1 1 0 0 0 0 1.414l.543 .543c.69 .69 1.81 .69 2.5 0l1 -1a3.182 3.182 0 0 1 4.5 0l2.25 2.25" /><path d="M12.5 15.5l2 2" /><path d="M15 13l2 2" /></svg>
+</span>
+                                <span class="nav-link-title text-red">Community Relay </span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <script type="text/javascript">
+        $(function (){
+            $("#logic_puzzles").click(function (){
+                location.href = '/logic-puzzles';
+            });
+            $("#sudoku_puzzles").click(function (){
+                location.href = '/sudoku-puzzles';
+            });
+        });
+    </script>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+
+        <div class="offcanvas-body" id="offcanvasRightBody" >
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-stacked">
+                        <div class="card-body">
+                            <div class="row">
+
+                                <div class="col-6">
+                                    <a href="/context">
+                                        <img data-src="/static/pztype/context/context_a.png" src="/static/img/spinner3.png" class="lazyload" title="Context" alt="Context" width="98%">
+                                    </a>
+                                    <h3><a href="/context">Context</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/from1tox">
+                                        <img data-src="/static/pztype/x001/frox_a.png" src="/static/img/spinner3.png" class="lazyload" title="From 1 To X" alt="From 1 To X" width="98%">
+                                    </a>
+                                    <h3><a href="/from1tox">From 1 To X</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/araf">
+                                        <img data-src="/static/pztype/puzzles/araf_a.png" src="/static/img/spinner3.png" class="lazyload" title="Araf" alt="Araf" width="98%">
+                                    </a>
+                                    <h3><a href="/araf">Araf</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/kropki-sudoku">
+                                        <img data-src="/static/pztype/kropki9x9/q320.png" src="/static/img/spinner3.png" class="lazyload" title="Kropki Sudoku" alt="Kropki Sudoku" width="98%">
+                                    </a>
+                                    <h3><a href="/kropki-sudoku">Kropki Sudoku</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/tatamibari">
+                                        <img data-src="/static/pztype/puzzles/tatamibari_a.png" src="/static/img/spinner3.png" class="lazyload" title="Tatamibari" alt="Tatamibari" width="98%">
+                                    </a>
+                                    <h3><a href="/tatamibari">Tatamibari</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/triple4">
+                                        <img data-src="/static/pztype/multi/triple4_q.png" src="/static/img/spinner3.png" class="lazyload" title="Triple Doku 2" alt="Triple Doku 2" width="98%">
+                                    </a>
+                                    <h3><a href="/triple4">Triple Doku 2</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/anti-knight-sudoku8x8">
+                                        <img data-src="/static/pztype/anti_knight8x8/q320.png" src="/static/img/spinner3.png" class="lazyload" title="Anti-knight Sudoku8x8" alt="Anti-knight Sudoku8x8" width="98%">
+                                    </a>
+                                    <h3><a href="/anti-knight-sudoku8x8">Anti-knight Sudoku8x8</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/miti">
+                                        <img data-src="/static/pztype/x001/miti_a.png" src="/static/img/spinner3.png" class="lazyload" title="Miti" alt="Miti" width="98%">
+                                    </a>
+                                    <h3><a href="/miti">Miti</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/diagonal-little-killer-sudoku">
+                                        <img data-src="/static/pztype/little_killerx/q320.png" src="/static/img/spinner3.png" class="lazyload" title="Diagonal Little Killer Sudoku" alt="Diagonal Little Killer Sudoku" width="98%">
+                                    </a>
+                                    <h3><a href="/diagonal-little-killer-sudoku">Diagonal Little Killer Sudoku</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/x-even-odd-sudoku-8x8">
+                                        <img data-src="/static/pztype/eos/eos8_x_q.png" src="/static/img/spinner3.png" class="lazyload" title="Diagonal Even-Odd Sudoku 8x8" alt="Diagonal Even-Odd Sudoku 8x8" width="98%">
+                                    </a>
+                                    <h3><a href="/x-even-odd-sudoku-8x8">Diagonal Even-Odd Sudoku 8x8</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/anti-king-x-rossini-sudoku">
+                                        <img data-src="/static/pztype/rossini/rossini_knightx_q.png" src="/static/img/spinner3.png" class="lazyload" title="Anti-knight Diagonal Rossini Sudoku" alt="Anti-knight Diagonal Rossini Sudoku" width="98%">
+                                    </a>
+                                    <h3><a href="/anti-king-x-rossini-sudoku">Anti-knight Diagonal Rossini Sudoku</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/Non-Consecutive-Sudoku">
+                                        <img data-src="/static/pztype/non_consecutive9x9/q320.png" src="/static/img/spinner3.png" class="lazyload" title="Non Consecutive Sudoku" alt="Non Consecutive Sudoku" width="98%">
+                                    </a>
+                                    <h3><a href="/Non-Consecutive-Sudoku">Non Consecutive Sudoku</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/anti-king-consecutive-sudoku-8x8">
+                                        <img data-src="/static/pztype/csd/csd8king_q.png" src="/static/img/spinner3.png" class="lazyload" title="Anti-King  Consecutive Sudoku 8x8" alt="Anti-King  Consecutive Sudoku 8x8" width="98%">
+                                    </a>
+                                    <h3><a href="/anti-king-consecutive-sudoku-8x8">Anti-King  Consecutive Sudoku 8x8</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/tapa-islands">
+                                        <img data-src="/static/pztype/tapa/tapa_islands_a.png" src="/static/img/spinner3.png" class="lazyload" title="Tapa Islands" alt="Tapa Islands" width="98%">
+                                    </a>
+                                    <h3><a href="/tapa-islands">Tapa Islands</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/tetoron">
+                                        <img data-src="/static/pztype/puzzles/tetoron_a.png" src="/static/img/spinner3.png" class="lazyload" title="Tetoron" alt="Tetoron" width="98%">
+                                    </a>
+                                    <h3><a href="/tetoron">Tetoron</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/vx-sudoku">
+                                        <img data-src="/static/pztype/vx-sudoku/q320.png" src="/static/img/spinner3.png" class="lazyload" title="Sudoku XV" alt="Sudoku XV" width="98%">
+                                    </a>
+                                    <h3><a href="/vx-sudoku">Sudoku XV</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/masyu">
+                                        <img data-src="/static/pztype/masyu/masyu_a320.png" src="/static/img/spinner3.png" class="lazyload" title="Masyu" alt="Masyu" width="98%">
+                                    </a>
+                                    <h3><a href="/masyu">Masyu</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/oases">
+                                        <img data-src="/static/pztype/x001/oases_a.png" src="/static/img/spinner3.png" class="lazyload" title="Oases" alt="Oases" width="98%">
+                                    </a>
+                                    <h3><a href="/oases">Oases</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/factorism">
+                                        <img data-src="/static/pztype/x001/factor_a.png" src="/static/img/spinner3.png" class="lazyload" title="Factorism" alt="Factorism" width="98%">
+                                    </a>
+                                    <h3><a href="/factorism">Factorism</a></h3>
+                                </div>
+
+                                <div class="col-6">
+                                    <a href="/hyper-consecutive-sudoku">
+                                        <img data-src="/static/pztype/csd/csd_win_q.png" src="/static/img/spinner3.png" class="lazyload" title="Hyper Consecutive Sudoku" alt="Hyper Consecutive Sudoku" width="98%">
+                                    </a>
+                                    <h3><a href="/hyper-consecutive-sudoku">Hyper Consecutive Sudoku</a></h3>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-wrapper">
+        <!-- page-header -->
+        <div class="container-xl">
+            <div class="page-header">
+                <div class="row align-items-center mw-100">
+                    <div class="col">
+
+                        <div class="mb-1">
+                            <ol class="breadcrumb" aria-label="breadcrumbs">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/logic-puzzles">Logic Puzzles</a></li>
+                                <li class="breadcrumb-item"><a href="/hitori">Hitori</a></li>
+
+                                <li class="breadcrumb-item"><a href="https://gridpuzzle.com/hitori/size-4">Hitori  #n031vz0</a></li>
+
+                            </ol>
+                        </div>
+
+                        <h1 class="page-title" style="margin-top: var(--tblr-spacer-4);">
+
+                            <span class="text-truncate">Hitori 4x4  </span>
+
+                        </h1>
+                    </div>
+                    <div class="col-auto">
+                        <div class="btn-list">
+                            <div id="btn_like" data-val="0" class="btn d-none d-md-inline-flex">
+<span id="btn_like_icon">
+
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-heart" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" /></svg>
+
+</span>
+                                Liked this puzzle!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end page-header -->
+        </div>
+        <!-- end page-header -->
+        <div class="page-body">
+            <div class="container-xl">
+                <div class="row row-cards" >
+                    <div class="col-lg-9 col-12" style="background-color: #fff; border-radius: 8px;">
+                        <div class="d-flex justify-content-around">
+                            <div >Puzzle ID: n031vz0</div>
+                            <div >Published on: <time datetime="2026-05-10">2026-05-10</time></div>
+                            <div >Rating: 4.8/5 (Based on the 1391 most recent ratings)</div>
+                        </div>
+                        <!-- main -->
+                        <div class="row mt-4 mb-3 d-sm-flex d-md-flex d-lg-flex">
+                            <nav class="nav nav-pills flex-sm-row d-sm-inline-flex d-md-inline-flex d-lg-inline-flex">
+                                <a class="flex-sm-fill nav-link justify-content-around active" href="/hitori/size-4">4x4</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-5">5x5</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-6">6x6</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-7">7x7</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-8">8x8</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-9">9x9</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-10">10x10</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-12">12x12</a>
+                                <a class="flex-sm-fill nav-link justify-content-around " href="/hitori/size-15">15x15</a>
+                            </nav>
+                            <!-- end level -->
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-12">
+                                <div id="puzzle" style="width: 100%; min-height: 450px;overflow: auto;">
+                                    <!-- puzzle -->
+                                    <div class="puzzle_main pm_4"><div id="c_1" class="cell gray" data-d="0" data-id="1" data-a="1">3</div><div id="c_2" class="cell gray" data-d="0" data-id="2" data-a="0">3</div><div id="c_3" class="cell gray" data-d="0" data-id="3" data-a="0">2</div><div id="c_4" class="cell gray" data-d="0" data-id="4" data-a="1">2</div><div id="c_5" class="cell gray" data-d="0" data-id="5" data-a="0">1</div><div id="c_6" class="cell gray" data-d="0" data-id="6" data-a="0">4</div><div id="c_7" class="cell gray" data-d="0" data-id="7" data-a="1">1</div><div id="c_8" class="cell gray" data-d="0" data-id="8" data-a="0">2</div><div id="c_9" class="cell gray" data-d="0" data-id="9" data-a="1">1</div><div id="c_10" class="cell gray" data-d="0" data-id="10" data-a="0">1</div><div id="c_11" class="cell gray" data-d="0" data-id="11" data-a="0">4</div><div id="c_12" class="cell gray" data-d="0" data-id="12" data-a="0">3</div><div id="c_13" class="cell gray" data-d="0" data-id="13" data-a="0">3</div><div id="c_14" class="cell gray" data-d="0" data-id="14" data-a="0">2</div><div id="c_15" class="cell gray" data-d="0" data-id="15" data-a="1">3</div><div id="c_16" class="cell gray" data-d="0" data-id="16" data-a="0">4</div></div>
+                                    <!-- end puzzle-main-->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-1"></div>
+                            <div class="col-10">
+                                <div class="d-flex justify-content-around">
+                                    <!--
+                                    <a href="#" class="btn btn-purple w-100" style="margin: auto 6px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle" width="24"
+                                    height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
+                                    <path d="M12 9h.01"/>
+                                    <path d="M11 12h1v4h1"/>
+                                    </svg>
+                                    提示
+                                    </a>
+                                    -->
+                                    <div id="btn-an" class="btn btn-green w-100 " style="margin: auto 6px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-viewfinder" width="24"
+                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/>
+                                            <path d="M12 3l0 4"/>
+                                            <path d="M12 21l0 -3"/>
+                                            <path d="M3 12l4 0"/>
+                                            <path d="M21 12l-3 0"/>
+                                            <path d="M12 12l0 .01"/>
+                                        </svg>
+                                        Show Answer
+                                    </div>
+                                    <div id="btn-restart" class="btn btn-pink w-100 d-sm-none d-md-none d-lg-block"
+                                         style="margin: auto 6px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh" width="24"
+                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                                            <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                                        </svg>
+                                        Reset
+                                    </div>
+                                    <div onclick="plz.undo();" class="btn btn-orange" style="margin: auto 6px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-back-up" width="24"
+                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 14l-4 -4l4 -4"/>
+                                            <path d="M5 10h11a4 4 0 1 1 0 8h-1"/>
+                                        </svg>
+                                    </div>
+                                    <div onclick="plz.redo();" class="btn btn-yellow " style="margin: auto 6px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-forward-up" width="24"
+                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M15 14l4 -4l-4 -4"/>
+                                            <path d="M19 10h-11a4 4 0 1 0 0 8h1"/>
+                                        </svg>
+                                    </div>
+                                    <div onclick="plz.check(true, true);" class="btn btn-green " style="margin: auto 6px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" width="24"
+                                             height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M5 12l5 5l10 -10"/>
+                                        </svg>
+                                    </div>
+
+                                    <!--
+                                    <a href="#" class="btn btn-teal w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-frame" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M4 17l16 0" /><path d="M7 4l0 16" /><path d="M17 4l0 16" /></svg>
+                                    规则
+                                    </a>
+                                    -->
+                                    <div id="btn_go_next" class="btn btn-cyan w-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-narrow-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M15 16l4 -4" /><path d="M15 8l4 4" /></svg>
+                                        New Puzzle
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end main -->
+                        <!-- $ -->
+                        <div class="row" style="margin: 30px auto 30px;">
+                            <div class="col-12">
+                                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5339286475788637"
+                                        crossorigin="anonymous"></script>
+                                <!-- gp_play_footer -->
+                                <ins class="adsbygoogle"
+                                     style="display:block"
+                                     data-ad-client="ca-pub-5339286475788637"
+                                     data-ad-slot="2245102612"
+                                     data-ad-format="auto"
+                                     data-full-width-responsive="true"></ins>
+                                <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                </script>
+                            </div>
+                        </div>
+                        <!-- end $ -->
+                        <!-- share -->
+                        <div class="row" style="margin: 30px auto 30px;">
+                            <div class="col-lg-7 col-md-8 col-sm-6 col-12">
+                                <div class="alert alert-info" style="display: block!important;">
+                                    <div style="position: absolute; top:0;right: 0; border-bottom-left-radius: 5px; -moz-border-radius-bottomleft:5px;
+border-bottom: solid 1px #23c6c8;border-left: solid 1px #23c6c8;background-color: #23c6c8; ">
+                                        <div id="btn_copy_txt" style="cursor: pointer;color:#fff; " data-clipboard-target="#share_url">
+                                            Copy & Share
+                                        </div>
+                                    </div>
+                                    <span style="font-weight: 400; font-size:120%">Share this puzzle with friends and family</span> <br>
+                                    <p id="share_url">Hitori() <a
+                                            href="https://gridpuzzle.com/hitori/31vz0">https://gridpuzzle.com/hitori/31vz0</a>
+                                    </p>
+
+                                    <!-- https://www.addtoany.com/ -->
+                                    <!-- AddToAny BEGIN -->
+                                    <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+                                        <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+                                        <a class="a2a_button_facebook"></a>
+                                        <a class="a2a_button_twitter"></a>
+                                        <a class="a2a_button_email"></a>
+                                        <a class="a2a_button_whatsapp"></a>
+                                        <a class="a2a_button_reddit"></a>
+                                    </div>
+                                    <script async src="https://static.addtoany.com/menu/page.js"></script>
+                                    <!-- AddToAny END -->
+
+                                </div>
+                            </div>
+                            <div class="col-lg-5 col-md-4 col-sm-6 col-12" style="text-align: center;">
+                                <div class="alert alert-warning" style="height: 80%; max-height: 90px;display: block!important;">
+                                    <a href="/hitori/rule">Hitori rules & tips</a>
+                                </div>
+                            </div>
+                            <!-- end share -->
+                        </div>
+
+                        <!-- end share -->
+                        <!-- result -->
+
+                        <div class="row" style="margin: 30px auto 30px;">
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h2 class="card-title text-truncate"><a href="/hitori/alltime-leaderboard" class="text-primary">Hitori Leaderboard</a></h2>
+                                    </div>
+                                    <div class="card-body p-0" style="min-height: 376px;">
+                                        <div class="card-tabs">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <a href="#tab-alltime" class="nav-link active" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5e5a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-2 icon-tabler icons-tabler-outline icon-tabler-calendar-time"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg> All-time
+                                                    </a></li>
+                                                <li class="nav-item" role="presentation">
+                                                    <a href="#tab-monthly" class="nav-link " data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5e5a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-2 icon-tabler icons-tabler-outline icon-tabler-calendar-month"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M8 14v4" /><path d="M12 14v4" /><path d="M16 14v4" /></svg> Monthly
+                                                    </a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <!-- Content of card #1 -->
+                                                <div id="tab-alltime" class="card tab-pane active show" role="tabpanel">
+                                                    <div class="card-body m-0 p-0">
+                                                        <div class="card-table table-responsive">
+                                                            <table class="table table-vcenter score_table table-hover" style="min-height:337px;">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w-1 rank_th">Rank</th>
+                                                                    <th>Player</th>
+                                                                    <th>Solved</th>
+                                                                    <th>Level</th>
+                                                                    <th>Score</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">1</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/maren-mcconnell" target="_blank">
+
+<span class="avatar avatar-list-xs bg-azure-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Maren McConnell</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">3627</td>
+                                                                    <td class="text-nowrap text-secondary ">26</td>
+                                                                    <td class="text-nowrap text-secondary ">153090</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">2</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/z7orgq" target="_blank">
+
+<span class="avatar avatar-list-xs bg-indigo-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Тамара Коробчану</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">231</td>
+                                                                    <td class="text-nowrap text-secondary ">10</td>
+                                                                    <td class="text-nowrap text-secondary ">7420</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">3</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/admin" target="_blank">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/0/g2mnq_s.jpg?t=5439" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                admin</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">163</td>
+                                                                    <td class="text-nowrap text-secondary ">8</td>
+                                                                    <td class="text-nowrap text-secondary ">3715</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">4</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/azare" target="_blank">
+
+<span class="avatar avatar-list-xs bg-pink-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Azare</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">123</td>
+                                                                    <td class="text-nowrap text-secondary ">8</td>
+                                                                    <td class="text-nowrap text-secondary ">3575</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">5</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/randyran" target="_blank">
+
+<span class="avatar avatar-list-xs bg-red-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Randy Ran</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">54</td>
+                                                                    <td class="text-nowrap text-secondary ">5</td>
+                                                                    <td class="text-nowrap text-secondary ">1212</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">6</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/xiao" target="_blank">
+
+<span class="avatar avatar-list-xs bg-orange-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                xiao</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">50</td>
+                                                                    <td class="text-nowrap text-secondary ">5</td>
+                                                                    <td class="text-nowrap text-secondary ">1171</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">7</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/kyl3gz" target="_blank">
+
+<span class="avatar avatar-list-xs bg-yellow-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                地地虎</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">16</td>
+                                                                    <td class="text-nowrap text-secondary ">4</td>
+                                                                    <td class="text-nowrap text-secondary ">800</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">8</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/leah" target="_blank">
+
+<span class="avatar avatar-list-xs bg-lime-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Leah</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">15</td>
+                                                                    <td class="text-nowrap text-secondary ">4</td>
+                                                                    <td class="text-nowrap text-secondary ">750</td>
+                                                                </tr>
+
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">
+                                                                        ...
+                                                                    </td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">...</div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">...</td>
+                                                                    <td class="text-nowrap text-secondary">...</td>
+                                                                    <td class="text-nowrap text-secondary">...</td>
+                                                                </tr>
+                                                                <tr class="bg-orange-lt">
+                                                                    <td class="w-1 rank_txt text-warning">30</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate text-warning">
+                                                                            <a href="/user/newtom" target="_blank">
+
+<span class="avatar avatar-list-xs bg-teal-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                newtom</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary text-warning">3</td>
+                                                                    <td class="text-nowrap text-secondary text-warning">2</td>
+                                                                    <td class="text-nowrap text-secondary text-warning">48</td>
+                                                                </tr>
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Content of card #2 -->
+                                                <div id="tab-monthly" class="card tab-pane " role="tabpanel">
+                                                    <div class="card-body m-0 p-0">
+                                                        <div class="card-table table-responsive">
+                                                            <table class="table table-vcenter score_table table-hover" style="min-height:337px;">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w-1 rank_th">Rank</th>
+                                                                    <th>Player</th>
+                                                                    <th>Solved</th>
+                                                                    <th>Level</th>
+                                                                    <th>Score</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">1</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/congtouya" target="_blank">
+
+<span class="avatar avatar-list-xs bg-azure-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                CongtouYa</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">23</td>
+                                                                    <td class="text-nowrap text-secondary ">3</td>
+                                                                    <td class="text-nowrap text-secondary ">360</td>
+                                                                </tr>
+
+                                                                <tr class="">
+                                                                    <td class="w-1 rank_txt ">2</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate ">
+                                                                            <a href="/user/randyran" target="_blank">
+
+<span class="avatar avatar-list-xs bg-indigo-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Randy Ran</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary ">7</td>
+                                                                    <td class="text-nowrap text-secondary ">2</td>
+                                                                    <td class="text-nowrap text-secondary ">120</td>
+                                                                </tr>
+
+
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!--end card-tabs-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-12">
+                                <div class="card" style="height: 435px">
+                                    <div class="card-header">
+                                        <h2 class="card-title">Recent Hitori Solves</h2>
+                                    </div>
+                                    <div class="card-body card-body-scrollable card-body-scrollable-shadow">
+                                        <div class="divide-y">
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-azure-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#82m5e) in 43''. <span class="text-secondary">(17m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-indigo-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#56vqw) in 50''. <span class="text-secondary">(17m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-purple-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#56mx8) in 43''. <span class="text-secondary">(18m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-pink-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#21rd8) in 1'3''. <span class="text-secondary">(19m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-red-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#0xndw) in 42''. <span class="text-secondary">(20m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-orange-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#0x551) in 44''. <span class="text-secondary">(21m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-yellow-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#kd211) in 49''. <span class="text-secondary">(22m ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-lime-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 4x4 puzzle (#oyvw6) in 5'53''. <span class="text-secondary">(21h ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-green-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#j8ny5) in 59''. <span class="text-secondary">(23h ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-auto">
+
+<span class="avatar avatar-list-xs bg-teal-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                </div>
+                                                <div class="col">
+                                                    Guest solved a 8x8 puzzle (#ekq72) in 54''. <span class="text-secondary">(23h ago)</span>
+
+                                                    <span data-bs-toggle="tooltip" data-bs-placement="top" title="Played on Mobile"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e77d04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-device-mobile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /><path d="M11 4h2" /><path d="M12 17v.01" /></svg></span>
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end result -->
+                        <!-- short rule & summary -->
+                        <div class="row" style="margin: 30px auto 30px;">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body" >
+                                        <h2 class="card-title">How to play Hitori</h2>
+                                        <div class="alert alert-info" style="display: block!important;">
+                                            <p><strong>Hitori rule</strong></p>
+                                            <ol>
+                                                <li>
+                                                    <p>Eliminate numbers until there are no duplicates in any row or column.</p>
+                                                </li>
+                                                <li>
+                                                    <p>Eliminate numbers by marking them in Black.</p>
+                                                </li>
+                                                <li>
+                                                    <p>Black squares can't touch horizontally or vertically (diagonally is ok).</p>
+                                                </li>
+                                                <li>
+                                                    <p>Any White square can be reached from every other (i.e. they are connected).</p>
+                                                </li>
+                                            </ol>
+                                        </div>
+                                        <div>Read more: <a href="/rule/hitori">Hitori rules & tips</a></div>
+                                        <p>
+                                        <p>Hitori (from Japanese &quot;Hitori ni shite kure&quot;; literally &quot;let me alone&quot;) is a type of logic puzzle.</p>
+                                        <p>Hitori is played on a grid of squares. At the beginning, each cell contains a number. The goal is to paint out some cells so that there are no duplicate numbers in any row or column, similar to the solved state of a Sudoku puzzle (except with black squares added to the grid).</p>
+                                        <p>Orthogonal connections are important as well; painted-out (black) cells cannot be connected orthogonally, and the other cells must be connected orthogonally in a single group (i.e. no two black squares can be adjacent to each other, and all un-painted squares must be connected, horizontally or vertically, to create a single shape).</p>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end short rule & summary -->
+
+                        <!-- books -->
+
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h3 class="card-title">Hitori Logic Puzzle Books</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+
+                                        <div class="col-6 mt-2">
+                                            <div class="card">
+                                                <div class="row row-0">
+                                                    <div class="col-3">
+                                                        <!-- Photo -->
+                                                        <img data-src="https://m.media-amazon.com/images/I/71LajzEeRQL._AC_UY436_FMwebp_QL65_.jpg" src="/static/img/spinner3.png" class="lazyload w-100 h-100 object-cover card-img-start" alt="HITORI 400 Shading Logic Based Puzzles - Easy To Extreme Difficulty - Fit For Puzzle Edition (Kindle Scribe Only) (GET FIT WITH LOGIC BASED PUZZLES)"
+                                                             style="height: 100%!important; width: 100%!important; ">
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">HITORI 400 Shading Logic Based Puzzles - Easy To Extreme Difficulty - Fit For Puzzle Edition (Kindle Scribe Only) (GET FIT WITH LOGIC BASED PUZZLES)</h4>
+                                                            <p class="text-secondary" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">eatures Of This Puzzle & Fitness Log Book:
+
+                                                                400 Logic Based Puzzles from VERY EASY to EXTREME difficulty
+                                                                Progressive increase in difficulty:
+                                                                Very Easy - Learn and get familiarized with the puzzle, relax
+                                                                Extreme - Hours of brain-teasing fun</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex justify-content-between"><a href="https://amzn.to/3JjKpej" target="_blank" rel="noopener">Buy From Amazon</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 mt-2">
+                                            <div class="card">
+                                                <div class="row row-0">
+                                                    <div class="col-3">
+                                                        <!-- Photo -->
+                                                        <img data-src="https://m.media-amazon.com/images/I/81JHuSTDoOL._AC_UY436_FMwebp_QL65_.jpg" src="/static/img/spinner3.png" class="lazyload w-100 h-100 object-cover card-img-start" alt="MENTAL GYM FOR ADULTS Vol.5 SHADING BRAIN GAMES VARIETY Includes: CLOUDS - HITORI - KUROMASU - MOCHIKORO - NORINORI - NURIKABE - TAPA - YAJIKABE (Kindle ... - Stimulating Brain Teasers Collection)"
+                                                             style="height: 100%!important; width: 100%!important; ">
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">MENTAL GYM FOR ADULTS Vol.5 SHADING BRAIN GAMES VARIETY Includes: CLOUDS - HITORI - KUROMASU - MOCHIKORO - NORINORI - NURIKABE - TAPA - YAJIKABE (Kindle ... - Stimulating Brain Teasers Collection)</h4>
+                                                            <p class="text-secondary" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">Mental Gym For Adults - Shading Games Variety Quest Vol. 5 is HERE and this time it brings you a collection of 8 different shade-in games that test your strategic and coloring skills.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex justify-content-between"><a href="https://amzn.to/3WRf9GB" target="_blank" rel="noopener">Buy From Amazon</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 mt-2">
+                                            <div class="card">
+                                                <div class="row row-0">
+                                                    <div class="col-3">
+                                                        <!-- Photo -->
+                                                        <img data-src="https://m.media-amazon.com/images/I/61-+LChf66L._AC_UY436_FMwebp_QL65_.jpg" src="/static/img/spinner3.png" class="lazyload w-100 h-100 object-cover card-img-start" alt="500 Variety Logic Puzzles: 500 Hard Adults Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino) (Activity Book Series)"
+                                                             style="height: 100%!important; width: 100%!important; ">
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">500 Variety Logic Puzzles: 500 Hard Adults Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino) (Activity Book Series)</h4>
+                                                            <p class="text-secondary" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">- 500 Hard Logic Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino).</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex justify-content-between"><a href="https://amzn.to/4ovpLXD" target="_blank" rel="noopener">Buy From Amazon</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-6 mt-2">
+                                            <div class="card">
+                                                <div class="row row-0">
+                                                    <div class="col-3">
+                                                        <!-- Photo -->
+                                                        <img data-src="https://m.media-amazon.com/images/I/714CS053EJL._AC_UY436_FMwebp_QL65_.jpg" src="/static/img/spinner3.png" class="lazyload w-100 h-100 object-cover card-img-start" alt="Activity Book: 500 Hard Logic Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino) (Brain Games for Adults Series)"
+                                                             style="height: 100%!important; width: 100%!important; ">
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">Activity Book: 500 Hard Logic Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino) (Brain Games for Adults Series)</h4>
+                                                            <p class="text-secondary" style="overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;-webkit-line-clamp: 3; text-overflow: ellipsis; ">500 Hard Logic Puzzles (Sudoku, Kakuro, Hitori, Minesweeper, Masyu, Suguru, Binary Puzzle, Slitherlink, Futoshiki, Fillomino).</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer d-flex justify-content-between"><a href="https://amzn.to/4qnI0QE" target="_blank" rel="noopener">Buy From Amazon</a>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- end books -->
+                        <!-- 相关题型 -->
+                        <div class="row" style="margin: 30px auto 30px;">
+                            <div class="col-lg-12">
+                                <h3>Recommended Puzzles</h3>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/renkatsu" title="Renkatsu">
+                                        <img data-src="/static/pztype/puzzles/renkatsu_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Renkatsu" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/renkatsu">Renkatsu</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/sum-skyscrapers-park" title="Sum skyscrapers parks">
+                                        <img data-src="/static/pztype/skyscrapers-park/sum-skyscrapers-park_a320.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Sum skyscrapers parks" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/sum-skyscrapers-park">Sum skyscrapers parks</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/thermometers" title="Thermometers">
+                                        <img data-src="/static/pztype/x001/thermometers1_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Thermometers" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/thermometers">Thermometers</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/haisu" title="Haisu">
+                                        <img data-src="/static/pztype/lines/haisu_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Haisu" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/haisu">Haisu</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/usowan" title="Usowan">
+                                        <img data-src="/static/pztype/usowan/usowan_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Usowan" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/usowan">Usowan</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/pure-loop" title="Pure Loop">
+                                        <img data-src="/static/pztype/lines/pureloop_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Pure Loop" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/pure-loop">Pure Loop</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/irupu" title="Irupu">
+                                        <img data-src="/static/pztype/puzzles/irupu_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Irupu" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/irupu">Irupu</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-3 col-6">
+                                <div class="card">
+                                    <a href="/cave" title="Corral">
+                                        <img data-src="/static/pztype/lines/corral_a.png" class="lazyload img-thumbnail card-img-top"
+                                             alt="Corral" src="/static/img/spinner3.png">
+                                    </a>
+                                    <div class="card-body" style="padding: 3px">
+                                        <h4 class="card-title"><a href="/cave">Corral</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- end 题型-->
+                        <div class="row" style="margin: 20px auto 20px;">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body" >
+                                        <h2 class="card-title">Solve Hitori – Interactive Logic Grids</h2>
+                                        <p>Test your IQ with <strong>Hitori</strong>, a captivating <strong>logic grid puzzle</strong>. <strong>GridPuzzle</strong> is your library for <strong>professional brain teasers</strong>, designed to sharpen your <strong>problem-solving skills</strong> and deductive reasoning.</p><p>Our <strong>Hitori online game</strong> is optimized for all browsers. If you enjoy <strong>brain games</strong> that challenge your strategy, start solving today! Track your progress and unlock new difficulty levels on the premier site for <strong>online logic training</strong>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end col-lg-9 -->
+                    <!-- start right -->
+                    <div class="col-lg-3 col-12" >
+
+                        <div class="card mb-3 border-0 shadow-sm overflow-hidden">
+                            <div class="card-cover bg-dark-lt text-center" style="background-image: url('/static/img/user_bg/2.webp'); height: 60px;">
+
+
+<span class="avatar avatar-lg avatar-rounded border-3 border-white mt-3 shadow bg-teal text-white">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                            </div>
+                            <div class="card-body text-center pt-4">
+                                <h2 class="mb-1"><a href="/user/newtom">newtom</a></h2>
+                                <div class="text-muted smaller mb-3">
+                                    <span class="badge bg-cyan-lt">Puzzle Novice (Lv.2)</span>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="h3 mb-0 d-flex align-items-center justify-content-center">
+                                        <span class="fw-bold me-1">3</span>
+                                        <span class="text-muted fw-normal small text-truncate" style="max-width: 150px;" title="Hitori">
+Solved <strong>Hitori</strong>
+</span>
+                                    </div>
+                                    <div class="smaller text-muted opacity-75 mt-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4e5097" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chart-area"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 19l16 0" /><path d="M4 15l4 -6l4 2l4 -5l4 4l0 5l-16 0" /></svg>
+
+
+                                        Avg. stats for <strong>4x4</strong>
+
+
+                                    </div>
+                                </div>
+                                <div class="bg-light-lt rounded-3 p-2 border border-dashed border-primary-subtle">
+
+                                    <div class="row g-0 mt-1">
+                                        <div class="col-4 border-end">
+                                            <div class="smaller text-muted" style="font-size: 0.55rem;cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Your average solving speed over the last 7 days.">7D Avg</div>
+                                            <div class="fw-bold text-info" style="font-size: 0.85rem;">01:54</div>
+                                        </div>
+                                        <div class="col-4 border-end">
+                                            <div class="smaller text-muted" style="font-size: 0.55rem;cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Your average solving speed over the last 30 days.">30D Avg</div>
+                                            <div class="fw-bold text-azure" style="font-size: 0.85rem;">01:54</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="smaller text-yellow opacity-75 " style="font-size: 0.55rem; cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Your fastest solve recorded in the past 7 days.">7D BEST</div>
+                                            <div class="fw-bold text-yellow" style="font-size: 0.85rem;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f2b50d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-crown"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4l4 -6" /></svg> 01:54</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-footer p-2 bg-light-lt">
+                                <div class="accordion accordion-flush" id="faq-metrics">
+                                    <div class="accordion-item bg-transparent">
+                                        <h4 class="accordion-header text-muted small">
+                                            <button class="accordion-button collapsed py-2 smaller text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#user-metric-desc">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-info-circle"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>How are these metrics calculated?
+                                            </button>
+                                        </h4>
+                                        <div id="user-metric-desc" class="accordion-collapse collapse">
+                                            <div class="accordion-body py-2 smaller text-muted">
+                                                <p><strong>Total Solves</strong>: Represents your all-time career total across <strong>all difficulty levels</strong> for this specific puzzle type. </p><p><strong>Avg. Metrics</strong>: A targeted benchmark based on your performance for the current <strong>Grid Size and Level</strong> within the <strong>past 6 months</strong>.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <script async
+                                                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5339286475788637"
+                                                crossorigin="anonymous"></script>
+                                        <!-- gp_right_main -->
+                                        <ins class="adsbygoogle"
+                                             style="display:block"
+                                             data-ad-client="ca-pub-5339286475788637"
+                                             data-ad-slot="8995425362"
+                                             data-ad-format="auto"
+                                             data-full-width-responsive="true"></ins>
+                                        <script>
+                                            (adsbygoogle = window.adsbygoogle || []).push({});
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <style type="text/css">
+                                .score_table th {padding: 5px!important;}
+                                .score_table td {padding: 5px!important;}
+                                .rank_txt {text-align: center;}
+                                .rank_th { overflow: hidden; max-width: 46px!important;}
+                            </style>
+                            <div class="col-12 mt-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title text-truncate"><a href="/leaderboard" class="text-primary">Leaderboards</a></h3>
+                                    </div>
+                                    <div class="card-body mb-0 p-0">
+                                        <div class="card-tabs">
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <a href="#tab-gp-monthly" class="nav-link active" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5e5a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-2 icon-tabler icons-tabler-outline icon-tabler-calendar-time"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M14 18a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg> Monthly
+                                                    </a></li>
+                                                <li class="nav-item" role="presentation">
+                                                    <a href="#tab-gp-alltime" class="nav-link" data-bs-toggle="tab" aria-selected="false" role="tab" tabindex="-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5e5a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon me-2 icon-tabler icons-tabler-outline icon-tabler-calendar-month"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M8 14v4" /><path d="M12 14v4" /><path d="M16 14v4" /></svg> All-time
+                                                    </a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <!-- Content of card #1 -->
+                                                <div id="tab-gp-monthly" class="card tab-pane active show" role="tabpanel">
+                                                    <div class="card-body m-0 p-0">
+                                                        <div class="card-table table-responsive">
+                                                            <table class="table table-vcenter score_table table-hover">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w-1 rank_th">Rank</th>
+                                                                    <th>Player</th>
+                                                                    <th>Level</th>
+                                                                    <th>Score</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">1</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/17841888816">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/q78oo_s.jpg?t=7609" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                Zykalai</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">11</td>
+                                                                    <td class="text-nowrap text-secondary">11115</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">2</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/superwaka">
+
+<span class="avatar avatar-list-xs bg-indigo-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                SuperWaka</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">10</td>
+                                                                    <td class="text-nowrap text-secondary">8798</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">3</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/qeynlk">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/vd9xd_s.jpg?t=3108" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                山也</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">10</td>
+                                                                    <td class="text-nowrap text-secondary">7830</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">4</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/henrim">
+
+<span class="avatar avatar-list-xs bg-pink-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                henrim</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">10</td>
+                                                                    <td class="text-nowrap text-secondary">7550</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">5</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/chenyao">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/2prnd_s.jpg?t=3408" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                chenyao</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">9</td>
+                                                                    <td class="text-nowrap text-secondary">5284</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">6</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/thingunbob">
+
+<span class="avatar avatar-list-xs bg-orange-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                thingunbob</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">8</td>
+                                                                    <td class="text-nowrap text-secondary">4569</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">7</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/zhanroyal">
+
+<span class="avatar avatar-list-xs bg-yellow-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                ZHanRoyal</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">8</td>
+                                                                    <td class="text-nowrap text-secondary">4515</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">8</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/newtom">
+
+<span class="avatar avatar-list-xs bg-lime-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                newtom</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">8</td>
+                                                                    <td class="text-nowrap text-secondary">4226</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">9</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/randyran">
+
+<span class="avatar avatar-list-xs bg-green-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Randy Ran</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">8</td>
+                                                                    <td class="text-nowrap text-secondary">3380</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">10</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/thomas-bentz">
+
+<span class="avatar avatar-list-xs bg-teal-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Thomas Bentz</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">7</td>
+                                                                    <td class="text-nowrap text-secondary">3349</td>
+                                                                </tr>
+
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Content of card #2 -->
+                                                <div id="tab-gp-alltime" class="card tab-pane" role="tabpanel">
+                                                    <div class="card-body m-0 p-0">
+                                                        <div class="card-table table-responsive">
+                                                            <table class="table table-vcenter score_table table-hover">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="w-1 rank_th">Rank</th>
+                                                                    <th>Player</th>
+                                                                    <th>Level</th>
+                                                                    <th>Score</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">1</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/maren-mcconnell">
+
+<span class="avatar avatar-list-xs bg-azure-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Maren McConnell</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">27</td>
+                                                                    <td class="text-nowrap text-secondary">176020</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">2</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/qx6jlq">
+
+<span class="avatar avatar-list-xs bg-indigo-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                邱顯彥</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">26</td>
+                                                                    <td class="text-nowrap text-secondary">155869</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">3</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/dobby-lei">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/2zj3j_s.jpg?t=7997" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                Dobby Lei</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">24</td>
+                                                                    <td class="text-nowrap text-secondary">118841</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">4</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/k1o6nz">
+
+<span class="avatar avatar-list-xs bg-pink-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Александр Лобуренко</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">24</td>
+                                                                    <td class="text-nowrap text-secondary">118737</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">5</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/zpy">
+
+<span class="avatar avatar-list-xs bg-red-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                ZPY</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">19</td>
+                                                                    <td class="text-nowrap text-secondary">53391</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">6</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/newtom">
+
+<span class="avatar avatar-list-xs bg-orange-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                newtom</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">18</td>
+                                                                    <td class="text-nowrap text-secondary">50797</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">7</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/q3g94z">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/vnwd1_s.jpg?t=9161" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                ice冰泪</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">18</td>
+                                                                    <td class="text-nowrap text-secondary">49283</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">8</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/azare">
+
+<span class="avatar avatar-list-xs bg-lime-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                Azare</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">18</td>
+                                                                    <td class="text-nowrap text-secondary">47291</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">9</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/17841888816">
+
+                                                                                <span class="avatar avatar-xs lazyload" data-src="/static/avatar/0/2/q78oo_s.jpg?t=7609" style="background-image: url(/static/img/spinner3.png)"> </span>
+
+                                                                                Zykalai</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">17</td>
+                                                                    <td class="text-nowrap text-secondary">42717</td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td class="w-1 rank_txt">10</td>
+                                                                    <td class="td-truncate">
+                                                                        <div class="text-truncate">
+                                                                            <a href="/user/rose">
+
+<span class="avatar avatar-list-xs bg-teal-lt">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon avatar-icon icon-2">
+<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+<path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path>
+</svg>
+</span>
+
+                                                                                rose</a></div>
+                                                                    </td>
+                                                                    <td class="text-nowrap text-secondary">17</td>
+                                                                    <td class="text-nowrap text-secondary">38541</td>
+                                                                </tr>
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><!--end card-tabs-->
+                                    </div>
+                                </div><!--end card -->
+                            </div>
+                            <!-- puzzle list -->
+                            <div class="col-lg-12 col-md-6 col-12 mt-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><a href="/sudoku-puzzles">Sudoku Puzzles</a></h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/irregular-x-skyscraper-sudoku-6x6" target="_blank" class="col-auto" title="Irregular Diagonal Skyscraper Sudoku 6x6">
+<span class="lazyload avatar" data-src="/static/pztype/skysdk/skysdk6jigsawx_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-danger"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/irregular-x-skyscraper-sudoku-6x6" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Irregular Diagonal Skyscraper Sudoku 6x6">Irregular Diagonal Skyscraper Sudoku 6x6</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/outside-sudoku" target="_blank" class="col-auto" title="Outside Sudoku">
+<span class="lazyload avatar" data-src="/static/pztype/outside9x9/q320.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-orange"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/outside-sudoku" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Outside Sudoku">Outside Sudoku</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/irregular-non-consecutive6-sudoku" target="_blank" class="col-auto" title="Irregular Non-Consecutive Sudoku 6x6">
+<span class="lazyload avatar" data-src="/static/pztype/non_consecutive6x6/ncsd6jigsaw_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-red"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/irregular-non-consecutive6-sudoku" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Irregular Non-Consecutive Sudoku 6x6">Irregular Non-Consecutive Sudoku 6x6</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/anti-king-irregular-even-odd-sudoku-8x8" target="_blank" class="col-auto" title="Anti-King Irregular Even-Odd Sudoku 8x8">
+<span class="lazyload avatar" data-src="/static/pztype/eos/eos8_jigsaw_king_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-teal"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/anti-king-irregular-even-odd-sudoku-8x8" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Anti-King Irregular Even-Odd Sudoku 8x8">Anti-King Irregular Even-Odd Sudoku 8x8</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/asterisk-x-kropki-sudoku" target="_blank" class="col-auto" title="Asterisk Diagonal Kropki Sudoku">
+<span class="lazyload avatar" data-src="/static/pztype/kropki/kropki9astx_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-lime"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/asterisk-x-kropki-sudoku" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Asterisk Diagonal Kropki Sudoku">Asterisk Diagonal Kropki Sudoku</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/x-even-odd-sudoku-6x6" target="_blank" class="col-auto" title="Diagonal Even-Odd Sudoku 6x6">
+<span class="lazyload avatar" data-src="/static/pztype/eos/eos6_x_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-purple"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/x-even-odd-sudoku-6x6" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Diagonal Even-Odd Sudoku 6x6">Diagonal Even-Odd Sudoku 6x6</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/anti-king-x-skyscraper-sudoku" target="_blank" class="col-auto" title="Anti-King Diagonal Skyscraper Sudoku">
+<span class="lazyload avatar" data-src="/static/pztype/skysdk/skysdk9kingx_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-teal"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/anti-king-x-skyscraper-sudoku" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Anti-King Diagonal Skyscraper Sudoku">Anti-King Diagonal Skyscraper Sudoku</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/anti-king-hyper-skyscraper-sudoku" target="_blank" class="col-auto" title="Anti-King Hyper Skyscraper Sudoku">
+<span class="lazyload avatar" data-src="/static/pztype/skysdk/skysdk9kingwin_q.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-blue"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/anti-king-hyper-skyscraper-sudoku" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Anti-King Hyper Skyscraper Sudoku">Anti-King Hyper Skyscraper Sudoku</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-6 col-12 mt-2">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><a href="/logic-puzzles">Logic Puzzles</a></h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/tapa-row" target="_blank" class="col-auto" title="Tapa Row">
+<span class="lazyload avatar" data-src="/static/pztype/tapa/tapa_row_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-teal"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/tapa-row" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Tapa Row">Tapa Row</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/wataridori" target="_blank" class="col-auto" title="Wataridori">
+<span class="lazyload avatar" data-src="/static/pztype/x001/wataridori_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-success"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/wataridori" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Wataridori">Wataridori</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/skyscrapers-park" target="_blank" class="col-auto" title="Skyscrapers parks">
+<span class="lazyload avatar" data-src="/static/pztype/skyscrapers-park/skyscrapers-park_a320.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-blue"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/skyscrapers-park" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Skyscrapers parks">Skyscrapers parks</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/moonsun" target="_blank" class="col-auto" title="Moonsun">
+<span class="lazyload avatar" data-src="/static/pztype/lines/moonsun_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-red"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/moonsun" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Moonsun">Moonsun</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/neighbours" target="_blank" class="col-auto" title="Neighbours">
+<span class="lazyload avatar" data-src="/static/pztype/puzzles/neighbours_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge "></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/neighbours" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Neighbours">Neighbours</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/lits" target="_blank" class="col-auto" title="LITS">
+<span class="lazyload avatar" data-src="/static/pztype/x001/lits_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-blue"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/lits" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="LITS">LITS</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/hamusando" target="_blank" class="col-auto" title="Hamusando">
+<span class="lazyload avatar" data-src="/static/pztype/x001/hamusando_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-danger"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/hamusando" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Hamusando">Hamusando</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-6">
+                                                <div class="row g-3 align-items-center">
+                                                    <a href="/tapa-diagonal-neighbors" target="_blank" class="col-auto" title="Tapa Diagonal Neighbors">
+<span class="lazyload avatar" data-src="/static/pztype/tapa/tapa_x_neighbors_a.png"
+      style="background-image: url('/static/img/spinner3.png')">
+<span class="badge bg-danger"></span></span>
+                                                    </a>
+                                                    <div class="col text-truncate">
+                                                        <a href="/tapa-diagonal-neighbors" target="_blank" class="text-reset d-block text-truncate"
+                                                           title="Tapa Diagonal Neighbors">Tapa Diagonal Neighbors</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row sticky-top mt-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <script async
+                                                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5339286475788637"
+                                                crossorigin="anonymous"></script>
+                                        <!-- gp_page_sticky -->
+                                        <ins class="adsbygoogle"
+                                             style="display:block"
+                                             data-ad-client="ca-pub-5339286475788637"
+                                             data-ad-slot="4218057009"
+                                             data-ad-format="auto"
+                                             data-full-width-responsive="true"></ins>
+                                        <script>
+                                            (adsbygoogle = window.adsbygoogle || []).push({});
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end right -->
+                </div><!-- end row-cards -->
+
+                <style type="text/css">
+                    .footer .list-inline-item {
+                        font-size: 0.9rem;
+                    }
+                    .footer a:hover {
+                        color: #007bff !important;
+                        text-decoration: underline !important;
+                    }
+                    @media (max-width: 576px) {
+                        .footer .list-inline-item {
+                            display: inline-block;
+                            margin-bottom: 5px;
+                        }
+                    }
+                </style>
+                <footer class="footer py-4 bg-light mt-4">
+                    <div class="container text-center">
+                        <ul class="list-inline mb-2">
+                            <li class="list-inline-item">
+                                <a href="/privacy" class="text-decoration-none text-muted">Privacy Policy</a>
+                            </li>
+                            <li class="list-inline-item mx-2 text-muted">·</li>
+                            <li class="list-inline-item">
+                                <a href="/terms" class="text-decoration-none text-muted">Terms of Service</a>
+                            </li>
+                            <li class="list-inline-item mx-2 text-muted">·</li>
+                            <li class="list-inline-item text-muted">
+                                Copyright &copy; 2026 <strong>Gridpuzzle</strong>
+                            </li>
+                        </ul>
+                        <p class="small text-muted mb-0">All Rights Reserved.</p>
+                    </div>
+                </footer>
+            </div><!-- end container-xl-->
+        </div><!-- end page-body-->
+    </div><!-- end page-wrapper-->
+
+</div>
+
+</body>
+
+</html>

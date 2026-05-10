@@ -1,12 +1,20 @@
 from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
+from GridPlayers.GridPuzzle.GridPuzzleHitoriPlayer import GridPuzzleHitoriPlayer
 from GridPlayers.PuzzlesMobile.PuzzleHitoriPlayer import PuzzleHitoriPlayer
 from GridPlayers.Vuqq.VuqqHitoriPlayer import VuqqHitoriPlayer
+from GridProviders.GridPuzzle.GridPuzzleHitoriGridProvider import GridPuzzleHitoriGridProvider
 from GridProviders.PuzzlesMobile.PuzzleHitoriGridProvider import PuzzleHitoriGridProvider
 from GridProviders.Vuqq.VuqqHitoriGridProvider import VuqqHitoriGridProvider
 from Run.GameRegistry import GameRegistry
 
 
 def register():
+    GameRegistry.register(
+        r"https://.*gridpuzzle\.com/hitori",
+        GridPuzzleHitoriGridProvider,
+        GridPuzzleHitoriPlayer
+    )(HitoriSolver)
+
     GameRegistry.register(
         r"https://.*\.puzzle-hitori\.com", 
         PuzzleHitoriGridProvider, 
