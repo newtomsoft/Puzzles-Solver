@@ -116,6 +116,7 @@ import Run.Games.TentaiShowConfig
 import Run.Games.TentsConfig
 import Run.Games.ThermometersConfig
 import Run.Games.TilePaintConfig
+import Run.Games.TraceNumbersConfig
 import Run.Games.TrilogyConfig
 import Run.Games.VectorsConfig
 import Run.Games.WamazuConfig
@@ -259,6 +260,7 @@ class UrlPatternMatcher:
         Run.Games.TentsConfig.register()
         Run.Games.ThermometersConfig.register()
         Run.Games.TilePaintConfig.register()
+        Run.Games.TraceNumbersConfig.register()
         Run.Games.TrilogyConfig.register()
         Run.Games.VectorsConfig.register()
         Run.Games.WamazuConfig.register()
