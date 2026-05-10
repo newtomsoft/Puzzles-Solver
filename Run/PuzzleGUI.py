@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import logging
 import os
@@ -5,6 +6,7 @@ import sys
 import threading
 import time
 import tkinter as tk
+from pathlib import Path
 from tkinter import messagebox, scrolledtext, ttk
 
 from Domain.Board.Grid import Grid
@@ -150,6 +152,31 @@ class PuzzleGUI:
         self.log_area.delete(1.0, tk.END)
         self.log_area.configure(state="disabled")
 
+    @staticmethod
+    def _find_latest_video():
+        candidates = [Path("videos"), Path(__file__).parent / "videos", Path(__file__).parent.parent / "videos"]
+        for video_dir in candidates:
+            if video_dir.exists():
+                videos = sorted(video_dir.glob("*.webm"), key=lambda p: p.stat().st_mtime, reverse=True)
+                if videos:
+                    return videos[0]
+        return None
+
+    def _propose_upload(self, video_path):
+        answer = messagebox.askyesno("Upload YouTube", f"Vidéo enregistrée : {video_path.name}\n\nVoulez-vous l'uploader sur YouTube ?")
+        if answer:
+            thread = threading.Thread(target=self._run_upload, args=(video_path,), daemon=True)
+            thread.start()
+
+    def _run_upload(self, video_path):
+        try:
+            from Run.UploadToYoutube import upload_video_file
+            asyncio.run(upload_video_file(video_path))
+        except ImportError:
+            print("UploadToYoutube non disponible.")
+        except Exception as e:
+            print(f"Erreur lors de l'upload : {e}")
+
     def start_solver(self):
         url = self.url_entry.get()
         if not url:
@@ -174,8 +201,6 @@ class PuzzleGUI:
             elif url == "tango":
                 url = "https://www.linkedin.com/games/tango"
 
-            import asyncio
-
             async def async_main():
                 factory = GameComponentFactory()
                 game_solver_class, data_game, game_player, browser_context, playwright = await factory.create_components_from_url(url)
@@ -196,6 +221,12 @@ class PuzzleGUI:
                         else:
                             await game_player.play(solution)
                         print("Execution complete.")
+
+                        video = PuzzleGUI._find_latest_video()
+                        if video:
+                            print(f"\nVidéo enregistrée : {video.name}")
+                            self.root.after(0, lambda v=video: self._propose_upload(v))
+
                         if hasattr(game_player, 'browser') and game_player.browser:
                             await game_player.browser.close()
                         if playwright:
