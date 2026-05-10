@@ -1,0 +1,135 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+  "manifest_version": 3,
+  "default_locale": "en",
+  "name": "NoScript",
+  "version": "13.5.2",
+  "description": "__MSG_Description__",
+  "incognito": "spanning",
+  "icons": {
+    "48": "img/icon48.png",
+    "96": "img/icon96.png",
+    "256": "img/icon256.png"
+  },
+  "permissions": [
+    "contextMenus",
+    "debugger",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "scripting",
+    "declarativeNetRequest",
+    "webNavigation",
+    "webRequest",
+    "dns"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "sw.js"
+  },
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "matches": [
+        "<all_urls>"
+      ],
+      "match_about_blank": true,
+      "match_origin_as_fallback": true,
+      "all_frames": true,
+      "js": [
+        "/nscl/lib/browser-polyfill.js",
+        "/nscl/common/UA.js",
+        "/nscl/common/uuid.js",
+        "/nscl/common/log.js",
+        "/nscl/common/SyncMessage.js",
+        "/nscl/common/Messages.js",
+        "/nscl/common/CSP.js",
+        "/nscl/common/CapsCSP.js",
+        "/nscl/common/RequestKey.js",
+        "/nscl/content/DocRewriter.js",
+        "/nscl/content/Worlds.js",
+        "/nscl/content/patchWorkers.js",
+        "/nscl/content/DocumentCSP.js",
+        "/nscl/content/NoscriptElements.js",
+        "/nscl/content/prefetchCSSResources.js",
+        "/nscl/content/PlaceHolder.js",
+        "/nscl/content/sanitizePaste.js",
+        "content/onScriptDisabled.js",
+        "content/staticNS.js",
+        "/nscl/content/media.js",
+        "/nscl/content/WasmHook.js",
+        "/nscl/content/WebGLHook.js",
+        "content/content.js",
+        "/nscl/content/DocumentFreezer.js",
+        "content/eventsHook.js",
+        "content/syncFetchPolicy.js"
+      ]
+    },
+    {
+      "run_at": "document_start",
+      "matches": [
+        "<all_urls>"
+      ],
+      "match_about_blank": true,
+      "match_origin_as_fallback": true,
+      "all_frames": true,
+      "world": "MAIN",
+      "js": [
+        "/nscl/main/uuid.js",
+        "/nscl/main/Worlds.js",
+        "/nscl/main/Worlds.main.js",
+        "/nscl/main/patchWorkers.main.js",
+        "/nscl/main/WasmHook.main.js",
+        "/nscl/main/WebGLHook.main.js",
+        "content/eventsHook.main.js",
+        "/nscl/main/prefetchCSSResources.main.js"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "/nscl/common/SyncMessage/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "options_ui": {
+    "page": "ui/options.html",
+    "open_in_tab": true
+  },
+  "action": {
+    "default_area": "navbar",
+    "default_title": "NoScript",
+    "default_icon": {
+      "64": "img/ui-maybe64.png"
+    }
+  },
+  "commands": {
+    "toggleEnforcementForTab": {
+      "description": "__MSG_toggleEnforcementForTab__",
+      "suggested_key": {
+        "default": "Alt+Shift+Space",
+        "windows": "Alt+Shift+Comma"
+      }
+    },
+    "openPageUI": {
+      "description": "__MSG_pagePermissionsUI__",
+      "suggested_key": {
+        "default": "Alt+Shift+N"
+      }
+    },
+    "tempTrustPage": {
+      "description": "__MSG_TempTrustPage__"
+    },
+    "revokeTemp": {
+      "description": "__MSG_RevokeTemp__"
+    },
+    "_execute_action": {}
+  }
+}
