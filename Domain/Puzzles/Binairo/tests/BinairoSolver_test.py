@@ -10,46 +10,15 @@ _ = -1
 class BinairoSolverTests(TestCase):
     def test_solution_grid_too_small(self):
         grid = Grid([
-            [_, _, _, _, _],
-            [_, _, 0, _, 0],
-            [1, _, _, _, _],
-            [_, _, _, _, _],
-            [0, 0, _, _, 0],
+            [_, _, _],
+            [_, 0, _],
+            [1, _, _],
         ])
 
         with self.assertRaises(ValueError) as context:
             BinairoSolver(grid)
 
-        self.assertEqual("Binairo grid must be at least 6x6", str(context.exception))
-
-    def test_solution_not_even_size_column(self):
-        grid = Grid([
-            [_, _, _, _, _, 0, _],
-            [_, _, 0, _, 0, _, _],
-            [1, _, _, _, _, _, _],
-            [_, _, _, _, _, _, _],
-            [0, 0, _, _, 0, _, _],
-            [_, _, _, _, _, _, _],
-        ])
-        with self.assertRaises(ValueError) as context:
-            BinairoSolver(grid)
-
-        self.assertEqual("Binairo grid must have an even number of rows/columns", str(context.exception))
-
-    def test_solution_not_even_size_row(self):
-        grid = Grid([
-            [_, _, _, _, _, 0],
-            [_, _, 0, _, 0, _],
-            [1, _, _, _, _, _],
-            [_, _, _, _, _, _],
-            [0, 0, _, _, 0, _],
-            [_, _, _, _, _, _],
-            [_, _, _, _, _, _],
-        ])
-        with self.assertRaises(ValueError) as context:
-            BinairoSolver(grid)
-
-        self.assertEqual("Binairo grid must have an even number of rows/columns", str(context.exception))
+        self.assertEqual("Binairo grid must be at least 4x4", str(context.exception))
 
     def test_solution_using_only_initial_constraint(self):
         grid = Grid([
@@ -257,6 +226,60 @@ class BinairoSolverTests(TestCase):
         self.assertEqual(expected_grid, solution)
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_9x9_expert_0y741(self):
+        grid = Grid([
+            [_, _, _, 0, _, 1, _, _, _],
+            [0, _, _, _, _, _, _, _, _],
+            [_, _, 0, _, _, _, _, 1, _],
+            [_, 1, 1, _, _, _, _, _, 0],
+            [_, 1, _, _, _, _, 0, _, _],
+            [_, _, 1, 0, _, _, _, _, _],
+            [_, 0, _, _, _, _, _, _, _],
+            [_, _, _, _, _, 1, _, _, _],
+            [_, _, 0, _, _, _, _, _, _],
+        ])
+        expected_grid = Grid([
+            [0, 1, 1, 0, 1, 1, 0, 1, 0],
+            [0, 0, 1, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 1, 1, 0, 0, 1, 1],
+            [0, 1, 1, 0, 1, 0, 1, 1, 0],
+            [1, 1, 0, 1, 0, 1, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 1, 1, 0],
+            [0, 0, 1, 1, 0, 1, 0, 1, 1],
+            [1, 1, 0, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 0, 1, 0, 1, 0, 1],
+        ])
+        game_solver = BinairoSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
+
+    def test_solution_9x9_evil_0y4kg(self):
+        grid = Grid([
+            [_, 0, _, _, 1, _, _, _, _],
+            [_, 0, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, 1, _, _],
+            [_, _, _, _, _, 0, _, 1, _],
+            [0, _, _, _, _, _, _, _, _],
+            [_, _, _, _, _, 0, 0, _, 1],
+            [_, _, _, _, _, _, _, _, _],
+            [_, _, _, 1, _, _, _, _, _],
+            [1, _, _, _, _, _, 0, _, _],
+        ])
+        expected_grid = Grid([
+            [1, 0, 0, 1, 1, 0, 1, 1, 0],
+            [0, 0, 1, 1, 0, 1, 0, 1, 1],
+            [0, 1, 1, 0, 0, 1, 1, 0, 1],
+            [1, 1, 0, 1, 1, 0, 0, 1, 0],
+            [0, 0, 1, 1, 0, 1, 1, 0, 1],
+            [1, 1, 0, 0, 1, 0, 0, 1, 1],
+            [0, 1, 1, 0, 1, 0, 1, 1, 0],
+            [1, 0, 1, 1, 0, 1, 1, 0, 0],
+            [1, 1, 0, 0, 1, 1, 0, 0, 1],
+        ])
+        game_solver = BinairoSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_grid, solution)
 
 
 if __name__ == '__main__':
