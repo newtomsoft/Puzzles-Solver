@@ -228,6 +228,7 @@ class BinairoSolverTests(TestCase):
         self.assertEqual(Grid.empty(), other_solution)
 
     def test_solution_9x9_expert_0y741(self):
+        """https://gridpuzzle.com/binairo/0y741"""
         grid = Grid([
             [_, _, _, 0, _, 1, _, _, _],
             [0, _, _, _, _, _, _, _, _],
@@ -255,6 +256,7 @@ class BinairoSolverTests(TestCase):
         self.assertEqual(expected_grid, solution)
 
     def test_solution_9x9_evil_0y4kg(self):
+        """https://gridpuzzle.com/binairo/0y4kg"""
         grid = Grid([
             [_, 0, _, _, 1, _, _, _, _],
             [_, 0, _, _, _, _, _, _, _],
