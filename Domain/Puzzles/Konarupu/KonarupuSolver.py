@@ -1,4 +1,5 @@
-from z3 import Solver, Not, And, Int, sat, Or, Sum, BoolRef
+from ortools.sat.python import cp_model
+from ortools.sat.python.cp_model import BoolVarT
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -15,8 +16,9 @@ class KonarupuSolver(GameSolver):
         self.input_grid = grid
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
-        self._solver = Solver()
-        self._island_bridges_z3: dict[Position, dict[Direction, any]] = {}
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._island_bridges_vars: dict[Position, dict[Direction, BoolVarT]] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
@@ -24,55 +26,77 @@ class KonarupuSolver(GameSolver):
             [[Island(Position(r, c), 2) for c in range(self.input_grid.columns_number + 1)] for r in range(self.input_grid.rows_number + 1)])
 
     def _init_solver(self):
-        self._island_bridges_z3 = {island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in
-                                   self._island_grid.islands.values()}
+        self._island_bridges_vars = {island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in
+                                     self._island_grid.islands.values()}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
-        if not self._solver.assertions():
+        if not self._model.Proto().variables:
             self._init_solver()
 
         solution, _ = self._ensure_all_islands_connected()
         return solution
 
-    def _ensure_all_islands_connected(self) -> tuple[Grid, int]:
+    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
+        while True:
+            status = self._solver.solve(self._model)
+            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+                return IslandGrid.empty(), proposition_count
+
             proposition_count += 1
-            for position, direction_bridges in self._island_bridges_z3.items():
-                for direction, bridges in direction_bridges.items():
-                    if position.after(direction) not in self._island_bridges_z3:
+            for position, direction_bridges in self._island_bridges_vars.items():
+                for direction, bridges_var in direction_bridges.items():
+                    if position.after(direction) not in self._island_bridges_vars:
                         continue
-                    bridges_number = model.eval(bridges).as_long()
-                    if bridges_number > 0:
-                        self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
-                    elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
+                    is_bridge = self._solver.boolean_value(bridges_var)
+                    if is_bridge:
+                        self._island_grid[position].set_bridge_to_position(
+                            self._island_grid[position].direction_position_bridges[direction][0], 1)
+                    elif direction in self._island_grid[position].direction_position_bridges:
                         self._island_grid[position].direction_position_bridges.pop(direction)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
+
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count
 
-            not_loop_constraints = []
+            block_literals = []
+            for position, direction_bridges in self._island_bridges_vars.items():
+                for direction, bridges_var in direction_bridges.items():
+                    if position.after(direction) not in self._island_bridges_vars:
+                        continue
+                    is_bridge = self._solver.boolean_value(bridges_var)
+                    if is_bridge:
+                        block_literals.append(bridges_var.negated())
+                    else:
+                        block_literals.append(bridges_var)
+            self._model.add_bool_or(block_literals)
+
             for positions in connected_positions:
-                cell_constraints = []
+                comp_literals = []
                 for position in positions:
                     for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
-                        cell_constraints.append(self._island_bridges_z3[position][direction] == value)
-                not_loop_constraints.append(Not(And(cell_constraints)))
-            self._solver.add(And(not_loop_constraints))
+                        var = self._island_bridges_vars[position][direction]
+                        if value == 1:
+                            comp_literals.append(var.negated())
+                        else:
+                            comp_literals.append(var)
+                self._model.add_bool_or(comp_literals)
+
             self._init_island_grid()
 
-        return IslandGrid.empty(), proposition_count
-
     def get_other_solution(self):
-        previous_solution_constraints = []
+        literals_for_disjunction = []
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
-                previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(Not(And(previous_solution_constraints)))
+                var = self._island_bridges_vars[island.position][direction]
+                if value == 1:
+                    literals_for_disjunction.append(var.negated())
+                else:
+                    literals_for_disjunction.append(var)
+        self._model.add_bool_or(literals_for_disjunction)
 
         self._init_island_grid()
         return self.get_solution()
@@ -84,60 +108,62 @@ class KonarupuSolver(GameSolver):
         self._add_numbers_constraints()
 
     def _add_initial_constraints(self):
-        constraints = [Or(direction_bridges == 0, direction_bridges == 1) for _island_bridges_z3 in self._island_bridges_z3.values() for direction_bridges in
-                       _island_bridges_z3.values()]
-        self._solver.add(constraints)
-        constraints_border_up = [self._island_bridges_z3[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
-        constraints_border_down = [self._island_bridges_z3[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in
-                                   range(self._island_grid.columns_number)]
-        constraints_border_right = [self._island_bridges_z3[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in
-                                    range(self._island_grid.rows_number)]
-        constraints_border_left = [self._island_bridges_z3[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
-        self._solver.add(constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left)
+        constraints = []
+        constraints += [self._island_bridges_vars[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
+        constraints += [self._island_bridges_vars[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in
+                        range(self._island_grid.columns_number)]
+        constraints += [self._island_bridges_vars[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in
+                        range(self._island_grid.rows_number)]
+        constraints += [self._island_bridges_vars[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
+        for constraint in constraints:
+            self._model.add(constraint)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(
-                        self._island_bridges_z3[island.position][direction] == self._island_bridges_z3[island.direction_position_bridges[direction][0]][
+                    self._model.add(
+                        self._island_bridges_vars[island.position][direction] == self._island_bridges_vars[island.direction_position_bridges[direction][0]][
                             direction.opposite])
                 else:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
+                    self._model.add(self._island_bridges_vars[island.position][direction] == 0)
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            sum0_constraint = sum([self._island_bridges_z3[island.position][direction] for direction in
-                                   [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 0
-            sum2_constraint = sum([self._island_bridges_z3[island.position][direction] for direction in
-                                   [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]) == 2
-            self._solver.add(Or(sum0_constraint, sum2_constraint))
+            b = self._island_bridges_vars[island.position]
+            bridge_sum = sum([b[direction] for direction in Direction.orthogonal_directions()])
+            self._model.add(bridge_sum != 1)
+            self._model.add(bridge_sum != 3)
+            self._model.add(bridge_sum != 4)
 
     def _add_numbers_constraints(self):
         for position, number in [(position, number) for position, number in self.input_grid if number != _]:
-            up_left_no_turn_constraint = self.corner_no_turn_constraint(self._island_bridges_z3[position])
-            down_left_no_turn_constraint = self.corner_no_turn_constraint(self._island_bridges_z3[position.down])
-            down_right_no_turn_constraint = self.corner_no_turn_constraint(self._island_bridges_z3[position.down_right])
-            up_right_no_turn_constraint = self.corner_no_turn_constraint(self._island_bridges_z3[position.right])
+            up_left_no_turn = self._create_no_turn_var(position, self._island_bridges_vars[position])
+            down_left_no_turn = self._create_no_turn_var(position.down, self._island_bridges_vars[position.down])
+            down_right_no_turn = self._create_no_turn_var(position.down_right, self._island_bridges_vars[position.down_right])
+            up_right_no_turn = self._create_no_turn_var(position.right, self._island_bridges_vars[position.right])
+            self._model.add(up_left_no_turn + down_left_no_turn + down_right_no_turn + up_right_no_turn == 4 - number)
 
-            self._solver.add(
-                Sum(up_left_no_turn_constraint, down_left_no_turn_constraint, down_right_no_turn_constraint, up_right_no_turn_constraint) == 4 - number
-            )
+    def _create_no_turn_var(self, position: Position, corner_directions_var: dict[Direction, BoolVarT]) -> BoolVarT:
+        up = corner_directions_var[Direction.up()]
+        down = corner_directions_var[Direction.down()]
+        left = corner_directions_var[Direction.left()]
+        right = corner_directions_var[Direction.right()]
 
-    def corner_no_turn_constraint(self, corner_directions_var: dict[Direction, int]) -> BoolRef:
-        corner_vertical = self.vertical_constraint(corner_directions_var)
-        corner_horizontal = self.horizontal_constraint(corner_directions_var)
-        corner_empty = self.empty_constraint(corner_directions_var)
-        return Or(corner_vertical, corner_horizontal, corner_empty)
+        vertical = self._model.new_bool_var(f"vertical_{position}")
+        self._model.add_bool_and([up, down]).only_enforce_if(vertical)
+        self._model.add_bool_or([up.negated(), down.negated()]).only_enforce_if(vertical.negated())
 
-    @staticmethod
-    def vertical_constraint(directions_var: dict[Direction, int]) -> BoolRef:
-        return And(directions_var[Direction.down()] == 1, directions_var[Direction.up()] == 1)
+        horizontal = self._model.new_bool_var(f"horizontal_{position}")
+        self._model.add_bool_and([left, right]).only_enforce_if(horizontal)
+        self._model.add_bool_or([left.negated(), right.negated()]).only_enforce_if(horizontal.negated())
 
-    @staticmethod
-    def horizontal_constraint(directions_var: dict[Direction, int]) -> BoolRef:
-        return And(directions_var[Direction.left()] == 1, directions_var[Direction.right()] == 1)
+        empty = self._model.new_bool_var(f"empty_{position}")
+        self._model.add_bool_and([up.negated(), down.negated(), left.negated(), right.negated()]).only_enforce_if(empty)
+        self._model.add_bool_or([up, down, left, right]).only_enforce_if(empty.negated())
 
-    @staticmethod
-    def empty_constraint(dir_var: dict[Direction, int]) -> BoolRef:
-        return And(dir_var[Direction.left()] == 0, dir_var[Direction.right()] == 0, dir_var[Direction.up()] == 0, dir_var[Direction.down()] == 0)
+        no_turn = self._model.new_bool_var(f"no_turn_{position}")
+        self._model.add_bool_or([vertical, horizontal, empty]).only_enforce_if(no_turn)
+        self._model.add_bool_and([vertical.negated(), horizontal.negated(), empty.negated()]).only_enforce_if(no_turn.negated())
+
+        return no_turn
