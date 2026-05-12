@@ -5,7 +5,6 @@ from ortools.sat.python import cp_model
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.ShapeGenerator import ShapeGenerator
 
 
 class TentaiShowSolver(GameSolver):
@@ -29,68 +28,13 @@ class TentaiShowSolver(GameSolver):
         if self._grid_vars is None:
             self._init_solver()
 
-        solution, _ = self._ensure_all_shapes_compliant()
-        self._previous_solution = solution
-        return solution
-
-    def _ensure_all_shapes_compliant(self) -> tuple[Grid, int]:
-        proposition_count = 0
         status = self._solver.solve(self._model)
-
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            proposition_count += 1
+            solution = Grid([[self._solver.value(self._grid_vars[Position(r, c)]) for c in range(self.columns_number)] for r in range(self.rows_number)])
+            self._previous_solution = solution
+            return solution
 
-            grid = Grid([[self._solver.value(self._grid_vars[Position(r, c)]) for c in range(self.columns_number)] for r in range(self.rows_number)])
-
-            circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
-            not_compliant_shapes = [(circle_value, shapes_positions) for (circle_value, shapes_positions) in circle_shapes.items() if len(shapes_positions) > 1]
-
-            while len(not_compliant_shapes) > 0:
-                for circle_value, shapes_positions in not_compliant_shapes:
-                    selected_circle_position = next(iter(self.circle_positions[circle_value].straddled_neighbors()))
-                    for shape_positions in shapes_positions:
-                        if selected_circle_position not in shape_positions:
-                            shape_literals = []
-                            for position in shape_positions:
-                                temp_var = self._model.new_bool_var(f"shape_{circle_value}_{position.r}_{position.c}")
-                                self._model.add(self._grid_vars[position] == circle_value).only_enforce_if(temp_var)
-                                self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(temp_var.Not())
-                                shape_literals.append(temp_var)
-
-                            around_literals = []
-                            for position in ShapeGenerator.around_shape(shape_positions):
-                                if position in grid:
-                                    temp_var = self._model.new_bool_var(f"around_{circle_value}_{position.r}_{position.c}")
-                                    self._model.add(self._grid_vars[position] == grid[position]).only_enforce_if(temp_var)
-                                    self._model.add(self._grid_vars[position] != grid[position]).only_enforce_if(temp_var.Not())
-                                    around_literals.append(temp_var)
-
-                            if shape_literals and around_literals:
-                                all_shape = self._model.new_bool_var(f"all_shape_{circle_value}")
-                                self._model.add_bool_and(shape_literals).only_enforce_if(all_shape)
-                                self._model.add_bool_or([lit.Not() for lit in shape_literals]).only_enforce_if(all_shape.Not())
-
-                                all_around = self._model.new_bool_var(f"all_around_{circle_value}")
-                                self._model.add_bool_and(around_literals).only_enforce_if(all_around)
-                                self._model.add_bool_or([lit.Not() for lit in around_literals]).only_enforce_if(all_around.Not())
-
-                                self._model.add_bool_or([all_shape.Not(), all_around.Not()])
-
-                status = self._solver.solve(self._model)
-                if status != cp_model.OPTIMAL and status != cp_model.FEASIBLE:
-                    break
-
-                proposition_count += 1
-
-                grid = Grid([[self._solver.value(self._grid_vars[Position(r, c)]) for c in range(self.columns_number)] for r in range(self.rows_number)])
-
-                circle_shapes = {circle_value: grid.get_all_shapes(circle_value) for circle_value in self.circle_positions.keys()}
-                not_compliant_shapes = [(circle_value, shapes_positions) for (circle_value, shapes_positions) in circle_shapes.items() if len(shapes_positions) > 1]
-
-            if len(not_compliant_shapes) == 0:
-                return grid, proposition_count
-
-        return Grid.empty(), proposition_count
+        return Grid.empty()
 
     def get_other_solution(self):
         self._exclude_previous_solution()
@@ -111,6 +55,7 @@ class TentaiShowSolver(GameSolver):
         self._add_circles_initial_constraints()
         self._add_symmetry_constraints()
         self._add_neighbors_constraints()
+        self._add_region_connectivity_constraints()
 
     def _add_circles_initial_constraints(self):
         for circle_value, current_position in self.circle_positions.items():
@@ -131,16 +76,11 @@ class TentaiShowSolver(GameSolver):
             for circle_value, circle_position in self.circle_positions.items():
                 symmetric_position = position.symmetric(circle_position)
                 if symmetric_position in self._grid:
-                    pos_equals_circle = self._model.new_bool_var(f"pos_equals_circle_{position.r}_{position.c}_{circle_value}")
-                    sym_equals_circle = self._model.new_bool_var(f"sym_equals_circle_{symmetric_position.r}_{symmetric_position.c}_{circle_value}")
-
-                    self._model.add(self._grid_vars[position] == circle_value).only_enforce_if(pos_equals_circle)
-                    self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(pos_equals_circle.Not())
-                    self._model.add(self._grid_vars[symmetric_position] == circle_value).only_enforce_if(sym_equals_circle)
-                    self._model.add(self._grid_vars[symmetric_position] != circle_value).only_enforce_if(sym_equals_circle.Not())
-
-                    self._model.add_implication(pos_equals_circle, sym_equals_circle)
-                    self._model.add_implication(pos_equals_circle.Not(), sym_equals_circle.Not())
+                    both_v = self._model.new_bool_var(f"both_{position.r}_{position.c}_{circle_value}")
+                    self._model.add(self._grid_vars[position] == circle_value).only_enforce_if(both_v)
+                    self._model.add(self._grid_vars[position] != circle_value).only_enforce_if(both_v.Not())
+                    self._model.add(self._grid_vars[symmetric_position] == circle_value).only_enforce_if(both_v)
+                    self._model.add(self._grid_vars[symmetric_position] != circle_value).only_enforce_if(both_v.Not())
                 else:
                     self._model.add(self._grid_vars[position] != circle_value)
 
@@ -158,3 +98,64 @@ class TentaiShowSolver(GameSolver):
 
                     if same_value_neighbors:
                         self._model.add_bool_or(same_value_neighbors)
+
+    def _add_region_connectivity_constraints(self):
+        max_dist = self.rows_number * self.columns_number
+        for circle_value, circle_position in self.circle_positions.items():
+            if int(circle_position.r) == circle_position.r and int(circle_position.c) == circle_position.c:
+                root = Position(int(circle_position.r), int(circle_position.c))
+            else:
+                positions = list(self._grid.straddled_neighbors_positions(circle_position))
+                root = positions[0]
+
+            depth = {}
+            for r in range(self.rows_number):
+                for c in range(self.columns_number):
+                    depth[(r, c)] = self._model.new_int_var(0, max_dist, f"depth_{circle_value}_{r}_{c}")
+
+            self._model.add(depth[(root.r, root.c)] == 0)
+
+            for r in range(self.rows_number):
+                for c in range(self.columns_number):
+                    pos = Position(r, c)
+                    if pos == root:
+                        continue
+
+                    fixed_value = self._grid[pos]
+                    if fixed_value == circle_value:
+                        self._model.add(depth[(r, c)] > 0)
+                        neighbors = self._grid.neighbors_positions(pos)
+                        parent_vars = []
+                        for neighbor in neighbors:
+                            neighbor_fixed = self._grid[neighbor]
+                            if neighbor_fixed != 0 and neighbor_fixed != circle_value:
+                                continue
+                            p_ok = self._model.new_bool_var(f"parent_{circle_value}_{r}_{c}_{neighbor.r}_{neighbor.c}")
+                            self._model.add(self._grid_vars[neighbor] == circle_value).only_enforce_if(p_ok)
+                            self._model.add(depth[(r, c)] == depth[(neighbor.r, neighbor.c)] + 1).only_enforce_if(p_ok)
+                            parent_vars.append(p_ok)
+                        if parent_vars:
+                            self._model.add_bool_or(parent_vars)
+                    elif fixed_value != 0:
+                        self._model.add(depth[(r, c)] == 0)
+                    else:
+                        is_v = self._model.new_bool_var(f"is_{circle_value}_{r}_{c}")
+                        self._model.add(self._grid_vars[pos] == circle_value).only_enforce_if(is_v)
+                        self._model.add(self._grid_vars[pos] != circle_value).only_enforce_if(is_v.Not())
+
+                        self._model.add(depth[(r, c)] == 0).only_enforce_if(is_v.Not())
+                        self._model.add(depth[(r, c)] > 0).only_enforce_if(is_v)
+
+                        neighbors = self._grid.neighbors_positions(pos)
+                        parent_vars = []
+                        for neighbor in neighbors:
+                            neighbor_fixed = self._grid[neighbor]
+                            if neighbor_fixed != 0 and neighbor_fixed != circle_value:
+                                continue
+                            p_ok = self._model.new_bool_var(f"parent_{circle_value}_{r}_{c}_{neighbor.r}_{neighbor.c}")
+                            self._model.add(self._grid_vars[neighbor] == circle_value).only_enforce_if(p_ok)
+                            self._model.add(depth[(r, c)] == depth[(neighbor.r, neighbor.c)] + 1).only_enforce_if(p_ok)
+                            parent_vars.append(p_ok)
+
+                        if parent_vars:
+                            self._model.add_bool_or(parent_vars).only_enforce_if(is_v)
