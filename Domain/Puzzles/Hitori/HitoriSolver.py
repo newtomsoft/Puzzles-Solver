@@ -64,33 +64,66 @@ class HitoriSolver(GameSolver):
                  self._model.add_bool_or([self._grid_vars[p] for p in valid_around])
 
     def _add_constraints(self):
-         # No adjacent black cells
-         for r in range(self._grid.rows_number):
-             for c in range(self._grid.columns_number):
-                 if r + 1 < self._grid.rows_number:
-                      self._model.add(self._grid_vars[r][c] + self._grid_vars[r+1][c] >= 1)
-                 if c + 1 < self._grid.columns_number:
-                      self._model.add(self._grid_vars[r][c] + self._grid_vars[r][c+1] >= 1)
+        self._add_no_adjacent_black_cells_constraint()
+        self._add_no_duplicate_numbers_in_rows_constraint()
+        self._add_no_duplicate_numbers_in_columns_constraint()
+        self._add_three_consecutive_identical_constraint()
+        self._add_one_between_identical_constraint()
 
-         # No duplicate numbers in row/col
-         for r in range(self._grid.rows_number):
-             vals = {}
-             for c in range(self._grid.columns_number):
-                 val = self._grid[r][c]
-                 if val not in vals: vals[val] = []
-                 vals[val].append(c)
-             for val, cols in vals.items():
-                 if len(cols) > 1:
-                      # At most one can be white (1)
-                      self._model.add(sum(self._grid_vars[r][c] for c in cols) <= 1)
+    def _add_no_adjacent_black_cells_constraint(self):
+        for r in range(self._grid.rows_number):
+            for c in range(self._grid.columns_number):
+                if r + 1 < self._grid.rows_number:
+                    self._model.add(self._grid_vars[r][c] + self._grid_vars[r + 1][c] >= 1)
+                if c + 1 < self._grid.columns_number:
+                    self._model.add(self._grid_vars[r][c] + self._grid_vars[r][c + 1] >= 1)
 
-         # Same for columns
-         for c in range(self._grid.columns_number):
-             vals = {}
-             for r in range(self._grid.rows_number):
-                 val = self._grid[r][c]
-                 if val not in vals: vals[val] = []
-                 vals[val].append(r)
-             for val, rows in vals.items():
-                 if len(rows) > 1:
-                      self._model.add(sum(self._grid_vars[r][c] for r in rows) <= 1)
+    def _add_no_duplicate_numbers_in_rows_constraint(self):
+        for r in range(self._grid.rows_number):
+            vals = {}
+            for c in range(self._grid.columns_number):
+                val = self._grid[r][c]
+                if val not in vals:
+                    vals[val] = []
+                vals[val].append(c)
+            for val, cols in vals.items():
+                if len(cols) > 1:
+                    self._model.add(sum(self._grid_vars[r][c] for c in cols) <= 1)
+
+    def _add_no_duplicate_numbers_in_columns_constraint(self):
+        for c in range(self._grid.columns_number):
+            vals = {}
+            for r in range(self._grid.rows_number):
+                val = self._grid[r][c]
+                if val not in vals:
+                    vals[val] = []
+                vals[val].append(r)
+            for val, rows in vals.items():
+                if len(rows) > 1:
+                    self._model.add(sum(self._grid_vars[r][c] for r in rows) <= 1)
+
+    def _add_three_consecutive_identical_constraint(self):
+        for r in range(self._grid.rows_number):
+            for c in range(self._grid.columns_number - 2):
+                if self._grid[r][c] == self._grid[r][c + 1] == self._grid[r][c + 2]:
+                    self._model.add(self._grid_vars[r][c + 1] == 1)
+                    self._model.add(self._grid_vars[r][c] == 0)
+                    self._model.add(self._grid_vars[r][c + 2] == 0)
+
+        for c in range(self._grid.columns_number):
+            for r in range(self._grid.rows_number - 2):
+                if self._grid[r][c] == self._grid[r + 1][c] == self._grid[r + 2][c]:
+                    self._model.add(self._grid_vars[r + 1][c] == 1)
+                    self._model.add(self._grid_vars[r][c] == 0)
+                    self._model.add(self._grid_vars[r + 2][c] == 0)
+
+    def _add_one_between_identical_constraint(self):
+        for r in range(self._grid.rows_number):
+            for c in range(self._grid.columns_number - 2):
+                if self._grid[r][c] == self._grid[r][c + 2]:
+                    self._model.add(self._grid_vars[r][c + 1] == 1)
+
+        for c in range(self._grid.columns_number):
+            for r in range(self._grid.rows_number - 2):
+                if self._grid[r][c] == self._grid[r + 2][c]:
+                    self._model.add(self._grid_vars[r + 1][c] == 1)
