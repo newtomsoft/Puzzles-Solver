@@ -90,6 +90,7 @@ class MasyuSolver(GameSolver):
     def _add_constraints(self):
         self._add_opposite_bridges_constraints()
         self._add_bridges_sum_constraints()
+        self._add_no_small_square_loops_constraints()
         self._add_dots_constraints()
 
     def _add_opposite_bridges_constraints(self):
@@ -103,16 +104,39 @@ class MasyuSolver(GameSolver):
 
     def _add_bridges_sum_constraints(self):
         for island in self._island_grid.islands.values():
-            vars_list = [self._island_bridges_z3[island.position][direction] for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]]
-            s = sum(vars_list)
-            is0 = self._model.new_bool_var(f"sum0_{island.position}")
-            is2 = self._model.new_bool_var(f"sum2_{island.position}")
-            # s == 0 or s == 2
-            self._model.add(s == 0).only_enforce_if(is0)
-            self._model.add(s != 0).only_enforce_if(is0.negated())
-            self._model.add(s == 2).only_enforce_if(is2)
-            self._model.add(s != 2).only_enforce_if(is2.negated())
-            self._model.add_bool_or([is0, is2])
+            vars_list = [self._island_bridges_z3[island.position][direction] for direction in Direction.orthogonal_directions()]
+            s = self._model.new_int_var(0, 4, f"sum_{island.position}")
+            self._model.add(s == sum(vars_list))
+            self._model.add_allowed_assignments([s], [(0,), (2,)])
+
+    def _add_no_small_loops_constraints(self):
+        rows = self.input_grid.rows_number
+        cols = self.input_grid.columns_number
+        for height in range(2, 5):
+            for width in range(2, 5):
+                if height == 2 and width == 2:
+                    continue
+                for r in range(rows - height + 1):
+                    for c in range(cols - width + 1):
+                        edges = []
+                        for j in range(width - 1):
+                            edges.append(self._island_bridges_z3[Position(r, c + j)][Direction.right()])
+                            edges.append(self._island_bridges_z3[Position(r + height - 1, c + j)][Direction.right()])
+                        for i in range(height - 1):
+                            edges.append(self._island_bridges_z3[Position(r + i, c)][Direction.down()])
+                            edges.append(self._island_bridges_z3[Position(r + i, c + width - 1)][Direction.down()])
+                        self._model.add(sum(edges) <= 2 * (height + width - 2) - 1)
+
+    def _add_no_small_square_loops_constraints(self):
+        for r in range(self.input_grid.rows_number - 1):
+            for c in range(self.input_grid.columns_number - 1):
+                edges = [
+                    self._island_bridges_z3[Position(r, c)][Direction.right()],
+                    self._island_bridges_z3[Position(r, c + 1)][Direction.down()],
+                    self._island_bridges_z3[Position(r + 1, c + 1)][Direction.left()],
+                    self._island_bridges_z3[Position(r + 1, c)][Direction.up()],
+                ]
+                self._model.add(sum(edges) <= 3)
 
     def _add_dots_constraints(self):
         for position, value in self.input_grid:
