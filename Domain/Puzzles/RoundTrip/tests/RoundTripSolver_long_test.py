@@ -6,6 +6,9 @@ from Domain.Board.Island import Island
 from Domain.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
 
 
+_ = RoundTripSolver.empty
+
+
 class RoundTripSolverLongTests(unittest.TestCase):
     def test_solution_12x12_evil_2kv1d(self):
         """https://gridpuzzle.com/round-trip/2kv1d"""

@@ -1,5 +1,4 @@
-﻿import unittest
-from unittest import TestCase
+﻿from unittest import TestCase
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
