@@ -66,6 +66,7 @@ class LookAirSolver(GameSolver):
 
     def _compute_solution(self) -> Grid:
         solver = cp_model.CpSolver()
+        solver.parameters.use_sat_inprocessing = True
         status = solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
@@ -83,68 +84,90 @@ class LookAirSolver(GameSolver):
             self._model.add(sum([self._grid_vars[position] for position in concerned_positions]) == number)
 
     def _add_all_shapes_are_squares_constraints(self):
+        # Une cellule de valeur 0 est forcément inactive : aucun carré ne peut la couvrir.
+        # Une cellule de valeur 1 ou 2 ne peut pas être dans un carré de taille > 1,
+        # car un carré >= 2x2 impliquerait au moins 3 cellules actives dans son
+        # voisinage de von Neumann (la cellule + 2 voisins orthogonaux au minimum).
+        forced_inactive = set()
+        no_big_square = set()
+        for r in range(self._rows_number):
+            for c in range(self._columns_number):
+                v = self._grid[Position(r, c)]
+                if v == 0:
+                    forced_inactive.add((r, c))
+                    self._model.add(self._grid_vars[Position(r, c)] == 0)
+                elif v in (1, 2):
+                    no_big_square.add((r, c))
+
         # Variables pour représenter les coins supérieurs gauches des carrés
         # squares[r][c][s] = 1 si il y a un carré de taille (s+1)x(s+1) commençant en (r,c)
         squares = {}
         for r in range(self._rows_number):
             for c in range(self._columns_number):
-                for s in range(min(self._rows_number, self._columns_number)):
-                    if r + s < self._rows_number and c + s < self._columns_number:
+                max_size = min(self._rows_number - r, self._columns_number - c)
+                for s in range(max_size):
+                    # Ignorer les carrés couvrant une cellule inactive (valeur 0)
+                    # ou une cellule de valeur 1/2 avec une taille > 1
+                    valid = True
+                    for dr in range(s + 1):
+                        for dc in range(s + 1):
+                            cell = (r + dr, c + dc)
+                            if cell in forced_inactive:
+                                valid = False
+                                break
+                            if s > 0 and cell in no_big_square:
+                                valid = False
+                                break
+                        if not valid:
+                            break
+                    if valid:
                         squares[(r, c, s)] = self._model.new_bool_var(f'square_{r}_{c}_{s}')
+
+        # Pré-calculer les carrés contenant chaque pixel
+        pixel_to_squares = [[[] for _ in range(self._columns_number)] for _ in range(self._rows_number)]
+        for (sr, sc, size), var in squares.items():
+            for r in range(sr, sr + size + 1):
+                for c in range(sc, sc + size + 1):
+                    pixel_to_squares[r][c].append(var)
 
         for r in range(self._rows_number):
             for c in range(self._columns_number):
-                # Liste des carrés qui pourraient contenir ce pixel
-                squares_containing_pixel = []
-                for sr in range(self._rows_number):
-                    for sc in range(self._columns_number):
-                        for size in range(min(self._rows_number, self._columns_number)):
-                            if (sr, sc, size) in squares:
-                                # Vérifier si (r,c) est dans le carré (sr,sc,size)
-                                if sr <= r <= sr + size and sc <= c <= sc + size:
-                                    squares_containing_pixel.append(squares[(sr, sc, size)])
-
                 # Si cell_values[(r, c)] = 1, le pixel doit appartenir à exactement un carré
                 # Si cell_values[(r, c)] = 0, le pixel ne doit appartenir à aucun carré
-                self._model.add(sum(squares_containing_pixel) == self._grid_vars[Position(r, c)])
+                self._model.add(sum(pixel_to_squares[r][c]) == self._grid_vars[Position(r, c)])
 
         # Contrainte : les carrés ne doivent pas être adjacents
         # Deux carrés sont adjacents s'ils se touchent horizontalement ou verticalement
-        for r1 in range(self._rows_number):
-            for c1 in range(self._columns_number):
-                for s1 in range(min(self._rows_number, self._columns_number)):
-                    if (r1, c1, s1) in squares:
-                        for r2 in range(self._rows_number):
-                            for c2 in range(self._columns_number):
-                                for s2 in range(min(self._rows_number, self._columns_number)):
-                                    if (r2, c2, s2) in squares and (r1, c1, s1) != (r2, c2, s2):
-                                        # Vérifier si les carrés sont adjacents
-                                        # Carré 1: (r1,c1) à (r1+s1, c1+s1)
-                                        # Carré 2: (r2,c2) à (r2+s2, c2+s2)
+        square_list = list(squares.items())
+        for i, ((r1, c1, s1), var1) in enumerate(square_list):
+            for j in range(i + 1, len(square_list)):
+                (r2, c2, s2), var2 = square_list[j]
 
-                                        # Calculer les bords des carrés
-                                        r1_min, r1_max = r1, r1 + s1
-                                        c1_min, c1_max = c1, c1 + s1
-                                        r2_min, r2_max = r2, r2 + s2
-                                        c2_min, c2_max = c2, c2 + s2
+                # Calculer les bords des carrés
+                r1_min, r1_max = r1, r1 + s1
+                c1_min, c1_max = c1, c1 + s1
+                r2_min, r2_max = r2, r2 + s2
+                c2_min, c2_max = c2, c2 + s2
 
-                                        # Vérifier l'adjacence (distance de 1 dans une direction)
-                                        adjacent = False
-                                        # Adjacence horizontale
-                                        if (r1_min <= r2_max and r2_min <= r1_max and
-                                                (c1_max + 1 == c2_min or c2_max + 1 == c1_min)):
-                                            adjacent = True
-                                        # Adjacence verticale
-                                        elif (c1_min <= c2_max and c2_min <= c1_max and
-                                              (r1_max + 1 == r2_min or r2_max + 1 == r1_min)):
-                                            adjacent = True
+                # Vérifier l'adjacence (distance de 1 dans une direction)
+                adjacent = False
+                # Adjacence horizontale
+                if (r1_min <= r2_max and r2_min <= r1_max and
+                        (c1_max + 1 == c2_min or c2_max + 1 == c1_min)):
+                    adjacent = True
+                # Adjacence verticale
+                elif (c1_min <= c2_max and c2_min <= c1_max and
+                      (r1_max + 1 == r2_min or r2_max + 1 == r1_min)):
+                    adjacent = True
 
-                                        if adjacent:
-                                            # Les carrés ne peuvent pas être tous les deux présents
-                                            self._model.add_bool_or([
-                                                squares[(r1, c1, s1)].negated(),
-                                                squares[(r2, c2, s2)].negated()
-                                            ])
+                if adjacent:
+                    # Les carrés ne peuvent pas être tous les deux présents
+                    self._model.add_bool_or([
+                        var1.negated(),
+                        var2.negated()
+                    ])
+
+
 
     def _impossible_segments(self, proposition: Grid) -> list[list[Position]]:
         segments: list[list[Position]] = []
