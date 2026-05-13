@@ -5,6 +5,7 @@ import Run.Games.ArofuroConfig
 import Run.Games.ArrowWebConfig
 import Run.Games.AyeheyaConfig
 import Run.Games.BalanceLoopConfig
+import Run.Games.BattleshipsConfig
 import Run.Games.BimaruConfig
 import Run.Games.BinairoConfig
 import Run.Games.BinairoPlusConfig
@@ -151,6 +152,7 @@ class UrlPatternMatcher:
         Run.Games.AyeheyaConfig.register()
         Run.Games.ArofuroConfig.register()
         Run.Games.BalanceLoopConfig.register()
+        Run.Games.BattleshipsConfig.register()
         Run.Games.BimaruConfig.register()
         Run.Games.BinairoPlusConfig.register()
         Run.Games.BinairoConfig.register()
