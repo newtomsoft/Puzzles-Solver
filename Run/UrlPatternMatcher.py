@@ -72,6 +72,7 @@ import Run.Games.MitiConfig
 import Run.Games.MoonsunConfig
 import Run.Games.NanroConfig
 import Run.Games.NeighboursConfig
+import Run.Games.NondangoConfig
 import Run.Games.No4InARowConfig
 import Run.Games.NonogramConfig
 import Run.Games.NorinoriConfig
@@ -217,6 +218,7 @@ class UrlPatternMatcher:
         Run.Games.MoonsunConfig.register()
         Run.Games.NanroConfig.register()
         Run.Games.NeighboursConfig.register()
+        Run.Games.NondangoConfig.register()
         Run.Games.No4InARowConfig.register()
         Run.Games.NonogramConfig.register()
         Run.Games.NorinoriConfig.register()
