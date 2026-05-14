@@ -16,78 +16,37 @@ class BalanceLoopSolver(GameSolver):
 
     def __init__(self, clues_grid: Grid):
         self._clues_grid = clues_grid
+        self._rows = clues_grid.rows_number
+        self._cols = clues_grid.columns_number
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._model = cp_model.CpModel()
         self._solver = cp_model.CpSolver()
         self._island_bridges_vars: dict[Position, dict[Direction, BoolVarT]] = {}
+        self._is_used_vars: dict[Position, BoolVarT] = {}
         self._previous_solution: IslandGrid | None = None
 
     def _init_island_grid(self):
         self._island_grid = IslandGrid(
-            [[Island(Position(r, c), 2) for c in range(self._clues_grid.columns_number)] for r in range(self._clues_grid.rows_number)])
+            [[Island(Position(r, c), 2) for c in range(self._cols)] for r in range(self._rows)])
 
     def _init_solver(self):
         self._model = cp_model.CpModel()
         self._island_bridges_vars = {island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()} for island in
                                      self._island_grid.islands.values()}
+        self._is_used_vars = {}
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
         if not self._island_bridges_vars:
             self._init_solver()
 
-        solution, _ = self._ensure_all_islands_connected()
-        return solution
+        status = self._solver.solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            return IslandGrid.empty()
 
-    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
-        proposition_count = 0
-        while True:
-            status = self._solver.solve(self._model)
-            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-                return IslandGrid.empty(), proposition_count
-
-            proposition_count += 1
-            for position, direction_bridges in self._island_bridges_vars.items():
-                for direction, bridges_var in direction_bridges.items():
-                    if position.after(direction) not in self._island_bridges_vars:
-                        continue
-                    is_bridge = self._solver.boolean_value(bridges_var)
-                    if is_bridge:
-                        self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], 1)
-                    elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
-                        self._island_grid[position].direction_position_bridges.pop(direction)
-                self._island_grid[position].set_bridges_count_according_to_directions_bridges()
-
-            connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
-            if len(connected_positions) == 1:
-                self._previous_solution = self._island_grid
-                return self._island_grid, proposition_count
-
-            block_literals = []
-            for position, direction_bridges in self._island_bridges_vars.items():
-                for direction, bridges_var in direction_bridges.items():
-                    if position.after(direction) not in self._island_bridges_vars:
-                        continue
-                    is_bridge = self._solver.boolean_value(bridges_var)
-                    if is_bridge:
-                        block_literals.append(bridges_var.negated())
-                    else:
-                        block_literals.append(bridges_var)
-            self._model.add_bool_or(block_literals)
-
-            for positions in connected_positions:
-                comp_literals = []
-                for position in positions:
-                    for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
-                        var = self._island_bridges_vars[position][direction]
-                        if value == 1:
-                            comp_literals.append(var.negated())
-                        else:
-                            comp_literals.append(var)
-                self._model.add_bool_or(comp_literals)
-
-            self._init_island_grid()
+        self._previous_solution = self._build_island_grid_from_solution()
+        return self._previous_solution
 
     def get_other_solution(self):
         literals_for_disjunction = []
@@ -103,19 +62,32 @@ class BalanceLoopSolver(GameSolver):
         self._init_island_grid()
         return self.get_solution()
 
+    def _build_island_grid_from_solution(self) -> IslandGrid:
+        island_grid = IslandGrid(
+            [[Island(Position(r, c), 2) for c in range(self._cols)] for r in range(self._rows)])
+        for position, direction_bridges in self._island_bridges_vars.items():
+            for direction, bridges_var in direction_bridges.items():
+                if position.after(direction) not in self._island_bridges_vars:
+                    continue
+                if self._solver.boolean_value(bridges_var):
+                    island_grid[position].set_bridge_to_position(island_grid[position].direction_position_bridges[direction][0], 1)
+                elif direction in island_grid[position].direction_position_bridges:
+                    island_grid[position].direction_position_bridges.pop(direction)
+            island_grid[position].set_bridges_count_according_to_directions_bridges()
+        return island_grid
+
     def _add_constraints(self):
         self._add_initial_constraints()
         self._add_opposite_bridges_constraints()
         self._add_bridges_sum_constraints()
         self._add_dots_constraints()
+        self._add_connectivity_constraint()
 
     def _add_initial_constraints(self):
-        constraints_border_up = [self._island_bridges_vars[Position(0, c)][Direction.up()] == 0 for c in range(self._island_grid.columns_number)]
-        constraints_border_down = [self._island_bridges_vars[Position(self._island_grid.rows_number - 1, c)][Direction.down()] == 0 for c in
-                                   range(self._island_grid.columns_number)]
-        constraints_border_right = [self._island_bridges_vars[Position(r, self._island_grid.columns_number - 1)][Direction.right()] == 0 for r in
-                                    range(self._island_grid.rows_number)]
-        constraints_border_left = [self._island_bridges_vars[Position(r, 0)][Direction.left()] == 0 for r in range(self._island_grid.rows_number)]
+        constraints_border_up = [self._island_bridges_vars[Position(0, c)][Direction.up()] == 0 for c in range(self._cols)]
+        constraints_border_down = [self._island_bridges_vars[Position(self._rows - 1, c)][Direction.down()] == 0 for c in range(self._cols)]
+        constraints_border_right = [self._island_bridges_vars[Position(r, self._cols - 1)][Direction.right()] == 0 for r in range(self._rows)]
+        constraints_border_left = [self._island_bridges_vars[Position(r, 0)][Direction.left()] == 0 for r in range(self._rows)]
         for constraint in constraints_border_down + constraints_border_up + constraints_border_right + constraints_border_left:
             self._model.add(constraint)
 
@@ -137,8 +109,58 @@ class BalanceLoopSolver(GameSolver):
                 continue
 
             is_used = self._model.new_bool_var(f"u_{position.r}_{position.c}")
+            self._is_used_vars[position] = is_used
             self._model.add(sum(bridge_vars) == 2).only_enforce_if(is_used)
             self._model.add(sum(bridge_vars) == 0).only_enforce_if(is_used.negated())
+
+    def _add_connectivity_constraint(self):
+        N = self._rows * self._cols
+        directions = Direction.orthogonal_directions()
+        rank_vars = [[self._model.new_int_var(0, N - 1, f"rank_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]
+
+        in_cycle_vars = [[self._model.new_bool_var(f"in_cycle_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]
+
+        for r in range(self._rows):
+            for c in range(self._cols):
+                pos = Position(r, c)
+                val = self._clues_grid[pos]
+                bridge_vars = [self._island_bridges_vars[pos][d] for d in directions]
+                if val != self.empty:
+                    self._model.add(in_cycle_vars[r][c] == 1)
+                else:
+                    is_used = self._is_used_vars.get(pos)
+                    if is_used is not None:
+                        self._model.add(in_cycle_vars[r][c] == is_used)
+
+                has_any = self._model.new_bool_var(f"has_any_{r}_{c}")
+                self._model.add(sum(bridge_vars) >= 1).only_enforce_if(has_any)
+                self._model.add(sum(bridge_vars) == 0).only_enforce_if(has_any.negated())
+                self._model.add(in_cycle_vars[r][c] == 0).only_enforce_if(has_any.negated())
+
+        is_root_vars = []
+        for r in range(self._rows):
+            for c in range(self._cols):
+                pos = Position(r, c)
+                is_root = self._model.new_bool_var(f"is_root_{r}_{c}")
+                is_root_vars.append(is_root)
+
+                self._model.add(is_root <= in_cycle_vars[r][c])
+                self._model.add(rank_vars[r][c] == 0).only_enforce_if(is_root)
+
+                parent_literals = []
+                for d in directions:
+                    npos = pos.after(d)
+                    if 0 <= npos.r < self._rows and 0 <= npos.c < self._cols:
+                        parent = self._model.new_bool_var(f"parent_{r}_{c}_{d}")
+                        self._model.add(self._island_bridges_vars[pos][d] == 1).only_enforce_if(parent)
+                        self._model.add(in_cycle_vars[npos.r][npos.c] == 1).only_enforce_if(parent)
+                        self._model.add(rank_vars[npos.r][npos.c] < rank_vars[r][c]).only_enforce_if(parent)
+                        parent_literals.append(parent)
+
+                if parent_literals:
+                    self._model.add_bool_or(parent_literals).only_enforce_if([in_cycle_vars[r][c], is_root.negated()])
+
+        self._model.add(sum(is_root_vars) == 1)
 
     def _add_dots_constraints(self):
         for position, cell_value in [(position, value) for position, value in self._clues_grid if value != self.empty]:
