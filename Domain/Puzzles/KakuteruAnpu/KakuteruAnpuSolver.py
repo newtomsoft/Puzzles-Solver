@@ -1,11 +1,8 @@
-from collections import defaultdict
-
-from z3 import Solver, Bool, Not, And, is_true, sat, BoolRef, Implies, Or
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.ShapeGenerator import ShapeGenerator
 
 
 class KakuteruAnpuSolver(GameSolver):
@@ -15,113 +12,126 @@ class KakuteruAnpuSolver(GameSolver):
         self._regions = self._regions_grid.get_regions()
         self.rows_number = self._numbers_grid.rows_number
         self.columns_number = self._numbers_grid.columns_number
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if self._grid_vars is None:
             self._init_solver()
 
-        solution, _ = self._ensure_black_cells_diagonally_connected()
+        status = self._solver.solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            return Grid.empty()
+
+        solution = Grid([[self._solver.boolean_value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         self._previous_solution = solution
         return solution
 
     def get_other_solution(self):
-        previous_solution_constraints = []
-        for position, _ in [(position, value) for (position, value) in self._previous_solution if not value]:
-            previous_solution_constraints.append(Not(self._grid_z3[position]))
-        self._solver.add(Not(And(previous_solution_constraints)))
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        terms = [self._grid_vars[position] for position, value in self._previous_solution if not value]
+        self._model.add_bool_or(terms)
 
         return self.get_solution()
-
-    def _ensure_black_cells_diagonally_connected(self):
-        proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self.columns_number)] for i in range(self.rows_number)])
-
-            black_shapes = current_grid.get_all_shapes(mode='diagonal')
-            if len(black_shapes) == 1:
-                return current_grid, proposition_count
-
-            biggest_black_shapes = max(black_shapes, key=len)
-            black_shapes.remove(biggest_black_shapes)
-            for black_shape in black_shapes:
-                in_all_black = And([Not(self._grid_z3[position]) for position in black_shape])
-                around_all_withe = And([self._grid_z3[position] for position in ShapeGenerator.around_shape(black_shape) if position in self._grid_z3])
-                constraint = Not(And(around_all_withe, in_all_black))
-                self._solver.add(constraint)
-
-        return Grid.empty(), proposition_count
 
     def _add_constraints(self):
         self._add_black_regions_constraints()
         self._add_no_black_neighbors_between_regions_constraints()
+        self._add_global_black_diagonal_connectivity_constraint()
 
     def _add_black_regions_constraints(self):
         for region in self._regions.values():
             self._add_black_region_constraint(region)
 
     def _add_black_region_constraint(self, region: frozenset[Position]):
-        self._add_contiguity_constraint(region)
+        self._add_region_connectivity_constraint(region)
         number = max(0 if (number := self._numbers_grid[position]) is None else number for position in region)
         if number != 0:
-            self._solver.add(sum([self._grid_z3[position] for position in region]) == number)
+            self._model.add(sum([self._grid_vars[position] for position in region]) == number)
 
-    def _add_contiguity_constraint(self, region: frozenset[Position]):
-        region_sum = sum([self._grid_z3[position] for position in region])
+    def _add_region_connectivity_constraint(self, region: frozenset[Position]):
+        region_list = list(region)
+        total_cells = len(region_list)
+        if total_cells <= 1:
+            return
 
-        reach_vars: dict[tuple[int, int], BoolRef] = {}
-        for pos in region:
-            reach_vars[(pos.r, pos.c)] = Bool(f"reach_{pos.r}_{pos.c}")
+        rank_vars = {}
+        is_root_vars = {}
+        for pos in region_list:
+            rank_vars[pos] = self._model.new_int_var(0, total_cells - 1, f"rank_reg_{pos.r}_{pos.c}")
+            is_root_vars[pos] = self._model.new_bool_var(f"root_reg_{pos.r}_{pos.c}")
 
-        root_vars: dict[tuple[int, int], BoolRef] = {}
-        for pos in region:
-            root_vars[(pos.r, pos.c)] = Bool(f"root_{pos.r}_{pos.c}")
+        region_has_black = self._model.new_bool_var(f"region_has_black_{region_list[0].r}_{region_list[0].c}")
+        region_sum = sum(self._grid_vars[pos] for pos in region_list)
+        self._model.add(region_sum >= 1).OnlyEnforceIf(region_has_black)
+        self._model.add(region_sum == 0).OnlyEnforceIf(region_has_black.negated())
 
-        no_black = (region_sum == 0)
-        self._solver.add(Implies(no_black, sum([var for var in root_vars.values()]) == 0))
+        self._model.add(sum(is_root_vars[pos] for pos in region_list) == 1).OnlyEnforceIf(region_has_black)
+        self._model.add(sum(is_root_vars[pos] for pos in region_list) == 0).OnlyEnforceIf(region_has_black.negated())
 
-        self._solver.add(Implies(Not(no_black), sum([var for var in root_vars.values()]) == 1))
+        for pos in region_list:
+            is_black = self._grid_vars[pos]
+            self._model.add(is_root_vars[pos] <= is_black)
+            self._model.add(is_root_vars[pos] <= region_has_black)
+            self._model.add(rank_vars[pos] == 0).OnlyEnforceIf(is_root_vars[pos])
 
-        for pos in region:
-            pos_key = (pos.r, pos.c)
-            self._solver.add(Implies(root_vars[pos_key], self._grid_z3[pos]))
-            self._solver.add(Implies(root_vars[pos_key], reach_vars[pos_key]))
-
-        neighbor_map = defaultdict(list)
-        for pos in region:
-            pos_key = (pos.r, pos.c)
+        for pos in region_list:
+            is_black = self._grid_vars[pos]
+            is_root = is_root_vars[pos]
+            parent_literals = []
             for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                neighbor_key = (pos.r + dx, pos.c + dy)
-                if neighbor_key in reach_vars:
-                    neighbor_map[pos_key].append(neighbor_key)
+                neighbor = Position(pos.r + dx, pos.c + dy)
+                if neighbor in rank_vars:
+                    parent = self._model.new_bool_var(f"parent_reg_{pos.r}_{pos.c}_{neighbor.r}_{neighbor.c}")
+                    self._model.add(self._grid_vars[neighbor] == 1).OnlyEnforceIf(parent)
+                    self._model.add(rank_vars[neighbor] < rank_vars[pos]).OnlyEnforceIf(parent)
+                    parent_literals.append(parent)
+            if parent_literals:
+                self._model.add_bool_or(parent_literals).OnlyEnforceIf([is_black, is_root.negated(), region_has_black])
 
-        for pos in region:
-            pos_key = (pos.r, pos.c)
-            current_pos = self._grid_z3[pos]
-            current_reach = reach_vars[pos_key]
-            current_root = root_vars[pos_key]
-
-            self._solver.add(Implies(current_pos, current_reach))
-            self._solver.add(Implies(current_reach, current_pos))
-
-            if neighbor_map[pos_key]:
-                neighbor_reach_vars = [reach_vars[nk] for nk in neighbor_map[pos_key]]
-                self._solver.add(Implies(And(current_reach, Not(current_root)), Or(neighbor_reach_vars)))
+    def _add_global_black_diagonal_connectivity_constraint(self):
+        total_cells = self.rows_number * self.columns_number
+        self._rank_vars = Grid([[self._model.new_int_var(0, total_cells - 1, f"rank_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        is_root_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_root = self._model.new_bool_var(f"is_root_{r}_{c}")
+                is_root_vars.append(is_root)
+                is_black = self._grid_vars[pos]
+                self._model.add(is_root <= is_black)
+                self._model.add(self._rank_vars[pos] == 0).OnlyEnforceIf(is_root)
+        self._model.add(sum(is_root_vars) == 1)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_black = self._grid_vars[pos]
+                is_root = is_root_vars[r * self.columns_number + c]
+                parent_literals = []
+                for neighbor in self._grid_vars.neighbors_positions(pos, mode='diagonal'):
+                    parent = self._model.new_bool_var(f"parent_{r}_{c}_{neighbor.r}_{neighbor.c}")
+                    self._model.add(self._grid_vars[neighbor] == 1).OnlyEnforceIf(parent)
+                    self._model.add(self._rank_vars[neighbor] < self._rank_vars[pos]).OnlyEnforceIf(parent)
+                    parent_literals.append(parent)
+                if parent_literals:
+                    self._model.add_bool_or(parent_literals).OnlyEnforceIf([is_black, is_root.negated()])
 
     def _add_no_black_neighbors_between_regions_constraints(self):
         for region in self._regions.values():
             self._add_no_black_neighbors_region_constraint(region)
 
     def _add_no_black_neighbors_region_constraint(self, region: frozenset[Position]):
-        region_neighbors = ShapeGenerator.around_shape(region)
+        region_set = set(region)
         for position in region:
-            for position_neighbor in [neighbor for neighbor in self._numbers_grid.neighbors_positions(position) if neighbor in region_neighbors]:
-                self._solver.add(Not(And(self._grid_z3[position], (self._grid_z3[position_neighbor]))))
+            for neighbor in self._numbers_grid.neighbors_positions(position):
+                if neighbor not in region_set:
+                    self._model.add_bool_or([self._grid_vars[position].negated(), self._grid_vars[neighbor].negated()])
+
