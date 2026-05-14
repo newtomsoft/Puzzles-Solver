@@ -1,9 +1,9 @@
-from z3 import Solver, Not, And, Or, sat, Bool, is_true, BoolRef
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
+from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
-from Utils.ShapeGenerator import ShapeGenerator
 
 
 class YajikabeSolver(GameSolver):
@@ -16,48 +16,40 @@ class YajikabeSolver(GameSolver):
 
     def __init__(self, grid: Grid):
         self._input_grid = grid
-        self._solver = Solver()
-        self._grid_z3: Grid[BoolRef] | None = None
+        self.rows_number = grid.rows_number
+        self.columns_number = grid.columns_number
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
-        self._grid_z3 = Grid([[Bool(f"c_{r}-{c}") for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
+        self._grid_vars = Grid([[self._model.new_bool_var(f"c_{r}_{c}") for c in range(self._input_grid.columns_number)] for r in range(self._input_grid.rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if self._grid_vars is None:
             self._init_solver()
 
-        self._previous_solution, _ = self._ensure_all_black_connected()
-        return self._previous_solution
+        status = self._solver.solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            return Grid.empty()
 
-    def _ensure_all_black_connected(self) -> tuple[Grid, int]:
-        proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            proposition_count += 1
-            current_grid = Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._grid_z3.columns_number)] for i in
-                                 range(self._grid_z3.rows_number)])
-            black_shapes = current_grid.get_all_shapes()
-            if len(black_shapes) == 1:
-                return current_grid, proposition_count
-
-            biggest_shape = max(black_shapes, key=len)
-            black_shapes.remove(biggest_shape)
-            for black_shape in black_shapes:
-                shape_not_all_black = Not(And([self._grid_z3[position] for position in black_shape]))
-                around_shape = ShapeGenerator.around_shape(black_shape)
-                around_not_all_white = Not(And([Not(self._grid_z3[position]) for position in around_shape if position in self._grid_z3]))
-                constraint = Or(shape_not_all_black, around_not_all_white)
-                self._solver.add(constraint)
-
-        return Grid.empty(), proposition_count
+        solution = Grid([[self._solver.boolean_value(self._grid_vars.value(i, j)) for j in range(self._grid_vars.columns_number)] for i in range(self._grid_vars.rows_number)])
+        self._previous_solution = solution
+        return solution
 
     def get_other_solution(self) -> Grid:
-        constraints = []
-        for position, value_z3 in self._grid_z3:
-            constraints.append(value_z3 == self._previous_solution[position])
-        self._solver.add(Not(And(constraints)))
+        if self._previous_solution is None:
+            return self.get_solution()
+
+        terms = []
+        for position, prev_val in self._previous_solution:
+            if prev_val:
+                terms.append(self._grid_vars[position].negated())
+            else:
+                terms.append(self._grid_vars[position])
+        self._model.add_bool_or(terms)
 
         return self.get_solution()
 
@@ -65,26 +57,54 @@ class YajikabeSolver(GameSolver):
         self._add_initial_constraints()
         self._add_black_cell_constraints()
         self._add_no_black_2x2_constraints()
+        self._add_black_connectivity_constraint()
 
     def _add_initial_constraints(self):
-        for grid_z3_value in [self._grid_z3[position] for position, value in self._input_grid if value != '']:
-            self._solver.add(Not(grid_z3_value))
+        for position in [position for position, value in self._input_grid if value != '']:
+            self._model.add(self._grid_vars[position] == 0)
 
     def _add_black_cell_constraints(self):
         for position, blacks_count_direction in [(position, self._convert_cell_value(value)) for position, value in self._input_grid if value != '']:
             count = blacks_count_direction[0]
             direction = blacks_count_direction[1]
-            positions = [position for position in self._grid_z3.all_positions_in_direction(position, direction) if self._input_grid[position] == '']
-            self._solver.add(sum([self._grid_z3[position] for position in positions]) == count)
+            positions = [position for position in self._grid_vars.all_positions_in_direction(position, direction) if self._input_grid[position] == '']
+            self._model.add(sum([self._grid_vars[position] for position in positions]) == count)
 
     def _add_no_black_2x2_constraints(self):
         for r in range(self._input_grid.rows_number - 1):
             for c in range(self._input_grid.columns_number - 1):
-                up_left = self._grid_z3.value(r, c)
-                up_right = self._grid_z3.value(r, c + 1)
-                down_left = self._grid_z3.value(r + 1, c)
-                down_right = self._grid_z3.value(r + 1, c + 1)
-                self._solver.add(Not(And(up_left, up_right, down_left, down_right)))
+                up_left = self._grid_vars.value(r, c)
+                up_right = self._grid_vars.value(r, c + 1)
+                down_left = self._grid_vars.value(r + 1, c)
+                down_right = self._grid_vars.value(r + 1, c + 1)
+                self._model.add_bool_or([up_left.negated(), up_right.negated(), down_left.negated(), down_right.negated()])
+
+    def _add_black_connectivity_constraint(self):
+        total_cells = self.rows_number * self.columns_number
+        self._rank_vars = Grid([[self._model.new_int_var(0, total_cells - 1, f"rank_{r}_{c}") for c in range(self._grid_vars.columns_number)] for r in range(self._grid_vars.rows_number)])
+        is_root_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_root = self._model.new_bool_var(f"is_root_{r}_{c}")
+                is_root_vars.append(is_root)
+                is_black = self._grid_vars[pos]
+                self._model.add(is_root <= is_black)
+                self._model.add(self._rank_vars[pos] == 0).OnlyEnforceIf(is_root)
+        self._model.add(sum(is_root_vars) == 1)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_black = self._grid_vars[pos]
+                is_root = is_root_vars[r * self.columns_number + c]
+                parent_literals = []
+                for neighbor in self._grid_vars.neighbors_positions(pos):
+                    parent = self._model.new_bool_var(f"parent_{r}_{c}_{neighbor.r}_{neighbor.c}")
+                    self._model.add(self._grid_vars[neighbor] == 1).OnlyEnforceIf(parent)
+                    self._model.add(self._rank_vars[neighbor] < self._rank_vars[pos]).OnlyEnforceIf(parent)
+                    parent_literals.append(parent)
+                if parent_literals:
+                    self._model.add_bool_or(parent_literals).OnlyEnforceIf([is_black, is_root.negated()])
 
     @staticmethod
     def _convert_cell_value(cell_value: str) -> tuple[int, Direction]:
