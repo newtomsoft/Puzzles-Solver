@@ -1,4 +1,4 @@
-from z3 import ArithRef, Solver, Not, And, Or, Int, sat, Sum, Implies, If, Bool
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -16,9 +16,11 @@ class CountryRoadSolver(GameSolver):
         self._rows_number = self._numbers_grid.rows_number
         self._columns_number = self._numbers_grid.columns_number
         self._init_island_grid()
-        self._solver = Solver()
-        self._rank_vars: dict[Position, ArithRef] = {}
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._island_bridges_z3: dict[Position, dict[Direction, cp_model.BoolVarT]] = {}
         self._previous_solution: IslandGrid | None = None
+        self._initialized = False
 
     def _init_island_grid(self):
         self._island_grid = IslandGrid(
@@ -26,30 +28,27 @@ class CountryRoadSolver(GameSolver):
 
     def _init_solver(self):
         self._island_bridges_z3 = {
-            island.position: {direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
+            island.position: {direction: self._model.new_bool_var(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()}
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
+        self._initialized = True
 
     def get_solution(self) -> IslandGrid:
-        if not self._solver.assertions():
+        if not self._initialized:
             self._init_solver()
 
-        if self._solver.check() != sat:
-            return IslandGrid.empty()
+        solution, _ = self._ensure_all_islands_connected()
+        return solution
 
-        self._previous_solution = self._build_island_grid_from_model()
-        return self._previous_solution
-
-    def _build_island_grid_from_model(self) -> IslandGrid:
-        model = self._solver.model()
+    def _extract_island_grid(self) -> IslandGrid:
         island_grid = IslandGrid(
-            [[Island(Position(r, c), 2) for c in range(self._numbers_grid.columns_number)] for r in range(self._numbers_grid.rows_number)])
+            [[Island(Position(r, c), 2) for c in range(self._columns_number)] for r in range(self._rows_number)])
         for position, direction_bridges in self._island_bridges_z3.items():
-            for direction, bridges in direction_bridges.items():
+            for direction, var in direction_bridges.items():
                 if position.after(direction) not in self._island_bridges_z3:
                     continue
-                bridges_number = model.eval(bridges).as_long()
+                bridges_number = self._solver.value(var)
                 if bridges_number > 0:
                     island_grid[position].set_bridge_to_position(
                         island_grid[position].direction_position_bridges[direction][0], bridges_number)
@@ -58,16 +57,53 @@ class CountryRoadSolver(GameSolver):
             island_grid[position].set_bridges_count_according_to_directions_bridges()
         return island_grid
 
+    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
+        proposition_count = 0
+        while True:
+            status = self._solver.solve(self._model)
+            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+                return IslandGrid.empty(), proposition_count
+
+            proposition_count += 1
+            island_grid = self._extract_island_grid()
+            connected_positions = island_grid.get_connected_positions(exclude_without_bridge=True)
+            if len(connected_positions) == 1:
+                self._previous_solution = island_grid
+                return island_grid, proposition_count
+
+            biggest = max(connected_positions, key=len)
+            connected_positions.remove(biggest)
+            for positions in connected_positions:
+                blocking_vars = []
+                for position in positions:
+                    for direction in Direction.orthogonal_directions():
+                        neighbor = position.after(direction)
+                        if neighbor not in self._island_bridges_z3:
+                            continue
+                        var = self._island_bridges_z3[position][direction]
+                        if self._solver.value(var) == 1:
+                            blocking_vars.append(var.Not())
+                        else:
+                            blocking_vars.append(var)
+                if blocking_vars:
+                    self._model.add_bool_or(blocking_vars)
+
     def get_other_solution(self):
         if self._previous_solution is None:
             return self.get_solution()
 
-        previous_solution_constraints = []
+        blocking_vars = []
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
-                previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(Not(And(previous_solution_constraints)))
+                var = self._island_bridges_z3[island.position][direction]
+                if value == 1:
+                    blocking_vars.append(var.Not())
+                else:
+                    blocking_vars.append(var)
+        if blocking_vars:
+            self._model.add_bool_or(blocking_vars)
 
+        self._init_island_grid()
         return self.get_solution()
 
     def _add_constraints(self):
@@ -76,48 +112,13 @@ class CountryRoadSolver(GameSolver):
         self._add_single_path_by_region_constraints()
         self._add_no_adjacent_empty_cell_between_regions_constraints()
         self._add_opposite_bridges_constraints()
-        self._add_connectivity_constraint()
-
-    def _add_connectivity_constraint(self):
-        total_cells = self._rows_number * self._columns_number
-        for position in self._island_bridges_z3:
-            self._rank_vars[position] = Int(f"rank_{position.r}_{position.c}")
-            self._solver.add(self._rank_vars[position] >= 0)
-            self._solver.add(self._rank_vars[position] < total_cells)
-
-        all_positions = list(self._island_bridges_z3.keys())
-        root_vars = []
-        for pos in all_positions:
-            is_root = Bool(f"root_{pos.r}_{pos.c}")
-            root_vars.append(is_root)
-            has_any_bridge = Or([self._island_bridges_z3[pos][d] > 0 for d in Direction.orthogonal_directions() if pos.after(d) in self._island_bridges_z3])
-
-            self._solver.add(Implies(is_root, has_any_bridge))
-            self._solver.add(Implies(is_root, self._rank_vars[pos] == 0))
-
-            parent_conditions = []
-            for d in Direction.orthogonal_directions():
-                neighbor = pos.after(d)
-                if neighbor not in self._island_bridges_z3:
-                    continue
-                has_bridge = self._island_bridges_z3[pos][d] > 0
-                neighbor_lower_rank = self._rank_vars[neighbor] < self._rank_vars[pos]
-                parent_conditions.append(And(has_bridge, neighbor_lower_rank))
-
-            if parent_conditions:
-                self._solver.add(Implies(And(has_any_bridge, Not(is_root)), Or(*parent_conditions)))
-
-        any_bridge = Or([Or([self._island_bridges_z3[pos][d] > 0 for d in Direction.orthogonal_directions() if pos.after(d) in self._island_bridges_z3]) for pos in all_positions])
-        root_sum = Sum([If(is_root, 1, 0) for is_root in root_vars])
-        self._solver.add(Implies(any_bridge, root_sum == 1))
-        self._solver.add(Implies(Not(any_bridge), root_sum == 0))
 
     def _add_initial_constraints(self):
         for position, directions_bridges in self._island_bridges_z3.items():
             bridges_count_vars = list(directions_bridges.values())
-            self._solver.add(Or(sum(bridges_count_vars) == 2, sum(bridges_count_vars) == 0))
-            for direction_bridges in directions_bridges.values():
-                self._solver.add(And(direction_bridges >= 0, direction_bridges <= 1))
+            s = self._model.new_int_var(0, 4, f"sum_{position.r}_{position.c}")
+            self._model.add(s == sum(bridges_count_vars))
+            self._model.add_allowed_assignments([s], [(0,), (2,)])
 
     def _add_crossed_cell_by_region_numbers_constraints(self):
         numbers_by_position = {position: number for position, number in self._numbers_grid if number is not None}
@@ -129,7 +130,7 @@ class CountryRoadSolver(GameSolver):
                     all_bridges_number_for_region = []
                     for bridges in [self._island_bridges_z3[position] for position in region_positions]:
                         all_bridges_number_for_region += list(bridges.values())
-                    self._solver.add(Sum(all_bridges_number_for_region) == number * 2)
+                    self._model.add(sum(all_bridges_number_for_region) == number * 2)
 
     def _add_single_path_by_region_constraints(self):
         for region_positions in self._regions.values():
@@ -137,21 +138,22 @@ class CountryRoadSolver(GameSolver):
             out_directions = []
             for pos in region_edges_positions:
                 out_directions += [self._island_bridges_z3[pos][direction] for direction in Direction.orthogonal_directions() if pos.after(direction) not in region_positions and pos.after(direction) in self._island_bridges_z3]
-            self._solver.add(sum(out_directions) == 2)
+            self._model.add(sum(out_directions) == 2)
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] ==
-                                     self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite])
+                    neighbor_pos = island.direction_position_bridges[direction][0]
+                    self._model.add(self._island_bridges_z3[island.position][direction] == self._island_bridges_z3[neighbor_pos][direction.opposite])
                 else:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
+                    self._model.add(self._island_bridges_z3[island.position][direction] == 0)
 
     def _add_no_adjacent_empty_cell_between_regions_constraints(self):
         for region_positions in self._regions.values():
             for position in region_positions:
                 neighbors_positions = [position for position in self._numbers_grid.neighbors_positions(position) if position not in region_positions]
                 for neighbor_position in neighbors_positions:
-                    self._solver.add(Or(sum([self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonal_directions()]) > 0,
-                                        sum([self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions()]) > 0))
+                    sum_neighbor = sum(self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonal_directions())
+                    sum_position = sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions())
+                    self._model.add(sum_neighbor + sum_position >= 1)
