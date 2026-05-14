@@ -7,13 +7,12 @@ class GridPuzzleHakoiriGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):
         _ = None
         expected_grid = Grid([
-            [1, 1, 2, 2],
-            [1, 1, 1, 2],
-            [1, 1, 3, 2],
-            [3, 3, 3, 2]
-
+            [0, 2, 1, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 3, 1, 0],
         ])
-        grid = await self.run_scrap_test(GridPuzzleHakoiriGridProvider, "hakoiri_sample.html", "scrap_grid")
+        _, grid = await self.run_scrap_test(GridPuzzleHakoiriGridProvider, "hakoiri_sample.html", "scrap_grid")
         self.assert_grid_equals(expected_grid, grid)
 
 if __name__ == '__main__':
