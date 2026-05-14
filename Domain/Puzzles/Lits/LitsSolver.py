@@ -9,7 +9,6 @@ from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 from Domain.Puzzles.Lits.LitsGridBuilder import LitsGridBuilder
 from Domain.Puzzles.Lits.LitsType import LitsType
-from Utils.ShapeGenerator import ShapeGenerator
 
 
 class LitsSolver(GameSolver):
@@ -26,42 +25,19 @@ class LitsSolver(GameSolver):
         self._shaded_vars = Grid.empty()
         self.previous_solution = Grid.empty()
         self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
 
     def get_solution(self) -> Grid:
         if self._grid_vars.is_empty():
             self._init_solver()
 
-        solver = cp_model.CpSolver()
+        status = self._solver.solve(self._model)
+        if status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+            return Grid.empty()
 
-        while solver.solve(self._model) in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-            current_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
-
-            bool_matrix = [[1 if cell != 0 else 0 for cell in row] for row in current_solution.matrix]
-            bool_grid = Grid(bool_matrix)
-
-            components_shapes = bool_grid.get_all_shapes(1)
-            components = [set(shape) for shape in components_shapes]
-
-            if len(components) <= 1:
-                self.previous_solution = current_solution
-                return self.previous_solution
-
-            self._add_connectivity_constraints(components)
-
-        return Grid.empty()
-
-    def _add_connectivity_constraints(self, components):
-        components.sort(key=len, reverse=True)
-        for component in components[1:]:
-            literals = []
-            for position in component:
-                literals.append(self._shaded_vars[position].negated())
-
-            neighbors = [p for p in ShapeGenerator.around_shape(component) if p in self._grid]
-            for position in neighbors:
-                literals.append(self._shaded_vars[position])
-
-            self._model.add_bool_or(literals)
+        current_solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self.previous_solution = current_solution
+        return current_solution
 
     def _init_solver(self):
         max_value = max(LitsType, key=lambda x: x.value).value
@@ -93,6 +69,34 @@ class LitsSolver(GameSolver):
         self._add_regions_constraints()
         self._add_no_square_constraints()
         self._add_touching_constraints()
+        self._add_shaded_connectivity_constraint()
+
+    def _add_shaded_connectivity_constraint(self):
+        total_cells = self.rows_number * self.columns_number
+        self._rank_vars = Grid([[self._model.new_int_var(0, total_cells - 1, f"rank_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
+        is_root_vars = []
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_root = self._model.new_bool_var(f"is_root_{r}_{c}")
+                is_root_vars.append(is_root)
+                is_shaded = self._shaded_vars[pos]
+                self._model.add(is_root <= is_shaded)
+                self._model.add(self._rank_vars[pos] == 0).OnlyEnforceIf(is_root)
+        self._model.add(sum(is_root_vars) == 1)
+        for r in range(self.rows_number):
+            for c in range(self.columns_number):
+                pos = Position(r, c)
+                is_shaded = self._shaded_vars[pos]
+                is_root = is_root_vars[r * self.columns_number + c]
+                parent_literals = []
+                for neighbor in self._shaded_vars.neighbors_positions(pos):
+                    parent = self._model.new_bool_var(f"parent_{r}_{c}_{neighbor.r}_{neighbor.c}")
+                    self._model.add(self._shaded_vars[neighbor] == 1).OnlyEnforceIf(parent)
+                    self._model.add(self._rank_vars[neighbor] < self._rank_vars[pos]).OnlyEnforceIf(parent)
+                    parent_literals.append(parent)
+                if parent_literals:
+                    self._model.add_bool_or(parent_literals).OnlyEnforceIf([is_shaded, is_root.negated()])
 
     def _add_count_in_regions_constraints(self):
         for region in self._regions.values():
