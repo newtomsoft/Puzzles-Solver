@@ -282,7 +282,6 @@ class BalanceLoopSolverTest(TestCase):
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
 
-    # test ko
     def test_4x4_with_white0_2_solutions(self):
         clues_grid = Grid([
             [W0, __, __, __],
