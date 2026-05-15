@@ -6,7 +6,7 @@ from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 
 _ = 0
 T = TentsSolver.tree_value
-
+N = TentsSolver.no_clue
 
 class TentsSolverTests(TestCase):
     def test_rows_must_be_at_least_5_raises_value_error(self):
@@ -253,6 +253,48 @@ class TentsSolverTests(TestCase):
             [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
             [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0]
+        ])
+        game_solver = TentsSolver(grid, tents_numbers_by_column_row)
+        solution = game_solver.get_other_solution()
+        self.assertEqual(expected_solution, solution)
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(Grid.empty(), other_solution)
+
+    def test_solution_15x15_evil_w9yve(self):
+        grid = Grid([
+            [_, _, _, T, _, T, _, _, _, T, T, _, T, _, _],
+            [_, T, _, _, _, _, _, _, _, _, _, _, _, _, _],
+            [_, _, _, T, T, _, T, _, _, _, T, _, T, _, _],
+            [_, T, _, _, _, _, _, _, _, _, _, _, _, _, T],
+            [_, _, _, T, _, _, T, T, _, _, _, T, _, _, _],
+            [T, _, _, _, _, _, _, _, _, _, _, _, _, _, T],
+            [_, _, _, _, _, _, T, _, T, _, _, _, _, _, T],
+            [T, T, _, _, _, _, _, _, _, _, T, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, T, _, _, T],
+            [_, _, _, T, T, _, T, _, _, _, T, _, _, _, _],
+            [T, _, _, _, T, _, _, _, _, T, _, _, _, _, _],
+            [_, _, _, _, _, _, T, _, _, _, T, _, _, _, T],
+            [_, _, _, _, T, _, _, _, _, _, _, T, _, _, _],
+            [_, _, T, _, _, _, _, T, _, _, _, _, T, _, _],
+            [_, T, _, _, T, _, T, _, _, T, _, _, _, _, _],
+        ])
+        tents_numbers_by_column_row = {'column': [5, N, N, N, N, N, 1, N, 2, 5, N, 6, N, N, N], 'row': [4, N, N, N, 3, 2, N, 3, 3, N, N, 4, N, 3, N]}
+        expected_solution = Grid([
+            [0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1],
+            [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+            [1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0],
         ])
         game_solver = TentsSolver(grid, tents_numbers_by_column_row)
         solution = game_solver.get_other_solution()

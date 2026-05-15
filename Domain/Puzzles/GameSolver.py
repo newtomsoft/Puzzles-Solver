@@ -4,6 +4,8 @@ from Domain.Board.Grid import Grid
 
 
 class GameSolver(ABC):
+    no_clue = None
+
     @abstractmethod
     def __init__(self, *args, **kwargs):
         pass

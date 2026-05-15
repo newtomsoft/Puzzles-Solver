@@ -1,12 +1,11 @@
 import math
 
 from bs4 import BeautifulSoup, ResultSet, Tag
-from bs4.element import AttributeValueList, NavigableString, PageElement
+from bs4.element import NavigableString, PageElement
 from playwright.async_api import BrowserContext
 
-from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 
 
@@ -121,5 +120,5 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(None)
+                    result.append(GameSolver.no_clue)
         return result
