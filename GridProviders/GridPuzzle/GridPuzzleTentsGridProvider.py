@@ -3,6 +3,7 @@ from bs4.element import NavigableString, PageElement
 from playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
@@ -49,14 +50,13 @@ class GridPuzzleTentsGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider)
 
     @staticmethod
     def make_grid(column_count: int, matrix: list[list], matrix_cells: ResultSet[PageElement | Tag | NavigableString]) -> Grid:
-        tree_value = GridPuzzleTentsGridProvider.tree_value
         for i, cell in enumerate(matrix_cells):
             row = i // column_count
             col = i % column_count
             classes = cell.get('class', [])
             data_a = cell.get('data-a', '')
             if 'tree' in classes or data_a == '#':
-                matrix[row][col] = tree_value
+                matrix[row][col] = TentsSolver.tree_value
             else:
                 matrix[row][col] = 0
         return Grid(matrix)
