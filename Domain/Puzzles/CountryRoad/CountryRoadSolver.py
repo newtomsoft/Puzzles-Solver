@@ -43,7 +43,6 @@ class CountryRoadSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        orthogonal_dirs = Direction.orthogonal_directions()
 
         while True:
             status = self._solver.solve(self._model)
@@ -81,7 +80,7 @@ class CountryRoadSolver(GameSolver):
 
         return IslandGrid.empty(), proposition_count
 
-    def get_other_solution(self):
+    def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution:
             return IslandGrid.empty()
 
