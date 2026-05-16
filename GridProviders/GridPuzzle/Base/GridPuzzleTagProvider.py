@@ -46,26 +46,6 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
         return grid, left, up
 
     @staticmethod
-    def make_clues(soup: BeautifulSoup, place_first_letter: str) -> list:
-        """Return clues for a given grid position: init_place = t=> top; b=> bottom; l=> left; r=> right"""
-        if place_first_letter not in {'t', 'b', 'l', 'r'}:
-            raise ValueError(f'Invalid init_place: {place_first_letter}')
-
-        container = soup.find('div', class_=f'f{place_first_letter}_txt')
-        result = []
-        if container:
-            class_value = 'text-center' if place_first_letter in {'t', 'b'} else 'justify-content-around'
-            clue_divs = container.find_all('div', class_={class_value})
-            for div in clue_divs:
-                text = div.get_text(strip=True)
-                try:
-                    result.append(int(text))
-                except (ValueError, AttributeError):
-                    result.append(None)
-
-        return result
-
-    @staticmethod
     def make_top(soup: BeautifulSoup) -> list:
         container = soup.find('div', class_='ft_txt')
         result = []
@@ -76,7 +56,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(None)
+                    result.append(GameSolver.no_clue)
         return result
 
     @staticmethod
@@ -91,7 +71,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(None)
+                    result.append(GameSolver.no_clue)
         return result
 
     @staticmethod
@@ -105,7 +85,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(None)
+                    result.append(GameSolver.no_clue)
         return result
 
     @staticmethod
