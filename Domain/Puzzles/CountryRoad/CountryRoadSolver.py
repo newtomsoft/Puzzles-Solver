@@ -35,50 +35,15 @@ class CountryRoadSolver(GameSolver):
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
+        self._add_circuit_constraint()
 
     def get_solution(self) -> IslandGrid:
         self._init_solver()
-        solution, _ = self._ensure_all_islands_connected()
-        return solution
-
-    def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
-        proposition_count = 0
-
-        while True:
-            status = self._solver.solve(self._model)
-            if status not in (4, 2):
-                break
-
-            proposition_count += 1
-            for position, direction_bridges in self._island_bridges_ortools.items():
-                island = self._island_grid[position]
-                for direction, var in direction_bridges.items():
-                    if position.after(direction) not in self._island_bridges_ortools:
-                        continue
-                    bridges_number = self._solver.value(var)
-                    if bridges_number > 0:
-                        island.set_bridge_to_position(
-                            island.direction_position_bridges[direction][0], bridges_number)
-                    elif direction in island.direction_position_bridges:
-                        island.direction_position_bridges.pop(direction)
-                island.set_bridges_count_according_to_directions_bridges()
-
-            connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
-            if len(connected_positions) == 1:
-                self._previous_solution = self._island_grid
-                return self._island_grid, proposition_count
-
-            for positions in connected_positions:
-                component_vars = []
-                for position in positions:
-                    for direction, (_, _) in self._island_grid[position].direction_position_bridges.items():
-                        component_vars.append(self._island_bridges_ortools[position][direction].negated())
-                if component_vars:
-                    self._model.add_bool_or(component_vars)
-
-            self._init_island_grid()
-
-        return IslandGrid.empty(), proposition_count
+        if self._solve():
+            self._extract_solution()
+            self._previous_solution = self._island_grid
+            return self._island_grid
+        return IslandGrid.empty()
 
     def get_other_solution(self) -> IslandGrid:
         if not self._previous_solution:
@@ -97,7 +62,66 @@ class CountryRoadSolver(GameSolver):
             self._model.add_bool_or(previous_solution_constraints)
 
         self._init_island_grid()
-        return self._ensure_all_islands_connected()[0]
+        if self._solve():
+            self._extract_solution()
+            return self._island_grid
+        return IslandGrid.empty()
+
+    def _solve(self) -> bool:
+        return self._solver.solve(self._model) in (4, 2)
+
+    def _extract_solution(self):
+        for position, direction_bridges in self._island_bridges_ortools.items():
+            island = self._island_grid[position]
+            for direction, var in direction_bridges.items():
+                if position.after(direction) not in self._island_bridges_ortools:
+                    continue
+                bridges_number = self._solver.value(var)
+                if bridges_number > 0:
+                    island.set_bridge_to_position(
+                        island.direction_position_bridges[direction][0], bridges_number)
+                elif direction in island.direction_position_bridges:
+                    island.direction_position_bridges.pop(direction)
+            island.set_bridges_count_according_to_directions_bridges()
+
+    def _add_circuit_constraint(self):
+        node_id = {pos: pos.r * self._columns_number + pos.c for pos in self._island_bridges_ortools}
+
+        is_active = {}
+        for pos in self._island_bridges_ortools:
+            sum_bridges = sum(self._island_bridges_ortools[pos].values())
+            is_active[pos] = self._model.new_bool_var(f"act_{pos}")
+            self._model.add(sum_bridges == 2).only_enforce_if(is_active[pos])
+            self._model.add(sum_bridges == 0).only_enforce_if(is_active[pos].Not())
+
+        circuit_arc: dict[Position, dict[Direction, any]] = {}
+        for pos in self._island_bridges_ortools:
+            circuit_arc[pos] = {}
+            for direction in Direction.orthogonal_directions():
+                neighbor = pos.after(direction)
+                if neighbor in self._island_bridges_ortools:
+                    circuit_arc[pos][direction] = self._model.new_bool_var(f"c_{pos}_{direction}")
+
+        arcs = []
+        for pos in self._island_bridges_ortools:
+            self_loop = self._model.new_bool_var(f"slf_{pos}")
+            self._model.add(self_loop == 1).only_enforce_if(is_active[pos].Not())
+            self._model.add(self_loop == 0).only_enforce_if(is_active[pos])
+            arcs.append((node_id[pos], node_id[pos], self_loop))
+
+            for direction, var in circuit_arc[pos].items():
+                neighbor = pos.after(direction)
+                arcs.append((node_id[pos], node_id[neighbor], var))
+
+                self._model.add(var <= self._island_bridges_ortools[pos][direction])
+
+                neighbor_var = circuit_arc[neighbor].get(direction.opposite)
+                if neighbor_var is not None:
+                    self._model.add(
+                        self._island_bridges_ortools[pos][direction] <= var + neighbor_var
+                    )
+
+        self._model.add_circuit(arcs)
 
     def _add_constraints(self):
         self._add_initial_constraints()
