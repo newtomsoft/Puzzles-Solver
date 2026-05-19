@@ -91,6 +91,7 @@ import Run.Games.PurenrupuConfig
 import Run.Games.RegionalYajilinConfig
 import Run.Games.RenkatsuConfig
 import Run.Games.RenzokuConfig
+import Run.Games.RimotoejjiConfig
 import Run.Games.RabbitsAndTreesConfig
 import Run.Games.RoundTripConfig
 import Run.Games.SashikazuneConfig
@@ -239,6 +240,7 @@ class UrlPatternMatcher:
         Run.Games.RegionalYajilinConfig.register()
         Run.Games.RenkatsuConfig.register()
         Run.Games.RenzokuConfig.register()
+        Run.Games.RimotoejjiConfig.register()
         Run.Games.RabbitsAndTreesConfig.register()
         Run.Games.RoundTripConfig.register()
         Run.Games.SashikazuneConfig.register()
