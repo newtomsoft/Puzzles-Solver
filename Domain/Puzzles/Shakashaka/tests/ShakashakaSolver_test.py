@@ -13,6 +13,8 @@ bl = ShakashakaCellType.WHITE_BL
 br = ShakashakaCellType.WHITE_BR
 bf = ShakashakaCellType.BLACK_FULL
 
+GridShakashaka = Grid[ShakashakaCellType]
+
 
 class ShakashakaSolverTests(unittest.TestCase):
     def test_2x2_empty(self):
@@ -22,7 +24,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, _]
         ])
         expected_white = Grid([[wf, wf], [wf, wf]])
-        expected_diamond = Grid([[br, bl], [tr, tl]])
+        expected_diamond = GridShakashaka([[br, bl], [tr, tl]])
         expected_solutions = {expected_white, expected_diamond}
 
         solver = ShakashakaSolver(grid)
@@ -49,7 +51,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, _, 2],
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [bf, br, bl],
             [br, wf, tl],
             [tr, tl, bf],
@@ -68,7 +70,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [2, _, _],
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [br, bl, bf],
             [tr, wf, bl],
             [bf, tr, tl],
@@ -89,7 +91,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, B, _, _, _],
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [wf, br, bl, bf, bf],
             [bf, tr, tl, wf, wf],
             [br, bl, bf, wf, wf],
@@ -117,7 +119,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, _, 1, _, _, _, _, _, _, _],
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [bf, br, bl, bf, br, bl, bf, br, bl, bf],
             [br, wf, tl, wf, tr, tl, br, wf, wf, bl],
             [tr, tl, bf, br, bl, bf, tr, wf, wf, tl],
@@ -155,7 +157,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [_, _, _, B, _, _, 2, _, _, _, B, 0, _, B, _]
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [bf, br, bl, br, bl, bf, wf, wf, bf, br, bl, bf, wf, br, bl],
             [wf, tr, tl, tr, tl, br, bl, bf, wf, tr, wf, bl, bf, tr, tl],
             [br, bl, wf, wf, bf, tr, tl, wf, br, bl, tr, tl, br, bl, bf],
@@ -203,7 +205,7 @@ class ShakashakaSolverTests(unittest.TestCase):
             [2, _, _, _, _, 0, _, _, _, 3, _, _, 2, _, _, B, _, _, _, _]
         ])
 
-        expected_solution = Grid([
+        expected_solution = GridShakashaka([
             [bf, bf, bf, bf, bf, wf, wf, bf, wf, wf, br, bl, wf, wf, br, bl, wf, br, bl, bf],
             [bf, wf, wf, wf, bf, wf, wf, br, bl, br, wf, tl, bf, br, wf, tl, wf, tr, tl, wf],
             [bf, wf, wf, wf, bf, bf, bf, tr, tl, tr, tl, br, bl, tr, tl, wf, bf, wf, wf, bf],
