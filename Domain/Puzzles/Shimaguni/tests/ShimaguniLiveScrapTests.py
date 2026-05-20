@@ -1,6 +1,6 @@
 import unittest
 import asyncio
-from playwright.async_api import async_playwright
+from rebrowser_playwright.async_api import async_playwright
 from Domain.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleShimaguniGridProvider import GridPuzzleShimaguniGridProvider
 

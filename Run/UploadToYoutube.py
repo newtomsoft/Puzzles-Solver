@@ -171,7 +171,7 @@ async def get_puzzle_metadata(video_name):
 
 
 async def fetch_gridpuzzle_description(puzzle_name):
-    from playwright.async_api import async_playwright
+    from rebrowser_playwright.async_api import async_playwright
     print(f"Ouverture de https://www.gridpuzzle.com/{puzzle_name}")
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)

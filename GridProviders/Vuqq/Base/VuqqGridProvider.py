@@ -1,4 +1,4 @@
-﻿from playwright.async_api import BrowserContext, Page
+﻿from rebrowser_playwright.async_api import BrowserContext, Page
 
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

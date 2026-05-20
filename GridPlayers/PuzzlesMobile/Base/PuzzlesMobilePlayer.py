@@ -1,6 +1,6 @@
 ﻿from abc import abstractmethod
 
-from playwright.async_api import Page
+from rebrowser_playwright.async_api import Page
 
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.Base.PlayStatus import PlayStatus

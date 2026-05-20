@@ -1,6 +1,6 @@
 import asyncio
 
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid

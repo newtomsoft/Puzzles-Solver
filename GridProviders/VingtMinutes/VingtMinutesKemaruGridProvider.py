@@ -1,7 +1,7 @@
 ﻿import re
 
 from bs4 import BeautifulSoup
-from playwright.async_api import BrowserContext, Page
+from rebrowser_playwright.async_api import BrowserContext, Page
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider

@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Any
 
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 
 
 class GridProvider(ABC):

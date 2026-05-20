@@ -1,5 +1,5 @@
 import math
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 from Domain.Board.Grid import Grid
 from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 

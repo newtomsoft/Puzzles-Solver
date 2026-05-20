@@ -1,4 +1,4 @@
-﻿from playwright.async_api import Page
+﻿from rebrowser_playwright.async_api import Page
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer

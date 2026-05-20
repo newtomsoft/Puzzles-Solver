@@ -1,5 +1,6 @@
-﻿from bs4.element import AttributeValueList
-from playwright.async_api import Page
+﻿import asyncio
+
+from bs4.element import AttributeValueList
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -13,11 +14,54 @@ class GridPuzzleProvider:
             page = await browser.new_page()
         else:
             page = browser.pages[0]
-        await page.set_viewport_size({"width": 685, "height": 900})
-        await page.goto(url)
-        # Wait for the grid to be loaded
-        await page.wait_for_selector(".page-body", timeout=10000)
-        html_page = await page.content()
+        try:
+            await page.set_viewport_size({"width": 685, "height": 900})
+        except Exception:
+            pass
+        await page.goto(url, wait_until="domcontentloaded", timeout=15000)
+        for attempt in range(5):
+            try:
+                page_title = await page.title()
+                break
+            except Exception:
+                if attempt == 4:
+                    raise
+                await asyncio.sleep(0.5)
+        if "just a moment" in page_title.lower() or "un instant" in page_title.lower():
+            print("\n" + "=" * 60, flush=True)
+            print("CLOUDFLARE CHALLENGE DETECTED!", flush=True)
+            print("Please solve the challenge in the browser window.", flush=True)
+            print("Waiting for page to load automatically...", flush=True)
+            print("=" * 60 + "\n", flush=True)
+            for attempt in range(60):
+                await asyncio.sleep(2)
+                for attempt in range(5):
+                    try:
+                        page_title = await page.title()
+                        break
+                    except Exception:
+                        if attempt == 4:
+                            raise
+                        await asyncio.sleep(0.5)
+                if "just a moment" not in page_title.lower() and "un instant" not in page_title.lower():
+                    print("Challenge solved! Continuing...", flush=True)
+                    break
+            else:
+                raise TimeoutError("Cloudflare challenge was not solved within 120 seconds")
+
+        try:
+            await page.wait_for_selector(".page-body", timeout=5000)
+        except Exception:
+            pass
+
+        for attempt in range(5):
+            try:
+                html_page = await asyncio.wait_for(page.content(), timeout=10)
+                break
+            except Exception:
+                if attempt == 4:
+                    raise
+                await asyncio.sleep(0.5)
         if not board_selector:
             return html_page
         div_to_view = await page.query_selector(board_selector)

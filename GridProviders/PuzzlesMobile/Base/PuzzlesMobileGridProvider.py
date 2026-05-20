@@ -2,7 +2,7 @@
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup, ResultSet, Tag
-from playwright.async_api import BrowserContext, Page
+from rebrowser_playwright.async_api import BrowserContext, Page
 
 
 class PuzzlesMobileGridProvider:

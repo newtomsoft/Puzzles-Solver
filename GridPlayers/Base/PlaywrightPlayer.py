@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Protocol
 
 from moviepy import VideoFileClip
-from playwright.async_api import BrowserContext, ElementHandle, Mouse, Page, Video
+from rebrowser_playwright.async_api import BrowserContext, ElementHandle, Mouse, Page, Video
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position

@@ -1,7 +1,7 @@
 ﻿import math
 import re
 from bs4 import BeautifulSoup
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 from Domain.Board.Grid import Grid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider

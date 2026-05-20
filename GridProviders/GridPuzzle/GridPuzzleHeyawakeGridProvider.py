@@ -1,5 +1,5 @@
 from collections import deque
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider

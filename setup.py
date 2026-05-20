@@ -10,7 +10,7 @@ setup(
     author_email='thomas@newtomsoft.fr',
     description='A collection of puzzle games.',
     install_requires=[
-        'playwright',
+        'rebrowser-playwright',
         'configparser',
     ],
     classifiers=[

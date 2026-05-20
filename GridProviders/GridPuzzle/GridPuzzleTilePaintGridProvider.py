@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 
 from Domain.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider

@@ -2,7 +2,7 @@ import asyncio
 import logging
 from urllib.parse import parse_qs, urlparse
 
-from playwright.async_api import BrowserContext
+from rebrowser_playwright.async_api import BrowserContext
 
 from Domain.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider

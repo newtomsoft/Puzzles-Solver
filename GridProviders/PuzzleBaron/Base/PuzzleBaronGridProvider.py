@@ -1,4 +1,4 @@
-﻿from playwright.async_api import Page
+﻿from rebrowser_playwright.async_api import Page
 
 
 class PuzzleBaronGridProvider:
