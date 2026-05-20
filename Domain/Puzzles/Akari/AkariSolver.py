@@ -25,9 +25,6 @@ class AkariSolver(GameSolver):
             else:
                 self._number_constraints[Position(k[0], k[1])] = v
 
-        if self.rows_number < 7 or self.columns_number < 7:
-            raise ValueError("Akari grid must be at least 7x7")
-
         self._solver = cp_model.CpSolver()
         self._model = None
         self._bulbs_vars = None
