@@ -114,9 +114,7 @@ class RimotoejjiSolver(GameSolver):
             if i == 0:
                 model.add(chain_var == inside_vars[0])
             else:
-                model.add(chain_var <= chain[i - 1])
-                model.add(chain_var <= inside_vars[i])
-                model.add(chain_var >= chain[i - 1] + inside_vars[i] - 1)
+                model.add_multiplication_equality(chain_var, [chain[i - 1], inside_vars[i]])
             chain.append(chain_var)
         length_var = model.new_int_var(0, k, f"{prefix}_len")
         model.add(length_var == sum(chain))
@@ -125,15 +123,6 @@ class RimotoejjiSolver(GameSolver):
     @staticmethod
     def _add_gt(model: cp_model.CpModel, a: cp_model.IntVar, b: cp_model.IntVar):
         model.add(a >= b + 1)
-
-    @staticmethod
-    def _add_eq(model: cp_model.CpModel, a: cp_model.IntVar, b: cp_model.IntVar, target: cp_model.IntVar):
-        is_gt = model.new_bool_var(f"gt_{a}_{b}")
-        is_lt = model.new_bool_var(f"lt_{a}_{b}")
-        model.add(a >= b + 1).only_enforce_if(is_gt)
-        model.add(b >= a + 1).only_enforce_if(is_lt)
-        model.add(a == b).only_enforce_if(target)
-        model.add(sum([is_gt, is_lt, target]) == 1)
 
     def _add_clues_direction_constraints(self):
         for pos, val in self.input_grid:
@@ -167,16 +156,16 @@ class RimotoejjiSolver(GameSolver):
             elif val == '+':
                 max_len = self._model.new_int_var(0, self._N, f"max_len_{r}_{c}")
                 self._model.add_max_equality(max_len, [up_len, down_len, left_len, right_len])
-                is_max_up = self._model.new_bool_var(f"ismax_up_{r}_{c}")
-                is_max_down = self._model.new_bool_var(f"ismax_down_{r}_{c}")
-                is_max_left = self._model.new_bool_var(f"ismax_left_{r}_{c}")
-                is_max_right = self._model.new_bool_var(f"ismax_right_{r}_{c}")
-                self._add_eq(self._model, up_len, max_len, is_max_up)
-                self._add_eq(self._model, down_len, max_len, is_max_down)
-                self._add_eq(self._model, left_len, max_len, is_max_left)
-                self._add_eq(self._model, right_len, max_len, is_max_right)
+                is_max_vars = []
+                for dir_len, suffix in [(up_len, 'up'), (down_len, 'down'), (left_len, 'left'), (right_len, 'right')]:
+                    is_max = self._model.new_bool_var(f"ismax_{r}_{c}_{suffix}")
+                    diff = self._model.new_int_var(0, self._N, f"diff_{r}_{c}_{suffix}")
+                    self._model.add(diff == max_len - dir_len)
+                    self._model.add(diff <= self._N * (1 - is_max))
+                    self._model.add(diff >= 1 - (self._N + 1) * is_max)
+                    is_max_vars.append(is_max)
                 n_max = self._model.new_int_var(0, 4, f"n_max_{r}_{c}")
-                self._model.add(n_max == sum([is_max_up, is_max_down, is_max_left, is_max_right]))
+                self._model.add(n_max == sum(is_max_vars))
                 self._model.add(n_max >= 2)
                 self._model.add(max_len >= 1)
 
