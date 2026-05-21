@@ -13,6 +13,7 @@ import Run.Games.BorderBlockConfig
 import Run.Games.BuraitoraitoConfig
 import Run.Games.ChoconaConfig
 import Run.Games.CloudsConfig
+import Run.Games.ContextConfig
 import Run.Games.CountryRoadConfig
 import Run.Games.CorralConfig
 import Run.Games.CreekConfig
@@ -162,6 +163,7 @@ class UrlPatternMatcher:
         Run.Games.BuraitoraitoConfig.register()
         Run.Games.ChoconaConfig.register()
         Run.Games.CloudsConfig.register()
+        Run.Games.ContextConfig.register()
         Run.Games.CountryRoadConfig.register()
         Run.Games.CorralConfig.register()
         Run.Games.CreekConfig.register()
