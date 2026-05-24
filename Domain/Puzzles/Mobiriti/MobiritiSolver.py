@@ -62,30 +62,32 @@ class MobiritiSolver(GameSolver):
         self._add_global_connectivity_constraint()
 
     def _add_clue_constraint(self, r, c, clue):
-        # On va utiliser la règle qui semble être la bonne (visibilité en ligne droite) :
-        # Ligne droite, les noirs bloquent.
-        # Les cercles ne bloquent PAS la vue (ils sont blancs).
-        # Les cellules vides blanches sont comptées.
-        # Les autres cercles ne sont PAS comptés dans le total de ce cercle.
         visibility_vars = []
         for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             curr_r, curr_c = r + dr, c + dc
             prev_visible = None
             while 0 <= curr_r < self._rows and 0 <= curr_c < self._cols:
-                is_white = self._color_vars[(curr_r, curr_c)].Not()
+                is_other_circle = (curr_r, curr_c) in self._circle_positions and (curr_r, curr_c) != (r, c)
                 is_visible = self._model.new_bool_var(f'is_visible_{r}_{c}_{curr_r}_{curr_c}')
                 
-                if prev_visible is None:
-                    self._model.add(is_visible == is_white)
+                if is_other_circle:
+                    self._model.add(is_visible == 0)
+                    prev_visible = 0
                 else:
-                    self._model.add_bool_and([is_white, prev_visible]).only_enforce_if(is_visible)
-                    self._model.add_bool_or([is_white.Not(), prev_visible.Not()]).only_enforce_if(is_visible.Not())
+                    is_white = self._color_vars[(curr_r, curr_c)].Not()
+                    if prev_visible is None:
+                        self._model.add(is_visible == is_white)
+                    else:
+                        if prev_visible == 0:
+                            self._model.add(is_visible == 0)
+                        else:
+                            self._model.add_bool_and([is_white, prev_visible]).only_enforce_if(is_visible)
+                            self._model.add_bool_or([is_white.Not(), prev_visible.Not()]).only_enforce_if(is_visible.Not())
+                    prev_visible = is_visible
                 
-                # Seulement les cellules SANS cercle sont comptées
-                if (curr_r, curr_c) not in self._circle_positions:
+                if not is_other_circle:
                     visibility_vars.append(is_visible)
                 
-                prev_visible = is_visible
                 curr_r += dr
                 curr_c += dc
         
