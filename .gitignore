@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -38,17 +38,13 @@ Thumbs.db
 /Run/videos/
 /videos/
 *.ini
+/Domain/Generators/
 
 # Chrome Extension
 /ChromeExtension/.idea/
 /ChromeExtension/node_modules/
 /ChromeExtension/node_modules/.package-lock.json
 /ChromeExtension/src/toto.html
-
-# C#
-/CSharp/.idea/
-/CSharp/bin/
-/CSharp/obj/
 
 # Logs
 *.log
@@ -65,3 +61,4 @@ BrowserExtension/node_modules/
 # Secrets
 client_secrets.json
 youtube_credentials.json
+
