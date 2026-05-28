@@ -98,12 +98,12 @@ class TentsSolver(GameSolver):
 
     def _add_sum_constraints(self):
         for row_index in range(self.rows_number):
-            if self.rows_tents_numbers[row_index] == self.no_clue:
+            if self.rows_tents_numbers[row_index] == self.empty:
                 continue
             tents_in_row = [self._tent_vars[Position(row_index, c)] for c in range(self.columns_number) if self._grid[Position(row_index, c)] != self.tree_value]
             self._model.add(sum(tents_in_row) == self.rows_tents_numbers[row_index])
         for col_index in range(self.columns_number):
-            if self.columns_tents_numbers[col_index] == self.no_clue:
+            if self.columns_tents_numbers[col_index] == self.empty:
                 continue
             tents_in_col = [self._tent_vars[Position(r, col_index)] for r in range(self.rows_number) if self._grid[Position(r, col_index)] != self.tree_value]
             self._model.add(sum(tents_in_col) == self.columns_tents_numbers[col_index])

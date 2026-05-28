@@ -6,7 +6,7 @@ from Domain.Puzzles.Tents.TentsSolver import TentsSolver
 
 _ = 0
 T = TentsSolver.tree_value
-N = TentsSolver.no_clue
+N = TentsSolver.empty
 
 class TentsSolverTests(TestCase):
     def test_rows_must_be_at_least_5_raises_value_error(self):
