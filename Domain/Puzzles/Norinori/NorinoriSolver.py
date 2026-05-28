@@ -11,17 +11,10 @@ class NorinoriSolver(GameSolver):
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
 
-        # Match test expectations
-        if self.rows_number != self.columns_number:
-            raise ValueError("The grid must be square")
-
-        if self.rows_number < 6:
-            raise ValueError("The grid must be at least 6x6")
-
         self._regions = self._grid.get_regions()
 
-        if len(self._regions) < 2:
-            raise ValueError("The grid must have at least 2 regions")
+        if len(self._regions) == 0:
+            raise ValueError("The grid must have at least one region")
 
         self._model = None
         self._solver = cp_model.CpSolver()
@@ -37,6 +30,7 @@ class NorinoriSolver(GameSolver):
         if self._model is None:
             self._init_model()
 
+        self._solver.parameters.max_time_in_seconds = 10.0
         self._status = self._solver.solve(self._model)
 
         if self._status not in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
@@ -66,7 +60,7 @@ class NorinoriSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        grid = Grid([[1 if self._solver.value(self._grid_vars[i][j]) else 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.boolean_value(self._grid_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def queen(self, position):

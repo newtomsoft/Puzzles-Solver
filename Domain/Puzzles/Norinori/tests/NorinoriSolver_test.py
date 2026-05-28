@@ -18,17 +18,16 @@ class NorinoriSolverTests(TestCase):
             NorinoriSolver(grid)
         self.assertEqual("The grid must be square", str(context.exception))
 
-    def test_solution_grid_size_less_than_4(self):
+    def test_solution_grid_size_less_than_5(self):
         grid = Grid([
-            [0, 0, 0, 1, 1],
-            [0, 0, 0, 1, 1],
-            [0, 0, 0, 1, 1],
-            [0, 0, 0, 1, 1],
-            [0, 0, 0, 1, 1],
+            [0, 0, 0, 1],
+            [0, 0, 0, 1],
+            [0, 0, 0, 1],
+            [0, 0, 0, 1],
         ])
         with self.assertRaises(ValueError) as context:
             NorinoriSolver(grid)
-        self.assertEqual("The grid must be at least 6x6", str(context.exception))
+        self.assertEqual("The grid must be at least 5x5", str(context.exception))
 
     def test_solution_color_less_than_columns_number(self):
         grid = Grid([
