@@ -62,6 +62,7 @@ import Run.Games.KurottoConfig
 import Run.Games.LinesweeperConfig
 import Run.Games.LitsConfig
 import Run.Games.LookAirConfig
+import Run.Games.MarutaringuConfig
 import Run.Games.MasyuConfig
 import Run.Games.MathraxConfig
 import Run.Games.MeadowsConfig
@@ -213,6 +214,7 @@ class UrlPatternMatcher:
         Run.Games.LinesweeperConfig.register()
         Run.Games.LitsConfig.register()
         Run.Games.LookAirConfig.register()
+        Run.Games.MarutaringuConfig.register()
         Run.Games.MasyuConfig.register()
         Run.Games.MathraxConfig.register()
         Run.Games.MeadowsConfig.register()
