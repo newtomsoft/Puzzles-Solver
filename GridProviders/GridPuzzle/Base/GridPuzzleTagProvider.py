@@ -56,7 +56,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(GameSolver.no_clue)
+                    result.append(GameSolver.empty)
         return result
 
     @staticmethod
@@ -71,7 +71,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(GameSolver.no_clue)
+                    result.append(GameSolver.empty)
         return result
 
     @staticmethod
@@ -85,7 +85,7 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(GameSolver.no_clue)
+                    result.append(GameSolver.empty)
         return result
 
     @staticmethod
@@ -100,5 +100,5 @@ class GridPuzzleTagProvider(GridPuzzleProvider):
                 try:
                     result.append(int(text))
                 except (ValueError, AttributeError):
-                    result.append(GameSolver.no_clue)
+                    result.append(GameSolver.empty)
         return result
