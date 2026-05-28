@@ -88,6 +88,7 @@ import Run.Games.ObitaruConfig
 import Run.Games.PipelinkConfig
 import Run.Games.PipesConfig
 import Run.Games.PipesWrapConfig
+import Run.Games.PutteriaConfig
 import Run.Games.PurenrupuConfig
 import Run.Games.RegionalYajilinConfig
 import Run.Games.RenkatsuConfig
@@ -238,6 +239,7 @@ class UrlPatternMatcher:
         Run.Games.PipelinkConfig.register()
         Run.Games.PipesConfig.register()
         Run.Games.PipesWrapConfig.register()
+        Run.Games.PutteriaConfig.register()
         Run.Games.PurenrupuConfig.register()
         Run.Games.RegionalYajilinConfig.register()
         Run.Games.RenkatsuConfig.register()
