@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from z3 import Solver, Not, And, Or, Implies, Int, sat, If
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.LinearPathGrid import LinearPathGrid
@@ -17,73 +17,111 @@ class NumberChainSolver(GameSolver):
         self._end_position = Position(self._grid.rows_number - 1, self._grid.columns_number - 1)
         self._start_value = self._grid[self._start_position]
         self._end_value = self._grid[self._end_position]
-        self._solver = Solver()
-        self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
+        self._blocked_patterns: list[list[tuple[Position, int]]] = []
 
     def get_solution(self) -> Grid:
-        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self.columns_number)] for r in range(self.rows_number)])
-        self._add_constraints()
+        self._blocked_patterns = []
         return self._compute_solution()
 
     def get_other_solution(self) -> Grid:
-        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution if value > 0])))
+        if self._previous_solution is not None:
+            self._blocked_patterns.append([(position, value) for position, value in self._previous_solution if value > 0])
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        while self._solver.check() == sat:
-            model = self._solver.model()
-            matrix_number = [[(model.eval(self._grid_z3.value(i, j))).as_long() for j in range(self.columns_number)] for i in range(self.rows_number)]
+        while True:
+            model = cp_model.CpModel()
+
+            grid_vars = Grid([
+                [model.new_int_var(-self._end_value, self._end_value, f"grid_{r}_{c}") for c in range(self.columns_number)]
+                for r in range(self.rows_number)
+            ])
+            pos_bools = Grid([
+                [model.new_bool_var(f"pos_{r}_{c}") for c in range(self.columns_number)]
+                for r in range(self.rows_number)
+            ])
+
+            for (position, var) in grid_vars:
+                b = pos_bools[position]
+                model.Add(var >= 1).OnlyEnforceIf(b)
+                model.Add(var <= 0).OnlyEnforceIf(b.Not())
+
+            self._add_initial_constraints(model, grid_vars)
+            self._add_way_cells_count_constraint(model, pos_bools)
+            self._add_way_distinct_cells_constraint(model, grid_vars)
+            self._add_neighbors_count_constraints(model, pos_bools, grid_vars)
+
+            for block in self._blocked_patterns:
+                if not block:
+                    continue
+                lits = []
+                for position, value in block:
+                    v = grid_vars[position]
+                    eq_lit = model.new_bool_var(f"block_eq_{position.r}_{position.c}")
+                    model.Add(v == value).OnlyEnforceIf(eq_lit)
+                    model.Add(v != value).OnlyEnforceIf(eq_lit.Not())
+                    lits.append(eq_lit)
+                model.Add(sum(lits) <= len(lits) - 1)
+
+            solver = cp_model.CpSolver()
+            status = solver.Solve(model)
+            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+                return Grid.empty()
+
+            matrix_number = [
+                [solver.Value(grid_vars.value(i, j)) for j in range(self.columns_number)]
+                for i in range(self.rows_number)
+            ]
             attempt = Grid(matrix_number)
-            attempt_bool = Grid([[True if matrix_number[i][j] > 0 else False for j in range(self.columns_number)] for i in range(self.rows_number)])
+
+            attempt_bool = Grid([[matrix_number[i][j] > 0 for j in range(self.columns_number)] for i in range(self.rows_number)])
             attempt_bool.set_value(self._end_position, 2)
-            linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(attempt_bool, {1: self._start_position, 2: self._end_position})
+            linear_path_grid = LinearPathGrid.from_grid_and_checkpoints(
+                attempt_bool, {1: self._start_position, 2: self._end_position}
+            )
             if linear_path_grid == Grid.empty():
-                self._solver.add(Not(And([self._grid_z3[position] == value for position, value in attempt if value > 0])))
+                self._blocked_patterns.append([(position, value) for position, value in attempt if value > 0])
                 continue
+
             self._previous_solution = attempt
             return linear_path_grid
-        return Grid.empty()
 
-    def _add_constraints(self):
-        self._add_initial_constraints()
-        self._add_way_cells_count_constraint()
-        self._add_way_distinct_cells_constraint()
-        self._add_neighbors_count_constraints()
+    def _add_initial_constraints(self, model: cp_model.CpModel, grid_vars: Grid):
+        model.Add(grid_vars[self._start_position] == self._start_value)
+        model.Add(grid_vars[self._end_position] == self._end_value)
 
-    def _add_initial_constraints(self):
-        self._solver.add(self._grid_z3[self._start_position] == self._start_value)
-        self._solver.add(self._grid_z3[self._end_position] == self._end_value)
-        for position, value in self._grid_z3:
-            self._solver.add(value >= -self._end_value)
-            self._solver.add(value <= self._end_value)
+    def _add_neighbors_count_constraints(self, model: cp_model.CpModel, pos_bools: Grid, grid_vars: Grid):
+        start_neighbors_count = sum(pos_bools.neighbors_values(self._start_position))
+        model.Add(start_neighbors_count >= 1)
 
-    def _add_neighbors_count_constraints(self):
-        same_value_start_position_neighbors_count = self._same_value_neighbors_count(self._start_position)
-        self._solver.add(same_value_start_position_neighbors_count >= 1)
+        end_neighbors_count = sum(pos_bools.neighbors_values(self._end_position))
+        model.Add(end_neighbors_count >= 1)
 
-        same_value_end_position_neighbors_count = self._same_value_neighbors_count(self._end_position)
-        self._solver.add(same_value_end_position_neighbors_count >= 1)
+        for position, _ in self._grid:
+            if position == self._start_position or position == self._end_position:
+                continue
+            neighbors_count = sum(pos_bools.neighbors_values(position))
+            model.Add(neighbors_count >= 2).OnlyEnforceIf(pos_bools[position])
 
-        for position in [position for position, _ in self._grid if position != self._start_position and position != self._end_position]:
-            same_value_start_position_neighbors_count = self._same_value_neighbors_count(position)
-            self._solver.add(Implies(self._grid_z3[position] > 0, same_value_start_position_neighbors_count >= 2))
+    def _add_way_cells_count_constraint(self, model: cp_model.CpModel, pos_bools: Grid):
+        all_bools = [b for _, b in pos_bools]
+        model.Add(sum(all_bools) == self._end_value)
 
-    def _same_value_neighbors_count(self, position):
-        return sum([neighbor_value > 0 for neighbor_value in self._grid_z3.neighbors_values(position)])
-
-    def _add_way_cells_count_constraint(self):
-        self._solver.add(sum([If(self._grid_z3[position] > 0, 1, 0) for position, _ in self._grid]) == self._end_value)
-
-    def _add_way_distinct_cells_constraint(self):
+    def _add_way_distinct_cells_constraint(self, model: cp_model.CpModel, grid_vars: Grid):
         values_to_positions = defaultdict(list)
         for position, value in [(position, value) for position, value in self._grid if value > 0]:
             values_to_positions[value].append(position)
 
         for value, positions in values_to_positions.items():
             if len(positions) == 1:
-                self._solver.add(self._grid_z3[positions[0]] == value)
+                model.Add(grid_vars[positions[0]] == value)
                 continue
+            selectors = []
             for index, position in enumerate(positions):
-                self._solver.add(Or(self._grid_z3[position] == value, self._grid_z3[position] == -index))
-            self._solver.add(sum([If(self._grid_z3[position] == value, 1, 0) for position in positions]) == 1)
+                sel = model.new_bool_var(f"pick_{value}_{position.r}_{position.c}")
+                v = grid_vars[position]
+                model.Add(v == value).OnlyEnforceIf(sel)
+                model.Add(v == -index).OnlyEnforceIf(sel.Not())
+                selectors.append(sel)
+            model.Add(sum(selectors) == 1)

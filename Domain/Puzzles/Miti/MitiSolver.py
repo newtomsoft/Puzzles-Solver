@@ -1,6 +1,6 @@
 from typing import Collection
 
-from z3 import Bool, Solver, Not, And, sat, is_true, Sum, ArithRef
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -17,21 +17,24 @@ class MitiSolver(GameSolver):
         self._rows_number = size
         self._columns_number = size
         self._init_island_grid()
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: IslandGrid
+        self._solver_initialized = False
 
     def _init_island_grid(self):
         self._island_grid = IslandGrid([[Island(Position(r, c), 2) for c in range(self._columns_number)] for r in range(self._rows_number)])
 
     def _init_solver(self):
         self._grid_z3 = Grid(
-            [[{direction: Bool(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in
+            [[{direction: self._model.NewBoolVar(f"{direction}_{r}-{c}") for direction in Direction.orthogonal_directions()} for c in range(self._columns_number)] for r in
              range(self._rows_number)])
         self._add_constraints()
+        self._solver_initialized = True
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if not self._solver_initialized:
             self._init_solver()
 
         solution, _ = self._ensure_all_islands_grouped()
@@ -39,13 +42,12 @@ class MitiSolver(GameSolver):
 
     def _ensure_all_islands_grouped(self) -> tuple[IslandGrid, int]:
         propositions_count = 0
-        while self._solver.check() == sat:
+        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             self._init_island_grid()
-            model = self._solver.model()
             propositions_count += 1
             for position, direction_bridges in self._grid_z3:
                 for direction, bridges in direction_bridges.items():
-                    bridges_number = 1 if is_true(model.eval(bridges)) else 0
+                    bridges_number = 1 if self._solver.Value(bridges) else 0
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
@@ -63,13 +65,13 @@ class MitiSolver(GameSolver):
         return IslandGrid.empty(), propositions_count
 
     def _exclude_positions_values_together(self, positions: set[Position]):
-        constraints = []
+        bool_vars = []
         for position in positions:
-            constraints += [
-                self._grid_z3[position][direction] == (self._island_grid[position].direction_position_bridges.get(direction, [0, 0])[1] == 1) for
-                direction in Direction.orthogonal_directions()
-            ]
-        self._solver.add(Not(And(constraints)))
+            for direction in Direction.orthogonal_directions():
+                val = self._island_grid[position].direction_position_bridges.get(direction, [0, 0])[1] == 1
+                var = self._grid_z3[position][direction]
+                bool_vars.append(var.Not() if val else var)
+        self._model.AddBoolOr(bool_vars)
 
     def get_other_solution(self):
         self._exclude_positions_values_together(self._previous_solution.get_positions())
@@ -85,28 +87,28 @@ class MitiSolver(GameSolver):
 
     def _add_initials_constraints(self):
         for position in self._grid_z3.edge_up_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.up()]))
+            self._model.Add(self._grid_z3[position][Direction.up()] == 0)
         for position in self._grid_z3.edge_down_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.down()]))
+            self._model.Add(self._grid_z3[position][Direction.down()] == 0)
         for position in self._grid_z3.edge_left_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.left()]))
+            self._model.Add(self._grid_z3[position][Direction.left()] == 0)
         for position in self._grid_z3.edge_right_positions():
-            self._solver.add(Not(self._grid_z3[position][Direction.right()]))
+            self._model.Add(self._grid_z3[position][Direction.right()] == 0)
 
     def _add_opposite_constraints(self):
         for position, _ in self._grid_z3:
             if position.up in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.up()] == self._grid_z3[position.up][Direction.down()])
+                self._model.Add(self._grid_z3[position][Direction.up()] == self._grid_z3[position.up][Direction.down()])
             if position.down in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.down()] == self._grid_z3[position.down][Direction.up()])
+                self._model.Add(self._grid_z3[position][Direction.down()] == self._grid_z3[position.down][Direction.up()])
             if position.left in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.left()] == self._grid_z3[position.left][Direction.right()])
+                self._model.Add(self._grid_z3[position][Direction.left()] == self._grid_z3[position.left][Direction.right()])
             if position.right in self._grid_z3:
-                self._solver.add(self._grid_z3[position][Direction.right()] == self._grid_z3[position.right][Direction.left()])
+                self._model.Add(self._grid_z3[position][Direction.right()] == self._grid_z3[position.right][Direction.left()])
 
     def _add_bridges_sum_constraints(self):
         for _, value in self._grid_z3:
-            self._solver.add(sum([value[direction] for direction in Direction.orthogonal_directions()]) == 2)
+            self._model.Add(sum([value[direction] for direction in Direction.orthogonal_directions()]) == 2)
 
     def _add_dots_constraints(self):
         for dot_position in self._dots_positions:
@@ -118,18 +120,18 @@ class MitiSolver(GameSolver):
         if len(in_grid_neighbors_positions) == 2:
             pos0, pos1 = in_grid_neighbors_positions
             direction = pos0.direction_to(pos1)
-            self._solver.add(Not(self._grid_z3[pos0][direction]))
+            self._model.Add(self._grid_z3[pos0][direction] == 0)
             return
 
         connected_cells_count_var = self._connected_cells_count_var(in_grid_neighbors_positions)
-        self._solver.add(connected_cells_count_var == 1)
+        self._model.Add(connected_cells_count_var == 1)
 
     def _add_not_edge_dots_constraints(self):
         empty_edge_positions = self._get_empty_edge_positions()
         for position in empty_edge_positions:
             pos0, pos1 = [neighbor for neighbor in position.straddled_neighbors() if neighbor in self._grid_z3]
             direction = pos0.direction_to(pos1)
-            self._solver.add(self._grid_z3[pos0][direction])
+            self._model.Add(self._grid_z3[pos0][direction] == 1)
 
     def _add_not_inside_dots_constraints(self):
         empty_inside_positions = self._get_empty_inside_positions()
@@ -139,7 +141,7 @@ class MitiSolver(GameSolver):
     def _add_not_inside_dot_constraints(self, position):
         positions = [neighbor for neighbor in position.straddled_neighbors() if neighbor in self._grid_z3]
         neighbors_connection_count_var = self._connected_cells_count_var(positions)
-        self._solver.add(neighbors_connection_count_var >= 2)
+        self._model.Add(neighbors_connection_count_var >= 2)
 
     def _get_empty_edge_positions(self) -> set[Position]:
         first_position = Position(-0.5, -0.5)
@@ -165,10 +167,10 @@ class MitiSolver(GameSolver):
         positions -= set(self._dots_positions)
         return positions
 
-    def _connected_cells_count_var(self, in_grid_neighbors_positions: list[Position]) -> ArithRef:
+    def _connected_cells_count_var(self, in_grid_neighbors_positions: list[Position]):
         paires = [(in_grid_neighbors_positions[i], in_grid_neighbors_positions[(i + 1) % 4]) for i in range(4)]
         constraints = []
         for pos0, pos1 in paires:
             direction = pos0.direction_to(pos1)
             constraints.append(self._grid_z3[pos0][direction])
-        return Sum(constraints)
+        return sum(constraints)

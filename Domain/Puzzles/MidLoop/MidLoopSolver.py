@@ -1,4 +1,4 @@
-from z3 import And, ArithRef, Implies, Int, Not, Or, Solver, sat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -19,9 +19,11 @@ class MidLoopSolver:
         self._input_grid = Grid([[0 for _ in range(self.columns_number)] for _ in range(self.rows_number)])
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
-        self._solver = Solver()
-        self._island_bridges_z3: dict[Position, dict[Direction, ArithRef]] = {}
+        self._model = cp_model.CpModel()
+        self._cp_solver = cp_model.CpSolver()
+        self._island_bridges_z3: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
+        self._solver_initialized = False
 
     def init_island_grid(self):
         self._island_grid = IslandGrid(
@@ -31,29 +33,29 @@ class MidLoopSolver:
     def _init_solver(self):
         self._island_bridges_z3 = {
             island.position: {
-                direction: Int(f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()
+                direction: self._model.NewIntVar(0, 1, f"{island.position}_{direction}") for direction in Direction.orthogonal_directions()
             }
             for island in self._island_grid.islands.values()
         }
         self._add_constraints()
 
     def get_solution(self) -> IslandGrid:
-        if not self._solver.assertions():
+        if not self._solver_initialized:
             self._init_solver()
+            self._solver_initialized = True
 
         solution, _ = self._ensure_all_islands_connected()
         return solution
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._solver.check() == sat:
-            model = self._solver.model()
+        while self._cp_solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = model.eval(bridges).as_long()
+                    bridges_number = self._cp_solver.Value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number
@@ -69,24 +71,30 @@ class MidLoopSolver:
                 self._previous_solution = self._island_grid
                 return self._island_grid, proposition_count
 
-            not_loop_constraints = []
             for positions in connected_positions:
-                cell_constraints = []
-                for position in positions:
+                eq_bools = []
+                for i, position in enumerate(positions):
                     for direction, (_, value) in self._island_grid[position].direction_position_bridges.items():
-                        cell_constraints.append(self._island_bridges_z3[position][direction] == value)
-                not_loop_constraints.append(Not(And(cell_constraints)))
-            self._solver.add(And(not_loop_constraints))
+                        b = self._model.NewBoolVar(f'eq_conn_{i}_{position}_{direction}')
+                        var = self._island_bridges_z3[position][direction]
+                        self._model.Add(var == value).OnlyEnforceIf(b)
+                        self._model.Add(var != value).OnlyEnforceIf(b.Not())
+                        eq_bools.append(b)
+                self._model.Add(sum(eq_bools) <= len(eq_bools) - 1)
             self.init_island_grid()
 
         return IslandGrid.empty(), proposition_count
 
     def get_other_solution(self):
-        previous_solution_constraints = []
+        eq_bools = []
         for island in self._previous_solution.islands.values():
             for direction, (_, value) in island.direction_position_bridges.items():
-                previous_solution_constraints.append(self._island_bridges_z3[island.position][direction] == value)
-        self._solver.add(Not(And(previous_solution_constraints)))
+                var = self._island_bridges_z3[island.position][direction]
+                b = self._model.NewBoolVar(f'prev_eq_{island.position}_{direction}')
+                self._model.Add(var == value).OnlyEnforceIf(b)
+                self._model.Add(var != value).OnlyEnforceIf(b.Not())
+                eq_bools.append(b)
+        self._model.Add(sum(eq_bools) <= len(eq_bools) - 1)
 
         self.init_island_grid()
         return self.get_solution()
@@ -98,12 +106,32 @@ class MidLoopSolver:
         self._add_symmetry_constraints()
         self._add_opposite_bridges_constraints()
 
+    def _pairs_to_boolvar(self, pairs, name: str):
+        eq_bools = []
+        for i, (var, val) in enumerate(pairs):
+            b = self._model.NewBoolVar(f'{name}_eq_{i}')
+            self._model.Add(var == val).OnlyEnforceIf(b)
+            self._model.Add(var != val).OnlyEnforceIf(b.Not())
+            eq_bools.append(b)
+        b_all = self._model.NewBoolVar(f'{name}_all')
+        for eb in eq_bools:
+            self._model.AddImplication(b_all, eb)
+        self._model.AddBoolOr([b_all] + [eb.Not() for eb in eq_bools])
+        return b_all
+
     def _add_initial_constraints(self):
         for position, directions_bridges in self._island_bridges_z3.items():
             bridges_count_vars = list(directions_bridges.values())
-            self._solver.add(Or(sum(bridges_count_vars) == 2, sum(bridges_count_vars) == 0))
+            b0 = self._model.NewBoolVar(f'sum0_{position}')
+            b2 = self._model.NewBoolVar(f'sum2_{position}')
+            self._model.Add(sum(bridges_count_vars) == 0).OnlyEnforceIf(b0)
+            self._model.Add(sum(bridges_count_vars) != 0).OnlyEnforceIf(b0.Not())
+            self._model.Add(sum(bridges_count_vars) == 2).OnlyEnforceIf(b2)
+            self._model.Add(sum(bridges_count_vars) != 2).OnlyEnforceIf(b2.Not())
+            self._model.AddBoolOr([b0, b2])
             for direction_bridges in directions_bridges.values():
-                self._solver.add(And(direction_bridges >= 0, direction_bridges <= 1))
+                self._model.Add(direction_bridges >= 0)
+                self._model.Add(direction_bridges <= 1)
 
     def _add_minimal_edge_segments_constraints(self):
         for dot_position in [
@@ -132,64 +160,63 @@ class MidLoopSolver:
             self._add_minimal_segment_constraints(dot_position)
 
     def _add_minimal_segment_constraints(self, dot_position: Position):
-        self._solver.add(
-            Or(
-                self._minimal_horizontal_segments_constraints(dot_position),
-                self._minimal_vertical_segments_constraints(dot_position),
-            )
-        )
+        b_horiz = self._minimal_horizontal_segments_boolvar(dot_position)
+        b_vert = self._minimal_vertical_segments_boolvar(dot_position)
+        alternatives = [b for b in [b_horiz, b_vert] if b is not None]
+        if alternatives:
+            self._model.AddBoolOr(alternatives)
 
     def _add_minimal_horizontal_segments_constraints(self, dot_position: Position):
-        self._solver.add(self._minimal_horizontal_segments_constraints(dot_position))
+        b = self._minimal_horizontal_segments_boolvar(dot_position)
+        if b is not None:
+            self._model.Add(b == 1)
 
-    def _minimal_horizontal_segments_constraints(self, dot_position: Position):
+    def _minimal_horizontal_segments_boolvar(self, dot_position: Position):
         if not dot_position.is_on_row():
-            return False
+            return None
 
         if not dot_position.is_on_column():
             position_left = Position(dot_position.r, int(dot_position.c))
             position_right = position_left.right
-            return And(
-                [
-                    self._island_bridges_z3[position_left][Direction.right()] == 1,
-                    self._island_bridges_z3[position_right][Direction.left()] == 1,
-                ]
-            )
-
-        return And(
-            [
-                self._island_bridges_z3[dot_position][Direction.left()] == 1,
-                self._island_bridges_z3[dot_position][Direction.right()] == 1,
-                self._island_bridges_z3[dot_position][Direction.up()] == 0,
-                self._island_bridges_z3[dot_position][Direction.down()] == 0,
+            pairs = [
+                (self._island_bridges_z3[position_left][Direction.right()], 1),
+                (self._island_bridges_z3[position_right][Direction.left()], 1),
             ]
-        )
+            return self._pairs_to_boolvar(pairs, f'min_h_{dot_position}')
+
+        pairs = [
+            (self._island_bridges_z3[dot_position][Direction.left()], 1),
+            (self._island_bridges_z3[dot_position][Direction.right()], 1),
+            (self._island_bridges_z3[dot_position][Direction.up()], 0),
+            (self._island_bridges_z3[dot_position][Direction.down()], 0),
+        ]
+        return self._pairs_to_boolvar(pairs, f'min_h_cross_{dot_position}')
 
     def _add_minimal_vertical_segments_constraints(self, dot_position: Position):
-        self._solver.add(self._minimal_vertical_segments_constraints(dot_position))
+        b = self._minimal_vertical_segments_boolvar(dot_position)
+        if b is not None:
+            self._model.Add(b == 1)
 
-    def _minimal_vertical_segments_constraints(self, dot_position: Position):
+    def _minimal_vertical_segments_boolvar(self, dot_position: Position):
         if not dot_position.is_on_column():
-            return False
+            return None
 
         if not dot_position.is_on_row():
             position_up = Position(int(dot_position.r), dot_position.c)
             position_down = position_up.down
-            return And(
-                [
-                    self._island_bridges_z3[position_up][Direction.down()] == 1,
-                    self._island_bridges_z3[position_down][Direction.up()] == 1,
-                ]
-            )
-
-        return And(
-            [
-                self._island_bridges_z3[dot_position][Direction.up()] == 1,
-                self._island_bridges_z3[dot_position][Direction.down()] == 1,
-                self._island_bridges_z3[dot_position][Direction.left()] == 0,
-                self._island_bridges_z3[dot_position][Direction.right()] == 0,
+            pairs = [
+                (self._island_bridges_z3[position_up][Direction.down()], 1),
+                (self._island_bridges_z3[position_down][Direction.up()], 1),
             ]
-        )
+            return self._pairs_to_boolvar(pairs, f'min_v_{dot_position}')
+
+        pairs = [
+            (self._island_bridges_z3[dot_position][Direction.up()], 1),
+            (self._island_bridges_z3[dot_position][Direction.down()], 1),
+            (self._island_bridges_z3[dot_position][Direction.left()], 0),
+            (self._island_bridges_z3[dot_position][Direction.right()], 0),
+        ]
+        return self._pairs_to_boolvar(pairs, f'min_v_cross_{dot_position}')
 
     def _add_symmetry_constraints(self):
         for dot_position in self.dots_positions:
@@ -201,115 +228,247 @@ class MidLoopSolver:
                 self._add_symetry_segment_constraint(dot_position)
 
     def _add_must_symetry_vertical_segment_constraint(self, dot_position: Position):
-        constraint = self._symetry_vertical_segment_constraint(dot_position)
-        self._solver.add(constraint)
+        b = self._symetry_vertical_segment_boolvar(dot_position)
+        if b is not None:
+            self._model.Add(b == 1)
 
     def _add_must_symetry_horizontal_segment_constraint(self, dot_position: Position):
-        constraint = self._symetry_horizontal_segment_constraint(dot_position)
-        self._solver.add(constraint)
+        b = self._symetry_horizontal_segment_boolvar(dot_position)
+        if b is not None:
+            self._model.Add(b == 1)
 
     def _add_symetry_segment_constraint(self, dot_position: Position):
-        vertical_constraint = self._symetry_vertical_segment_constraint(dot_position)
-        horizontal_constraint = self._symetry_horizontal_segment_constraint(dot_position)
-        self._solver.add(Or(vertical_constraint, horizontal_constraint))
+        b_vert = self._symetry_vertical_segment_boolvar(dot_position)
+        b_horiz = self._symetry_horizontal_segment_boolvar(dot_position)
+        alternatives = [b for b in [b_vert, b_horiz] if b is not None]
+        if alternatives:
+            self._model.AddBoolOr(alternatives)
 
-    def _symetry_vertical_segment_constraint(self, dot_position: Position):
+    def _symetry_vertical_segment_boolvar(self, dot_position: Position):
         if self._input_grid.is_position_in_edge_up(dot_position) or self._input_grid.is_position_in_edge_down(
                 dot_position
         ):
-            return False
+            return None
 
-        constraints = []
+        all_sub_bools = []
+
         if dot_position.is_on_row():
-            constraints.append(self._island_bridges_z3[dot_position][Direction.up()] == 1)
-            constraints.append(self._island_bridges_z3[dot_position][Direction.down()] == 1)
+            for direction in [Direction.up(), Direction.down()]:
+                pairs = [(self._island_bridges_z3[dot_position][direction], 1)]
+                b = self._pairs_to_boolvar(pairs, f'sym_v_onrow_{dot_position}_{direction}')
+                all_sub_bools.append(b)
+
             position_up = dot_position.up
             position_down = dot_position.down
-            all_up_go_down_and_down_go_up = True
+            prev_cumul = None
+            idx = 0
             while position_up in self._input_grid and position_down in self._input_grid:
-                up_go_down = self._island_bridges_z3[position_up][Direction.down()] == 1
-                down_go_up = self._island_bridges_z3[position_down][Direction.up()] == 1
-                up_go_down_and_down_go_up = And(up_go_down, down_go_up)
-                all_up_go_down_and_down_go_up = And(all_up_go_down_and_down_go_up, up_go_down_and_down_go_up)
-                up_go_up = self._island_bridges_z3[position_up][Direction.up()] == 1
-                down_go_down = self._island_bridges_z3[position_down][Direction.down()] == 1
-                constraints.append(Implies(all_up_go_down_and_down_go_up, up_go_up == down_go_down))
+                b_ugd = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_up][Direction.down()], 1)],
+                    f'sym_v_pair_{idx}_ugd'
+                )
+                b_dgu = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_down][Direction.up()], 1)],
+                    f'sym_v_pair_{idx}_dgu'
+                )
+
+                b_cumul = self._model.NewBoolVar(f'sym_v_cumul_{idx}')
+                if prev_cumul is None:
+                    self._model.AddImplication(b_cumul, b_ugd)
+                    self._model.AddImplication(b_cumul, b_dgu)
+                    self._model.AddBoolOr([b_cumul, b_ugd.Not(), b_dgu.Not()])
+                else:
+                    self._model.AddImplication(b_cumul, prev_cumul)
+                    self._model.AddImplication(b_cumul, b_ugd)
+                    self._model.AddImplication(b_cumul, b_dgu)
+                    self._model.AddBoolOr([b_cumul, prev_cumul.Not(), b_ugd.Not(), b_dgu.Not()])
+
+                b_eq_extend = self._model.NewBoolVar(f'sym_v_ext_{idx}')
+                var_up = self._island_bridges_z3[position_up][Direction.up()]
+                var_down = self._island_bridges_z3[position_down][Direction.down()]
+                self._model.Add(var_up == var_down).OnlyEnforceIf(b_eq_extend)
+                self._model.Add(var_up != var_down).OnlyEnforceIf(b_eq_extend.Not())
+
+                b_impl = self._model.NewBoolVar(f'sym_v_impl_{idx}')
+                self._model.AddBoolOr([b_impl.Not(), b_cumul.Not(), b_eq_extend])
+                self._model.AddBoolOr([b_cumul, b_impl])
+                self._model.AddBoolOr([b_eq_extend.Not(), b_impl])
+
+                all_sub_bools.append(b_impl)
+
+                prev_cumul = b_cumul
                 position_up = position_up.up
                 position_down = position_down.down
-            return And(constraints)
+                idx += 1
+        else:
+            position_up = Position(int(dot_position.r), dot_position.c)
+            position_down = position_up.down
+            pairs = [
+                (self._island_bridges_z3[position_up][Direction.down()], 1),
+                (self._island_bridges_z3[position_down][Direction.up()], 1),
+            ]
+            b = self._pairs_to_boolvar(pairs, f'sym_v_base_{dot_position}')
+            all_sub_bools.append(b)
 
-        # dot is between two rows
-        position_up = Position(int(dot_position.r), dot_position.c)
-        position_down = position_up.down
-        constraints.append(self._island_bridges_z3[position_up][Direction.down()] == 1)
-        constraints.append(self._island_bridges_z3[position_down][Direction.up()] == 1)
-        all_up_go_down_and_down_go_up = True
-        while position_up in self._input_grid and position_down in self._input_grid:
-            up_go_down = self._island_bridges_z3[position_up][Direction.down()] == 1
-            down_go_up = self._island_bridges_z3[position_down][Direction.up()] == 1
-            up_go_down_and_down_go_up = And(up_go_down, down_go_up)
-            all_up_go_down_and_down_go_up = And(all_up_go_down_and_down_go_up, up_go_down_and_down_go_up)
-            up_go_up = self._island_bridges_z3[position_up][Direction.up()] == 1
-            down_go_down = self._island_bridges_z3[position_down][Direction.down()] == 1
-            constraints.append(Implies(all_up_go_down_and_down_go_up, up_go_up == down_go_down))
-            position_up = position_up.up
-            position_down = position_down.down
-        return And(constraints)
+            prev_cumul = b
+            idx = 0
+            while position_up in self._input_grid and position_down in self._input_grid:
+                b_ugd = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_up][Direction.down()], 1)],
+                    f'sym_v_pair_{idx}_ugd'
+                )
+                b_dgu = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_down][Direction.up()], 1)],
+                    f'sym_v_pair_{idx}_dgu'
+                )
 
-    def _symetry_horizontal_segment_constraint(self, dot_position: Position):
+                b_cumul = self._model.NewBoolVar(f'sym_v_cumul_{idx}')
+                self._model.AddImplication(b_cumul, prev_cumul)
+                self._model.AddImplication(b_cumul, b_ugd)
+                self._model.AddImplication(b_cumul, b_dgu)
+                self._model.AddBoolOr([b_cumul, prev_cumul.Not(), b_ugd.Not(), b_dgu.Not()])
+
+                b_eq_extend = self._model.NewBoolVar(f'sym_v_ext_{idx}')
+                var_up = self._island_bridges_z3[position_up][Direction.up()]
+                var_down = self._island_bridges_z3[position_down][Direction.down()]
+                self._model.Add(var_up == var_down).OnlyEnforceIf(b_eq_extend)
+                self._model.Add(var_up != var_down).OnlyEnforceIf(b_eq_extend.Not())
+
+                b_impl = self._model.NewBoolVar(f'sym_v_impl_{idx}')
+                self._model.AddBoolOr([b_impl.Not(), b_cumul.Not(), b_eq_extend])
+                self._model.AddBoolOr([b_cumul, b_impl])
+                self._model.AddBoolOr([b_eq_extend.Not(), b_impl])
+
+                all_sub_bools.append(b_impl)
+
+                prev_cumul = b_cumul
+                position_up = position_up.up
+                position_down = position_down.down
+                idx += 1
+
+        if not all_sub_bools:
+            return None
+        b_block = self._model.NewBoolVar(f'sym_v_block_{dot_position}')
+        for b_sub in all_sub_bools:
+            self._model.AddImplication(b_block, b_sub)
+        return b_block
+
+    def _symetry_horizontal_segment_boolvar(self, dot_position: Position):
         if self._input_grid.is_position_in_edge_left(dot_position) or self._input_grid.is_position_in_edge_right(
                 dot_position
         ):
-            return False
+            return None
 
-        constraints = []
+        all_sub_bools = []
+
         if dot_position.is_on_column():
-            constraints.append(self._island_bridges_z3[dot_position][Direction.left()] == 1)
-            constraints.append(self._island_bridges_z3[dot_position][Direction.right()] == 1)
+            for direction in [Direction.left(), Direction.right()]:
+                pairs = [(self._island_bridges_z3[dot_position][direction], 1)]
+                b = self._pairs_to_boolvar(pairs, f'sym_h_oncol_{dot_position}_{direction}')
+                all_sub_bools.append(b)
+
             position_left = dot_position.left
             position_right = dot_position.right
-            all_left_go_right_and_right_go_left = True
+            prev_cumul = None
+            idx = 0
             while position_left in self._input_grid and position_right in self._input_grid:
-                left_go_right = self._island_bridges_z3[position_left][Direction.right()] == 1
-                right_go_left = self._island_bridges_z3[position_right][Direction.left()] == 1
-                left_go_right_and_right_go_left = And(left_go_right, right_go_left)
-                all_left_go_right_and_right_go_left = And(
-                    all_left_go_right_and_right_go_left, left_go_right_and_right_go_left
+                b_lgr = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_left][Direction.right()], 1)],
+                    f'sym_h_pair_{idx}_lgr'
                 )
-                left_go_left = self._island_bridges_z3[position_left][Direction.left()] == 1
-                right_go_right = self._island_bridges_z3[position_right][Direction.right()] == 1
-                constraints.append(Implies(all_left_go_right_and_right_go_left, left_go_left == right_go_right))
+                b_rgl = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_right][Direction.left()], 1)],
+                    f'sym_h_pair_{idx}_rgl'
+                )
+
+                b_cumul = self._model.NewBoolVar(f'sym_h_cumul_{idx}')
+                if prev_cumul is None:
+                    self._model.AddImplication(b_cumul, b_lgr)
+                    self._model.AddImplication(b_cumul, b_rgl)
+                    self._model.AddBoolOr([b_cumul, b_lgr.Not(), b_rgl.Not()])
+                else:
+                    self._model.AddImplication(b_cumul, prev_cumul)
+                    self._model.AddImplication(b_cumul, b_lgr)
+                    self._model.AddImplication(b_cumul, b_rgl)
+                    self._model.AddBoolOr([b_cumul, prev_cumul.Not(), b_lgr.Not(), b_rgl.Not()])
+
+                b_eq_extend = self._model.NewBoolVar(f'sym_h_ext_{idx}')
+                var_left = self._island_bridges_z3[position_left][Direction.left()]
+                var_right = self._island_bridges_z3[position_right][Direction.right()]
+                self._model.Add(var_left == var_right).OnlyEnforceIf(b_eq_extend)
+                self._model.Add(var_left != var_right).OnlyEnforceIf(b_eq_extend.Not())
+
+                b_impl = self._model.NewBoolVar(f'sym_h_impl_{idx}')
+                self._model.AddBoolOr([b_impl.Not(), b_cumul.Not(), b_eq_extend])
+                self._model.AddBoolOr([b_cumul, b_impl])
+                self._model.AddBoolOr([b_eq_extend.Not(), b_impl])
+
+                all_sub_bools.append(b_impl)
+
+                prev_cumul = b_cumul
                 position_left = position_left.left
                 position_right = position_right.right
-            return And(constraints)
+                idx += 1
+        else:
+            position_left = Position(dot_position.r, int(dot_position.c))
+            position_right = position_left.right
+            pairs = [
+                (self._island_bridges_z3[position_left][Direction.right()], 1),
+                (self._island_bridges_z3[position_right][Direction.left()], 1),
+            ]
+            b = self._pairs_to_boolvar(pairs, f'sym_h_base_{dot_position}')
+            all_sub_bools.append(b)
 
-        # dot is between two columns
-        position_left = Position(dot_position.r, int(dot_position.c))
-        position_right = position_left.right
-        constraints.append(self._island_bridges_z3[position_left][Direction.right()] == 1)
-        constraints.append(self._island_bridges_z3[position_right][Direction.left()] == 1)
-        all_left_go_right_and_right_go_left = True
-        while position_left in self._input_grid and position_right in self._input_grid:
-            left_go_right = self._island_bridges_z3[position_left][Direction.right()] == 1
-            right_go_left = self._island_bridges_z3[position_right][Direction.left()] == 1
-            left_go_right_and_right_go_left = And(left_go_right, right_go_left)
-            all_left_go_right_and_right_go_left = And(
-                all_left_go_right_and_right_go_left, left_go_right_and_right_go_left
-            )
-            left_go_left = self._island_bridges_z3[position_left][Direction.left()] == 1
-            right_go_right = self._island_bridges_z3[position_right][Direction.right()] == 1
-            constraints.append(Implies(all_left_go_right_and_right_go_left, left_go_left == right_go_right))
-            position_left = position_left.left
-            position_right = position_right.right
-        return And(constraints)
+            prev_cumul = b
+            idx = 0
+            while position_left in self._input_grid and position_right in self._input_grid:
+                b_lgr = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_left][Direction.right()], 1)],
+                    f'sym_h_pair_{idx}_lgr'
+                )
+                b_rgl = self._pairs_to_boolvar(
+                    [(self._island_bridges_z3[position_right][Direction.left()], 1)],
+                    f'sym_h_pair_{idx}_rgl'
+                )
+
+                b_cumul = self._model.NewBoolVar(f'sym_h_cumul_{idx}')
+                self._model.AddImplication(b_cumul, prev_cumul)
+                self._model.AddImplication(b_cumul, b_lgr)
+                self._model.AddImplication(b_cumul, b_rgl)
+                self._model.AddBoolOr([b_cumul, prev_cumul.Not(), b_lgr.Not(), b_rgl.Not()])
+
+                b_eq_extend = self._model.NewBoolVar(f'sym_h_ext_{idx}')
+                var_left = self._island_bridges_z3[position_left][Direction.left()]
+                var_right = self._island_bridges_z3[position_right][Direction.right()]
+                self._model.Add(var_left == var_right).OnlyEnforceIf(b_eq_extend)
+                self._model.Add(var_left != var_right).OnlyEnforceIf(b_eq_extend.Not())
+
+                b_impl = self._model.NewBoolVar(f'sym_h_impl_{idx}')
+                self._model.AddBoolOr([b_impl.Not(), b_cumul.Not(), b_eq_extend])
+                self._model.AddBoolOr([b_cumul, b_impl])
+                self._model.AddBoolOr([b_eq_extend.Not(), b_impl])
+
+                all_sub_bools.append(b_impl)
+
+                prev_cumul = b_cumul
+                position_left = position_left.left
+                position_right = position_right.right
+                idx += 1
+
+        if not all_sub_bools:
+            return None
+        b_block = self._model.NewBoolVar(f'sym_h_block_{dot_position}')
+        for b_sub in all_sub_bools:
+            self._model.AddImplication(b_block, b_sub)
+        return b_block
 
     def _add_opposite_bridges_constraints(self):
         for island in self._island_grid.islands.values():
             for direction in [Direction.right(), Direction.down(), Direction.left(), Direction.up()]:
                 if island.direction_position_bridges.get(direction) is not None:
-                    self._solver.add(
+                    self._model.Add(
                         self._island_bridges_z3[island.position][direction]
                         == self._island_bridges_z3[island.direction_position_bridges[direction][0]][direction.opposite]
                     )
                 else:
-                    self._solver.add(self._island_bridges_z3[island.position][direction] == 0)
+                    self._model.Add(self._island_bridges_z3[island.position][direction] == 0)

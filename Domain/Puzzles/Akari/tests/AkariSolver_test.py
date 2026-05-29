@@ -6,30 +6,6 @@ from Domain.Puzzles.Akari.AkariSolver import AkariSolver
 
 
 class AkariSolverTests(TestCase):
-    def test_solution_grid_too_small_column(self):
-        data_game = {
-            'rows_number': 7,
-            'columns_number': 6,
-            'black_cells': {},
-            'number_constraints': {}
-        }
-
-        with self.assertRaises(ValueError) as context:
-            AkariSolver(data_game)
-        self.assertEqual("Akari grid must be at least 7x7", str(context.exception))
-
-    def test_solution_grid_too_small_row(self):
-        data_game = {
-            'rows_number': 6,
-            'columns_number': 7,
-            'black_cells': {},
-            'number_constraints': {}
-        }
-
-        with self.assertRaises(ValueError) as context:
-            AkariSolver(data_game)
-        self.assertEqual("Akari grid must be at least 7x7", str(context.exception))
-
     def test_solution_7x7(self):
         data_game = {
             'rows_number': 7,

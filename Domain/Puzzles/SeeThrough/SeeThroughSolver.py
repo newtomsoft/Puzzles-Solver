@@ -1,6 +1,6 @@
 from typing import Generator
 
-from z3 import Solver, Not, And, Or, Bool, is_true, sat
+from ortools.sat.python import cp_model
 
 from Domain.Board.Direction import Direction
 from Domain.Board.Grid import Grid
@@ -14,16 +14,19 @@ class SeeThroughSolver(GameSolver):
         self._input_grid = input_grid
         self.rows_number, self.columns_number = input_grid.rows_number, input_grid.columns_number
         self._grid_z3: Grid | None = None
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
         self._previous_solution: Grid | None = None
+        self._solver_initialized = False
 
     def _init_solver(self):
         self._grid_z3 = Grid(
-            [[{k: Bool(f"{k}_{r}{c}") for k in ['left', 'right', 'up', 'down']} for c in range(self.columns_number)] for r in range(self.rows_number)])
+            [[{k: self._model.NewBoolVar(f"{k}_{r}{c}") for k in ['left', 'right', 'up', 'down']} for c in range(self.columns_number)] for r in range(self.rows_number)])
         self._add_constraints()
+        self._solver_initialized = True
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if not self._solver_initialized:
             self._init_solver()
 
         solution, _ = self._ensure_all_rooms_connected()
@@ -31,11 +34,10 @@ class SeeThroughSolver(GameSolver):
 
     def _ensure_all_rooms_connected(self) -> tuple[Grid, int]:
         proposition_count = 0
-        while self._solver.check() == sat:
+        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             proposition_count += 1
-            model = self._solver.model()
             custom_proposition = Grid([
-                [{edge: is_true(model.eval(self._grid_z3[Position(r, c)][edge])) for edge in ['left', 'right', 'up', 'down']} for c in range(self.columns_number)]
+                [{edge: bool(self._solver.Value(self._grid_z3[Position(r, c)][edge])) for edge in ['left', 'right', 'up', 'down']} for c in range(self.columns_number)]
                 for r in range(self.rows_number)
             ])
 
@@ -52,20 +54,23 @@ class SeeThroughSolver(GameSolver):
                 return IslandGrid.from_walls_grid(grid_fully_true_with_walls, with_edges=True), proposition_count
 
             smallest_connected_positions = min(connected_positions, key=len)
-            constraints = []
-
+            bool_vars = []
             for position in smallest_connected_positions:
-                constraints += [self._grid_z3[position][edge] == custom_proposition[position][edge] for edge in ['left', 'right', 'up', 'down']]
+                for edge in ['left', 'right', 'up', 'down']:
+                    var = self._grid_z3[position][edge]
+                    bool_vars.append(var.Not() if custom_proposition[position][edge] else var)
 
-            self._solver.add(Not(And(constraints)))
+            self._model.AddBoolOr(bool_vars)
 
         return Grid.empty(), proposition_count
 
     def get_other_solution(self):
-        constraints = []
+        bool_vars = []
         for position, value in self._previous_solution:
-            constraints += [self._grid_z3[position][edge] == value[edge] for edge in ['left', 'right', 'up', 'down']]
-        self._solver.add(Not(And(constraints)))
+            for edge in ['left', 'right', 'up', 'down']:
+                var = self._grid_z3[position][edge]
+                bool_vars.append(var.Not() if value[edge] else var)
+        self._model.AddBoolOr(bool_vars)
         return self.get_solution()
 
     def _add_constraints(self):
@@ -75,32 +80,32 @@ class SeeThroughSolver(GameSolver):
 
     def _add_initials_constraints(self):
         for position in self._input_grid.edge_up_positions():
-            self._solver.add(self._grid_z3[position]['up'])
+            self._model.Add(self._grid_z3[position]['up'] == 1)
         for position in self._input_grid.edge_down_positions():
-            self._solver.add(self._grid_z3[position]['down'])
+            self._model.Add(self._grid_z3[position]['down'] == 1)
         for position in self._input_grid.edge_left_positions():
-            self._solver.add(self._grid_z3[position]['left'])
+            self._model.Add(self._grid_z3[position]['left'] == 1)
         for position in self._input_grid.edge_right_positions():
-            self._solver.add(self._grid_z3[position]['right'])
+            self._model.Add(self._grid_z3[position]['right'] == 1)
 
     def _add_opposite_constraints(self):
         for position, _ in self._input_grid:
             if position.up in self._grid_z3:
-                self._solver.add(self._grid_z3[position]['up'] == self._grid_z3[position.up]['down'])
+                self._model.Add(self._grid_z3[position]['up'] == self._grid_z3[position.up]['down'])
             if position.down in self._grid_z3:
-                self._solver.add(self._grid_z3[position]['down'] == self._grid_z3[position.down]['up'])
+                self._model.Add(self._grid_z3[position]['down'] == self._grid_z3[position.down]['up'])
             if position.left in self._grid_z3:
-                self._solver.add(self._grid_z3[position]['left'] == self._grid_z3[position.left]['right'])
+                self._model.Add(self._grid_z3[position]['left'] == self._grid_z3[position.left]['right'])
             if position.right in self._grid_z3:
-                self._solver.add(self._grid_z3[position]['right'] == self._grid_z3[position.right]['left'])
+                self._model.Add(self._grid_z3[position]['right'] == self._grid_z3[position.right]['left'])
 
     def _add_numbers_constraints(self):
         for position, number in [(position, number) for position, number in self._input_grid if number > 0]:
             self._add_number_constraints(position, number)
 
     def _add_number_constraints(self, position: Position, number: int):
-        constraints = []
-        for up_count, down_count, right_count, left_count in self.find_combinations(number):
+        all_combination_vars = []
+        for i, (up_count, down_count, right_count, left_count) in enumerate(self.find_combinations(number)):
             if (up_position := position.after(Direction.up(), up_count)) not in self._grid_z3:
                 continue
             if (down_position := position.after(Direction.down(), down_count)) not in self._grid_z3:
@@ -110,26 +115,29 @@ class SeeThroughSolver(GameSolver):
             if (right_position := position.after(Direction.right(), right_count)) not in self._grid_z3:
                 continue
 
-            constraint_up = self._grid_z3[up_position]['up']
+            literals = []
+            literals.append(self._grid_z3[up_position]['up'])
             if up_count > 0:
                 for between_position in [position] + position.all_positions_between(up_position):
-                    constraint_up = And(constraint_up, Not(self._grid_z3[between_position]['up']))
-            constraint_down = self._grid_z3[down_position]['down']
+                    literals.append(self._grid_z3[between_position]['up'].Not())
+            literals.append(self._grid_z3[down_position]['down'])
             if down_count > 0:
                 for between_position in [position] + position.all_positions_between(down_position):
-                    constraint_down = And(constraint_down, Not(self._grid_z3[between_position]['down']))
-            constraint_left = self._grid_z3[left_position]['left']
+                    literals.append(self._grid_z3[between_position]['down'].Not())
+            literals.append(self._grid_z3[left_position]['left'])
             if left_count > 0:
                 for between_position in [position] + position.all_positions_between(left_position):
-                    constraint_left = And(constraint_left, Not(self._grid_z3[between_position]['left']))
-            constraint_right = self._grid_z3[right_position]['right']
+                    literals.append(self._grid_z3[between_position]['left'].Not())
+            literals.append(self._grid_z3[right_position]['right'])
             if right_count > 0:
                 for between_position in [position] + position.all_positions_between(right_position):
-                    constraint_right = And(constraint_right, Not(self._grid_z3[between_position]['right']))
+                    literals.append(self._grid_z3[between_position]['right'].Not())
 
-            constraints.append(And(constraint_up, constraint_down, constraint_left, constraint_right))
+            b = self._model.NewBoolVar(f"comb_{i}")
+            self._model.AddBoolAnd(literals).OnlyEnforceIf(b)
+            all_combination_vars.append(b)
 
-        self._solver.add(Or(constraints))
+        self._model.AddBoolOr(all_combination_vars)
 
     @staticmethod
     def find_combinations(number) -> Generator[tuple[int, int, int, int], None, None]:

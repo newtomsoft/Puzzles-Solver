@@ -1,4 +1,4 @@
-from z3 import Solver, Not, And, unsat, Int, Distinct, If
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -12,7 +12,8 @@ class Str8tsSolver:
         self._columns_number = self._numbers_grid.columns_number
         if self._rows_number != self._columns_number:
             raise ValueError("Str8ts has to be a square")
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._blank_grid = self._get_blank_grid()
@@ -24,21 +25,28 @@ class Str8tsSolver:
         return blank_grid
 
     def get_solution(self) -> tuple[Grid, Grid]:
-        self._grid_z3 = Grid([[Int(f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+        max_abs = self._rows_number * self._columns_number
+        self._grid_z3 = Grid([[self._model.new_int_var(-max_abs, max_abs, f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._blank_grid
 
     def get_other_solution(self) -> tuple[Grid, Grid]:
-        self._solver.add(Not(And([self._grid_z3[position] == value for position, value in self._previous_solution if value > 0])))
+        eq_vars = []
+        for position, value in [(position, value) for position, value in self._previous_solution if value > 0]:
+            b = self._model.new_bool_var(f"block_{position.r}_{position.c}")
+            self._model.Add(self._grid_z3[position] == value).OnlyEnforceIf(b)
+            self._model.Add(self._grid_z3[position] != value).OnlyEnforceIf(b.Not())
+            eq_vars.append(b)
+        self._model.Add(sum(eq_vars) <= len(eq_vars) - 1)
         self._previous_solution = self._compute_solution()
         return self._previous_solution, self._blank_grid
 
     def _compute_solution(self) -> Grid:
-        if self._solver.check() == unsat:
+        status = self._solver.Solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
-        model = self._solver.model()
-        solution_with_black_negative = Grid([[(model.eval(self._grid_z3.value(i, j))).as_long() for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution_with_black_negative = Grid([[self._solver.Value(self._grid_z3.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         solution = Grid([[max(0, solution_with_black_negative.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         return solution
 
@@ -49,24 +57,24 @@ class Str8tsSolver:
 
     def _add_initial_constraints(self):
         for position, value in [(position, value) for position, value in self._numbers_grid if value > 0]:
-            self._solver.add(self._grid_z3[position] == value)
+            self._model.Add(self._grid_z3[position] == value)
 
         black_count = 0
         for position, is_black in self._blacks_grid:
             if is_black and self._numbers_grid[position] == 0:
                 black_count += 1
-                self._solver.add(self._grid_z3[position] == -black_count)
+                self._model.Add(self._grid_z3[position] == -black_count)
             else:
-                self._solver.add(self._grid_z3[position] > 0)
-                self._solver.add(self._grid_z3[position] <= self._rows_number)
+                self._model.Add(self._grid_z3[position] > 0)
+                self._model.Add(self._grid_z3[position] <= self._rows_number)
 
     def _add_distinct_constraints(self):
         for index, row in enumerate(self._grid_z3.matrix):
-            self._solver.add(Distinct(row))
+            self._model.AddAllDifferent(row)
 
         for index, column_tuple in enumerate(zip(*self._grid_z3.matrix)):
             column = list(column_tuple)
-            self._solver.add(Distinct(column))
+            self._model.AddAllDifferent(column)
 
     def _add_consecutive_constraints(self):
         for column_index, row in enumerate(self._grid_z3.matrix):
@@ -100,11 +108,8 @@ class Str8tsSolver:
             self.add_consecutive_constraint(cells)
 
     def add_consecutive_constraint(self, cells: list):
-        min_val = cells[0]
-        max_val = cells[0]
-        for i in range(1, len(cells)):
-            min_val = If(cells[i] < min_val, cells[i], min_val)
-            max_val = If(cells[i] > max_val, cells[i], max_val)
-
-        self._solver.add(max_val - min_val == len(cells) - 1)
-
+        min_val = self._model.new_int_var(1, self._rows_number, f"min_{id(cells)}")
+        max_val = self._model.new_int_var(1, self._rows_number, f"max_{id(cells)}")
+        self._model.AddMinEquality(min_val, cells)
+        self._model.AddMaxEquality(max_val, cells)
+        self._model.Add(max_val - min_val == len(cells) - 1)

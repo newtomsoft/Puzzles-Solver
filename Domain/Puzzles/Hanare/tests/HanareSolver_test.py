@@ -35,11 +35,11 @@ class HanareSolverTests(unittest.TestCase):
         ])
         
         expected_solution = Grid([
-            [3, 3, 0, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 3, 0, 4],
-            [0, 5, 0, 0, 0],
-            [0, 0, 0, 5, 0]
+            [3, 3, _, 2, _],
+            [_, _, _, _, _],
+            [_, _, 3, _, 4],
+            [_, 5, _, _, _],
+            [_, _, _, 5, _]
         ])
 
         solver = HanareSolver(regions, clues)

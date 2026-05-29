@@ -65,25 +65,25 @@ class MobiritiSolver(GameSolver):
         visibility_vars = []
         for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
             curr_r, curr_c = r + dr, c + dc
-            prev_visible = None
+            active = None
+            blocked = False
             while 0 <= curr_r < self._rows and 0 <= curr_c < self._cols:
                 is_other_circle = (curr_r, curr_c) in self._circle_positions and (curr_r, curr_c) != (r, c)
                 is_visible = self._model.new_bool_var(f'is_visible_{r}_{c}_{curr_r}_{curr_c}')
                 
-                if is_other_circle:
+                if is_other_circle or blocked:
                     self._model.add(is_visible == 0)
-                    prev_visible = 0
                 else:
                     is_white = self._color_vars[(curr_r, curr_c)].Not()
-                    if prev_visible is None:
+                    if active is None:
                         self._model.add(is_visible == is_white)
                     else:
-                        if prev_visible == 0:
-                            self._model.add(is_visible == 0)
-                        else:
-                            self._model.add_bool_and([is_white, prev_visible]).only_enforce_if(is_visible)
-                            self._model.add_bool_or([is_white.Not(), prev_visible.Not()]).only_enforce_if(is_visible.Not())
-                    prev_visible = is_visible
+                        self._model.add_bool_and([is_white, active]).only_enforce_if(is_visible)
+                        self._model.add_bool_or([is_white.Not(), active.Not()]).only_enforce_if(is_visible.Not())
+                    active = is_visible
+                
+                if is_other_circle:
+                    blocked = True
                 
                 if not is_other_circle:
                     visibility_vars.append(is_visible)

@@ -1,5 +1,6 @@
 from ortools.sat.python import cp_model
 
+from Domain.Board import RegionsGrid
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
@@ -55,12 +56,12 @@ class NeighboursSolver(GameSolver):
         self._regions_count = len(self._clue_by_position)
         self._solver = cp_model.CpSolver()
 
-    def get_solution(self) -> Grid:
+    def get_solution(self) -> RegionsGrid:
         self._grid_ortools = Grid([[self._model.new_int_var(1, self._regions_count, f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
         return self._compute_solution()
 
-    def get_other_solution(self) -> Grid:
+    def get_other_solution(self) -> RegionsGrid:
         bool_vars = []
         for position, value in self._previous_solution:
             b = self._model.new_bool_var('')
@@ -70,7 +71,7 @@ class NeighboursSolver(GameSolver):
         self._model.add(sum(bool_vars) > 0)
         return self._compute_solution()
 
-    def _compute_solution(self) -> Grid:
+    def _compute_solution(self) -> RegionsGrid:
         status = self._solver.solve(self._model)
         if status == cp_model.INFEASIBLE or status == cp_model.UNKNOWN:
             return Grid.empty()

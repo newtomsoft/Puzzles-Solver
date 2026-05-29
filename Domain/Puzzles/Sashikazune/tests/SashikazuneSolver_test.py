@@ -28,7 +28,7 @@ class SashikazuneSolverTests(TestCase):
 
         game_solver = SashikazuneSolver(grid)
         solution = game_solver.get_solution()
-        self.assertEqual(str(solution), expected_solution_str)
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertTrue(other_solution.is_empty())
 
@@ -52,7 +52,7 @@ class SashikazuneSolverTests(TestCase):
 
         game_solver = SashikazuneSolver(grid)
         solution = game_solver.get_solution()
-        self.assertEqual(str(solution), expected_solution_str)
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertTrue(other_solution.is_empty())
 
@@ -83,7 +83,7 @@ class SashikazuneSolverTests(TestCase):
             "│ │ ┌─────────┴─┘ │\n"
             "└─┴─┴─────────────┘\n"
         )
-        self.assertEqual(str(solution), expected_solution_str)
+        self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertTrue(other_solution.is_empty())
 

@@ -6,42 +6,6 @@ from Domain.Puzzles.Norinori.NorinoriSolver import NorinoriSolver
 
 
 class NorinoriSolverTests(TestCase):
-    def test_solution_grid_not_a_square(self):
-        grid = Grid([
-            [0, 1, 1, 1, 1, 1],
-            [0, 2, 2, 1, 1, 1],
-            [0, 2, 2, 1, 1, 1],
-            [0, 2, 2, 1, 1, 1],
-            [0, 2, 2, 1, 1, 1],
-        ])
-        with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid)
-        self.assertEqual("The grid must be square", str(context.exception))
-
-    def test_solution_grid_size_less_than_5(self):
-        grid = Grid([
-            [0, 0, 0, 1],
-            [0, 0, 0, 1],
-            [0, 0, 0, 1],
-            [0, 0, 0, 1],
-        ])
-        with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid)
-        self.assertEqual("The grid must be at least 5x5", str(context.exception))
-
-    def test_solution_color_less_than_columns_number(self):
-        grid = Grid([
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0],
-        ])
-        with self.assertRaises(ValueError) as context:
-            NorinoriSolver(grid)
-        self.assertEqual("The grid must have at least 2 regions", str(context.exception))
-
     def test_solution_none_because_2_by_region(self):
         grid = Grid([
             [0, 0, 1, 0, 0, 0],

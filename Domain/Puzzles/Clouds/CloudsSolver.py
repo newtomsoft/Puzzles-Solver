@@ -1,4 +1,4 @@
-from z3 import Solver, Bool, Not, And, is_true, sat, Implies
+from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
@@ -11,18 +11,21 @@ class CloudsSolver(GameSolver):
         self._columns_counts = columns_counts
         self._rows_number = len(rows_counts)
         self._columns_number = len(columns_counts)
-        self._solver = Solver()
+        self._model = cp_model.CpModel()
+        self._solver = cp_model.CpSolver()
+        self._solver_initialized = False
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 
     def _init_solver(self):
         self._grid_z3 = Grid(
-            [[Bool(f"cell_{r}-{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
+            [[self._model.NewBoolVar(f"cell_{r}-{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._add_constraints()
 
     def get_solution(self) -> Grid:
-        if not self._solver.assertions():
+        if not self._solver_initialized:
             self._init_solver()
+            self._solver_initialized = True
 
         solution = self._compute_solution()
         self._previous_solution = solution
@@ -32,14 +35,12 @@ class CloudsSolver(GameSolver):
         previous_solution_constraints = []
         for position, _ in [(position, value) for (position, value) in self._previous_solution if value]:
             previous_solution_constraints.append(self._grid_z3[position])
-        self._solver.add(Not(And(previous_solution_constraints)))
-
+        self._model.AddBoolOr([v.Not() for v in previous_solution_constraints])
         return self.get_solution()
 
     def _compute_solution(self) -> Grid:
-        if self._solver.check() == sat:
-            model = self._solver.model()
-            return Grid([[is_true(model.eval(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        if self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            return Grid([[bool(self._solver.Value(self._grid_z3.value(i, j))) for j in range(self._columns_number)] for i in range(self._rows_number)])
 
         return Grid.empty()
 
@@ -50,11 +51,11 @@ class CloudsSolver(GameSolver):
 
     def _add_lines_counts_constraints(self):
         for i, row in enumerate(self._grid_z3.matrix):
-            self._solver.add(sum(row) == self._rows_counts[i])
+            self._model.Add(sum(row) == self._rows_counts[i])
 
         for i in range(self._columns_number):
             column_vars = [self._grid_z3[Position(r, i)] for r in range(self._rows_number)]
-            self._solver.add(sum(column_vars) == self._columns_counts[i])
+            self._model.Add(sum(column_vars) == self._columns_counts[i])
 
     def _add_shapes_rectangles_sizes_neighbors_constraints(self):
         for position, top_left in [(pos, val) for pos, val in self._grid_z3 if pos not in self._grid_z3.edge_down_positions() + self._grid_z3.edge_right_positions()]:
@@ -65,14 +66,14 @@ class CloudsSolver(GameSolver):
             self._add_neighbor_constraint(top_left, top_right, bottom_left, bottom_right)
 
     def _add_rectangle_constraint(self, top_left, top_right, bottom_left, bottom_right):
-        self._solver.add(Implies(And(top_right, bottom_left, bottom_right), top_left))
-        self._solver.add(Implies(And(top_left, bottom_left, bottom_right), top_right))
-        self._solver.add(Implies(And(top_left, top_right, bottom_right), bottom_left))
-        self._solver.add(Implies(And(top_left, top_right, bottom_left), bottom_right))
+        self._model.AddBoolOr([top_right.Not(), bottom_left.Not(), bottom_right.Not(), top_left])
+        self._model.AddBoolOr([top_left.Not(), bottom_left.Not(), bottom_right.Not(), top_right])
+        self._model.AddBoolOr([top_left.Not(), top_right.Not(), bottom_right.Not(), bottom_left])
+        self._model.AddBoolOr([top_left.Not(), top_right.Not(), bottom_left.Not(), bottom_right])
 
     def _add_neighbor_constraint(self, top_left, top_right, bottom_left, bottom_right):
-        self._solver.add(Not(And(top_left, Not(top_right), bottom_right, Not(bottom_left))))
-        self._solver.add(Not(And(Not(top_left), top_right, Not(bottom_right), bottom_left)))
+        self._model.AddBoolOr([top_left.Not(), top_right, bottom_right.Not(), bottom_left])
+        self._model.AddBoolOr([top_left, top_right.Not(), bottom_right, bottom_left.Not()])
 
     def _add_sizes_constraints(self):
         for r in range(self._rows_number - 2):
@@ -83,7 +84,9 @@ class CloudsSolver(GameSolver):
                 left = self._grid_z3[Position(r + 1, c)]
                 right = self._grid_z3[Position(r + 1, c + 2)]
                 down_right = self._grid_z3[Position(r + 2, c + 2)]
-                self._solver.add(Implies(And(center, Not(left), Not(up)), And(down, right, down_right)))
+                self._model.AddBoolOr([center.Not(), left, up, down])
+                self._model.AddBoolOr([center.Not(), left, up, right])
+                self._model.AddBoolOr([center.Not(), left, up, down_right])
 
         for r in range(self._rows_number - 2):
             c = 0
@@ -92,13 +95,15 @@ class CloudsSolver(GameSolver):
             down = self._grid_z3[Position(r + 2, c)]
             right = self._grid_z3[Position(r + 1, c + 1)]
             down_right = self._grid_z3[Position(r + 2, c + 1)]
-            self._solver.add(Implies(And(center, Not(up)), And(down, right, down_right)))
+            self._model.AddBoolOr([center.Not(), up, down])
+            self._model.AddBoolOr([center.Not(), up, right])
+            self._model.AddBoolOr([center.Not(), up, down_right])
 
             c = self._columns_number - 1
             center = self._grid_z3[Position(r + 1, c)]
             up = self._grid_z3[Position(r, c)]
             left = self._grid_z3[Position(r + 1, c - 1)]
-            self._solver.add(Not(And(center, Not(left), Not(up))))
+            self._model.AddBoolOr([center.Not(), left, up])
 
         for c in range(self._columns_number - 2):
             r = 0
@@ -107,10 +112,12 @@ class CloudsSolver(GameSolver):
             left = self._grid_z3[Position(r, c)]
             right = self._grid_z3[Position(r, c + 2)]
             down_right = self._grid_z3[Position(r + 1, c + 2)]
-            self._solver.add(Implies(And(center, Not(left)), And(down, right, down_right)))
+            self._model.AddBoolOr([center.Not(), left, down])
+            self._model.AddBoolOr([center.Not(), left, right])
+            self._model.AddBoolOr([center.Not(), left, down_right])
 
             r = self._columns_number - 1
             center = self._grid_z3[Position(r, c + 1)]
             up = self._grid_z3[Position(r - 1, c + 1)]
             left = self._grid_z3[Position(r, c)]
-            self._solver.add(Not(And(center, Not(left), Not(up))))
+            self._model.AddBoolOr([center.Not(), left, up])

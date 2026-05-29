@@ -9,7 +9,7 @@ _ = 0
 
 class TraceNumbersSolverTests(TestCase):
     def test_solution_7x7_3ne1r(self):
-        # https://gridpuzzle.com/trace-numbers/3ne1r
+        """https://gridpuzzle.com/trace-numbers/3ne1r"""
         grid = Grid([
             [6, 5, 1, 1, 2, 0, 1],
             [4, 0, 2, 0, 0, 3, 0],

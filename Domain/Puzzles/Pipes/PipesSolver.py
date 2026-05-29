@@ -135,7 +135,7 @@ class PipesSolver(GameSolver):
         # We use a potential function: if (u,v) is an edge, then |pot[u] - pot[v]| = 1
         # This is a bit complex for a grid, let's use a flow-based approach instead.
         # Or a simpler distance-from-root approach.
-        potentials = GridBase(
+        potentials = type(self._grid_vars)(
             [[self._model.new_int_var(0, self._rows_number * self._columns_number, f"pot_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)]
         )
 
