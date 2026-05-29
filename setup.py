@@ -1,9 +1,9 @@
-﻿from setuptools import setup, find_packages
+﻿from setuptools import setup, find_namespace_packages
 
 setup(
     name='PuzzleGames',
     version='1.0.0',
-    packages=find_packages(),
+    packages=find_namespace_packages(include=['Domain', 'Domain.*', 'Utils', 'Utils.*']),
     url='https://github.com/newtomsoft/Puzzle',
     license='MIT',
     author='thoma',
