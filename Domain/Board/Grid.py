@@ -323,6 +323,14 @@ class Grid[T](GridBase[T]):
     def are_valid_positions(self, positions):
         return all(0 <= p.r < self.rows_number and 0 <= p.c < self.columns_number for p in positions)
 
+    def normalize_regions(self) -> 'Grid':
+        regions = self.get_regions()
+        old_ids = sorted(regions.keys())
+        id_map = {old_id: new_id for new_id, old_id in enumerate(old_ids)}
+        new_matrix = [[id_map[value] for value in row] for row in self._matrix]
+        return Grid(new_matrix)
+
+
 def is_integer(s):
     if s.startswith('-'):
         return s[1:].isdigit()
