@@ -1,14 +1,14 @@
 ﻿from setuptools import setup, find_namespace_packages
 
 setup(
-    name='PuzzleGames',
+    name='PuzzleSolver',
     version='1.0.0',
     packages=find_namespace_packages(include=['Domain', 'Domain.*', 'Utils', 'Utils.*']),
     url='https://github.com/newtomsoft/Puzzle',
     license='MIT',
-    author='thoma',
+    author='Thomas Vuille',
     author_email='thomas@newtomsoft.fr',
-    description='A collection of puzzle games.',
+    description='A collection of puzzle solvers.',
     install_requires=[
         'rebrowser-playwright',
         'configparser',
