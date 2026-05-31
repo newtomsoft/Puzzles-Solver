@@ -1,7 +1,7 @@
 ﻿import asyncio
 
 from Domain.Board.Grid import Grid
-from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
+from Domain.Board.PipeShapeTransition import PipeShapeTransition
 from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 
