@@ -5,9 +5,9 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class MidLoopSolver:
+class MidLoopSolver(GameSolver):
     def __init__(self, input_grid: Grid):
         self.rows_number = (input_grid.rows_number + 1) // 2
         self.columns_number = (input_grid.columns_number + 1) // 2

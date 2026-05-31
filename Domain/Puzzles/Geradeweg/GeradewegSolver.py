@@ -5,9 +5,9 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class GeradewegSolver:
+class GeradewegSolver(GameSolver):
     _used_directions = [Direction.right(), Direction.down()]
 
     def __init__(self, grid: Grid):

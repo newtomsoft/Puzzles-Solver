@@ -2,9 +2,9 @@ from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class TrilogySolver:
+class TrilogySolver(GameSolver):
     def __init__(self, grid: Grid[int]):
         self._grid = grid
         self._rows_number = self._grid.rows_number

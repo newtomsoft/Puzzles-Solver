@@ -5,9 +5,9 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class WamazuSolver:
+class WamazuSolver(GameSolver):
     def __init__(self, grid: Grid):
         self._input_grid = grid
         self._connections_number = sum(1 for row in grid for cell in row if cell == 1) // 2

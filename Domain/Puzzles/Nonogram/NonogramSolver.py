@@ -1,8 +1,8 @@
 from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, FEASIBLE
 from Domain.Board.Grid import Grid
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class NonogramSolver:
+class NonogramSolver(GameSolver):
     def __init__(self, numbers_by_top_left: dict[str, list[list[int]]]):
         self._numbers_left = numbers_by_top_left['left']
         self._numbers_top = numbers_by_top_left['top']

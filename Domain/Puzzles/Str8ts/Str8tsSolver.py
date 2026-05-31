@@ -2,9 +2,9 @@ from ortools.sat.python import cp_model
 
 from Domain.Board.Grid import Grid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
-
-class Str8tsSolver:
+class Str8tsSolver(GameSolver):
     def __init__(self, numbers_grid: Grid[int], blacks_grid: Grid[bool]):
         self._numbers_grid = numbers_grid
         self._blacks_grid = blacks_grid

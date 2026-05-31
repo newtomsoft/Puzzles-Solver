@@ -9,7 +9,7 @@ class DosunFuwariSolver(GameSolver):
     cell_empty = 0
     black = 1
     white = 2
-    wall = empty
+    wall = -1
 
     def __init__(self, region_grid: Grid):
         self._region_grid = region_grid

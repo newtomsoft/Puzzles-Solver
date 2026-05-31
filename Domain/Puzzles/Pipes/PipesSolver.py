@@ -6,7 +6,7 @@ from Domain.Board.Pipe import Pipe
 from Domain.Board.PipesGrid import PipesGrid
 from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
-from Domain.Puzzles.Pipes.PipeShapeTransition import PipeShapeTransition
+from Domain.Board.PipeShapeTransition import PipeShapeTransition
 
 
 class PipesSolver(GameSolver):

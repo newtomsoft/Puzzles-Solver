@@ -4,12 +4,13 @@ from Domain.Board.Grid import Grid
 from Domain.Board.Island import Island
 from Domain.Board.IslandsGrid import IslandGrid
 from Domain.Board.Position import Position
+from Domain.Puzzles.GameSolver import GameSolver
 
 _ = 0
 B = 1
 W = 2
 
-class DotchiLoopSolver:
+class DotchiLoopSolver(GameSolver):
     def __init__(self, region_grid: Grid[int], value_grid: Grid[int]):
         self._region_grid = region_grid
         self._value_grid = value_grid
