@@ -7,7 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 class KurottoSolver(GameSolver):
     unknown = '?'
-    empty = None
+    cell_empty = None
     black = 1
     white = None
 

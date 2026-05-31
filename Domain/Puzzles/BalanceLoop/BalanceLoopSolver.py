@@ -10,7 +10,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class BalanceLoopSolver(GameSolver):
-    empty = None
+    cell_empty = None
     white = 'w'
     black = 'b'
 

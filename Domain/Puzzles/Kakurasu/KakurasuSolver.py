@@ -7,7 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KakurasuSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, data_or_grid: Union[Grid, dict[str, List[int]]]):
         if isinstance(data_or_grid, Grid):

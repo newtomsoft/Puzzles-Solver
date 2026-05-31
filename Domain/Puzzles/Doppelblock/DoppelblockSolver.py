@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class DoppelblockSolver(GameSolver):
-    empty = None
+    cell_empty = None
     black_value = 0  # must stay 0
 
     def __init__(self, grid: Grid, row_sums_clues: list, column_sums_clues: list):

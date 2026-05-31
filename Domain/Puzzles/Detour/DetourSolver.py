@@ -10,7 +10,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class DetourSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, clues_grid: Grid, regions_grid: Grid):
         self._clues_grid = clues_grid

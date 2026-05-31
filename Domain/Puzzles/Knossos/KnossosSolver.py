@@ -5,7 +5,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class KnossosSolver(GameSolver):
-    empty = -1
+    cell_empty = -1
 
     def __init__(self, grid: Grid):
         self._grid = grid

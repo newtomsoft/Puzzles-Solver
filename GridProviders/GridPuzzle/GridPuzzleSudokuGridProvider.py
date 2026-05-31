@@ -39,7 +39,7 @@ class GridPuzzleSudokuGridProvider(PlaywrightGridProvider, GridPuzzleProvider):
                 if val and val.isdigit():
                     row.append(int(val))
                 else:
-                    row.append(SudokuSolver.empty)
+                    row.append(SudokuSolver.cell_empty)
             matrix.append(row)
         
         return matrix

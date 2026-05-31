@@ -4,7 +4,7 @@ from Domain.Board.Grid import Grid
 
 
 class GameSolver(ABC):
-    empty = None
+    cell_empty = None
 
     @abstractmethod
     def __init__(self, *args, **kwargs):

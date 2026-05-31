@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class DosunFuwariSolver(GameSolver):
-    empty = 0
+    cell_empty = 0
     black = 1
     white = 2
     wall = empty

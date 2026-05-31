@@ -5,7 +5,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class MinesweeperSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid):
         self._grid = grid

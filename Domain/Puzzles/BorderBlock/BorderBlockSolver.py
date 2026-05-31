@@ -9,7 +9,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class BorderBlockSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid, dots: Collection[Position]):
         self._input_grid = grid

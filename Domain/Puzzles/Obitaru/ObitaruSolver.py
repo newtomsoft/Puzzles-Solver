@@ -13,7 +13,7 @@ ObitaruCell = Union[str, int, None]
 
 class ObitaruSolver(GameSolver):
     white = 'w'
-    empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid):
         self._grid = grid

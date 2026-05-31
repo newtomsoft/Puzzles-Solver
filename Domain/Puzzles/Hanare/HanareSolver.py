@@ -9,7 +9,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class HanareSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, regions_grid: RegionsGrid, clues_grid: Grid = None):
         self._regions_grid = regions_grid

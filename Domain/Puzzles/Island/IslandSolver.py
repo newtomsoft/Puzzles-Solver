@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class IslandSolver(GameSolver):
-    empty = None
+    cell_empty = None
     sea = -1
     land = 0
     clue = 1

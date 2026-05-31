@@ -12,7 +12,7 @@ from Domain.Puzzles.Lits.LitsType import LitsType
 
 
 class LitsSolver(GameSolver):
-    empty = 0
+    cell_empty = 0
 
     def __init__(self, grid: Grid):
         self._grid = grid

@@ -4,7 +4,7 @@ from Domain.Board.Position import Position
 from Domain.Puzzles.GameSolver import GameSolver
 
 class IrasutoSolver(GameSolver):
-    empty = None
+    cell_empty = None
     white = 'w'
     black = 'b'
 

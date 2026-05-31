@@ -7,7 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class YonmasuSolver(GameSolver):
-    empty = '.'
+    cell_empty = '.'
     forbidden = '#'
     circle = 'O'
 

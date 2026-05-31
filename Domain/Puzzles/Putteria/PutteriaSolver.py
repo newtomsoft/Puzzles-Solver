@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class PutteriaSolver(GameSolver):
-    empty = 0
+    cell_empty = 0
     cross = -1
 
     def __init__(self, regions_grid: Grid, clues_grid: Grid):

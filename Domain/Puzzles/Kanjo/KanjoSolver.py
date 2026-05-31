@@ -13,7 +13,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 class KanjoSolver(GameSolver):
     horizontal = -1
     vertical = -2
-    empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid):
         self._input_grid = grid

@@ -9,7 +9,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 class NumberCrossSolver(GameSolver):
     black_value = False  # must stay False
-    empty = None  # must stay None
+    cell_empty = None  # must stay None
 
     def __init__(self, input_grid: Grid, row_sums_clues: list, column_sums_clues: list):
         self._input_grid = input_grid

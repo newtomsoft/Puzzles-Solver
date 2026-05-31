@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class TasukueaSolver(GameSolver):
-    empty = None
+    cell_empty = None
     unknown = '?'
 
     def __init__(self, grid: Grid):

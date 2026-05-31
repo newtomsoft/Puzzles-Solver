@@ -7,7 +7,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class NeighboursSolver(GameSolver):
-    empty = None
+    cell_empty = None
     unknow = 0
     SHAPES = {
         2: [

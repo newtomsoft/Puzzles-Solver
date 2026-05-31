@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class From1ToXSolver(GameSolver):
-    empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid, region_grid: Grid, rows_clues: list, columns_clues: list):
         self._grid = grid

@@ -6,7 +6,7 @@ from Domain.Puzzles.GameSolver import GameSolver
 
 
 class ContextSolver(GameSolver):
-    empty = None
+    cell_empty = None
     black = 0
     white = 1
 

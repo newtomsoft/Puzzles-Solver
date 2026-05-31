@@ -10,7 +10,7 @@ from Utils.utils import is_perfect_square
 
 
 class SudokuBaseSolver(GameSolver):
-    empty = -1
+    cell_empty = -1
     
     def __init__(self, grid: Grid):
         self._grid = grid
@@ -81,7 +81,7 @@ class SudokuBaseSolver(GameSolver):
         pass
 
     def _initials_constraints(self):
-        for position, value in [(position, value) for position, value in self._grid if value !=self.empty]:
+        for position, value in [(position, value) for position, value in self._grid if value !=self.cell_empty]:
             self._model.add(self._grid_vars[position] == value)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
@@ -105,7 +105,7 @@ class SudokuBaseSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 value = self._grid[Position(r, c)]
-                if value ==self.empty:
+                if value ==self.cell_empty:
                     continue
                 if value in seen_in_rows[r] or value in seen_in_columns[c]:
                     return False
@@ -120,7 +120,7 @@ class SudokuBaseSolver(GameSolver):
                 for r in range(self._sub_square_row_number):
                     for c in range(self._sub_square_column_number):
                         value = self._grid.value(sub_square_row + r, sub_square_column + c)
-                        if value ==self.empty:
+                        if value ==self.cell_empty:
                             continue
                         if value in seen_in_sub_square:
                             return False
@@ -129,7 +129,7 @@ class SudokuBaseSolver(GameSolver):
 
     def _are_initial_numbers_between_1_and_nxn(self):
         return all(
-            self._grid.value(r, c) ==self.empty or 1 <= self._grid.value(r, c) <= self.rows_number
+            self._grid.value(r, c) ==self.cell_empty or 1 <= self._grid.value(r, c) <= self.rows_number
             for r in range(self.rows_number)
             for c in range(self.columns_number)
         )
