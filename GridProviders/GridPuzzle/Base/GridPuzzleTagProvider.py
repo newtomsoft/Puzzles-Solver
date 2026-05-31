@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup, ResultSet, Tag
 from bs4.element import NavigableString, PageElement
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.GameSolver import GameSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleProvider import GridPuzzleProvider
 
 

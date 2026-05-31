@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleKanjoGridProvider import GridPuzzleKanjoGridProvider
-from Domain.Board.Island import Island
+from PuzzleSolver.Board.Island import Island
 
 class GridPuzzleKanjoGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):

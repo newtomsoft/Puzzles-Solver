@@ -1,4 +1,4 @@
-from Domain.Puzzles.Yajikabe.YajilkabeSolver import YajikabeSolver
+from PuzzleSolver.Puzzles.Yajikabe.YajilkabeSolver import YajikabeSolver
 from GridPlayers.GridPuzzle.GridPuzzleYajikabePlayer import GridPuzzleYajikabePlayer
 from GridProviders.GridPuzzle.GridPuzzleYajikabeGridProvider import GridPuzzleYajikabeGridProvider
 from Run.GameRegistry import GameRegistry

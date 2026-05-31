@@ -1,5 +1,5 @@
 import asyncio
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Hanare.HanareSolver import HanareSolver
+﻿from PuzzleSolver.Puzzles.Hanare.HanareSolver import HanareSolver
 from GridPlayers.GridPuzzle.GridPuzzleHanarePlayer import GridPuzzleHanarePlayer
 from GridProviders.GridPuzzle.GridPuzzleHanareGridProvider import GridPuzzleHanareGridProvider
 from Run.GameRegistry import GameRegistry

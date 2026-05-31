@@ -1,6 +1,6 @@
-﻿from Domain.Board.Direction import Direction
-from Domain.Board.IslandsGrid import IslandGrid
-from Domain.Board.Position import Position
+﻿from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.IslandsGrid import IslandGrid
+from PuzzleSolver.Board.Position import Position
 
 
 class GridPuzzleCanvasPlayer:

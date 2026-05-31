@@ -1,4 +1,4 @@
-from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
+from PuzzleSolver.Puzzles.Clouds.CloudsSolver import CloudsSolver
 from GridPlayers.GridPuzzle.GridPuzzleCloudsPlayer import GridPuzzleCloudsPlayer
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 from Run.GameRegistry import GameRegistry

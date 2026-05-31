@@ -1,7 +1,7 @@
 import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from GridProviders.GridPuzzle.GridPuzzleBattleshipsGridProvider import GridPuzzleBattleshipsGridProvider
 
 

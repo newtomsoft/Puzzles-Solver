@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.RabbitsAndTrees.RabbitsAndTreesSolver import RabbitsAndTreesSolver
+﻿from PuzzleSolver.Puzzles.RabbitsAndTrees.RabbitsAndTreesSolver import RabbitsAndTreesSolver
 from GridPlayers.GridPuzzle.GridPuzzleRabbitsAndTreesPlayer import GridPuzzleRabbitsAndTreesPlayer
 from GridProviders.GridPuzzle.GridPuzzleRabbitsAndTreesGridProvider import GridPuzzleRabbitsAndTreesGridProvider
 from Run.GameRegistry import GameRegistry

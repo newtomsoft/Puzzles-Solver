@@ -1,7 +1,7 @@
 import asyncio
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaCellType
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaCellType
 from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 

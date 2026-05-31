@@ -1,4 +1,4 @@
-from Domain.Puzzles.Grades.GradesSolver import GradesSolver
+from PuzzleSolver.Puzzles.Grades.GradesSolver import GradesSolver
 from GridPlayers.GridPuzzle.GridPuzzleGradesPlayer import GridPuzzleGradesPlayer
 from GridProviders.GridPuzzle.GridPuzzleGradesGridProvider import GridPuzzleGradesGridProvider
 from Run.GameRegistry import GameRegistry

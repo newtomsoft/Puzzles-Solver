@@ -1,4 +1,4 @@
-from Domain.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
+from PuzzleSolver.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
 from GridPlayers.GridPuzzle.GridPuzzleRoundTripPlayer import GridPuzzleRoundTripPlayer
 from GridProviders.GridPuzzle.GridPuzzleRoundTripGridProvider import GridPuzzleRoundTripGridProvider
 from Run.GameRegistry import GameRegistry

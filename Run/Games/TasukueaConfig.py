@@ -1,4 +1,4 @@
-from Domain.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
+from PuzzleSolver.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 from GridPlayers.GridPuzzle.GridPuzzleTasukueaPlayer import GridPuzzleTasukueaPlayer
 from GridProviders.GridPuzzle.GridPuzzleTasukueaGridProvider import GridPuzzleTasukueaGridProvider
 from Run.GameRegistry import GameRegistry

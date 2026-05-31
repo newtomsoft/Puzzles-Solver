@@ -1,4 +1,4 @@
-from Domain.Puzzles.Masyu.MasyuSolver import MasyuSolver
+from PuzzleSolver.Puzzles.Masyu.MasyuSolver import MasyuSolver
 from GridPlayers.GridPuzzle.GridPuzzleMasyuPlayer import GridPuzzleMasyuPlayer
 from GridPlayers.PuzzlesMobile.PuzzleMasyuPlayer import PuzzleMasyuPlayer
 from GridProviders.GridPuzzle.GridPuzzleMasyuGridProvider import GridPuzzleMasyuGridProvider

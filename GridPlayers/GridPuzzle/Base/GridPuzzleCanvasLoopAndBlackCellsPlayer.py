@@ -1,4 +1,4 @@
-from Domain.Board.IslandsGrid import IslandGrid
+from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 

@@ -1,5 +1,5 @@
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Toichika.ToichikaSolver import ToichikaSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Toichika.ToichikaSolver import ToichikaSolver
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

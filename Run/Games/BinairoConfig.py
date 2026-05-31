@@ -1,4 +1,4 @@
-from Domain.Puzzles.Binairo.BinairoSolver import BinairoSolver
+from PuzzleSolver.Puzzles.Binairo.BinairoSolver import BinairoSolver
 from GridPlayers.GridPuzzle.GridPuzzleBinairoPlayer import GridPuzzleBinairoPlayer
 from GridPlayers.PuzzlesMobile.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridProviders.GridPuzzle.GridPuzzleBinairoGridProvider import GridPuzzleBinairoGridProvider

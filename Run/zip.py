@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Zip.ZipSolver import ZipSolver
+﻿from PuzzleSolver.Puzzles.Zip.ZipSolver import ZipSolver
 from GridPlayers.LinkedIn.ZipPlayer import ZipPlayer
 from GridProviders.Linkedin.ZipGridProvider import ZipGridProvider
 

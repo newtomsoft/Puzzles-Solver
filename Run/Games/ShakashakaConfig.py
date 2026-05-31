@@ -1,4 +1,4 @@
-from Domain.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
+from PuzzleSolver.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
 from GridPlayers.PuzzlesMobile.PuzzleShakashakaPlayer import PuzzleShakashakaPlayer
 from GridProviders.PuzzlesMobile.PuzzleShakashakaGridProvider import PuzzleShakashakaGridProvider
 from Run.GameRegistry import GameRegistry

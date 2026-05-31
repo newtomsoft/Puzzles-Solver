@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
@@ -16,8 +16,8 @@ class GridPuzzleChoconaGridProvider(PlaywrightGridProvider, GridPuzzleTagProvide
         
         # Sur gridpuzzle.com, les bordures des régions semblent être définies par data-h et data-v
         # h=1 signifie bordure à droite, v=1 signifie bordure en bas
-        from Domain.Board.Position import Position
-        from Domain.Board.Direction import Direction
+        from PuzzleSolver.Board.Position import Position
+        from PuzzleSolver.Board.Direction import Direction
         
         opened_grid = Grid([[set() for _ in range(column_count)] for _ in range(row_count)])
         all_borders = set(Direction.orthogonal_directions())

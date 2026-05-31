@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 

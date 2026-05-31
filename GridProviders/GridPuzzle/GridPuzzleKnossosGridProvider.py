@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Knossos.KnossosSolver import KnossosSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Knossos.KnossosSolver import KnossosSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

@@ -1,4 +1,4 @@
-from Domain.Puzzles.Yajilin.YajilinSolver import YajilinSolver
+from PuzzleSolver.Puzzles.Yajilin.YajilinSolver import YajilinSolver
 from GridPlayers.GridPuzzle.GridPuzzleYajilinPlayer import GridPuzzleYajilinPlayer
 from GridProviders.GridPuzzle.GridPuzzleYajilinGridProvider import GridPuzzleYajilinGridProvider
 from Run.GameRegistry import GameRegistry

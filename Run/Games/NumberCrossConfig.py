@@ -1,4 +1,4 @@
-from Domain.Puzzles.NumberCross.NumberCrossSolver import NumberCrossSolver
+from PuzzleSolver.Puzzles.NumberCross.NumberCrossSolver import NumberCrossSolver
 from GridPlayers.GridPuzzle.GridPuzzleNumberCrossPlayer import GridPuzzleNumberCrossPlayer
 from GridProviders.GridPuzzle.GridPuzzleNumberCrossGridProvider import GridPuzzleNumberCrossGridProvider
 from Run.GameRegistry import GameRegistry

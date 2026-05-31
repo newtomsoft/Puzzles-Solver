@@ -1,4 +1,4 @@
-from Domain.Puzzles.Kemaru.KemaruSolver import KemaruSolver
+from PuzzleSolver.Puzzles.Kemaru.KemaruSolver import KemaruSolver
 from GridPlayers.VingtMinutes.VingtMinutesKemaruPlayer import VingtMinutesKemaruPlayer
 from GridProviders.VingtMinutes.VingtMinutesKemaruGridProvider import VingtMinutesKemaruGridProvider
 from Run.GameRegistry import GameRegistry

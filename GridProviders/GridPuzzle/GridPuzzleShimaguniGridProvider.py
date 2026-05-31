@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
@@ -15,8 +15,8 @@ class GridPuzzleShimaguniGridProvider(PlaywrightGridProvider, GridPuzzleTagProvi
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
         grid = self.make_grid(column_count, matrix, matrix_cells)
 
-        from Domain.Board.Direction import Direction
-        from Domain.Board.Position import Position
+        from PuzzleSolver.Board.Direction import Direction
+        from PuzzleSolver.Board.Position import Position
 
         # Initialize all borders as open
         opened_grid_matrix = [[set(Direction.orthogonal_directions()) for _ in range(column_count)] for _ in range(row_count)]

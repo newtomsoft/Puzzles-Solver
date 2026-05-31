@@ -1,4 +1,4 @@
-﻿from Domain.Board.Grid import Grid
+﻿from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.GridPuzzle.Base.GridPuzzleNumbersPlayer import GridPuzzleNumbersPlayer
 
 

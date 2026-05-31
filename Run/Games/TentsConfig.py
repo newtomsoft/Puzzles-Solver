@@ -1,4 +1,4 @@
-from Domain.Puzzles.Tents.TentsSolver import TentsSolver
+from PuzzleSolver.Puzzles.Tents.TentsSolver import TentsSolver
 from GridPlayers.GridPuzzle.GridPuzzleTentsPlayer import GridPuzzleTentsPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCampsitesGridPlayer import PuzzleBaronCampsitesPlayer
 from GridPlayers.PuzzlesMobile.PuzzleTentsPlayer import PuzzleTentsPlayer

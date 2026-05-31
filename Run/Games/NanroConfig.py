@@ -1,4 +1,4 @@
-from Domain.Puzzles.Nanro.NanroSolver import NanroSolver
+from PuzzleSolver.Puzzles.Nanro.NanroSolver import NanroSolver
 from GridPlayers.GridPuzzle.GridPuzzleNanroPlayer import GridPuzzleNanroPlayer
 from GridProviders.GridPuzzle.GridPuzzleNanroGridProvider import GridPuzzleNanroGridProvider
 from Run.GameRegistry import GameRegistry

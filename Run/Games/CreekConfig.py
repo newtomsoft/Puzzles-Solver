@@ -1,4 +1,4 @@
-from Domain.Puzzles.Creek.CreekSolver import CreekSolver
+from PuzzleSolver.Puzzles.Creek.CreekSolver import CreekSolver
 from GridPlayers.GridPuzzle.GridPuzzleCreekPlayer import GridPuzzleCreekPlayer
 from GridProviders.GridPuzzle.GridPuzzleCreekGridProvider import GridPuzzleCreekGridProvider
 from Run.GameRegistry import GameRegistry

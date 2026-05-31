@@ -1,4 +1,4 @@
-from Domain.Puzzles.Lits.LitsSolver import LitsSolver
+from PuzzleSolver.Puzzles.Lits.LitsSolver import LitsSolver
 from GridPlayers.PuzzlesMobile.PuzzleLitsPlayer import PuzzleLitsPlayer
 from GridProviders.PuzzlesMobile.PuzzleLitsGridProvider import PuzzleLitsGridProvider
 from Run.GameRegistry import GameRegistry

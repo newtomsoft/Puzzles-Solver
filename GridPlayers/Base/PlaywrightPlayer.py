@@ -8,8 +8,8 @@ from typing import Protocol
 from moviepy import VideoFileClip
 from rebrowser_playwright.async_api import BrowserContext, ElementHandle, Mouse, Page, Video
 
-from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
 from GridPlayers.Base.GridPlayer import GridPlayer
 
 

@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.SheepAndWolves.SheepAndWolvesSolver import SheepAndWolvesSolver
+﻿from PuzzleSolver.Puzzles.SheepAndWolves.SheepAndWolvesSolver import SheepAndWolvesSolver
 from GridPlayers.GridPuzzle.GridPuzzleSheepAndWolvesPlayer import GridPuzzleSheepAndWolvesPlayer
 from GridProviders.GridPuzzle.GridPuzzleSheepAndWolvesGridProvider import GridPuzzleSheepAndWolvesGridProvider
 from Run.GameRegistry import GameRegistry

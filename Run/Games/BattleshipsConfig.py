@@ -1,4 +1,4 @@
-from Domain.Puzzles.Bimaru.BimaruSolver import BimaruSolver
+from PuzzleSolver.Puzzles.Bimaru.BimaruSolver import BimaruSolver
 from GridPlayers.GridPuzzle.GridPuzzleBattleshipsPlayer import GridPuzzleBattleshipsPlayer
 from GridProviders.GridPuzzle.GridPuzzleBattleshipsGridProvider import GridPuzzleBattleshipsGridProvider
 from Run.GameRegistry import GameRegistry

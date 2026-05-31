@@ -1,4 +1,4 @@
-from Domain.Puzzles.Hitori.HitoriSolver import HitoriSolver
+from PuzzleSolver.Puzzles.Hitori.HitoriSolver import HitoriSolver
 from GridPlayers.GridPuzzle.GridPuzzleHitoriPlayer import GridPuzzleHitoriPlayer
 from GridPlayers.PuzzlesMobile.PuzzleHitoriPlayer import PuzzleHitoriPlayer
 from GridPlayers.Vuqq.VuqqHitoriPlayer import VuqqHitoriPlayer

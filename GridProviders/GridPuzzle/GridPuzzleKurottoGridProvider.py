@@ -1,7 +1,7 @@
 ﻿from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Kurotto.KurottoSolver import KurottoSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Kurotto.KurottoSolver import KurottoSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

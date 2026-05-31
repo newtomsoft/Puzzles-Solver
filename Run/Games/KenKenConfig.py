@@ -1,4 +1,4 @@
-from Domain.Puzzles.KenKen.KenKenSolver import KenKenSolver
+from PuzzleSolver.Puzzles.KenKen.KenKenSolver import KenKenSolver
 from GridPlayers.GridPuzzle.GridPuzzleKenKenPlayer import GridPuzzleKenKenPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronCalcudokuGridPlayer import PuzzleBaronCalcudokuPlayer
 from GridProviders.GridPuzzle.GridPuzzleKenKenGridProvider import GridPuzzleKenKenGridProvider

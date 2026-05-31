@@ -1,4 +1,4 @@
-from Domain.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
+from PuzzleSolver.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
 from GridPlayers.GridPuzzle.GridPuzzleSudokuPlayer import GridPuzzleSudokuPlayer
 from GridPlayers.PuzzlesMobile.PuzzleSudokuPlayer import PuzzleSudokuPlayer
 from GridProviders.EscapeSudoku.EscapeSudokuProvider import EscapeSudokuGridProvider

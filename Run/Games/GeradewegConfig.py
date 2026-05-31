@@ -1,4 +1,4 @@
-from Domain.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
+from PuzzleSolver.Puzzles.Geradeweg.GeradewegSolver import GeradewegSolver
 from GridPlayers.GridPuzzle.GridPuzzleGeradewegPlayer import GridPuzzleGeradewegPlayer
 from GridProviders.GridPuzzle.GridPuzzleGeradewegGridProvider import GridPuzzleGeradewegGridProvider
 from Run.GameRegistry import GameRegistry

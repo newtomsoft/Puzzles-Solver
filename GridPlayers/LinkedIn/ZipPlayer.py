@@ -1,4 +1,4 @@
-from Domain.Board.LinearPathGrid import LinearPathGrid
+from PuzzleSolver.Board.LinearPathGrid import LinearPathGrid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

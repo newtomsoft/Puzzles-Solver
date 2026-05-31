@@ -1,5 +1,5 @@
-﻿from Domain.Board.Grid import Grid
-from Domain.Puzzles.Irasuto.IrasutoSolver import IrasutoSolver
+﻿from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Irasuto.IrasutoSolver import IrasutoSolver
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

@@ -1,6 +1,6 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
 
 class GridPuzzleCloudsGridProviderTests(GridPuzzleProviderTestBase):

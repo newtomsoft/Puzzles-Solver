@@ -1,4 +1,4 @@
-from Domain.Puzzles.Knossos.KnossosSolver import KnossosSolver
+from PuzzleSolver.Puzzles.Knossos.KnossosSolver import KnossosSolver
 from GridPlayers.GridPuzzle.GridPuzzleKnossosPlayer import GridPuzzleKnossosPlayer
 from GridProviders.GridPuzzle.GridPuzzleKnossosGridProvider import GridPuzzleKnossosGridProvider
 from Run.GameRegistry import GameRegistry

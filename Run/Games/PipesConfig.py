@@ -1,4 +1,4 @@
-from Domain.Puzzles.Pipes.PipesSolver import PipesSolver
+from PuzzleSolver.Puzzles.Pipes.PipesSolver import PipesSolver
 from GridPlayers.PuzzlesMobile.PuzzlePipesPlayer import PuzzlePipesPlayer
 from GridPlayers.Vuqq.VuqqNetwalkPlayer import VuqqNetwalkPlayer
 from GridProviders.PuzzlesMobile.PuzzlePipesGridProvider import PuzzlePipesGridProvider

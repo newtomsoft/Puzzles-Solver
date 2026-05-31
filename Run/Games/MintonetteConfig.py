@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Mintonette.MintonetteSolver_or_tools import MintonetteSolver
+﻿from PuzzleSolver.Puzzles.Mintonette.MintonetteSolver_or_tools import MintonetteSolver
 from GridPlayers.GridPuzzle.GridPuzzleMintonettePlayer import GridPuzzleMintonettePlayer
 from GridProviders.GridPuzzle.GridPuzzleMintonetteGridProvider import GridPuzzleMintonetteGridProvider
 from Run.GameRegistry import GameRegistry

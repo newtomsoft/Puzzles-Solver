@@ -1,7 +1,7 @@
 ﻿import asyncio
 
-from Domain.Board.Direction import Direction
-from Domain.Board.IslandsGrid import IslandGrid
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 

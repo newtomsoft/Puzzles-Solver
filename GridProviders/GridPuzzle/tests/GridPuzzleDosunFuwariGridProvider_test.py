@@ -1,8 +1,8 @@
 ﻿import unittest
 
-from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+from PuzzleSolver.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
 
 class GridPuzzleDosunFuwariGridProviderTests(GridPuzzleProviderTestBase):

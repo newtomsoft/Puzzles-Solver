@@ -1,9 +1,9 @@
 ﻿import re
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
-from Domain.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from GridProviders.PuzzleBaron.Base.PuzzleBaronGridProvider import PuzzleBaronGridProvider
 
 

@@ -1,4 +1,4 @@
-from Domain.Puzzles.Hidoku.HidokuSolver import HidokuSolver
+from PuzzleSolver.Puzzles.Hidoku.HidokuSolver import HidokuSolver
 from GridPlayers.GridGames.HidokuPlayer import HidokuPlayer
 from GridProviders.GridGames.HidokuGridProvider import HidokuGridProvider
 from Run.GameRegistry import GameRegistry

@@ -2,8 +2,8 @@ import math
 
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Slant.SlantSolver import SlantSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Slant.SlantSolver import SlantSolver
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 

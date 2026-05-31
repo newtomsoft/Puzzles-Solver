@@ -1,4 +1,4 @@
-from Domain.Puzzles.Koburin.KoburinSolver import KoburinSolver
+from PuzzleSolver.Puzzles.Koburin.KoburinSolver import KoburinSolver
 from GridPlayers.GridPuzzle.GridPuzzleKoburinPlayer import GridPuzzleKoburinPlayer
 from GridProviders.GridPuzzle.GridPuzzleKoburinGridProvider import GridPuzzleKoburinGridProvider
 from Run.GameRegistry import GameRegistry

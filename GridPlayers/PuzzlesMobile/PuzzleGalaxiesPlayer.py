@@ -2,9 +2,9 @@ import asyncio
 
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
 from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 

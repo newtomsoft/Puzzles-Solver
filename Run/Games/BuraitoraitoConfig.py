@@ -1,4 +1,4 @@
-from Domain.Puzzles.Buraitoraito.BuraitoraitoSolver import BuraitoraitoSolver
+from PuzzleSolver.Puzzles.Buraitoraito.BuraitoraitoSolver import BuraitoraitoSolver
 from GridPlayers.GridPuzzle.GridPuzzleBuraitoraitoPlayer import GridPuzzleBuraitoraitoPlayer
 from GridProviders.GridPuzzle.GridPuzzleBuraitoraitoGridProvider import GridPuzzleBuraitoraitoGridProvider
 from Run.GameRegistry import GameRegistry

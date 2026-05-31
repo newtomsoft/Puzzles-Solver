@@ -1,4 +1,4 @@
-from Domain.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
+from PuzzleSolver.Puzzles.TentaiShow.TentaiShowSolver import TentaiShowSolver
 from GridPlayers.GridPuzzle.GridPuzzleGalaxiesPlayer import GridPuzzleGalaxiesPlayer
 from GridPlayers.PuzzlesMobile.PuzzleGalaxiesPlayer import PuzzleGalaxiesPlayer
 from GridProviders.GridPuzzle.GridPuzzleGalaxiesGridProvider import GridPuzzleGalaxiesGridProvider

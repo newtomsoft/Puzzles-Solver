@@ -1,5 +1,5 @@
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 

@@ -1,4 +1,4 @@
-from Domain.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
+from PuzzleSolver.Puzzles.Shingoki.ShingokiSolver import ShingokiSolver
 from GridPlayers.GridPuzzle.GridPuzzleShingokiPlayer import GridPuzzleShingokiPlayer
 from GridPlayers.PuzzlesMobile.PuzzleMasyuPlayer import PuzzleMasyuPlayer
 from GridProviders.GridPuzzle.GridPuzzleShingokiGridProvider import GridPuzzleShingokiGridProvider

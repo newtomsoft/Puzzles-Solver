@@ -1,4 +1,4 @@
-from Domain.Puzzles.Context.ContextSolver import ContextSolver
+from PuzzleSolver.Puzzles.Context.ContextSolver import ContextSolver
 from GridPlayers.GridPuzzle.GridPuzzleContextPlayer import GridPuzzleContextPlayer
 from GridPlayers.PuzzLink.PuzzLinkContextPlayer import PuzzLinkContextPlayer
 from GridProviders.GridPuzzle.GridPuzzleContextGridProvider import GridPuzzleContextGridProvider

@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleKurottoGridProvider import GridPuzzleKurottoGridProvider
-from Domain.Puzzles.Kurotto.KurottoSolver import KurottoSolver
+from PuzzleSolver.Puzzles.Kurotto.KurottoSolver import KurottoSolver
 
 _ = KurottoSolver.white
 

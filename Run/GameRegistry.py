@@ -1,7 +1,7 @@
 import re
 from typing import Optional
 
-from Domain.Puzzles.GameSolver import GameSolver
+from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from GridPlayers.Base.GridPlayer import GridPlayer
 from GridProviders.GridProvider import GridProvider
 

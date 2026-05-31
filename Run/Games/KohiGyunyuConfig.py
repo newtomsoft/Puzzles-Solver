@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.KohiGyunyu.KohiGyunyuSolver import KohiGyunyuSolver
+﻿from PuzzleSolver.Puzzles.KohiGyunyu.KohiGyunyuSolver import KohiGyunyuSolver
 from GridPlayers.GridPuzzle.GridPuzzleKohiGyunyuPlayer import GridPuzzleKohiGyunyuPlayer
 from GridProviders.GridPuzzle.GridPuzzleKohiGyunyuGridProvider import GridPuzzleKohiGyunyuGridProvider
 from Run.GameRegistry import GameRegistry

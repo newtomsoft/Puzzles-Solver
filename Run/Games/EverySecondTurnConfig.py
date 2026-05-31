@@ -1,4 +1,4 @@
-from Domain.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySecondTurnSolver
+from PuzzleSolver.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySecondTurnSolver
 from GridPlayers.GridPuzzle.GridPuzzleEverySecondTurnPlayer import GridPuzzleEverySecondTurnPlayer
 from GridProviders.GridPuzzle.GridPuzzleEverySecondTurnGridProvider import GridPuzzleEverySecondTurnGridProvider
 from Run.GameRegistry import GameRegistry

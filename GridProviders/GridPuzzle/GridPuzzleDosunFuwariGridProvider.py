@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.RegionsGrid import RegionsGrid
-from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

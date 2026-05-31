@@ -1,4 +1,4 @@
-from Domain.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
+from PuzzleSolver.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
 from GridPlayers.GridPuzzle.GridPuzzleDoppelblockPlayer import GridPuzzleDoppelblockPlayer
 from GridProviders.GridPuzzle.GridPuzzleDoppelblockGridProvider import GridPuzzleDoppelblockGridProvider
 from Run.GameRegistry import GameRegistry

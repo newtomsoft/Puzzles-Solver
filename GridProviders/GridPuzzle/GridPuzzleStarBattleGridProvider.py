@@ -1,6 +1,6 @@
 ﻿from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

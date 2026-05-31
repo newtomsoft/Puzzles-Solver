@@ -1,4 +1,4 @@
-from Domain.Puzzles.Hashi.HashiSolver import HashiSolver
+from PuzzleSolver.Puzzles.Hashi.HashiSolver import HashiSolver
 from GridPlayers.GridPuzzle.GridPuzzleHashiPlayer import GridPuzzleHashiPlayer
 from GridPlayers.PuzzlesMobile.PuzzleHashiPlayer import PuzzleHashiPlayer
 from GridProviders.GridPuzzle.GridPuzzleHashiGridProvider import GridPuzzleHashiGridProvider

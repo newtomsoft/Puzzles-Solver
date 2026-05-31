@@ -1,6 +1,6 @@
 from GridProviders.GridPuzzle.GridPuzzleYinYangGridProvider import GridPuzzleYinYangGridProvider
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 
 
 class GridPuzzleYinYangGridProviderTest(GridPuzzleProviderTestBase):

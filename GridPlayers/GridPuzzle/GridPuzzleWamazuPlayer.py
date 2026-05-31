@@ -1,5 +1,5 @@
-from Domain.Board.IslandsGrid import IslandGrid
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.IslandsGrid import IslandGrid
+from PuzzleSolver.Board.Position import Position
 from GridPlayers.GridPuzzle.Base.GridPuzzleCanvasPlayer import GridPuzzleCanvasPlayer
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 

@@ -1,5 +1,36 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PuzzleSolver"
+version = "1.0.0"
+description = "A collection of puzzle solvers."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Thomas Vuille", email = "thomas@newtomsoft.fr" }]
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "ortools>=9.0",
+    "numpy",
+    "bitarray",
+    "rebrowser-playwright",
+    "configparser",
+]
+
+[project.urls]
+Repository = "https://github.com/newtomsoft/Puzzle"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["PuzzleSolver*", "Utils*"]
+
 [tool.ruff]
-# Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
     ".direnv",
@@ -29,31 +60,21 @@ exclude = [
     "venv",
 ]
 
-# Same as Black.
 line-length = 180
 indent-width = 4
 
-# Assume Python 3.12
 target-version = "py312"
 
 [tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 select = ["E4", "E7", "E9", "F"]
 ignore = ["E701"]
 
-# Allow fix for all enabled rules (when `--fix` is provided).
 fixable = ["ALL"]
 unfixable = []
 
-# Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.format]
-# Like Black, indent with spaces, rather than tabs.
 indent-style = "space"
-
-# Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"

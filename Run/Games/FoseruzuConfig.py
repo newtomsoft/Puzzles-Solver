@@ -1,4 +1,4 @@
-from Domain.Puzzles.Foseruzu.FoseruzuSolver import FoseruzuSolver
+from PuzzleSolver.Puzzles.Foseruzu.FoseruzuSolver import FoseruzuSolver
 from GridPlayers.GridPuzzle.GridPuzzleFoseruzuPlayer import GridPuzzleFoseruzuPlayer
 from GridProviders.GridPuzzle.GridPuzzleFoseruzuGridProvider import GridPuzzleFoseruzuGridProvider
 from Run.GameRegistry import GameRegistry

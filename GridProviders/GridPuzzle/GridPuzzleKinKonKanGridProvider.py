@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
-from Domain.Board.Grid import Grid
-from Domain.Board.Position import Position
-from Domain.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
@@ -40,7 +40,7 @@ class GridPuzzleKinKonKanGridProvider(PlaywrightGridProvider, GridPuzzleTagProvi
 
     def make_opened_grid_extended(self, row_count, column_count, matrix_cells) -> Grid:
         from bs4.element import AttributeValueList
-        from Domain.Board.Direction import Direction
+        from PuzzleSolver.Board.Direction import Direction
         
         # Initialisation : toutes les directions sont fermées par défaut
         opened_grid = Grid([[set() for _ in range(column_count)] for _ in range(row_count)])

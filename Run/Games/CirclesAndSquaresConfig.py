@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import CirclesAndSquaresSolver
+﻿from PuzzleSolver.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import CirclesAndSquaresSolver
 from GridPlayers.GridPuzzle.GridPuzzleCirclesAndSquaresPlayer import GridPuzzleCirclesAndSquaresPlayer
 from GridProviders.GridPuzzle.GridPuzzleCirclesAndSquaresGridProvider import GridPuzzleCirclesAndSquaresGridProvider
 from Run.GameRegistry import GameRegistry

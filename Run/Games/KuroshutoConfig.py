@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Kuroshuto.KuroshutoSolver import KuroshutoSolver
+﻿from PuzzleSolver.Puzzles.Kuroshuto.KuroshutoSolver import KuroshutoSolver
 from GridProviders.GridPuzzle.GridPuzzleKuroshutoGridProvider import GridPuzzleKuroshutoGridProvider
 from GridPlayers.GridPuzzle.GridPuzzleKuroshutoPlayer import GridPuzzleKuroshutoPlayer
 from Run.GameRegistry import GameRegistry

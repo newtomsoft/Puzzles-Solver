@@ -1,4 +1,4 @@
-from Domain.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
+from PuzzleSolver.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from GridPlayers.PuzzlesMobile.PuzzleSudokuPlayer import PuzzleSudokuPlayer
 from GridProviders.PuzzlesMobile.PuzzleJigsawSudokuGridProvider import PuzzleJigsawSudokuGridProvider
 from Run.GameRegistry import GameRegistry

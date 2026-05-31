@@ -1,4 +1,4 @@
-from Domain.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
+from PuzzleSolver.Puzzles.Thermometers.ThermometersSolver import ThermometersSolver
 from GridPlayers.PuzzlesMobile.PuzzleThermometersPlayer import PuzzleThermometersPlayer
 from GridProviders.PuzzlesMobile.PuzzleThermometersGridProvider import PuzzleThermometersGridProvider
 from Run.GameRegistry import GameRegistry

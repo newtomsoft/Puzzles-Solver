@@ -1,4 +1,4 @@
-from Domain.Puzzles.Akari.AkariSolver import AkariSolver
+from PuzzleSolver.Puzzles.Akari.AkariSolver import AkariSolver
 from GridPlayers.PuzzleBaron.PuzzleBaronLaserGridsGridPlayer import PuzzleBaronLaserGridsPlayer
 from GridPlayers.PuzzlesMobile.PuzzleAkariPlayer import PuzzleAkariPlayer
 from GridPlayers.Vuqq.VuqqAkariPlayer import VuqqAkariPlayer

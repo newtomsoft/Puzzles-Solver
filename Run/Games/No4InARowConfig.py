@@ -1,4 +1,4 @@
-from Domain.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
+from PuzzleSolver.Puzzles.No4InARow.No4InARowSolver import No4InARowSolver
 from GridPlayers.GridPuzzle.GridPuzzleNo4InARowPlayer import GridPuzzleNo4InARowPlayer
 from GridProviders.GridPuzzle.GridPuzzleNo4InARowGridProvider import GridPuzzleNo4InARowGridProvider
 from Run.GameRegistry import GameRegistry

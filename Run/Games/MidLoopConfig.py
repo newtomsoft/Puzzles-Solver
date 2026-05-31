@@ -1,4 +1,4 @@
-from Domain.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
+from PuzzleSolver.Puzzles.MidLoop.MidLoopSolver import MidLoopSolver
 from GridPlayers.GridPuzzle.GridPuzzleMidLoopPlayer import GridPuzzleMidLoopPlayer
 from GridProviders.GridPuzzle.GridPuzzleMidLoopGridProvider import GridPuzzleMidLoopGridProvider
 from Run.GameRegistry import GameRegistry

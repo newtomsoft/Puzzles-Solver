@@ -1,4 +1,4 @@
-from Domain.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
+from PuzzleSolver.Puzzles.MinesweeperMosaic.MinesweeperMosaicSolver import MinesweeperMosaicSolver
 from GridPlayers.PuzzlesMobile.PuzzleMinesweeperMosaicPlayer import PuzzleMinesweeperMosaicPlayer
 from GridProviders.PuzzlesMobile.PuzzleMinesweeperMosaicGridProvider import PuzzleMinesweeperMosaicGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,8 +1,8 @@
 ﻿import unittest
 
-from Domain.Board.Grid import Grid
-from Domain.Board.RegionsGrid import RegionsGrid
-from Domain.Puzzles.Hanare.HanareSolver import HanareSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Puzzles.Hanare.HanareSolver import HanareSolver
 from GridProviders.GridPuzzle.GridPuzzleHanareGridProvider import GridPuzzleHanareGridProvider
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
 

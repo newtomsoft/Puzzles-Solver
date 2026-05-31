@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Obitaru.ObitaruSolver import ObitaruSolver
+﻿from PuzzleSolver.Puzzles.Obitaru.ObitaruSolver import ObitaruSolver
 from GridPlayers.GridPuzzle.GridPuzzleObitaruPlayer import GridPuzzleObitaruPlayer
 from GridProviders.GridPuzzle.GridPuzzleObitaruGridProvider import GridPuzzleObitaruGridProvider
 from Run.GameRegistry import GameRegistry

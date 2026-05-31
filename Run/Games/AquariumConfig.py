@@ -1,4 +1,4 @@
-from Domain.Puzzles.Aquarium.AquariumSolver import AquariumSolver
+from PuzzleSolver.Puzzles.Aquarium.AquariumSolver import AquariumSolver
 from GridPlayers.PuzzlesMobile.PuzzleAquariumPlayer import PuzzleAquariumPlayer
 from GridProviders.PuzzlesMobile.PuzzleAquariumGridProvider import PuzzleAquariumGridProvider
 from Run.GameRegistry import GameRegistry

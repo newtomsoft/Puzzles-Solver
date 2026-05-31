@@ -6,8 +6,8 @@ from pathlib import Path
 
 from GameComponentFactory import GameComponentFactory
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.GameSolver import GameSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from GridPlayers.Base.PlayStatus import PlayStatus
 
 

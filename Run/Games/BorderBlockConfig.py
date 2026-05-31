@@ -1,4 +1,4 @@
-from Domain.Puzzles.BorderBlock.BorderBlockSolver import BorderBlockSolver
+from PuzzleSolver.Puzzles.BorderBlock.BorderBlockSolver import BorderBlockSolver
 from GridPlayers.GridPuzzle.GridPuzzleBorderBlockPlayer import GridPuzzleBorderBlockPlayer
 from GridProviders.GridPuzzle.GridPuzzleBorderBlockGridProvider import GridPuzzleBorderBlockGridProvider
 from Run.GameRegistry import GameRegistry

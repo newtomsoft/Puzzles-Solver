@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup
 
 from GridProviders.GridProvider import GridProvider
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 
 
 class PlaySumpleteGridProvider(GridProvider):

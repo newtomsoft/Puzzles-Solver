@@ -4,7 +4,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 from GridProviders.PuzzlesMobile.Base.PuzzlesMobileGridProvider import PuzzlesMobileGridProvider
 

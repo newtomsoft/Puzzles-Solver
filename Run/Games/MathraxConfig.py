@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Mathrax.MathraxSolver import MathraxSolver
+﻿from PuzzleSolver.Puzzles.Mathrax.MathraxSolver import MathraxSolver
 from GridPlayers.GridPuzzle.GridPuzzleMathraxPlayer import GridPuzzleMathraxPlayer
 from GridProviders.GridPuzzle.GridPuzzleMathraxGridProvider import GridPuzzleMathraxGridProvider
 from Run.GameRegistry import GameRegistry

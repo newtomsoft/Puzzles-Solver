@@ -1,4 +1,4 @@
-from Domain.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
+from PuzzleSolver.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
 from GridPlayers.GridPuzzle.GridPuzzleHakoiriPlayer import GridPuzzleHakoiriPlayer
 from GridProviders.GridPuzzle.GridPuzzleHakoiriGridProvider import GridPuzzleHakoiriGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,8 +1,8 @@
 ﻿import unittest
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleArafGridProvider import GridPuzzleArafGridProvider
-from Domain.Puzzles.Araf.ArafSolver import ArafSolver
+from PuzzleSolver.Puzzles.Araf.ArafSolver import ArafSolver
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
 
 _ = ArafSolver.empty

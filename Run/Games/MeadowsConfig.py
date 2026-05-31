@@ -1,4 +1,4 @@
-from Domain.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
+from PuzzleSolver.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
 from GridPlayers.GridPuzzle.GridPuzzleMeadowsPlayer import GridPuzzleMeadowsPlayer
 from GridProviders.GridPuzzle.GridPuzzleMeadowsGridProvider import GridPuzzleMeadowsGridProvider
 from Run.GameRegistry import GameRegistry

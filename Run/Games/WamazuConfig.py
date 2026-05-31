@@ -1,4 +1,4 @@
-from Domain.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
+from PuzzleSolver.Puzzles.Wamuzu.WamazuSolver import WamazuSolver
 from GridPlayers.GridPuzzle.GridPuzzleWamazuPlayer import GridPuzzleWamazuPlayer
 from GridProviders.GridPuzzle.GridPuzzleWamazuGridProvider import GridPuzzleWamazuGridProvider
 from Run.GameRegistry import GameRegistry

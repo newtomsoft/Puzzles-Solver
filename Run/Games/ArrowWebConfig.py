@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.ArrowWeb.ArrowWebSolver import ArrowWebSolver
+﻿from PuzzleSolver.Puzzles.ArrowWeb.ArrowWebSolver import ArrowWebSolver
 from GridPlayers.GridPuzzle.GridPuzzleArrowWebPlayer import GridPuzzleArrowWebPlayer
 from GridProviders.GridPuzzle.GridPuzzleArrowWebGridProvider import GridPuzzleArrowWebGridProvider
 from Run.GameRegistry import GameRegistry

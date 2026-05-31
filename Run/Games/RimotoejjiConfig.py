@@ -1,4 +1,4 @@
-from Domain.Puzzles.Rimotoejji.RimotoejjiSolver import RimotoejjiSolver
+from PuzzleSolver.Puzzles.Rimotoejji.RimotoejjiSolver import RimotoejjiSolver
 from GridPlayers.GridPuzzle.GridPuzzleRimotoejjiPlayer import GridPuzzleRimotoejjiPlayer
 from GridProviders.GridPuzzle.GridPuzzleRimotoejjiGridProvider import GridPuzzleRimotoejjiGridProvider
 from Run.GameRegistry import GameRegistry

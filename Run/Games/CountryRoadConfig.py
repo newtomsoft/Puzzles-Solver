@@ -1,4 +1,4 @@
-from Domain.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
+from PuzzleSolver.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 from GridPlayers.GridPuzzle.GridPuzzleCountryRoadPlayer import GridPuzzleCountryRoadPlayer
 from GridProviders.GridPuzzle.GridPuzzleCountryRoadGridProvider import GridPuzzleCountryRoadGridProvider
 from Run.GameRegistry import GameRegistry

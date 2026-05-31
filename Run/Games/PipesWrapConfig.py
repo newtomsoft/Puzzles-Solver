@@ -1,4 +1,4 @@
-from Domain.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
+from PuzzleSolver.Puzzles.PipesWrap.PipesWrapSolver import PipesWrapSolver
 from GridPlayers.PuzzlesMobile.PuzzlePipesPlayer import PuzzlePipesPlayer
 from GridProviders.PuzzlesMobile.PuzzlePipesGridProvider import PuzzlePipesGridProvider
 from Run.GameRegistry import GameRegistry

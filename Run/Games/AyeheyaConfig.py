@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Ayeheya.AyeheyaSolver import AyeheyaSolver
+﻿from PuzzleSolver.Puzzles.Ayeheya.AyeheyaSolver import AyeheyaSolver
 from GridPlayers.PuzzLink.PuzzLinkAyeheyaPlayer import PuzzLinkAyeheyaPlayer
 from GridProviders.PuzzLink.PuzzLinkAyeheyaGridProvider import PuzzLinkAyeheyaGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,7 +1,7 @@
 ﻿import asyncio
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Position import Position
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

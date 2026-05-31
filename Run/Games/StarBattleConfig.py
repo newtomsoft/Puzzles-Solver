@@ -1,4 +1,4 @@
-from Domain.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
+from PuzzleSolver.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
 from GridPlayers.GridPuzzle.GridPuzzleStarBattlePlayer import GridPuzzleStarBattlePlayer
 from GridPlayers.LinkedIn.QueensPlayer import QueensPlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronStarBattleGridPlayer import PuzzleBaronStarBattlePlayer

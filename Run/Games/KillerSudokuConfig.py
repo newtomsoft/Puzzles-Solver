@@ -1,4 +1,4 @@
-from Domain.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
+from PuzzleSolver.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from GridPlayers.PuzzlesMobile.PuzzleSudokuPlayer import PuzzleSudokuPlayer
 from GridProviders.PuzzlesMobile.PuzzleKillerSudokuGridProvider import PuzzleKillerSudokuGridProvider
 from Run.GameRegistry import GameRegistry

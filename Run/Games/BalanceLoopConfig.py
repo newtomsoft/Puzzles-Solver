@@ -1,4 +1,4 @@
-from Domain.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
+from PuzzleSolver.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
 from GridPlayers.GridPuzzle.GridPuzzleBalanceLoopPlayer import GridPuzzleBalanceLoopPlayer
 from GridProviders.GridPuzzle.GridPuzzleBalanceLoopGridProvider import GridPuzzleBalanceLoopGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,8 +1,8 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Pipe import Pipe
-from Domain.Board.PipesGrid import PipesGrid
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Pipe import Pipe
+from PuzzleSolver.Board.PipesGrid import PipesGrid
 from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 
 

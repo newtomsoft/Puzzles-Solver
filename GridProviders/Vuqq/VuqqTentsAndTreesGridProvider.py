@@ -1,8 +1,8 @@
 import asyncio
 import json
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Tents.TentsSolver import TentsSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Tents.TentsSolver import TentsSolver
 from GridProviders.Vuqq.Base.VuqqGridProvider import VuqqGridProvider
 
 

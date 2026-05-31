@@ -3,7 +3,7 @@ from typing import Any
 
 import puzzlekit
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridProvider import GridProvider
 
 

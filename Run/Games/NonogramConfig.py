@@ -1,4 +1,4 @@
-from Domain.Puzzles.Nonogram.NonogramSolver import NonogramSolver
+from PuzzleSolver.Puzzles.Nonogram.NonogramSolver import NonogramSolver
 from GridPlayers.PuzzlesMobile.PuzzleNonogramsGrid import PuzzleNonogramsPlayer
 from GridProviders.PuzzlesMobile.PuzzleNonogramsGridProvider import PuzzleNonogramsGridProvider
 from Run.GameRegistry import GameRegistry

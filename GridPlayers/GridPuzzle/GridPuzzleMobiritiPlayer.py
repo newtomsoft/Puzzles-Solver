@@ -1,5 +1,5 @@
-﻿from Domain.Board.Grid import Grid
-from Domain.Puzzles.Mobiriti.MobiritiSolver import MobiritiSolver
+﻿from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Mobiriti.MobiritiSolver import MobiritiSolver
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

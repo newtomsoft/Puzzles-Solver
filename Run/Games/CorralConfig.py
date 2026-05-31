@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Corral.CorralSolver import CorralSolver
+﻿from PuzzleSolver.Puzzles.Corral.CorralSolver import CorralSolver
 from GridPlayers.GridPuzzle.GridPuzzleCorralPlayer import GridPuzzleCorralPlayer
 from GridProviders.GridPuzzle.GridPuzzleCorralGridProvider import GridPuzzleCorralGridProvider
 from Run.GameRegistry import GameRegistry

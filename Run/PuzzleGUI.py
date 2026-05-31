@@ -9,7 +9,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import messagebox, scrolledtext, ttk
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from Run.GameComponentFactory import GameComponentFactory
 
 current_dir = os.path.dirname(os.path.abspath(__file__))

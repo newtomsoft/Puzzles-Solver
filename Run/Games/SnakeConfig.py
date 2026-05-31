@@ -1,4 +1,4 @@
-from Domain.Puzzles.Snake.SnakeSolver import SnakeSolver
+from PuzzleSolver.Puzzles.Snake.SnakeSolver import SnakeSolver
 from GridPlayers.GridPuzzle.GridPuzzleSnakePlayer import GridPuzzleSnakePlayer
 from GridProviders.GridPuzzle.GridPuzzleSnakeGridProvider import GridPuzzleSnakeGridProvider
 from Run.GameRegistry import GameRegistry

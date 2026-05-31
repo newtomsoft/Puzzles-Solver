@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Hiroimono.HiroimonoSolver import HiroimonoSolver
+﻿from PuzzleSolver.Puzzles.Hiroimono.HiroimonoSolver import HiroimonoSolver
 from GridPlayers.GridPuzzle.GridPuzzleHiroimonoPlayer import GridPuzzleHiroimonoPlayer
 from GridProviders.GridPuzzle.GridPuzzleHiroimonoGridProvider import GridPuzzleHiroimonoGridProvider
 from Run.GameRegistry import GameRegistry

@@ -1,4 +1,4 @@
-from Domain.Puzzles.Putteria.PutteriaSolver import PutteriaSolver
+from PuzzleSolver.Puzzles.Putteria.PutteriaSolver import PutteriaSolver
 from GridPlayers.GridPuzzle.GridPuzzlePutteriaPlayer import GridPuzzlePutteriaPlayer
 from GridProviders.GridPuzzle.GridPuzzlePutteriaGridProvider import GridPuzzlePutteriaGridProvider
 from Run.GameRegistry import GameRegistry

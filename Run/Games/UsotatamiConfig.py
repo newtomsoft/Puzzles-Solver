@@ -1,4 +1,4 @@
-from Domain.Puzzles.Usotatami.UsotatamiSolver import UsotatamiSolver
+from PuzzleSolver.Puzzles.Usotatami.UsotatamiSolver import UsotatamiSolver
 from GridPlayers.GridPuzzle.GridPuzzleUsotatamiPlayer import GridPuzzleUsotatamiPlayer
 from GridProviders.GridPuzzle.GridPuzzleUsotatamiGridProvider import GridPuzzleUsotatamiGridProvider
 from Run.GameRegistry import GameRegistry

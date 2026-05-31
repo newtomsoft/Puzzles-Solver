@@ -1,7 +1,7 @@
 ﻿from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import (
     GridPuzzleGridCanvasProvider,
 )

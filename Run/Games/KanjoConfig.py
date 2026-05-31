@@ -1,4 +1,4 @@
-from Domain.Puzzles.Kanjo.KanjoSolver import KanjoSolver
+from PuzzleSolver.Puzzles.Kanjo.KanjoSolver import KanjoSolver
 from GridPlayers.GridPuzzle.GridPuzzleKanjoPlayer import GridPuzzleKanjoPlayer
 from GridProviders.GridPuzzle.GridPuzzleKanjoGridProvider import GridPuzzleKanjoGridProvider
 from Run.GameRegistry import GameRegistry

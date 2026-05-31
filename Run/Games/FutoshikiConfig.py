@@ -1,4 +1,4 @@
-from Domain.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
+from PuzzleSolver.Puzzles.Futoshiki.FutoshikiSolver import FutoshikiSolver
 from GridPlayers.PuzzlesMobile.PuzzleFutoshikiPlayer import PuzzleFutoshikiPlayer
 from GridProviders.PuzzlesMobile.PuzzleFutoshikiGridProvider import PuzzleFutoshikiGridProvider
 from Run.GameRegistry import GameRegistry

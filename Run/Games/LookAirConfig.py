@@ -1,4 +1,4 @@
-from Domain.Puzzles.LookAir.LookAirSolver import LookAirSolver
+from PuzzleSolver.Puzzles.LookAir.LookAirSolver import LookAirSolver
 from GridPlayers.GridPuzzle.GridPuzzleLookAirPlayer import GridPuzzleLookAirPlayer
 from GridProviders.GridPuzzle.GridPuzzleLookAirGridProvider import GridPuzzleLookAirGridProvider
 from Run.GameRegistry import GameRegistry

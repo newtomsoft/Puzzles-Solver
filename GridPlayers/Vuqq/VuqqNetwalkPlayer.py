@@ -1,7 +1,7 @@
 import asyncio
 
-from Domain.Board.Direction import Direction
-from Domain.Board.PipesGrid import PipesGrid
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.PipesGrid import PipesGrid
 from GridPlayers.Base.PlayStatus import PlayStatus
 from GridPlayers.Vuqq.Base.VuqqPlayer import VuqqPlayer
 

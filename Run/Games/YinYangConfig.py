@@ -1,4 +1,4 @@
-from Domain.Puzzles.YinYang.YinYangSolver import YinYangSolver
+from PuzzleSolver.Puzzles.YinYang.YinYangSolver import YinYangSolver
 from GridPlayers.GridPuzzle.GridPuzzleYinYangPlayer import GridPuzzleYinYangPlayer
 from GridPlayers.PuzzlesMobile.PuzzleBinairoPlayer import PuzzleBinairoPlayer
 from GridProviders.GridPuzzle.GridPuzzleYinYangGridProvider import GridPuzzleYinYangGridProvider

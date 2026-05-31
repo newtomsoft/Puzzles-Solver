@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleCirclesAndSquaresGridProvider import GridPuzzleCirclesAndSquaresGridProvider
-from Domain.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import CirclesAndSquaresSolver
+from PuzzleSolver.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import CirclesAndSquaresSolver
 
 B = CirclesAndSquaresSolver.Black
 W = CirclesAndSquaresSolver.White

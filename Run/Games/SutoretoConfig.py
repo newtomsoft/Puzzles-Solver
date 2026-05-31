@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Sutoreto.SutoretoSolver import SutoretoSolver
+﻿from PuzzleSolver.Puzzles.Sutoreto.SutoretoSolver import SutoretoSolver
 from GridPlayers.GridPuzzle.GridPuzzleSutoretoPlayer import GridPuzzleSutoretoPlayer
 from GridProviders.GridPuzzle.GridPuzzleSutoretoGridProvider import GridPuzzleSutoretoGridProvider
 from Run.GameRegistry import GameRegistry

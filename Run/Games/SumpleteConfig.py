@@ -1,4 +1,4 @@
-from Domain.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
+from PuzzleSolver.Puzzles.Sumplete.SumpleteSolver import SumpleteSolver
 from GridProviders.PlaySumplete.PlaySumpleteGridProvider import PlaySumpleteGridProvider
 from Run.GameRegistry import GameRegistry
 

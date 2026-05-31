@@ -1,4 +1,4 @@
-from Domain.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
+from PuzzleSolver.Puzzles.Skyscrapers.SkyscrapersSolver import SkyscrapersSolver
 from GridPlayers.PuzzlesMobile.PuzzleSkyscrapersPlayer import PuzzleSkyScrapersPlayer
 from GridPlayers.Vuqq.VuqqSkyscrapersPlayer import VuqqSkyscrapersPlayer
 from GridProviders.PuzzlesMobile.PuzzleSkyscrapersGridProvider import PuzzleSkyscrapersGridProvider

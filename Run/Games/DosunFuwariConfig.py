@@ -1,4 +1,4 @@
-from Domain.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
+from PuzzleSolver.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 from GridPlayers.GridPuzzle.GridPuzzleDosunFuwariPlayer import GridPuzzleDosunFuwariPlayer
 from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzleDosunFuwariGridProvider
 from Run.GameRegistry import GameRegistry

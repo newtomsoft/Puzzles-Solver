@@ -1,4 +1,4 @@
-from Domain.Puzzles.Shirokuro.ShirokuroSolver import ShirokuroSolver
+from PuzzleSolver.Puzzles.Shirokuro.ShirokuroSolver import ShirokuroSolver
 from GridPlayers.GridPuzzle.GridPuzzleShirokuroPlayer import GridPuzzleShirokuroPlayer
 from GridProviders.GridPuzzle.GridPuzzleShirokuroGridProvider import GridPuzzleShirokuroGridProvider
 from Run.GameRegistry import GameRegistry

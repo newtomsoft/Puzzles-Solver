@@ -1,6 +1,6 @@
-﻿from Domain.Board.Grid import Grid
+﻿from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
-from Domain.Puzzles.RabbitsAndTrees.RabbitsAndTreesSolver import RabbitsAndTreesSolver
+from PuzzleSolver.Puzzles.RabbitsAndTrees.RabbitsAndTreesSolver import RabbitsAndTreesSolver
 
 
 class GridPuzzleRabbitsAndTreesPlayer(PlaywrightPlayer):

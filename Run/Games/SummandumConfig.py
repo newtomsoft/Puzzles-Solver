@@ -1,4 +1,4 @@
-﻿from Domain.Puzzles.Summandum.SummandumSolver import SummandumSolver
+﻿from PuzzleSolver.Puzzles.Summandum.SummandumSolver import SummandumSolver
 from GridPlayers.GridPuzzle.GridPuzzleSummandumPlayer import GridPuzzleSummandumPlayer
 from GridProviders.GridPuzzle.GridPuzzleSummandumGridProvider import GridPuzzleSummandumGridProvider
 from Run.GameRegistry import GameRegistry

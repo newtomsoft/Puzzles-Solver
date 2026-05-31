@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleSutoretoGridProvider import GridPuzzleSutoretoGridProvider
-from Domain.Puzzles.Sutoreto.SutoretoSolver import SutoretoSolver
+from PuzzleSolver.Puzzles.Sutoreto.SutoretoSolver import SutoretoSolver
 
 _ = 0
 x = True

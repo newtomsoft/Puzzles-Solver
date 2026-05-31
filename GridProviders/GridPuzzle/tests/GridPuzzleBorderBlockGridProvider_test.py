@@ -1,8 +1,8 @@
 ﻿import unittest
 
-from Domain.Puzzles.BorderBlock.BorderBlockSolver import BorderBlockSolver
+from PuzzleSolver.Puzzles.BorderBlock.BorderBlockSolver import BorderBlockSolver
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleBorderBlockGridProvider import GridPuzzleBorderBlockGridProvider
 
 class GridPuzzleBorderBlockGridProviderTests(GridPuzzleProviderTestBase):

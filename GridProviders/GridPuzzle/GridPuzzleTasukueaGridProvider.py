@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

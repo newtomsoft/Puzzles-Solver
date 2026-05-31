@@ -1,4 +1,4 @@
-from Domain.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
+from PuzzleSolver.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
 from GridPlayers.GridPuzzle.GridPuzzleNeighboursPlayer import GridPuzzleNeighboursPlayer
 from GridProviders.GridPuzzle.GridPuzzleNeighboursGridProvider import GridPuzzleNeighboursGridProvider
 from Run.GameRegistry import GameRegistry

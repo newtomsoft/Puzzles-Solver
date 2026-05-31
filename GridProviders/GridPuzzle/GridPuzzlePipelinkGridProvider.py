@@ -1,9 +1,9 @@
 ﻿from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Grid import Grid
-from Domain.Board.Island import Island
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Island import Island
+from PuzzleSolver.Board.Position import Position
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

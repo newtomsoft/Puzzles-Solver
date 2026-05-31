@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleArofuroGridProvider import GridPuzzleArofuroGridProvider
-from Domain.Puzzles.Arofuro.ArofuroSolver import ArofuroSolver
+from PuzzleSolver.Puzzles.Arofuro.ArofuroSolver import ArofuroSolver
 
 class GridPuzzleArofuroGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):

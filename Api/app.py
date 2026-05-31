@@ -8,10 +8,10 @@ sys.path.append(os.getcwd())
 from Run.UrlPatternMatcher import UrlPatternMatcher
 from Run.GameRegistry import GameRegistry
 from Run.GameComponentFactory import GameComponentFactory
-from Domain.Board.Grid import Grid
-from Domain.Board.Direction import Direction
-from Domain.Board.Position import Position
-from Domain.Board.IslandsGrid import IslandGrid
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Position import Position
+from PuzzleSolver.Board.IslandsGrid import IslandGrid
 
 app = Flask(__name__)
 CORS(app)

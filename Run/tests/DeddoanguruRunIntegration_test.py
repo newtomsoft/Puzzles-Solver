@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 
 from Run.PuzzleMainConsole import PuzzleMainConsole
 from GridProviders.GridPuzzle.GridPuzzleDeddoanguruGridProvider import GridPuzzleDeddoanguruGridProvider
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 
 
 class DeddoanguruRunIntegrationTest(unittest.IsolatedAsyncioTestCase):

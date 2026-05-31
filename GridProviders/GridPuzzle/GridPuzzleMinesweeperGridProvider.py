@@ -1,7 +1,7 @@
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

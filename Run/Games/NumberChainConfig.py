@@ -1,4 +1,4 @@
-from Domain.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
+from PuzzleSolver.Puzzles.NumberChain.NumberChainSolver import NumberChainSolver
 from GridPlayers.GridPuzzle.GridPuzzleNumberChainPlayer import GridPuzzleNumberChainPlayer
 from GridProviders.GridPuzzle.GridPuzzleNumberChainGridProvider import GridPuzzleNumberChainGridProvider
 from Run.GameRegistry import GameRegistry

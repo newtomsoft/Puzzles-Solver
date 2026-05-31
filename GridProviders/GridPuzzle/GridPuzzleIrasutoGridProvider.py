@@ -1,8 +1,8 @@
 ﻿from bs4 import BeautifulSoup
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Grid import Grid
-from Domain.Puzzles.Irasuto.IrasutoSolver import IrasutoSolver
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Puzzles.Irasuto.IrasutoSolver import IrasutoSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

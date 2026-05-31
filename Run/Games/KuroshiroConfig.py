@@ -1,4 +1,4 @@
-from Domain.Puzzles.Kuroshiro.KuroshiroSolver import KuroshiroSolver
+from PuzzleSolver.Puzzles.Kuroshiro.KuroshiroSolver import KuroshiroSolver
 from GridPlayers.GridPuzzle.GridPuzzleKuroshiroPlayer import GridPuzzleKuroshiroPlayer
 from GridProviders.GridPuzzle.GridPuzzleKuroshiroGridProvider import GridPuzzleKuroshiroGridProvider
 from Run.GameRegistry import GameRegistry

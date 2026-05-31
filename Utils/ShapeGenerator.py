@@ -1,7 +1,7 @@
 ﻿import itertools
 from typing import Collection
 
-from Domain.Board.Position import Position
+from PuzzleSolver.Board.Position import Position
 
 
 class ShapeGenerator:

@@ -1,4 +1,4 @@
-from Domain.Puzzles.KinKonKan.KinKonKanSolver import KinKonKanSolver
+from PuzzleSolver.Puzzles.KinKonKan.KinKonKanSolver import KinKonKanSolver
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 

@@ -1,6 +1,6 @@
 import asyncio
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.PuzzlesMobile.Base.PuzzlesMobilePlayer import PuzzlesMobilePlayer
 from GridPlayers.Base.PlayStatus import PlayStatus
 

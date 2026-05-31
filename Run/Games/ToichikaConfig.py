@@ -1,4 +1,4 @@
-from Domain.Puzzles.Toichika.ToichikaSolver import ToichikaSolver
+from PuzzleSolver.Puzzles.Toichika.ToichikaSolver import ToichikaSolver
 from GridPlayers.GridPuzzle.GridPuzzleToichikaPlayer import GridPuzzleToichikaPlayer
 from GridProviders.GridPuzzle.GridPuzzleToichikaGridProvider import GridPuzzleToichikaGridProvider
 from Run.GameRegistry import GameRegistry

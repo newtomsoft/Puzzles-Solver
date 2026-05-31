@@ -1,4 +1,4 @@
-from Domain.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
+from PuzzleSolver.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from GridPlayers.GridPuzzle.GridPuzzleGrandTourPlayer import GridPuzzleGrandTourPlayer
 from GridProviders.GridPuzzle.GridPuzzleGrandTourGridProvider import GridPuzzleGrandTourGridProvider
 from Run.GameRegistry import GameRegistry

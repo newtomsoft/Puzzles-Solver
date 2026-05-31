@@ -1,6 +1,6 @@
 ﻿import unittest
 
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.PuzzLink.PuzzLinkAyeheyaGridProvider import PuzzLinkAyeheyaGridProvider
 
 _ = None

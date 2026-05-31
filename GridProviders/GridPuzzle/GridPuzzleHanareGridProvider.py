@@ -1,10 +1,10 @@
 ﻿from bs4 import BeautifulSoup
 from rebrowser_playwright.async_api import BrowserContext
 
-from Domain.Board.Direction import Direction
-from Domain.Board.Grid import Grid
-from Domain.Board.RegionsGrid import RegionsGrid
-from Domain.Puzzles.Hanare.HanareSolver import HanareSolver
+from PuzzleSolver.Board.Direction import Direction
+from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.RegionsGrid import RegionsGrid
+from PuzzleSolver.Puzzles.Hanare.HanareSolver import HanareSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleTagProvider import GridPuzzleTagProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 

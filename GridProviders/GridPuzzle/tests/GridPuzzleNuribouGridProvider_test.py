@@ -1,6 +1,6 @@
 from GridProviders.GridPuzzle.GridPuzzleNuribouGridProvider import GridPuzzleNuribouGridProvider
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 
 
 class GridPuzzleNuribouGridProviderTest(GridPuzzleProviderTestBase):

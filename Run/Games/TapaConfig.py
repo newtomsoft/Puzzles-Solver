@@ -1,4 +1,4 @@
-from Domain.Puzzles.Tapa.TapaSolver import TapaSolver
+from PuzzleSolver.Puzzles.Tapa.TapaSolver import TapaSolver
 from GridPlayers.PuzzlesMobile.PuzzleTapaPlayer import PuzzleTapaPlayer
 from GridProviders.PuzzlesMobile.PuzzleTapaGridProvider import PuzzleTapaGridProvider
 from Run.GameRegistry import GameRegistry

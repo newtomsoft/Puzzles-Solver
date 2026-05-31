@@ -1,5 +1,5 @@
-from Domain.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
-from Domain.Puzzles.ArukoneNo2x2.ArukoneNo2x2Solver import ArukoneNo2x2Solver
+from PuzzleSolver.Puzzles.NumberLink.NumberLinkSolver import NumberLinkSolver
+from PuzzleSolver.Puzzles.ArukoneNo2x2.ArukoneNo2x2Solver import ArukoneNo2x2Solver
 from GridPlayers.GridPuzzle.GridPuzzleArukoneNo2x2Player import GridPuzzleArukoneNo2x2Player
 from GridPlayers.GridPuzzle.GridPuzzleArukonePlayer import GridPuzzleArukonePlayer
 from GridPlayers.PuzzleBaron.PuzzleBaronNumberLinksGridPlayer import PuzzleBaronNumberLinksPlayer

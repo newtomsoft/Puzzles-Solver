@@ -1,4 +1,4 @@
-from Domain.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
+from PuzzleSolver.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from GridPlayers.GridPuzzle.GridPuzzleFobidoshiPlayer import GridPuzzleFobidoshiPlayer
 from GridProviders.GridPuzzle.GridPuzzleFobidoshiGridProvider import GridPuzzleFobidoshiGridProvider
 from Run.GameRegistry import GameRegistry

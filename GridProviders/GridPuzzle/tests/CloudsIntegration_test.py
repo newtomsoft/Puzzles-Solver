@@ -1,8 +1,8 @@
 ﻿import unittest
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
-from Domain.Board.Grid import Grid
+from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleCloudsGridProvider import GridPuzzleCloudsGridProvider
-from Domain.Puzzles.Clouds.CloudsSolver import CloudsSolver
+from PuzzleSolver.Puzzles.Clouds.CloudsSolver import CloudsSolver
 
 class CloudsIntegrationTests(GridPuzzleProviderTestBase):
     async def test_scrap_and_solve_clouds(self):
