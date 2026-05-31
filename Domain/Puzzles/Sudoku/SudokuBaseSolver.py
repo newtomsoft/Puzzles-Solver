@@ -27,6 +27,7 @@ class SudokuBaseSolver(GameSolver):
         self._grid_vars = None
         self._model = cp_model.CpModel()
         self._previous_solution: Grid | None = None
+        self._solver = cp_model.CpSolver()
 
     def _init_sub_squares(self):
         if is_perfect_square(self.rows_number):
@@ -46,13 +47,12 @@ class SudokuBaseSolver(GameSolver):
         self._add_constraints()
         self._add_specific_constraints()
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):
