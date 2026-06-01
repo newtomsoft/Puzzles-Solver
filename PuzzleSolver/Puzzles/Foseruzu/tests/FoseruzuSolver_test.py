@@ -9,10 +9,10 @@ _ = FoseruzuSolver.cell_empty
 class FoseruzuSolverTests(TestCase):
     def test_4x4_some_no_clue_multiple_solutions(self):
         grid = Grid([
-            [3, 2, 2, 3],
-            [2, _, _, 2],
-            [2, _, _, 2],
-            [3, 2, 2, 3],
+            [_, _, _, _],
+            [_, _, _, _],
+            [_, _, _, _],
+            [_, _, _, _],
         ])
 
         game_solver = FoseruzuSolver(grid)
