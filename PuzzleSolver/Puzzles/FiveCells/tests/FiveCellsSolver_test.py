@@ -21,7 +21,8 @@ class FiveCellsSolverTests(TestCase):
         solution = game_solver.get_solution()
         self.assertFalse(solution.is_empty())
         other_solution = game_solver.get_other_solution()
-        self.assertTrue(other_solution.is_empty())
+        self.assertFalse(other_solution.is_empty())
+        self.assertNotEqual(solution, other_solution)
 
 
 if __name__ == '__main__':
