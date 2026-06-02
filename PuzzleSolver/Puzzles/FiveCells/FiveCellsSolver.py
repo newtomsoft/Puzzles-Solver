@@ -1,7 +1,7 @@
-from PuzzleSolver.Puzzles.Foseruzu._FoseruzuBaseSolver import _FoseruzuBaseSolver
+from PuzzleSolver.Puzzles.Foseruzu.FoseruzuBaseSolver import FoseruzuBaseSolver
 
 
-class FiveCellsSolver(_FoseruzuBaseSolver):
+class FiveCellsSolver(FoseruzuBaseSolver):
     REGION_SIZE = 5
     ALL_SHAPES = [
         [(0, 0), (0, 1), (1, 1), (1, 2), (2, 1)],

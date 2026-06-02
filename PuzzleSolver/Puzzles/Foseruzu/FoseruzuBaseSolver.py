@@ -4,7 +4,8 @@ from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
-class _FoseruzuBaseSolver(GameSolver):
+
+class FoseruzuBaseSolver(GameSolver):
     REGION_SIZE = 4
     ALL_SHAPES = []
 
@@ -75,13 +76,11 @@ class _FoseruzuBaseSolver(GameSolver):
     def _add_wall_constraints(self):
         for i in range(self._rows):
             for j in range(self._cols - 1):
-                covering_both = [self._use[p] for p, cells in enumerate(self._placements)
-                                 if (i, j) in cells and (i, j + 1) in cells]
+                covering_both = [self._use[p] for p, cells in enumerate(self._placements) if (i, j) in cells and (i, j + 1) in cells]
                 self._model.Add(self._right[(i, j)] == 1 - sum(covering_both))
         for i in range(self._rows - 1):
             for j in range(self._cols):
-                covering_both = [self._use[p] for p, cells in enumerate(self._placements)
-                                 if (i, j) in cells and (i + 1, j) in cells]
+                covering_both = [self._use[p] for p, cells in enumerate(self._placements) if (i, j) in cells and (i + 1, j) in cells]
                 self._model.Add(self._bottom[(i, j)] == 1 - sum(covering_both))
 
     def _add_region_link_and_size_constraints(self):
