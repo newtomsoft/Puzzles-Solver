@@ -1,7 +1,7 @@
-from PuzzleSolver.Puzzles.Foseruzu.FoseruzuBaseSolver import FoseruzuBaseSolver
+from PuzzleSolver.Puzzles.Foseruzu.SameSizeRegionsSolver import SameSizeRegionsSolver
 
 
-class FoseruzuSolver(FoseruzuBaseSolver):
+class FoseruzuSolver(SameSizeRegionsSolver):
     REGION_SIZE = 4
     ALL_SHAPES = [
         [(0, 0), (0, 1), (0, 2), (0, 3)],
