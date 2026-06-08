@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from PuzzleSolver.Puzzles.Ichimaga.IchimagaSolver import IchimagaSolver
 
-_ = IchimagaSolver.Empty
+_ = IchimagaSolver.cell_empty
 
 
 class IchimagaSolverTests(TestCase):

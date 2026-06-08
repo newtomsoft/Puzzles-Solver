@@ -3,7 +3,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Lits.LitsSolver import LitsSolver
 
-_ = LitsSolver.empty
+_ = LitsSolver.cell_empty
 
 class LitsSolverTest(unittest.TestCase):
     def test_get_solution_region_too_small(self):

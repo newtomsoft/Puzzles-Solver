@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Tasukuea.TasukueaSolver import TasukueaSolver
 
-_ = TasukueaSolver.empty
+_ = TasukueaSolver.cell_empty
 T = True
 F = False
 U = TasukueaSolver.unknown

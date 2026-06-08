@@ -9,14 +9,14 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class IchimagaSolver(GameSolver):
-    Empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
         self._model = cp_model.CpModel()
-        self._cp_solver = cp_model.CpSolver()
         self._island_bridges_z3: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
         self._solver_initialized = False
@@ -43,13 +43,13 @@ class IchimagaSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._cp_solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = self._cp_solver.Value(bridges)
+                    bridges_number = self._solver.Value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
@@ -90,13 +90,6 @@ class IchimagaSolver(GameSolver):
         self.init_island_grid()
         return self.get_solution()
 
-    def get_stats(self) -> dict:
-        return {
-            "num_conflicts": self._cp_solver.NumConflicts(),
-            "num_branches": self._cp_solver.NumBranches(),
-            "wall_time": self._cp_solver.WallTime(),
-        }
-
     def _add_constraints(self):
         self._add_initial_constraints()
         self._add_opposite_bridges_constraints()
@@ -105,7 +98,7 @@ class IchimagaSolver(GameSolver):
     def _add_initial_constraints(self):
         for position, value in self._input_grid:
             bridges_var = list(self._island_bridges_z3[position].values())
-            if value == self.Empty:
+            if value == self.cell_empty:
                 b0 = self._model.NewBoolVar(f'sum0_{position}')
                 b2 = self._model.NewBoolVar(f'sum2_{position}')
                 self._model.Add(sum(bridges_var) == 0).OnlyEnforceIf(b0)
@@ -131,13 +124,13 @@ class IchimagaSolver(GameSolver):
                     self._model.Add(self._island_bridges_z3[island.position][direction] == 0)
 
     def _add_links_constraints(self):
-        for position in [position for position, value in self._input_grid if value != self.Empty]:
+        for position in [position for position, value in self._input_grid if value != self.cell_empty]:
             sum_linked_bools = self._get_connected_neighbors_boolvars(position)
             self._model.Add(sum(sum_linked_bools) == self._input_grid[position])
 
     def _get_connected_neighbors_boolvars(self, value_pos: Position):
         bool_vars = []
-        for other_value_pos in [pos for pos, value in self._input_grid if value != self.Empty and pos != value_pos]:
+        for other_value_pos in [pos for pos, value in self._input_grid if value != self.cell_empty and pos != value_pos]:
             if value_pos.r == other_value_pos.r:
                 direction = Direction.right() if other_value_pos.c > value_pos.c else Direction.left()
                 b = self._straight_connection_boolvar(value_pos, other_value_pos, direction, f's_{value_pos}_{other_value_pos}')
@@ -181,7 +174,7 @@ class IchimagaSolver(GameSolver):
         pairs = [(self._island_bridges_z3[start][direction], 1)]
         current = start.after(direction)
         while current != end:
-            if current not in self._input_grid or self._input_grid[current] != self.Empty:
+            if current not in self._input_grid or self._input_grid[current] != self.cell_empty:
                 return None
             pairs.append((self._island_bridges_z3[current][direction], 1))
             current = current.after(direction)
@@ -190,15 +183,15 @@ class IchimagaSolver(GameSolver):
     def _to_other_value_boolvar(self, value_pos, other_value_pos, turn_position, first_direction, second_direction, suffix: str):
         pairs = [(self._island_bridges_z3[value_pos][first_direction], 1)]
         current_position = value_pos.after(first_direction)
-        while self._input_grid[current_position] == self.Empty and current_position in self._input_grid and current_position != turn_position:
+        while self._input_grid[current_position] == self.cell_empty and current_position in self._input_grid and current_position != turn_position:
             pairs.append((self._island_bridges_z3[current_position][first_direction], 1))
             current_position = current_position.after(first_direction)
-        if current_position not in self._input_grid or self._input_grid[current_position] != self.Empty:
+        if current_position not in self._input_grid or self._input_grid[current_position] != self.cell_empty:
             return None
 
         pairs.append((self._island_bridges_z3[current_position][second_direction], 1))
         current_position = current_position.after(second_direction)
-        while self._input_grid[current_position] == self.Empty and current_position != other_value_pos:
+        while self._input_grid[current_position] == self.cell_empty and current_position != other_value_pos:
             pairs.append((self._island_bridges_z3[current_position][second_direction], 1))
             current_position = current_position.after(second_direction)
         if current_position != other_value_pos:

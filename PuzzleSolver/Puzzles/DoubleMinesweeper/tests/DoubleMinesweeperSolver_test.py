@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.DoubleMinesweeper.DoubleMinesweeperSolver import DoubleMinesweeperSolver
 
-_ = DoubleMinesweeperSolver.empty
+_ = DoubleMinesweeperSolver.cell_empty
 
 
 class DoubleMinesweeperSolverTests(TestCase):

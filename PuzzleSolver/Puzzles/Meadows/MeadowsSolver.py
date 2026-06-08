@@ -9,6 +9,7 @@ class MeadowsSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
@@ -17,7 +18,7 @@ class MeadowsSolver(GameSolver):
         self._previous_solution = Grid.empty()
 
     def _initialize_grid_vars(self):
-        given_values = [value for _, value in self._grid if value is not self.empty]
+        given_values = [value for _, value in self._grid if value is not self.cell_empty]
         min_value = min(given_values)
         max_value = max(given_values)
         self._grid_vars = Grid([[self._model.new_int_var(min_value, max_value, f"cell_{r}_{c}") for c in range(self._columns_number)]
@@ -29,7 +30,7 @@ class MeadowsSolver(GameSolver):
 
     def _add_init_constraints(self):
         for position, value in self._grid:
-            if value is not self.empty:
+            if value is not self.cell_empty:
                 self._model.add(self._grid_vars[position] == value)
 
     def get_solution(self) -> Grid:
@@ -42,17 +43,16 @@ class MeadowsSolver(GameSolver):
         return self._solve()
 
     def _solve(self) -> Grid[int]:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
     def _add_all_shapes_are_squares_constraints(self):
-        for position, value in [(position, value) for position, value in self._grid if value is not self.empty]:
+        for position, value in [(position, value) for position, value in self._grid if value is not self.cell_empty]:
             self._add_square_constraint(position, value)
 
     def _add_square_constraint(self, position: Position, square_area: int):

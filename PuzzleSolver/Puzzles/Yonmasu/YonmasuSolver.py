@@ -12,6 +12,7 @@ class YonmasuSolver(GameSolver):
     circle = 'O'
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
@@ -22,7 +23,6 @@ class YonmasuSolver(GameSolver):
         self._all_tetrominoes_per_o = self._generate_tetrominoes()
         self._model = cp_model.CpModel()
         self._tetro_vars = None
-        self._solver = cp_model.CpSolver()
         self._previous_solution = None
 
     def _get_tetrominoes_containing(self, o_pos: Position) -> list[frozenset[Position]]:

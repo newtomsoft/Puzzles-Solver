@@ -3,7 +3,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Slant.SlantSolver import SlantSolver
 
-_ = SlantSolver.empty
+_ = SlantSolver.cell_empty
 
 
 class SlantSolverLongTests(unittest.TestCase):

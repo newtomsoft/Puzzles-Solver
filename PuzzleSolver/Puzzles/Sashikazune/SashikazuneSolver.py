@@ -7,6 +7,7 @@ from ortools.sat.python import cp_model
 
 class SashikazuneSolver(GameSolver):
     def __init__(self, data_game: Grid):
+        super().__init__()
         self._grid = data_game
         self.rows = self._grid.rows_number
         self.cols = self._grid.columns_number
@@ -34,11 +35,10 @@ class SashikazuneSolver(GameSolver):
 
     def _solve(self) -> RegionsGrid:
         rows, cols = self.rows, self.cols
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            return RegionsGrid([[solver.value(self._pivot_rows.value(r, c)) * cols + solver.value(self._pivot_cols.value(r, c)) for c in range(cols)] for r in range(rows)])
+            return RegionsGrid([[self._solver.value(self._pivot_rows.value(r, c)) * cols + self._solver.value(self._pivot_cols.value(r, c)) for c in range(cols)] for r in range(rows)])
 
         return RegionsGrid.empty()
 

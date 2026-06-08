@@ -10,11 +10,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class PipelinkSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self.input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
         self._island_grid: IslandGrid | None = None
         self._model = cp_model.CpModel()
-        self._cp_solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: IslandGrid
         self._solver_initialized = False
@@ -38,12 +38,12 @@ class PipelinkSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         propositions_count = 0
-        while self._cp_solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             self._init_island_grid()
             propositions_count += 1
             for position, direction_bridges in self._grid_z3:
                 for direction, bridges in direction_bridges.items():
-                    bridges_number = 1 if self._cp_solver.Value(bridges) else 0
+                    bridges_number = 1 if self._solver.Value(bridges) else 0
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                     elif position in self._island_grid and direction in self._island_grid[position].direction_position_bridges:
@@ -82,13 +82,6 @@ class PipelinkSolver(GameSolver):
         self._model.Add(sum(eq_bools) <= len(eq_bools) - 1)
         self._solver_initialized = True
         return self.get_solution()
-
-    def get_stats(self) -> dict:
-        return {
-            "num_conflicts": self._cp_solver.NumConflicts(),
-            "num_branches": self._cp_solver.NumBranches(),
-            "wall_time": self._cp_solver.WallTime(),
-        }
 
     def _add_constraints(self):
         self._add_initials_constraints()

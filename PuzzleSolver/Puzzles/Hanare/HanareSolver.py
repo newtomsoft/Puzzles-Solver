@@ -12,12 +12,12 @@ class HanareSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, regions_grid: RegionsGrid, clues_grid: Grid = None):
+        super().__init__()
         self._regions_grid = regions_grid
         self._clues_grid = clues_grid if clues_grid is not None else Grid.empty()
         self._rows_number = regions_grid.rows_number
         self._columns_number = regions_grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution = Grid.empty()
 
         self._region_cells = defaultdict(list)
@@ -25,7 +25,7 @@ class HanareSolver(GameSolver):
             self._region_cells[region_id].append(position)
         self._region_sizes = {rid: len(cells) for rid, cells in self._region_cells.items()}
 
-        self._clue_positions = [position for position, value in self._clues_grid if value != HanareSolver.empty]
+        self._clue_positions = [position for position, value in self._clues_grid if value != HanareSolver.cell_empty]
 
     def _init_vars(self):
         self._has_number = [
@@ -99,10 +99,10 @@ class HanareSolver(GameSolver):
         if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
 
-        matrix = [[self.empty for _ in range(self._columns_number)] for _ in range(self._rows_number)]
+        matrix = [[self.cell_empty for _ in range(self._columns_number)] for _ in range(self._rows_number)]
         for position, region_id in self._regions_grid:
             has_num = self._solver.value(self._has_number[position.r][position.c])
-            matrix[position.r][position.c] = self._region_sizes[region_id] if has_num else self.empty
+            matrix[position.r][position.c] = self._region_sizes[region_id] if has_num else self.cell_empty
         solution = Grid(matrix)
         self._previous_solution = solution
         return solution
@@ -119,7 +119,7 @@ class HanareSolver(GameSolver):
         diffs = []
         for position, prev_val in self._previous_solution:
             diff = self._model.new_bool_var(f"diff_r{position.r}_c{position.c}")
-            if prev_val != self.empty:
+            if prev_val != self.cell_empty:
                 self._model.add(self._has_number[position.r][position.c] == 0).only_enforce_if(diff)
                 self._model.add(self._has_number[position.r][position.c] == 1).only_enforce_if(diff.Not())
             else:

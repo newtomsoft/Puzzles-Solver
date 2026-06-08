@@ -9,18 +9,18 @@ class ArafSolver(GameSolver):
     cell_empty = -1
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution = Grid.empty()
         self._cell_room = None
         self._in_region = []
 
         self._clues = []
         for position, val in self._grid:
-            if val != self.empty:
+            if val != self.cell_empty:
                 self._clues.append((position, val))
 
         self._num_clues = len(self._clues)

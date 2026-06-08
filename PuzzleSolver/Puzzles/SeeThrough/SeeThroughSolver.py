@@ -11,11 +11,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class SeeThroughSolver(GameSolver):
     def __init__(self, input_grid: Grid):
+        super().__init__()
         self._input_grid = input_grid
         self.rows_number, self.columns_number = input_grid.rows_number, input_grid.columns_number
         self._grid_z3: Grid | None = None
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution: Grid | None = None
         self._solver_initialized = False
 

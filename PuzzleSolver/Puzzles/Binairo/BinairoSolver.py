@@ -6,13 +6,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class BinairoSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number < 4 or self.columns_number < 4:
             raise ValueError("Binairo grid must be at least 4x4")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = Grid.empty()
         self._previous_solution: Grid | None = None
 

@@ -9,12 +9,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class StarsAndArrowsSolver(GameSolver):
     def __init__(self, grid: Grid, counts: dict[str, list[int]]):
+        super().__init__()
         self._input_grid = grid
         self._counts_by_edge: dict[str, list[int]] = counts
         self.rows_number = grid.rows_number
         self.columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver_initialized = False
         self._grid_z3: Grid | None = None
         self._previous_solution = None

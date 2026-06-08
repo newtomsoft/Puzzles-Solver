@@ -10,6 +10,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class NumberChainSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -73,14 +74,13 @@ class NumberChainSolver(GameSolver):
                 # Not all equalities simultaneously true
                 model.add(sum(lits) <= len(lits) - 1)
 
-            solver = cp_model.CpSolver()
-            status = solver.solve(model)
+            status = self._solver.solve(model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 return Grid.empty()
 
             # Extract one candidate solution
             matrix_number = [
-                [solver.value(grid_vars.value(i, j)) for j in range(self.columns_number)]
+                [self._solver.value(grid_vars.value(i, j)) for j in range(self.columns_number)]
                 for i in range(self.rows_number)
             ]
             attempt = Grid(matrix_number)

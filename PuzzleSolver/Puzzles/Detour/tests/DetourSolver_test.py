@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Detour.DetourSolver import DetourSolver
 
 # region
-_ = DetourSolver.empty
+_ = DetourSolver.cell_empty
 a = 10
 b = 11
 c = 12

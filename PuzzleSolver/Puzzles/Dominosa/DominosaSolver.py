@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class DominosaSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -21,7 +22,6 @@ class DominosaSolver(GameSolver):
         if self.max_number_on_domino - self.min_number_on_domino + 1 != self.len_range_number_on_domino:
             raise ValueError(f"Values on dominoes must be between x and x + {self.len_range_number_on_domino - 1}")
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._dominoes_positions = None
         self._domino_position_bool_vars = None
         self._status = None

@@ -7,11 +7,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class GyokusekiSolver(GameSolver):
     def __init__(self, counts: dict[str, list[int]]):
+        super().__init__()
         self._counts_by_edge: dict[str, list[int]] = counts
         self.rows_number = len(self._counts_by_edge['up'])
         self.columns_number = len(self._counts_by_edge['left'])
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution_grid = None
         self._solver_initialized = False

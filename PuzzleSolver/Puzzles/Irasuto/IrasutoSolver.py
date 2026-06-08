@@ -9,12 +9,12 @@ class IrasutoSolver(GameSolver):
     black = 'b'
 
     def __init__(self, grid: Grid, initial_colors: Grid = None):
+        super().__init__()
         self._grid = grid
         self._initial_colors = initial_colors
         self._rows = grid.rows_number
         self._cols = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._color_vars = {}
 
     def get_solution(self) -> Grid:

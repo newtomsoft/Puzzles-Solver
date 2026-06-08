@@ -9,6 +9,7 @@ class SkyscrapersSolver(GameSolver):
     _no_value = 0
 
     def __init__(self, grid: Grid, visible_skyscrapers: dict[str, list[int]]):
+        super().__init__()
         self._grid: Grid = grid
         self.visible_skyscrapers: dict[str, list[int]] = visible_skyscrapers
         self.rows_number = self._grid.rows_number
@@ -27,7 +28,6 @@ class SkyscrapersSolver(GameSolver):
         if len(self.visible_skyscrapers['by_south']) != self.rows_number:
             raise ValueError("The 'by_south' viewable skyscrapers list must have the same length as the columns number")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution_grid = None
 

@@ -12,11 +12,11 @@ class RimotoejjiSolver(GameSolver):
     no_clue = ' '
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self.input_grid = grid
         self._N = grid.rows_number
         self._V = self._N + 1
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_grid: IslandGrid | None = None
         self._edge: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._inside: dict[Position, cp_model.IntVar] = {}

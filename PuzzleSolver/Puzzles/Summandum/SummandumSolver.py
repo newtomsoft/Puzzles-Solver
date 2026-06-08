@@ -7,9 +7,10 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class SummandumSolver(GameSolver):
-    Empty = None
+    cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self.rows_number = len(grid.matrix)
         self.columns_number = len(grid.matrix[0]) if self.rows_number > 0 else 0
         self._clues = {}
@@ -17,10 +18,9 @@ class SummandumSolver(GameSolver):
             for c in range(self.columns_number):
                 p = Position(r, c)
                 val = grid[p]
-                if val is not self.Empty:
+                if val is not self.cell_empty:
                     self._clues[p] = val
 
-        self._solver = cp_model.CpSolver()
         self._model = None
         self._row_vars = None
         self._col_vars = None
@@ -72,7 +72,7 @@ class SummandumSolver(GameSolver):
 
     def _compute_solution(self) -> Grid:
         solution_size = self.rows_number + 1
-        solution_matrix = [[self.Empty] * solution_size for _ in range(solution_size)]
+        solution_matrix = [[self.cell_empty] * solution_size for _ in range(solution_size)]
 
         for c in range(self.columns_number):
             solution_matrix[0][c + 1] = self._solver.value(self._col_headers[c])
@@ -86,7 +86,7 @@ class SummandumSolver(GameSolver):
                 if pos in self._clues:
                     solution_matrix[r + 1][c + 1] = self._clues[pos]
                 else:
-                    solution_matrix[r + 1][c + 1] = self.Empty  # Keep empty cells empty
+                    solution_matrix[r + 1][c + 1] = self.cell_empty  # Keep empty cells empty
 
         return Grid(solution_matrix)
 

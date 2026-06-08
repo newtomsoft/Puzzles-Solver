@@ -9,6 +9,7 @@ class From1ToXSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid, region_grid: Grid, rows_clues: list, columns_clues: list):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -48,11 +49,10 @@ class From1ToXSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        grid = Grid([[solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -62,7 +62,7 @@ class From1ToXSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, number_value in self._grid:
-            if number_value != self.empty:
+            if number_value != self.cell_empty:
                 self._model.add(self._grid_vars[position] == number_value)
             else:
                 self._model.add(self._grid_vars[position] >= 1)
@@ -83,8 +83,8 @@ class From1ToXSolver(GameSolver):
             self._model.add(self._grid_vars[neighbor_position] != self._grid_vars[position])
 
     def _add_clues_constraints(self):
-        for row, clue in ((row, clue) for row, clue in enumerate(self._rows_clues) if clue != self.empty):
+        for row, clue in ((row, clue) for row, clue in enumerate(self._rows_clues) if clue != self.cell_empty):
             self._model.add(sum((self._grid_vars[Position(row, c)] for c in range(self.columns_number))) == clue)
 
-        for col, clue in ((col, clue) for col, clue in enumerate(self._columns_clues) if clue != self.empty):
+        for col, clue in ((col, clue) for col, clue in enumerate(self._columns_clues) if clue != self.cell_empty):
             self._model.add(sum((self._grid_vars[Position(r, col)] for r in range(self.rows_number))) == clue)

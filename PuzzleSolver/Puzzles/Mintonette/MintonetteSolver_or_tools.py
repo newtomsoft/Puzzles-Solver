@@ -11,14 +11,15 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class MintonetteSolver(GameSolver):
-    Empty = None
+    cell_empty = None
     Unknown = -1
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
         self._turn_clues_by_positions: dict[Position, int] = {
-            position: turn_value for position, turn_value in self._input_grid if turn_value != self.Empty
+            position: turn_value for position, turn_value in self._input_grid if turn_value != self.cell_empty
         }
 
         self._positions_by_clues = defaultdict(list)
@@ -29,7 +30,6 @@ class MintonetteSolver(GameSolver):
 
         self._island_grid: IslandGrid | None = None
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_ortools: Grid | None = None
         self._path_id_var_by_position = {}
         self._previous_solution: IslandGrid
@@ -128,7 +128,7 @@ class MintonetteSolver(GameSolver):
 
     def _add_bridges_sum_constraints(self):
         for position, value in self._input_grid:
-            if value == self.Empty:
+            if value == self.cell_empty:
                 self._model.add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 2)
                 continue
             self._model.add(sum([self._grid_ortools[position][direction] for direction in Direction.orthogonal_directions()]) == 1)
@@ -176,14 +176,14 @@ class MintonetteSolver(GameSolver):
                 new_path = curr_path + [next_pos]
                 next_value = self._input_grid[next_pos]
                 if value != self.Unknown:
-                    if next_value == self.Empty:
+                    if next_value == self.cell_empty:
                         queue.append((next_pos, direction, new_turns, new_path))
                         continue
                     if next_value in {self.Unknown, value} and new_turns == n_turn:
                         found_paths.append(tuple(new_path))
                         continue
                 else:
-                    if next_value == self.Empty:
+                    if next_value == self.cell_empty:
                         queue.append((next_pos, direction, new_turns, new_path))
                         continue
                     if next_value == self.Unknown or next_value == new_turns:

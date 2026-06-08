@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class KemaruSolver(GameSolver):
     def __init__(self, grid: Grid, region_grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -15,7 +16,6 @@ class KemaruSolver(GameSolver):
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 

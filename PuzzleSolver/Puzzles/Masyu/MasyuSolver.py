@@ -1,6 +1,6 @@
 from ortools.sat.cp_model_pb2 import CpSolverStatus
 from ortools.sat.python import cp_model
-from ortools.sat.python.cp_model import IntVar, CpModel, CpSolver
+from ortools.sat.python.cp_model import IntVar, CpModel
 
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Board.Grid import Grid
@@ -13,8 +13,8 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 class MasyuSolver(GameSolver):
     def __init__(self, grid: Grid):
         self.input_grid = grid
+        super().__init__()
         self._model = CpModel()
-        self._solver = CpSolver()
         self._initialized = False
         self._island_bridges_var: dict[Position, dict[Direction, IntVar]] = {}
         self._previous_solution: IslandGrid | None = None

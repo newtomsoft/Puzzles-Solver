@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class TraceNumbersSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = grid.rows_number
         self.columns_number = grid.columns_number
@@ -37,7 +38,6 @@ class TraceNumbersSolver(GameSolver):
 
     def _solve(self) -> Grid:
         model = cp_model.CpModel()
-        solver = cp_model.CpSolver()
 
         R = self.rows_number
         C = self.columns_number
@@ -110,11 +110,11 @@ class TraceNumbersSolver(GameSolver):
                         model.Add(cell_order[r1][c1] < cell_order[r2][c2]).OnlyEnforceIf(both)
 
         model.Maximize(cell_order[R - 1][C - 1])
-        status = solver.Solve(model)
+        status = self._solver.Solve(model)
         if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
 
-        return self._build_solution(cell_path, solver)
+        return self._build_solution(cell_path, self._solver)
 
     def _build_solution(self, path_vars, solver):
         R = self.rows_number
@@ -122,5 +122,5 @@ class TraceNumbersSolver(GameSolver):
         data = [[0 for _ in range(C)] for _ in range(R)]
         for r in range(R):
             for c in range(C):
-                data[r][c] = solver.Value(path_vars[r][c])
+                data[r][c] = self._solver.Value(path_vars[r][c])
         return Grid(data)

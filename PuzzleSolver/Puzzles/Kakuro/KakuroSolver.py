@@ -6,13 +6,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class KakuroSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         if self.rows_number < 3:
             raise ValueError("The grid must be at least 3x3")
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 

@@ -7,8 +7,8 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class HitoriSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
-        self._solver = cp_model.CpSolver()
         self._model = cp_model.CpModel()
         self._grid_vars = None
         self._previous_solution: Grid | None = None

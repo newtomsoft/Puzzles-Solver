@@ -9,6 +9,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class DeddoanguruSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
@@ -127,14 +128,13 @@ class DeddoanguruSolver(GameSolver):
         return RegionsGrid([row[:] for row in region_matrix])
 
     def _solve(self) -> RegionsGrid:
-        solver = cp_model.CpSolver()
-        solver.parameters.num_search_workers = 8
-        solver.parameters.linearization_level = 2
-        status = solver.solve(self._model)
+        self._solver.parameters.num_search_workers = 8
+        self._solver.parameters.linearization_level = 2
+        status = self._solver.solve(self._model)
         if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return RegionsGrid.empty()
         region_matrix = [
-            [int(solver.value(self._region_vars[r][c])) for c in range(self._columns_number)]
+            [int(self._solver.value(self._region_vars[r][c])) for c in range(self._columns_number)]
             for r in range(self._rows_number)
         ]
         solution = self._to_regions_grid(region_matrix)

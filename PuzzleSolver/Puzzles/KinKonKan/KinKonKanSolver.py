@@ -15,6 +15,7 @@ class KinKonKanSolver(GameSolver):
     _BACKSLASH_MAP = {Direction.up(): Direction.left(), Direction.left(): Direction.up(), Direction.down(): Direction.right(), Direction.right(): Direction.down()}
 
     def __init__(self, regions: RegionsGrid, clues: dict[str, list[str]]):
+        super().__init__()
         self.rows_number = regions.rows_number
         self.columns_number = regions.columns_number
         self.regions_grid = regions
@@ -22,7 +23,6 @@ class KinKonKanSolver(GameSolver):
 
         self.clues = self._process_clues(clues)
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_var: Grid = Grid.empty()
         self._previous_solution: Grid = Grid.empty()
 

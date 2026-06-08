@@ -15,6 +15,7 @@ class LitsSolver(GameSolver):
     cell_empty = 0
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._regions = self._grid.get_regions()
         if any(len(region) < 4 for region in self._regions.values()):
@@ -25,7 +26,6 @@ class LitsSolver(GameSolver):
         self._shaded_vars = Grid.empty()
         self.previous_solution = Grid.empty()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
 
     def get_solution(self) -> Grid:
         if self._grid_vars.is_empty():

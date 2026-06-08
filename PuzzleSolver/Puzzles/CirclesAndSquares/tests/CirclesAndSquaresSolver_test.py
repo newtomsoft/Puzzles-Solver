@@ -8,7 +8,7 @@ from PuzzleSolver.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import Circl
 
 B = CirclesAndSquaresSolver.Black
 W = CirclesAndSquaresSolver.White
-_ = CirclesAndSquaresSolver.Empty
+_ = CirclesAndSquaresSolver.cell_empty
 
 class CirclesAndSquaresSolverTests(unittest.TestCase):
     def test_solve_5x5_easy_3n2qr(self):

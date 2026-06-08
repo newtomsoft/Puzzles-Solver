@@ -12,6 +12,7 @@ class NumberCrossSolver(GameSolver):
     cell_empty = None  # must stay None
 
     def __init__(self, input_grid: Grid, row_sums_clues: list, column_sums_clues: list):
+        super().__init__()
         self._input_grid = input_grid
         if self._input_grid.rows_number != self._input_grid.columns_number:
             raise ValueError("The grid must be square")
@@ -49,12 +50,11 @@ class NumberCrossSolver(GameSolver):
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
         grid = Grid([
-            [self._input_grid[Position(i, j)] if solver.value(self._grid_vars[Position(i, j)]) == 1 else self.black_value for j in range(self.columns_number)]
+            [self._input_grid[Position(i, j)] if self._solver.value(self._grid_vars[Position(i, j)]) == 1 else self.black_value for j in range(self.columns_number)]
             for i in range(self.rows_number)
         ])
         return grid
@@ -74,7 +74,7 @@ class NumberCrossSolver(GameSolver):
 
     def _add_constraints_for_clues(self, clues: list, line_positions_generator: Callable):
         for index, clue in enumerate(clues):
-            if clue != self.empty:
+            if clue != self.cell_empty:
                 line_positions = line_positions_generator(index)
                 self._add_sum_for_line_constraint(line_positions, clue)
 

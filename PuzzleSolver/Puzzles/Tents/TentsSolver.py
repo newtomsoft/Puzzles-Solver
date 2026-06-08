@@ -9,6 +9,7 @@ class TentsSolver(GameSolver):
     tree_value = -1
 
     def __init__(self, grid: Grid, tents_numbers_by_column_row):
+        super().__init__()
         self._grid: Grid = grid
         self.tents_numbers_by_column_row: dict[str, list[int]] = tents_numbers_by_column_row
         self.rows_number = self._grid.rows_number
@@ -18,7 +19,6 @@ class TentsSolver(GameSolver):
         self.columns_tents_numbers = self.tents_numbers_by_column_row['column']
         self.rows_tents_numbers = self.tents_numbers_by_column_row['row']
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._tent_vars = None
         self._tree_match_vars: dict[Position, dict[Position, cp_model.BoolVarT]] = {}
         self._status = None

@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class AquariumSolver(GameSolver):
     def __init__(self, grid: Grid, numbers: list[int]):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -21,7 +22,6 @@ class AquariumSolver(GameSolver):
         self.columns_water_numbers = numbers[:grid.rows_number]
         self.rows_water_numbers = numbers[grid.rows_number:]
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._previous_solution = None
 

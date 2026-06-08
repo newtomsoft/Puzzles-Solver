@@ -3,7 +3,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Context.ContextSolver import ContextSolver
 
-_ = ContextSolver.empty
+_ = ContextSolver.cell_empty
 B = ContextSolver.black
 W = ContextSolver.white
 

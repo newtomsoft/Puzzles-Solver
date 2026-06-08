@@ -13,6 +13,7 @@ class SudokuBaseSolver(GameSolver):
     cell_empty = -1
     
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -27,7 +28,6 @@ class SudokuBaseSolver(GameSolver):
         self._grid_vars = None
         self._model = cp_model.CpModel()
         self._previous_solution: Grid | None = None
-        self._solver = cp_model.CpSolver()
 
     def _init_sub_squares(self):
         if is_perfect_square(self.rows_number):
@@ -59,18 +59,32 @@ class SudokuBaseSolver(GameSolver):
         if self._previous_solution is None:
             return self.get_solution()
 
+        previous = self._previous_solution
+
+        solution = self.get_solution()
+        if solution.is_empty():
+            return solution
+
+        if solution != previous:
+            return solution
+
         bool_vars = []
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                prev_val = self._previous_solution.value(r, c)
-                diff_var = self._model.new_bool_var(f"diff_r{r}_c{c}")
+                prev_val = previous.value(r, c)
+                diff_var = self._model.new_bool_var(f"other_diff_r{r}_c{c}")
                 self._model.add(self._grid_vars[Position(r, c)] != prev_val).only_enforce_if(diff_var)
                 self._model.add(self._grid_vars[Position(r, c)] == prev_val).only_enforce_if(diff_var.negated())
                 bool_vars.append(diff_var)
 
         self._model.add_bool_or(bool_vars)
 
-        return self.get_solution()
+        status = self._solver.solve(self._model)
+        if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return Grid.empty()
+
+        self._previous_solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return self._previous_solution
 
     def _add_constraints(self):
         self._initials_constraints()

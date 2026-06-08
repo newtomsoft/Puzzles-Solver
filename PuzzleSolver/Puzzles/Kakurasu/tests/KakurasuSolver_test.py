@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Kakurasu.KakurasuSolver import KakurasuSolver
 
-_ = KakurasuSolver.empty
+_ = KakurasuSolver.cell_empty
 
 
 class KakurasuSolverTests(TestCase):

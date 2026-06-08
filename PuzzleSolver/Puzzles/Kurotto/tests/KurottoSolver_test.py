@@ -2,8 +2,8 @@
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Kurotto.KurottoSolver import KurottoSolver
 
-U = KurottoSolver.unknown
-_ = KurottoSolver.empty
+U = KurottoSolver.cell_unknown
+_ = KurottoSolver.cell_empty
 
 class KurottoSolverTests(unittest.TestCase):
     def test_no_solution_impossible_clue(self):
@@ -134,16 +134,16 @@ class KurottoSolverTests(unittest.TestCase):
         ])
 
         expected = Grid([
-            [0, 0, 1, 1, 1, 1, 0, 1, 0, 0],
-            [1, 0, 0, 0, 1, 0, 1, 0, 1, 1],
-            [0, 0, 1, 1, 0, 0, 1, 0, 0, 0],
-            [0, 1, 0, 0, 1, 0, 0, 0, 1, 1],
-            [1, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-            [1, 0, 1, 0, 1, 0, 0, 1, 0, 0],
-            [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 1, 0, 1, 1, 0],
-            [1, 1, 0, 1, 0, 1, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 1, 0, 1, 1, 0],
+            [_, _, 1, 1, 1, 1, _, 1, _, _],
+            [1, _, _, _, 1, _, 1, _, 1, 1],
+            [_, _, 1, 1, _, _, 1, _, _, _],
+            [_, 1, _, _, 1, _, _, _, 1, 1],
+            [1, _, _, _, _, 1, _, 1, _, _],
+            [1, _, 1, _, 1, _, _, 1, _, _],
+            [_, 1, _, 1, _, 1, _, _, _, _],
+            [_, _, _, _, _, 1, _, 1, 1, _],
+            [1, 1, _, 1, _, 1, _, _, _, 1],
+            [_, _, 1, _, _, 1, _, 1, 1, _],
         ])
 
         solver = KurottoSolver(grid)

@@ -6,12 +6,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class KurottoSolver(GameSolver):
-    unknown = '?'
+    cell_unknown = '?'
     cell_empty = None
     black = 1
     white = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
@@ -19,11 +20,10 @@ class KurottoSolver(GameSolver):
 
         self._circles = []
         for position, value in grid:
-            if value != KurottoSolver.empty:
+            if value != KurottoSolver.cell_empty:
                 self._circles.append((position, value))
 
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._init_vars()
         self._add_constraints()
         self._previous_solution = None

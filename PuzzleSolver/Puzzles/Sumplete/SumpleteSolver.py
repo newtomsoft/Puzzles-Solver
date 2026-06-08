@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class SumpleteSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -20,7 +21,6 @@ class SumpleteSolver(GameSolver):
         self._target_rows = [self._grid.value(r, self.columns_number - 1) for r in range(self.rows_number)]
         self._target_columns = [self._grid.value(self.rows_number - 1, c) for c in range(self.columns_number)]
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 

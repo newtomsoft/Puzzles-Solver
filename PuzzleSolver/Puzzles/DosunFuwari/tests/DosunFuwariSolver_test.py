@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.DosunFuwari.DosunFuwariSolver import DosunFuwariSolver
 
-_ = DosunFuwariSolver.empty
+_ = DosunFuwariSolver.cell_empty
 B = DosunFuwariSolver.black
 W = DosunFuwariSolver.white
 

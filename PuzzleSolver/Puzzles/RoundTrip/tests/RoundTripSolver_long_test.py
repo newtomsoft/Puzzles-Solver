@@ -6,7 +6,7 @@ from PuzzleSolver.Board.Island import Island
 from PuzzleSolver.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
 
 
-_ = RoundTripSolver.empty
+_ = RoundTripSolver.cell_empty
 
 
 class RoundTripSolverLongTests(unittest.TestCase):

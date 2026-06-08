@@ -10,11 +10,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class SurizaSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self.input_grid = grid
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
 

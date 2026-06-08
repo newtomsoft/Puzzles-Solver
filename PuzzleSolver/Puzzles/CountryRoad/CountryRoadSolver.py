@@ -11,13 +11,13 @@ from Utils.ShapeGenerator import ShapeGenerator
 
 class CountryRoadSolver(GameSolver):
     def __init__(self, grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._numbers_grid = grid
         self._regions = regions_grid.get_regions()
         self._rows_number = self._numbers_grid.rows_number
         self._columns_number = self._numbers_grid.columns_number
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges_z3: dict[Position, dict[Direction, cp_model.BoolVarT]] = {}
         self._previous_solution: IslandGrid | None = None
         self._initialized = False

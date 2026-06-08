@@ -10,12 +10,12 @@ class TasukueaSolver(GameSolver):
     unknown = '?'
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
         self._grid_var: Grid = Grid.empty()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._initialized = False
         self._previous_solution: Grid | None = None
         self._square_selectors = None
@@ -59,7 +59,7 @@ class TasukueaSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, value in self._grid:
-            if value != self.empty:
+            if value != self.cell_empty:
                 self._model.add(self._grid_var[position] == 0)
 
     def _add_white_connectivity_constraint(self):
@@ -91,7 +91,7 @@ class TasukueaSolver(GameSolver):
 
     def _add_all_squares_constraints(self):
         self._build_square_model()
-        for position, sum_squares_area in [(position, value) for position, value in self._grid if value != self.empty]:
+        for position, sum_squares_area in [(position, value) for position, value in self._grid if value != self.cell_empty]:
             self._add_squares_no_adjacent_constraint(position, sum_squares_area)
 
     def _build_square_model(self):
@@ -123,7 +123,7 @@ class TasukueaSolver(GameSolver):
                             self._coverage[key].append(selector)
                             self._model.add_implication(selector, self._grid_var[pos])
 
-        clue_positions = [p for (p, v) in self._grid if v != self.empty]
+        clue_positions = [p for (p, v) in self._grid if v != self.cell_empty]
         if clue_positions:
             for s, r0, c0, sz in self._square_bounds:
                 r_min, r_max = r0, r0 + sz - 1

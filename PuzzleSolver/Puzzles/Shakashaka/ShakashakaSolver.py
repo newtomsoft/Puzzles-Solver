@@ -21,11 +21,11 @@ class ShakashakaSolver(GameSolver):
     input_black = -2
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution = Grid.empty()
         self._grid_vars = Grid.empty()
         self._init_solver()

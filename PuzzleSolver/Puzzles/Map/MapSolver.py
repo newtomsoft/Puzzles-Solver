@@ -11,9 +11,9 @@ brown = 4
 
 class MapSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self.neighbours = None

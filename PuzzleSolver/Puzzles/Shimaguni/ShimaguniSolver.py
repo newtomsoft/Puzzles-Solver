@@ -5,6 +5,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class ShimaguniSolver(GameSolver):
     def __init__(self, values_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._values_grid = values_grid
         self._regions_grid = regions_grid
         self._regions_positions_by_id = regions_grid.get_regions()
@@ -12,7 +13,6 @@ class ShimaguniSolver(GameSolver):
         self.columns_number = self._values_grid.columns_number
         
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = {}
         self._region_counts = {}
         self._status = None

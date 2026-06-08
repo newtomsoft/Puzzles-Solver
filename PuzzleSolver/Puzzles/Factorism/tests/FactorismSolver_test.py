@@ -3,7 +3,7 @@
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Factorism.FactorismSolver import FactorismSolver
 
-_ = FactorismSolver.Empty
+_ = FactorismSolver.cell_empty
 
 class FactorismSolverTests(unittest.TestCase):
     def test_solve_4x4_evil(self):

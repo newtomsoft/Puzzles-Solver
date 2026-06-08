@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.NumberCross.NumberCrossSolver import NumberCrossSolver
 
-_ = NumberCrossSolver.empty
+_ = NumberCrossSolver.cell_empty
 B = NumberCrossSolver.black_value
 
 class NumberCrossSolverTests(TestCase):

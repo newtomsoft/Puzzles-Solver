@@ -16,6 +16,7 @@ class KanjoSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
         
@@ -31,16 +32,6 @@ class KanjoSolver(GameSolver):
             self._positions_by_clues[val].append(pos)
 
         self._model = None
-        self._solver = None
-        
-        self._h_arcs = None
-        self._v_arcs = None
-        self._loop_id = None
-        self._loop_id_hor = None
-        self._loop_id_ver = None
-        self._is_deg2 = None
-        self._is_deg4 = None
-        
         self._island_grid = None
         self._previous_solution = None
 
@@ -53,7 +44,6 @@ class KanjoSolver(GameSolver):
         if self._model is None:
             self._init_model()
         
-        self._solver = cp_model.CpSolver()
         solution, _ = self._ensure_all_islands_grouped()
         return solution
 

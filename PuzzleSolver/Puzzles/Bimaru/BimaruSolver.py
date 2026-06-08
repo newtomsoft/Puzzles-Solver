@@ -18,6 +18,7 @@ class BimaruSolver(GameSolver):
     ship_middle_input = 8
 
     def __init__(self, grid: Grid, ship_cells: dict[str, list[int]], ships_number_by_size: dict[int, int]):
+        super().__init__()
         if BimaruSolver.ship_single != 7:
             raise ValueError("Ship single value error")
         self._grid = grid
@@ -41,7 +42,6 @@ class BimaruSolver(GameSolver):
         if self._total_ships_size() != sum(self.ship_cells['column']):
             raise ValueError("The sum of the size of the ships must be equal to the sum of ships cells")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._type_bools = {}
         self._previous_solution_grid = None

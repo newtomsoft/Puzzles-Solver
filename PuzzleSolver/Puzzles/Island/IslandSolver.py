@@ -12,11 +12,11 @@ class IslandSolver(GameSolver):
     clue = 1
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._land_vars = None
         self._clues = []
         self._clue_positions = set()
@@ -43,7 +43,7 @@ class IslandSolver(GameSolver):
         self._model = cp_model.CpModel()
         self._land_vars = Grid([[self._model.new_bool_var(f'land_{r}_{c}') for c in range(self._cols)] for r in range(self._rows)])
         
-        for position, val in ((p, v) for p, v in self._grid if v != self.empty):
+        for position, val in ((p, v) for p, v in self._grid if v != self.cell_empty):
             self._clues.append({'pos': position, 'val': val, 'id': len(self._clues)})
             self._clue_positions.add(position)
             self._model.add(self._land_vars[position] == 1)

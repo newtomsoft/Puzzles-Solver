@@ -9,7 +9,8 @@ class DoppelblockSolver(GameSolver):
     cell_empty = None
     black_value = 0  # must stay 0
 
-    def __init__(self, grid: Grid, row_sums_clues: list, column_sums_clues: list):
+    def __init__(self, grid: Grid, row_sums_clues: list, column_sums_clues: list, *args, **kwargs):
+        super().__init__()
         self._grid = grid
         if self._grid.rows_number != self._grid.columns_number:
             raise ValueError("The grid must be square")
@@ -49,11 +50,10 @@ class DoppelblockSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self):
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
-        grid = Grid([[solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._grid_vars[Position(i, j)]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return grid
 
     def _add_constrains(self):
@@ -63,7 +63,7 @@ class DoppelblockSolver(GameSolver):
 
     def _add_initials_constraints(self):
         for position, value in self._grid:
-            if value != self.empty:
+            if value != self.cell_empty:
                 self._model.add(self._grid_vars[position] == value)
 
     def _add_two_black_cells_and_distincts_numbers_constraints(self):
@@ -114,13 +114,13 @@ class DoppelblockSolver(GameSolver):
 
     def _add_sums_clues_constraints(self):
         for r, clue in enumerate(self._row_sums_clues):
-            if clue != self.empty:
+            if clue != self.cell_empty:
                 line_vars = [self._grid_vars[Position(r, c)] for c in range(self.columns_number)]
                 is_black = self._is_black_bools_rows[r]
                 self._add_sum_for_line_constraint(line_vars, is_black, clue, "row", r)
 
         for c, clue in enumerate(self._column_sums_clues):
-            if clue != self.empty:
+            if clue != self.cell_empty:
                 line_vars = [self._grid_vars[Position(r, c)] for r in range(self.rows_number)]
                 is_black = [self._is_black_bools_cols[c][r] for r in range(self.rows_number)]
                 self._add_sum_for_line_constraint(line_vars, is_black, clue, "col", c)

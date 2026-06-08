@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class BinairoPlusSolver(GameSolver):
     def __init__(self, grid: Grid, comparisons_positions: dict):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -17,7 +18,6 @@ class BinairoPlusSolver(GameSolver):
         self._comparisons_positions = comparisons_positions
 
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 

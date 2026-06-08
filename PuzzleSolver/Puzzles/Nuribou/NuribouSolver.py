@@ -5,13 +5,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class NuribouSolver(GameSolver):
-    EMPTY = 0
+    cell_empty = 0
     BLACK = -1
 
     def __init__(self, values_grid: Grid):
+        super().__init__()
         self._values_grid = values_grid
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = {}
         self._clues = {}
         self.rows_number = values_grid.rows_number
@@ -226,7 +226,7 @@ class NuribouSolver(GameSolver):
         return Grid.empty()
 
     def _compute_solution(self) -> Grid:
-        solution_matrix = [[self.EMPTY for _ in range(self.columns_number)] for _ in range(self.rows_number)]
+        solution_matrix = [[self.cell_empty for _ in range(self.columns_number)] for _ in range(self.rows_number)]
         for position, var in self._grid_vars.items():
             if self._solver.Value(var):
                 solution_matrix[position.r][position.c] = self.BLACK

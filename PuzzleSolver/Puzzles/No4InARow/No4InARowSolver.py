@@ -1,4 +1,4 @@
-from ortools.sat.python.cp_model import CpModel, CpSolver, INFEASIBLE
+from ortools.sat.python.cp_model import CpModel, INFEASIBLE
 
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
@@ -11,8 +11,8 @@ class No4InARowSolver(GameSolver):
         self.columns_number = self._grid.columns_number
         if self.rows_number < 4:
             raise ValueError("No 4 in a Row grid must be at least 4x4")
+        super().__init__()
         self._model = CpModel()
-        self._solver = CpSolver()
         self._grid_ortools = None
         self._previous_solution = None
         self._blocked_solutions = []

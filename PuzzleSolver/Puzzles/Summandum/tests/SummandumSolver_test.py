@@ -4,7 +4,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Puzzles.Summandum.SummandumSolver import SummandumSolver
 
-_ = SummandumSolver.Empty
+_ = SummandumSolver.cell_empty
 
 class SummandumSolverTests(unittest.TestCase):
     def test_solve_4x4_easy_ap317pk(self):

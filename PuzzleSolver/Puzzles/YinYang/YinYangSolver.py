@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class YinYangSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -14,7 +15,6 @@ class YinYangSolver(GameSolver):
             raise ValueError("Yin Yang grid must be at least 6x6")
 
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver.parameters.max_time_in_seconds = 120.0  # Fail fast if stuck
         self._grid_vars = {}
         self._previous_solution = None

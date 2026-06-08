@@ -3,7 +3,7 @@
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Corral.CorralSolver import CorralSolver
 
-_ = CorralSolver.empty
+_ = CorralSolver.cell_empty
 
 
 class CorralSolverTests(TestCase):

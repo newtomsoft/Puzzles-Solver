@@ -11,11 +11,11 @@ class GeradewegSolver(GameSolver):
     _used_directions = [Direction.right(), Direction.down()]
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self._rows_number = self._input_grid.rows_number
         self._columns_number = self._input_grid.columns_number
-        self._solver = cp_model.CpSolver()
         self._solver.parameters.max_time_in_seconds = 120.0
         self._grid_vars: dict[tuple[Position, Direction], cp_model.IntVar] = {}
         self._previous_solution: IslandGrid | None = None

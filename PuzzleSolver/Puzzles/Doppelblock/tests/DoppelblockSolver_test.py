@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Doppelblock.DoppelblockSolver import DoppelblockSolver
 
-_ = DoppelblockSolver.empty
+_ = DoppelblockSolver.cell_empty
 B = DoppelblockSolver.black_value
 
 

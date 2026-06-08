@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class NumberLinkSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -42,12 +43,11 @@ class NumberLinkSolver(GameSolver):
         return self._previous_solution
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        return Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        return Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
 
     def _add_constraints(self):
         self._add_initial_constraints()

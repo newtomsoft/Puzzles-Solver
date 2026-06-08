@@ -13,6 +13,7 @@ class KohiGyunyuSolver(GameSolver):
     EMPTY = "."
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows = grid.rows_number
         self.cols = grid.columns_number
@@ -51,12 +52,11 @@ class KohiGyunyuSolver(GameSolver):
             self._add_constraints()
             self._constraints_added = True
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            self._last_solver = solver
-            return self._build_grid_from_solver(solver)
+            self._last_solver = self._solver
+            return self._build_grid_from_solver(self._solver)
         else:
             print(f"Status: {status}")
             if status == cp_model.INFEASIBLE:
@@ -267,11 +267,10 @@ class KohiGyunyuSolver(GameSolver):
             return IslandGrid.empty()
 
         self._model.add_bool_or(exclude)
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            return self._build_grid_from_solver(solver)
+            return self._build_grid_from_solver(self._solver)
 
         return IslandGrid.empty()
 
@@ -283,14 +282,14 @@ class KohiGyunyuSolver(GameSolver):
         # Build adjacency for each group
         adj = {}
         for u, v, conn_var in self._connection_pairs:
-            if not solver.value(conn_var):
+            if not self._solver.value(conn_var):
                 continue
             p1 = self._all_circles[u]
             p2 = self._all_circles[v]
             self._draw_straight_connection(island_grid, p1, p2)
             island_grid.connections.append((p1, p2))
 
-            group_id = solver.value(self._circle_group_vars[u])
+            group_id = self._solver.value(self._circle_group_vars[u])
             if group_id not in adj: adj[group_id] = {}
             if p1 not in adj[group_id]: adj[group_id][p1] = []
             if p2 not in adj[group_id]: adj[group_id][p2] = []

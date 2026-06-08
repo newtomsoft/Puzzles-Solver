@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class Str8tsSolver(GameSolver):
     def __init__(self, numbers_grid: Grid[int], blacks_grid: Grid[bool]):
+        super().__init__()
         self._numbers_grid = numbers_grid
         self._blacks_grid = blacks_grid
         self._rows_number = self._numbers_grid.rows_number
@@ -13,7 +14,6 @@ class Str8tsSolver(GameSolver):
         if self._rows_number != self._columns_number:
             raise ValueError("Str8ts has to be a square")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._blank_grid = self._get_blank_grid()

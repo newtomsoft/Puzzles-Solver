@@ -11,13 +11,13 @@ class NanroSolver(GameSolver):
     no_filled_value = 0
 
     def __init__(self, values_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._values_grid = values_grid
         self._regions_positions_by_id = regions_grid.get_regions()
         self.rows_number = self._values_grid.rows_number
         self.columns_number = self._values_grid.columns_number
         self._grid_z3: Grid | None = None
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution: Grid | None = None
         self._solver_initialized = False
         self._exclude_counter = 0

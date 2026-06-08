@@ -15,6 +15,7 @@ class ToichikaSolver(GameSolver):
     Left = 4
 
     def __init__(self, regions_grid: RegionsGrid, given_arrows: Grid):
+        super().__init__()
         self._regions_grid = regions_grid
         self._given_arrows = given_arrows
         self._rows_number = regions_grid.rows_number
@@ -25,11 +26,9 @@ class ToichikaSolver(GameSolver):
         self._paired_vars = {}
         self._valid_pairs = []
         self._previous_solution = Grid.empty()
-        self._solver = None
 
     def get_solution(self) -> Grid:
         self._init_solver()
-        self._solver = cp_model.CpSolver()
         status = self._solver.solve(self._model)
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             solution = Grid([[self._solver.value(self._arrow_vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)])

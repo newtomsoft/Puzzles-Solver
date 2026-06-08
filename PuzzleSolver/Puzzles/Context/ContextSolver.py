@@ -11,11 +11,11 @@ class ContextSolver(GameSolver):
     white = 1
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = []
         self._previous_solution: Grid | None = None
 
@@ -93,7 +93,7 @@ class ContextSolver(GameSolver):
         for r in range(self._rows_number):
             for c in range(self._columns_number):
                 clue = self._grid[r][c]
-                if clue is None or clue == self.empty:
+                if clue is None or clue == self.cell_empty:
                     continue
                 clue = int(clue)
                 pos = Position(r, c)

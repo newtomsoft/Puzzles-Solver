@@ -13,12 +13,12 @@ class DetourSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, clues_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._clues_grid = clues_grid
         self._regions = regions_grid.get_regions()
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges_z3: dict[Position, dict[Direction, BoolVarT]] = {}
         self._flow_vars: dict[Position, dict[Direction, cp_model.IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
@@ -146,7 +146,7 @@ class DetourSolver(GameSolver):
             self._add_clues_turn_region_constraints(region)
 
     def _add_clues_turn_region_constraints(self, region: frozenset[Position]):
-        clues_in_region = [self._clues_grid[position] for position in region if self._clues_grid[position] != self.empty]
+        clues_in_region = [self._clues_grid[position] for position in region if self._clues_grid[position] != self.cell_empty]
         if not clues_in_region:
             return
         turn_clue = max(clues_in_region)

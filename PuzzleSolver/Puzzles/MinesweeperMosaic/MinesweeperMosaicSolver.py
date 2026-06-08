@@ -8,11 +8,11 @@ class MinesweeperMosaicSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3 = None
         self._previous_solution: Grid | None = None
 
@@ -47,7 +47,7 @@ class MinesweeperMosaicSolver(GameSolver):
     def _add_constraints(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
-                if self._grid.value(r, c) == self.empty:
+                if self._grid.value(r, c) == self.cell_empty:
                     continue
                 cells_in_cell_zone = []
                 for dr in range(-1, 2):

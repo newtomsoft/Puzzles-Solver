@@ -1,6 +1,6 @@
 from ortools.sat.cp_model_pb2 import CpSolverStatus
 from ortools.sat.python import cp_model
-from ortools.sat.python.cp_model import IntVar, CpModel, CpSolver
+from ortools.sat.python.cp_model import IntVar, CpModel
 
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Board.Grid import Grid
@@ -15,8 +15,8 @@ class KoburinSolver(GameSolver):
         self.input_grid = grid
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
+        super().__init__()
         self._model: CpModel = cp_model.CpModel()
-        self._solver: CpSolver = CpSolver()
         self._initialized = False
         self._island_bridges_z3: dict[Position, dict[Direction, IntVar]] = {}
         self._black_cells_z3: dict[Position, IntVar] = {}

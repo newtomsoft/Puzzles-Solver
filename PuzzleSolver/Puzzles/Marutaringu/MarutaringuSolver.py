@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class MarutaringuSolver(GameSolver):
     def __init__(self, regions_grid: Grid, clues_grid: Grid):
+        super().__init__()
         self._regions_grid = regions_grid
         self.rows = regions_grid.rows_number
         self.cols = regions_grid.columns_number
@@ -24,7 +25,6 @@ class MarutaringuSolver(GameSolver):
                     self.clues[pos_to_region_idx[(position.r, position.c)]] = value
 
         self.model = cp_model.CpModel()
-        self._solver = None
 
         # B[r,c] = 1 if cell (r,c) is black
         self.b = {}
@@ -113,9 +113,7 @@ class MarutaringuSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         while True:
-            solver = cp_model.CpSolver()
-            self._solver = solver
-            status = solver.Solve(self.model)
+            status = self._solver.Solve(self.model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 return Grid.empty()
 
@@ -123,7 +121,7 @@ class MarutaringuSolver(GameSolver):
             black_cells = []
             for r in range(self.rows):
                 for c in range(self.cols):
-                    if solver.Value(self.b[r, c]) == 1:
+                    if self._solver.Value(self.b[r, c]) == 1:
                         res[r][c] = True
                         black_cells.append((r, c))
 

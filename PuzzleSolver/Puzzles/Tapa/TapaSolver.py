@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class TapaSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -15,7 +16,6 @@ class TapaSolver(GameSolver):
         if not any(isinstance(cell, list) for row in self._grid.matrix for cell in row):
             raise ValueError("The grid must contain at least one list number")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 

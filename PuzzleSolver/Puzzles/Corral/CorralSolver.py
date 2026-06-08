@@ -8,12 +8,12 @@ class CorralSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
         self._cells_count = self._rows * self._cols
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._is_zero = [[self._model.new_bool_var(f"zero_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]
         self._is_root = [[self._model.new_bool_var(f"root_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]
         self._depth = [[self._model.new_int_var(0, self._cells_count, f"depth_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]

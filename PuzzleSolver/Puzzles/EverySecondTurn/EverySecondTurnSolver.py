@@ -13,6 +13,7 @@ _ = '.'
 
 class EverySecondTurnSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
@@ -43,14 +44,13 @@ class EverySecondTurnSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        solver = cp_model.CpSolver()
-        while solver.solve(self._model) == cp_model.OPTIMAL:
+        while self._solver.solve(self._model) == cp_model.OPTIMAL:
             proposition_count += 1
             for position, direction_bridges in self._island_bridges.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges:
                         continue
-                    bridges_number = solver.value(bridges)
+                    bridges_number = self._solver.value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)

@@ -9,11 +9,11 @@ class DoubleMinesweeperSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._counter = 0
@@ -47,12 +47,12 @@ class DoubleMinesweeperSolver(GameSolver):
 
     def _add_initial_constraints(self):
         for position, cell in self._grid:
-            if cell != self.empty:
+            if cell != self.cell_empty:
                 self._model.Add(self._grid_z3[position] == 0)
             else:
                 self._model.Add(self._grid_z3[position] >= 0)
                 self._model.Add(self._grid_z3[position] <= 2)
 
     def _add_neighbors_constraints(self):
-        for position, cell in [(position, cell) for position, cell in self._grid if cell != self.empty]:
+        for position, cell in [(position, cell) for position, cell in self._grid if cell != self.cell_empty]:
             self._model.Add(sum([value for value in self._grid_z3.neighbors_values(position, 'diagonal')]) == cell)

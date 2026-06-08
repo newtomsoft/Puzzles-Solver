@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class NorinoriSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -17,7 +18,6 @@ class NorinoriSolver(GameSolver):
             raise ValueError("The grid must have at least one region")
 
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 

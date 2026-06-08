@@ -6,12 +6,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class GappySolver(GameSolver):
     def __init__(self, gaps: list[list[int]]):
+        super().__init__()
         self._rows_gaps = gaps[0]
         self._columns_gaps = gaps[1]
         self._rows_number = len(self._rows_gaps)
         self._columns_number = len(self._columns_gaps)
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver_initialized = False
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None

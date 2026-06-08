@@ -7,11 +7,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class ArrowWebSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._shaded_vars = []
         self._initialized = False
         self._previous_solution = None

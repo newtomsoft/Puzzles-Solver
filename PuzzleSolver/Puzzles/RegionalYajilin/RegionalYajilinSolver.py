@@ -12,6 +12,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class RegionalYajilinSolver(GameSolver):
     def __init__(self, blacks_count_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._regions_grid = regions_grid
         self._positions_by_region_id = regions_grid.get_regions()
         self._blacks_count_grid = blacks_count_grid
@@ -48,10 +49,9 @@ class RegionalYajilinSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        solver = cp_model.CpSolver()
 
         while True:
-            status = solver.solve(self._model)
+            status = self._solver.solve(self._model)
             if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
                 return IslandGrid.empty(), proposition_count
 
@@ -61,14 +61,14 @@ class RegionalYajilinSolver(GameSolver):
                 for direction, var in direction_bridges.items():
                     next_pos = position.after(direction)
                     if next_pos in self._island_bridges_vars:
-                        bridges_number = solver.value(var)
+                        bridges_number = self._solver.value(var)
                         self._island_grid[position].set_bridge_to_position(self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
                 self._island_grid[position].set_bridges_count_according_to_directions_bridges()
 
             connected_positions = self._island_grid.get_connected_positions(exclude_without_bridge=True)
             if len(connected_positions) == 1:
                 for position, var in self._black_cells_vars.items():
-                    if solver.boolean_value(var):
+                    if self._solver.boolean_value(var):
                         self._island_grid.set_value(position, '■')
 
                 self._previous_solution = self._island_grid

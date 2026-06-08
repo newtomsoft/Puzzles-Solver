@@ -8,10 +8,10 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class BuraitoraitoSolver(GameSolver):
     def __init__(self, input_grid: Grid):
+        super().__init__()
         self._input_grid = input_grid
         self.rows_number = input_grid.rows_number
         self.columns_number = input_grid.columns_number
-        self._solver = cp_model.CpSolver()
         self._model = None
         self._stars_vars = None
         self._status = None

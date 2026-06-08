@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.BalanceLoop.BalanceLoopSolver import BalanceLoopSolver
 
 # region
-__ = BalanceLoopSolver.empty
+__ = BalanceLoopSolver.cell_empty
 B0 = 'b0'
 B2 = 'b2'
 B3 = 'b3'

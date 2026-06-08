@@ -9,9 +9,10 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 class CirclesAndSquaresSolver(GameSolver):
     Black = True
     White = False
-    Empty = None
+    cell_empty = None
 
     def __init__(self, data_game: dict[str, Any] | Grid):
+        super().__init__()
         if isinstance(data_game, Grid):
             self.rows_number = len(data_game.matrix)
             self.columns_number = len(data_game.matrix[0]) if self.rows_number > 0 else 0
@@ -36,7 +37,6 @@ class CirclesAndSquaresSolver(GameSolver):
         if self._black_circles & self._white_circles:
             raise ValueError("Black and white circles cannot overlap")
 
-        self._solver = cp_model.CpSolver()
         self._model = None
         self._black_cells_vars = None
         self._status = None

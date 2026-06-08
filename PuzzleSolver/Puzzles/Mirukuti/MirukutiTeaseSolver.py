@@ -11,6 +11,7 @@ class MirukutiTeaseSolver(GameSolver):
     BLACK = 'B'
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows = grid.rows_number
         self.cols = grid.columns_number
@@ -32,7 +33,6 @@ class MirukutiTeaseSolver(GameSolver):
         
         self._model = cp_model.CpModel()
         self._constraints_added = False
-        self._last_solver = None
         self._previous_solution = None
 
     def get_solution(self) -> IslandGrid:
@@ -43,11 +43,9 @@ class MirukutiTeaseSolver(GameSolver):
             self._add_constraints()
             self._constraints_added = True
         
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            self._last_solver = solver
             island_matrix = [[Island(Position(r, c), 0) for c in range(self.cols)] for r in range(self.rows)]
             
             for circle in self.circles:
@@ -57,7 +55,7 @@ class MirukutiTeaseSolver(GameSolver):
             island_grid.biscuits = []
             
             for jr, jc, stem_end_idx, bar_end1_idx, bar_end2_idx, cv in self._all_configs:
-                if solver.value(cv):
+                if self._solver.value(cv):
                     stem_end_pos = self.circles[stem_end_idx]['pos']
                     bar_end1_pos = self.circles[bar_end1_idx]['pos']
                     bar_end2_pos = self.circles[bar_end2_idx]['pos']
@@ -265,7 +263,7 @@ class MirukutiTeaseSolver(GameSolver):
         exclusion_elements = []
 
         for jr, jc, stem_end_idx, bar_end1_idx, bar_end2_idx, cv in self._all_configs:
-            val = self._last_solver.value(cv)
+            val = self._solver.value(cv)
             if val:
                 exclusion_elements.append(cv.negated())
             else:

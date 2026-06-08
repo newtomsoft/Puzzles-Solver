@@ -12,6 +12,7 @@ class BorderBlockSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid, dots: Collection[Position]):
+        super().__init__()
         self._input_grid = grid
         self._dots = set(dots)
         self._rows_number = self._input_grid.rows_number
@@ -20,7 +21,6 @@ class BorderBlockSolver(GameSolver):
         self._cell_vars: list[list] = []
         self._rank_vars: list[list] = []
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution: Grid = Grid.empty()
         self._initialized = False
 

@@ -78,6 +78,7 @@ class ThermometersSolver(GameSolver):
     }
 
     def __init__(self, grid: Grid, full_by_column_row):
+        super().__init__()
         self._grid: Grid = grid
         self.full_numbers_by_column_row: dict[str, list[int]] = full_by_column_row
         self.rows_number = self._grid.rows_number
@@ -106,11 +107,10 @@ class ThermometersSolver(GameSolver):
         if self._model is None:
             self._init_solver()
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-            grid_data = [[solver.value(self._matrix_ortools[r][c]) == 1 for c in range(self.columns_number)] for r in range(self.rows_number)]
+            grid_data = [[self._solver.value(self._matrix_ortools[r][c]) == 1 for c in range(self.columns_number)] for r in range(self.rows_number)]
             grid = Grid(grid_data)
             self._previous_solution_grid = grid
             return grid

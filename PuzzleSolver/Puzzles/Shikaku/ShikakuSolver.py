@@ -6,6 +6,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class ShikakuSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -31,13 +32,12 @@ class ShikakuSolver(GameSolver):
                              for r in range(self.rows_number)]
         self._add_constraints()
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        grid = Grid([[solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        grid = Grid([[self._solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         self._previous_solution = grid
         return grid
 
@@ -56,13 +56,12 @@ class ShikakuSolver(GameSolver):
                 literals.append(self._matrix_vars[r][c] != prev_val)
         self._model.add_bool_or(literals)
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = Grid([[self._solver.value(self._matrix_vars[i][j]) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def _add_constraints(self):

@@ -8,11 +8,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class RenkatsuSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._previous_solution: Grid | None = None
         self._compute_numbers_occurs_in_regions()

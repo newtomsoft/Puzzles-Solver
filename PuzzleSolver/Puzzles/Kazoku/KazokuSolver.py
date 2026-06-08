@@ -9,12 +9,12 @@ class KazokuSolver(GameSolver):
     Unknown = '?'
 
     def __init__(self, numbers_grid: Grid, circles_grid: Grid):
+        super().__init__()
         self._numbers_grid = numbers_grid
         self._circles_grid = circles_grid
         self._rows = numbers_grid.rows_number
         self._cols = numbers_grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._region_id = [[self._model.new_int_var(0, len([pos for pos, val in self._numbers_grid if val is not None]) - 1, f"region_{r}_{c}") for c in range(self._cols)] for r in range(self._rows)]
         self._hint_positions = [pos for pos, val in self._numbers_grid if val is not None]
         self._circle_positions = [pos for pos, val in self._circles_grid if val == self.Circle]

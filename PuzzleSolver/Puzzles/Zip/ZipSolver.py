@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class ZipSolver(GameSolver):
     def __init__(self, grid: Grid = None):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -15,7 +16,6 @@ class ZipSolver(GameSolver):
         self._start_position = self._checkpoints[min(self._checkpoints.keys())]
         self._finish_position = self._checkpoints[max(self._checkpoints.keys())]
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
         self._solver_impl = None

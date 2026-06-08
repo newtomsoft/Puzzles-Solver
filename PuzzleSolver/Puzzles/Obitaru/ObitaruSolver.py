@@ -16,11 +16,11 @@ class ObitaruSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution = None
         self._previous_rectangles = []
 
@@ -76,7 +76,7 @@ class ObitaruSolver(GameSolver):
                 val = self._grid[r, c]
                 if val == self.white:
                     white_positions.append((r, c))
-                elif val != self.empty:
+                elif val != self.cell_empty:
                     black_positions.append((r, c))
                     black_numbers[(r, c)] = val
 

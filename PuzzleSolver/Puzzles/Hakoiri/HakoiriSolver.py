@@ -7,12 +7,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class HakoiriSolver(GameSolver):
     def __init__(self, region_grid: Grid[int], value_grid: Grid[int]):
+        super().__init__()
         self._region_grid = region_grid
         self._value_grid = value_grid
         self.rows_number = self._region_grid.rows_number
         self.columns_number = self._region_grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._is_filled: Grid | None = None
         self._previous_solution: Grid | None = None

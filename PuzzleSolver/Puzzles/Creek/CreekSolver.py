@@ -7,13 +7,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class CreekSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self.solution_rows_number = self._grid.rows_number - 1
         self.solution_columns_number = self._grid.columns_number - 1
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 

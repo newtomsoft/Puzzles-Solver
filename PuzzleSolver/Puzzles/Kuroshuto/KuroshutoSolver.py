@@ -5,14 +5,14 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class KuroshutoSolver(GameSolver):
-    EMPTY = None
+    cell_empty = None
     BLACK = '■'
     WHITE = '□'
 
     def __init__(self, values_grid: Grid):
+        super().__init__()
         self._values_grid = values_grid
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = {}
         self._clues = {}
         self.rows_number = values_grid.rows_number

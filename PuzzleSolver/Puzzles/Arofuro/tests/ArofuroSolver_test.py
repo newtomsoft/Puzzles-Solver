@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Arofuro.ArofuroSolver import ArofuroSolver
 
-_ = ArofuroSolver.Empty
+_ = ArofuroSolver.cell_empty
 B = ArofuroSolver.Black
 a = 10
 b = 11

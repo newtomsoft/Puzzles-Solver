@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Meadows.MeadowsSolver import MeadowsSolver
 
-_ = MeadowsSolver.empty
+_ = MeadowsSolver.cell_empty
 
 
 class MeadowsSolverTests(TestCase):

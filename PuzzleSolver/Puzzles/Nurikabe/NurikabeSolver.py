@@ -8,6 +8,7 @@ class NurikabeSolver(GameSolver):
     river = 1
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows = grid.rows_number
         self.cols = grid.columns_number
@@ -22,7 +23,6 @@ class NurikabeSolver(GameSolver):
                     self._seeds.append((r, c, val))
 
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver.parameters.max_time_in_seconds = 30.0
 
         self._is_white = {}

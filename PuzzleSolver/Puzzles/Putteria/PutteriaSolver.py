@@ -10,6 +10,7 @@ class PutteriaSolver(GameSolver):
     cross = -1
 
     def __init__(self, regions_grid: Grid, clues_grid: Grid):
+        super().__init__()
         self._regions_grid = regions_grid
         self._clues_grid = clues_grid
         self.rows_number = self._regions_grid.rows_number
@@ -21,7 +22,6 @@ class PutteriaSolver(GameSolver):
             for pos in cells:
                 self._cell_region[pos] = region_id
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = Grid.empty()
         self._status = None
 
@@ -71,7 +71,7 @@ class PutteriaSolver(GameSolver):
         self._add_no_duplicate_in_column_constraints()
 
     def _add_clue_constraints(self):
-        for position, value in [(position, value) for position, value in self._clues_grid if value != self.empty and value != self.cross]:
+        for position, value in [(position, value) for position, value in self._clues_grid if value != self.cell_empty and value != self.cross]:
             expected_size = self._region_sizes[self._cell_region[position]]
             if value != expected_size:
                 raise ValueError(f"Clue at {position} has value {value}, but region size is {expected_size}")

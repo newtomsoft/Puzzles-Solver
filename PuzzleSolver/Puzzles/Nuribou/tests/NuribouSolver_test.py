@@ -2,7 +2,7 @@ import unittest
 from PuzzleSolver.Puzzles.Nuribou.NuribouSolver import NuribouSolver
 from PuzzleSolver.Board.Grid import Grid
 
-_ = NuribouSolver.EMPTY
+_ = NuribouSolver.cell_empty
 X = NuribouSolver.BLACK
 
 class TestNuribouSolver(unittest.TestCase):

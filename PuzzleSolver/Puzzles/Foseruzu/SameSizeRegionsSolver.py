@@ -8,7 +8,6 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 class SameSizeRegionsSolver(GameSolver):
     REGION_SIZE = 0
     ALL_SHAPES = []
-    cell_blocked = '#'
 
     def __init__(self, grid: Grid, clues: dict[str, list[int]] | None = None):
         super().__init__()
@@ -154,21 +153,17 @@ class SameSizeRegionsSolver(GameSolver):
             self._init_solver()
             self._solver_initialized = True
 
-        while True:
-            status = self._solver.Solve(self._model)
-            if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-                return RegionsGrid.empty()
+        status = self._solver.Solve(self._model)
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            return RegionsGrid.empty()
 
-            r_vals = {(i, j): self._solver.Value(self._right[(i, j)]) for i in range(self._rows) for j in range(self._cols)}
-            b_vals = {(i, j): self._solver.Value(self._bottom[(i, j)]) for i in range(self._rows) for j in range(self._cols)}
-            use_vals = {p: self._solver.Value(self._use[p]) for p in range(len(self._use))}
+        r_vals = {(i, j): self._solver.Value(self._right[(i, j)]) for i in range(self._rows) for j in range(self._cols)}
+        b_vals = {(i, j): self._solver.Value(self._bottom[(i, j)]) for i in range(self._rows) for j in range(self._cols)}
+        use_vals = {p: self._solver.Value(self._use[p]) for p in range(len(self._use))}
 
-            if self._is_valid_partition(r_vals, b_vals):
-                solution = self._build_region_grid(r_vals, b_vals)
-                self._previous_solution = (r_vals, b_vals, use_vals, solution)
-                return solution
-
-            self._add_blocking_constraint_use(use_vals)
+        solution = self._build_region_grid(r_vals, b_vals)
+        self._previous_solution = (r_vals, b_vals, use_vals, solution)
+        return solution
 
     def _build_region_grid(self, r: dict, b: dict) -> RegionsGrid:
         region_matrix = [[-1 for _ in range(self._cols)] for _ in range(self._rows)]
@@ -196,32 +191,6 @@ class SameSizeRegionsSolver(GameSolver):
             region_matrix[i][j] = region_id
             region_id += 1
         return RegionsGrid(region_matrix)
-
-    def _is_valid_partition(self, r: dict, b: dict) -> bool:
-        visited = set(self._blocked)
-        for i in range(self._rows):
-            for j in range(self._cols):
-                if (i, j) in visited:
-                    continue
-                stack = [(i, j)]
-                component = []
-                while stack:
-                    ci, cj = stack.pop()
-                    if (ci, cj) in visited:
-                        continue
-                    visited.add((ci, cj))
-                    component.append((ci, cj))
-                    if cj + 1 < self._cols and r[(ci, cj)] == 0 and (ci, cj + 1) not in visited:
-                        stack.append((ci, cj + 1))
-                    if cj - 1 >= 0 and r[(ci, cj - 1)] == 0 and (ci, cj - 1) not in visited:
-                        stack.append((ci, cj - 1))
-                    if ci + 1 < self._rows and b[(ci, cj)] == 0 and (ci + 1, cj) not in visited:
-                        stack.append((ci + 1, cj))
-                    if ci - 1 >= 0 and b[(ci - 1, cj)] == 0 and (ci - 1, cj) not in visited:
-                        stack.append((ci - 1, cj))
-                if len(component) != self.REGION_SIZE:
-                    return False
-        return True
 
     def _add_blocking_constraint_use(self, use_vals: dict[int, int]):
         literals = [self._use[p] if val == 0 else self._use[p].Not() for p, val in use_vals.items()]

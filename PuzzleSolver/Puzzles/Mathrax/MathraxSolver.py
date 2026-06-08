@@ -4,6 +4,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class MathraxSolver(GameSolver):
     def __init__(self, grid: Grid, constraints: list[dict[str, int | tuple[int, int]]]):
+        super().__init__()
         self.grid = grid
         self.size = grid.rows_number
         self.constraints = constraints # list of dict: {'pos': (r, c), 'op': '+', 'val': 10} or {'op': 'E'} etc.
@@ -62,10 +63,9 @@ class MathraxSolver(GameSolver):
                     self._model.add_modulo_equality(1, cell, 2)
 
     def get_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            matrix = [[solver.value(self._vars[r][c]) for c in range(self.size)] for r in range(self.size)]
+            matrix = [[self._solver.value(self._vars[r][c]) for c in range(self.size)] for r in range(self.size)]
             self._last_solution_matrix = matrix
             return Grid(matrix)
         return Grid.empty()
@@ -86,9 +86,8 @@ class MathraxSolver(GameSolver):
         
         self._model.add(sum(literals) >= 1)
         
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            matrix = [[solver.value(self._vars[r][c]) for c in range(self.size)] for r in range(self.size)]
+            matrix = [[self._solver.value(self._vars[r][c]) for c in range(self.size)] for r in range(self.size)]
             return Grid(matrix)
         return Grid.empty()

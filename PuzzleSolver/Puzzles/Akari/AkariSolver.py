@@ -10,6 +10,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class AkariSolver(GameSolver):
     def __init__(self, data_game: dict[str, Any]):
+        super().__init__()
         self._data_game = data_game
         self.rows_number = self._data_game['rows_number']
         self.columns_number = self._data_game['columns_number']
@@ -25,7 +26,6 @@ class AkariSolver(GameSolver):
             else:
                 self._number_constraints[Position(k[0], k[1])] = v
 
-        self._solver = cp_model.CpSolver()
         self._model = None
         self._bulbs_vars = None
         self._status = None

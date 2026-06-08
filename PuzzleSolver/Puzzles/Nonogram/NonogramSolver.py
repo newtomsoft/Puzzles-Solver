@@ -1,4 +1,4 @@
-from ortools.sat.python.cp_model import CpModel, CpSolver, OPTIMAL, FEASIBLE
+from ortools.sat.python.cp_model import CpModel, OPTIMAL, FEASIBLE
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
@@ -17,8 +17,8 @@ class NonogramSolver(GameSolver):
         if any([len(numbers) == 0 for numbers in self._numbers_top]):
             raise ValueError("Missing number for column")
 
+        super().__init__()
         self._model = CpModel()
-        self._solver = CpSolver()
         self._grid_ortools: list[list] = []
         self._previous_solution: Grid | None = None
 

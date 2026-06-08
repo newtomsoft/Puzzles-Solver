@@ -9,12 +9,12 @@ class GradesSolver(GameSolver):
     no_value = None
 
     def __init__(self, grid: Grid, clues: dict[str, list[int]]):
+        super().__init__()
         self._grid = grid
         self._clues: dict[str, list[int]] = clues
         self.rows_number = len(clues['left'])
         self.columns_number = len(clues['top'])
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution_grid = None
         self._solver_initialized = False

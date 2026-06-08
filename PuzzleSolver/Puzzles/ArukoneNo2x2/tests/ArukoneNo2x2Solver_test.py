@@ -4,7 +4,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from PuzzleSolver.Puzzles.ArukoneNo2x2.ArukoneNo2x2Solver import ArukoneNo2x2Solver
 
-_ = ArukoneNo2x2Solver.empty
+_ = ArukoneNo2x2Solver.cell_empty
 
 
 class ArukoneNo2x2SolverTests(TestCase):

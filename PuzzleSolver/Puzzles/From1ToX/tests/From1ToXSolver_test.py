@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
 
-_ = From1ToXSolver.empty
+_ = From1ToXSolver.cell_empty
 
 
 class From1ToXSolverTests(TestCase):

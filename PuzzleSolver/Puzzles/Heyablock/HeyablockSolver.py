@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class HeyablockSolver(GameSolver):
     def __init__(self, grid: Grid, region_grid: Grid):
+        super().__init__()
         self._grid = grid
         self._region_grid = region_grid
         self._rows = grid.rows_number
@@ -15,7 +16,6 @@ class HeyablockSolver(GameSolver):
         if len(self._regions) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._region_number_map = self._build_region_number_map()
-        self._solver = cp_model.CpSolver()
         self._model = None
         self._grid_vars = None
         self._previous_solution = None

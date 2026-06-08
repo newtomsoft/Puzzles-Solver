@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Minesweeper.MinesweeperSolver import MinesweeperSolver
 
-_ = MinesweeperSolver.empty
+_ = MinesweeperSolver.cell_empty
 
 
 class MinesweeperSolverTests(TestCase):

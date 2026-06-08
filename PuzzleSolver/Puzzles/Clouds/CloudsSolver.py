@@ -7,12 +7,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class CloudsSolver(GameSolver):
     def __init__(self, rows_counts: list[int], columns_counts: list[int]):
+        super().__init__()
         self._rows_counts = rows_counts
         self._columns_counts = columns_counts
         self._rows_number = len(rows_counts)
         self._columns_number = len(columns_counts)
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver_initialized = False
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None

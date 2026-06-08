@@ -15,11 +15,11 @@ class YajikabeSolver(GameSolver):
     }
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self.rows_number = grid.rows_number
         self.columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 

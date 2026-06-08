@@ -9,11 +9,11 @@ class SlantSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, clues_grid: Grid):
+        super().__init__()
         self._clues_grid = clues_grid
         self._rows_number = clues_grid.rows_number - 1
         self._columns_number = clues_grid.columns_number - 1
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = SlantGrid.empty()
         self._previous_solution = SlantGrid.empty()
 
@@ -67,7 +67,7 @@ class SlantSolver(GameSolver):
         self._add_not_minimal_loop_constraint()
 
     def _add_clues_constraints(self):
-        for position, clue in [(position, clue) for position, clue in self._clues_grid if clue != self.empty]:
+        for position, clue in [(position, clue) for position, clue in self._clues_grid if clue != self.cell_empty]:
             connections = []
             if (up_left := position.up_left) in self._grid_vars:
                 connections.append(self._grid_vars[up_left])

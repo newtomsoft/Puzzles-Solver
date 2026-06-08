@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.Island import Island
 from PuzzleSolver.Puzzles.Kanjo.KanjoSolver import KanjoSolver
 
-_ = KanjoSolver.empty
+_ = KanjoSolver.cell_empty
 
 
 class KanjoSolverTest(TestCase):

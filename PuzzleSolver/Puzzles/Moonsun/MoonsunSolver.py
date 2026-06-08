@@ -16,13 +16,13 @@ class MoonsunSolver(GameSolver):
     no_circle = None
 
     def __init__(self, circle_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._circle_grid = circle_grid
         self._regions_grid = regions_grid
         self._regions = regions_grid.get_regions()
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._model = CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges_z3: dict[Position, dict[Direction, IntVar]] = {}
         self._previous_solution: IslandGrid | None = None
         self._solver_initialized = False

@@ -11,6 +11,7 @@ class MirukutiSolver(GameSolver):
     COOKIE = 'B'
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self.rows = grid.rows_number
         self.cols = grid.columns_number
@@ -44,12 +45,10 @@ class MirukutiSolver(GameSolver):
             self._add_constraints()
             self._constraints_added = True
         
-        solver = cp_model.CpSolver()
-        # solver.parameters.log_search_progress = True
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            self._last_solver = solver
+            self._last_solver = self._solver
             # Create a matrix of Islands
             island_matrix = [[Island(Position(r, c), 0) for c in range(self.cols)] for r in range(self.rows)]
             
@@ -63,8 +62,8 @@ class MirukutiSolver(GameSolver):
             island_grid.biscuits = []
             
             for b_idx, biscuit_pos in enumerate(self.biscuits):
-                j_r = solver.value(self._j_r[b_idx])
-                j_c = solver.value(self._j_c[b_idx])
+                j_r = self._solver.value(self._j_r[b_idx])
+                j_c = self._solver.value(self._j_c[b_idx])
                 junction_pos = Position(j_r, j_c)
                 
                 biscuit_info = {
@@ -91,7 +90,7 @@ class MirukutiSolver(GameSolver):
                 # Find which Milk corresponds to which end
                 for e in [0, 1]:
                     for m_idx, m_pos in enumerate(self.milks):
-                        if solver.value(self._milk_assigned[m_idx][b_idx][e]):
+                        if self._solver.value(self._milk_assigned[m_idx][b_idx][e]):
                             biscuit_info['milks'].append(m_pos)
                             curr = m_pos
                             d_bar = m_pos.direction_to(junction_pos)

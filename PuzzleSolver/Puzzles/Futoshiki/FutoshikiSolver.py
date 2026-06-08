@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class FutoshikiSolver(GameSolver):
     def __init__(self, grid: Grid, higher_positions: list[tuple[Position, Position]]):
+        super().__init__()
         self._grid = grid
         self._higher_positions = higher_positions
         self.rows_number = self._grid.rows_number
@@ -18,7 +19,6 @@ class FutoshikiSolver(GameSolver):
         self._model = None
         self._grid_vars = None
         self._previous_solution_grid: Grid | None = None
-        self._solver = None
 
     def _init_solver(self):
         self._model = cp_model.CpModel()
@@ -32,7 +32,6 @@ class FutoshikiSolver(GameSolver):
         if self._model is None:
             self._init_solver()
 
-        self._solver = cp_model.CpSolver()
         status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:

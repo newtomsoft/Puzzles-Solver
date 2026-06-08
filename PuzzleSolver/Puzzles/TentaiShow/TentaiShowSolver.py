@@ -9,12 +9,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class TentaiShowSolver(GameSolver):
     def __init__(self, grid_size: Tuple[int, int], circles_positions: Dict[int, Position]):
+        super().__init__()
         self._grid = Grid([[0 for _ in range(grid_size[1])] for _ in range(grid_size[0])])
         self.circle_positions = circles_positions
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._previous_solution = None
 

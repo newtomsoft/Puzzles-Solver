@@ -13,12 +13,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 class MitiSolver(GameSolver):
 
     def __init__(self, dots_positions: Collection[Position], size: int):
+        super().__init__()
         self._dots_positions = dots_positions
         self._rows_number = size
         self._columns_number = size
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: IslandGrid
         self._solver_initialized = False

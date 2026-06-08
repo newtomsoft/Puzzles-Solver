@@ -4,7 +4,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.Araf.ArafSolver import ArafSolver
 
-_ = ArafSolver.empty
+_ = ArafSolver.cell_empty
 
 
 class ArafSolverTests(unittest.TestCase):

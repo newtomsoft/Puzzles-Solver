@@ -6,12 +6,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class RabbitsAndTreesSolver(GameSolver):
-    EMPTY = None
+    cell_empty = None
     RABBIT = 1
     TREE = 2
     NOTHING = 0
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
@@ -48,7 +49,7 @@ class RabbitsAndTreesSolver(GameSolver):
 
         # Visibility constraints
         for pos, value in self._grid:
-            if value is not self.EMPTY:
+            if value is not self.cell_empty:
                 # Numbers mean rabbits can't be in the cell itself?
                 # "The viewing cell itself is not counted."
                 # Usually numbers are clues in empty cells or specific cells.
@@ -101,13 +102,12 @@ class RabbitsAndTreesSolver(GameSolver):
         if self._grid_vars is None:
             self._init_model()
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
 
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
+        solution = Grid([[self._solver.value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
         self._previous_solution = solution
         return solution
 
@@ -131,11 +131,10 @@ class RabbitsAndTreesSolver(GameSolver):
 
         self._model.add_bool_or(diff_bools)
 
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         self._previous_solution = solution
         return solution

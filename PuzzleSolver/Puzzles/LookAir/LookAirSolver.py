@@ -9,6 +9,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 class LookAirSolver(GameSolver):
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
@@ -65,13 +66,12 @@ class LookAirSolver(GameSolver):
         return solution
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        solver.parameters.use_sat_inprocessing = True
-        status = solver.solve(self._model)
+        self._solver.parameters.use_sat_inprocessing = True
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
+        self._previous_solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self._columns_number)] for i in range(self._rows_number)])
         return self._previous_solution
 
     def _add_constraints(self):

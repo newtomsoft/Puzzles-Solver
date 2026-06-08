@@ -6,11 +6,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class TrilogySolver(GameSolver):
     def __init__(self, grid: Grid[int]):
+        super().__init__()
         self._grid = grid
         self._rows_number = self._grid.rows_number
         self._columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_z3: Grid | None = None
         self._previous_solution: Grid | None = None
 

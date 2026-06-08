@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Puzzles.RabbitsAndTrees.RabbitsAndTreesSolver import RabbitsAndTreesSolver
 
-_ = RabbitsAndTreesSolver.EMPTY
+_ = RabbitsAndTreesSolver.cell_empty
 
 class RabbitsAndTreesSolverTests(TestCase):
     def test_small_grid(self):

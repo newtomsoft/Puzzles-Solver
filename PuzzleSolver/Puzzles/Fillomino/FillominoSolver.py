@@ -6,12 +6,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class FillominoSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self.grid = grid
         self.rows = self.grid.rows_number
         self.cols = self.grid.columns_number
         self.max_val = self.rows * self.cols
         self.model = cp_model.CpModel()
-        self.solver = cp_model.CpSolver()
         self.cell_vars = Grid.empty()
         self._init_solver()
         self._previous_solution = Grid.empty()
@@ -24,9 +24,9 @@ class FillominoSolver(GameSolver):
 
     def get_solution(self) -> Grid:
         iteration = 0
-        while self.solver.solve(self.model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self._solver.solve(self.model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             iteration += 1
-            current_solution = Grid([[self.solver.value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
+            current_solution = Grid([[self._solver.value(self.cell_vars[(r, c)]) for c in range(self.cols)] for r in range(self.rows)])
             if self._validate_and_add_constraints(current_solution, iteration):
                 self._previous_solution = current_solution
                 return current_solution

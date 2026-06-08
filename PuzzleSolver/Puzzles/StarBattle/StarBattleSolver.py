@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class StarBattleSolver(GameSolver):
     def __init__(self, grid: Grid, stars_count_by_region_column_row: int):
+        super().__init__()
         self._grid = grid
         self._stars_count_by_region_column_row = stars_count_by_region_column_row
         self.rows_number = self._grid.rows_number
@@ -21,7 +22,6 @@ class StarBattleSolver(GameSolver):
         if self._stars_count_by_region_column_row < 1:
             raise ValueError("The stars count by region/column/row must be at least 1")
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 

@@ -10,11 +10,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class PurenrupuSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self.input_grid = grid
         self._solution_island_grid: IslandGrid | None = None
         self._init_solution_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver_initialized = False
         self._island_bridges_z3 = {}
         self._previous_solution: IslandGrid | None = None

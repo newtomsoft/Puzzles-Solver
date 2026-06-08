@@ -15,13 +15,13 @@ class BalanceLoopSolver(GameSolver):
     black = 'b'
 
     def __init__(self, clues_grid: Grid):
+        super().__init__()
         self._clues_grid = clues_grid
         self._rows = clues_grid.rows_number
         self._cols = clues_grid.columns_number
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges_vars: dict[Position, dict[Direction, BoolVarT]] = {}
         self._is_used_vars: dict[Position, BoolVarT] = {}
         self._previous_solution: IslandGrid | None = None
@@ -104,7 +104,7 @@ class BalanceLoopSolver(GameSolver):
     def _add_bridges_sum_constraints(self):
         for position, value in self._clues_grid:
             bridge_vars = [self._island_bridges_vars[position][direction] for direction in Direction.orthogonal_directions()]
-            if value != self.empty:
+            if value != self.cell_empty:
                 self._model.add(sum(bridge_vars) == 2)
                 continue
 
@@ -125,7 +125,7 @@ class BalanceLoopSolver(GameSolver):
                 pos = Position(r, c)
                 val = self._clues_grid[pos]
                 bridge_vars = [self._island_bridges_vars[pos][d] for d in directions]
-                if val != self.empty:
+                if val != self.cell_empty:
                     self._model.add(in_cycle_vars[r][c] == 1)
                 else:
                     is_used = self._is_used_vars.get(pos)
@@ -163,7 +163,7 @@ class BalanceLoopSolver(GameSolver):
         self._model.add(sum(is_root_vars) == 1)
 
     def _add_dots_constraints(self):
-        for position, cell_value in [(position, value) for position, value in self._clues_grid if value != self.empty]:
+        for position, cell_value in [(position, value) for position, value in self._clues_grid if value != self.cell_empty]:
             color, segments_count = self._convert_cell_value_to_color_and_segments_count(cell_value)
             match segments_count:
                 case 0:

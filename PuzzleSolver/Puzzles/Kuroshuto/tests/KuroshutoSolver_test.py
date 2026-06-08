@@ -2,7 +2,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Kuroshuto.KuroshutoSolver import KuroshutoSolver
 
-_ = KuroshutoSolver.EMPTY
+_ = KuroshutoSolver.cell_empty
 B = KuroshutoSolver.BLACK
 W = KuroshutoSolver.WHITE
 

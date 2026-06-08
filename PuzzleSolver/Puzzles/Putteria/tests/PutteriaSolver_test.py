@@ -3,7 +3,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Putteria.PutteriaSolver import PutteriaSolver
 
-_ = PutteriaSolver.empty
+_ = PutteriaSolver.cell_empty
 x = PutteriaSolver.cross
 A = 10
 B = 11

@@ -10,10 +10,10 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class GrandTourSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._init_island_grid()
         self._model = cp_model.CpModel()
-        self._cp_solver = cp_model.CpSolver()
         self._previous_solution: IslandGrid | None = None
         self._solver_initialized = False
 
@@ -39,13 +39,13 @@ class GrandTourSolver(GameSolver):
 
     def _ensure_all_islands_connected(self) -> tuple[IslandGrid, int]:
         proposition_count = 0
-        while self._cp_solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        while self._solver.Solve(self._model) in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             proposition_count += 1
             for position, direction_bridges in self._island_bridges_z3.items():
                 for direction, bridges in direction_bridges.items():
                     if position.after(direction) not in self._island_bridges_z3:
                         continue
-                    bridges_number = self._cp_solver.Value(bridges)
+                    bridges_number = self._solver.Value(bridges)
                     if bridges_number > 0:
                         self._island_grid[position].set_bridge_to_position(
                             self._island_grid[position].direction_position_bridges[direction][0], bridges_number)
@@ -85,13 +85,6 @@ class GrandTourSolver(GameSolver):
 
         self._init_island_grid()
         return self.get_solution()
-
-    def get_stats(self) -> dict:
-        return {
-            "num_conflicts": self._cp_solver.NumConflicts(),
-            "num_branches": self._cp_solver.NumBranches(),
-            "wall_time": self._cp_solver.WallTime(),
-        }
 
     def _add_constraints(self):
         self._add_all_cells_crossed_constraints()

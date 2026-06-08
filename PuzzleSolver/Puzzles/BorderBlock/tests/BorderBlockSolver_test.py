@@ -6,7 +6,7 @@ from PuzzleSolver.Puzzles.BorderBlock.BorderBlockSolver import BorderBlockSolver
 from PuzzleSolver.Puzzles.utils import positions
 
 # region constant
-_ = BorderBlockSolver.empty
+_ = BorderBlockSolver.cell_empty
 A = 10
 B = 11
 C = 12

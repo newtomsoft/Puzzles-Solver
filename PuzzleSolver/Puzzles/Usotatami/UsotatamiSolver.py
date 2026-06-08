@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class UsotatamiSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._initial_grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
@@ -59,10 +60,9 @@ class UsotatamiSolver(GameSolver):
         self._add_constraints()
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-            solution = Grid([[solver.value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
+            solution = Grid([[self._solver.value(self._grid_vars.value(r, c)) for c in range(self._columns_number)] for r in range(self._rows_number)])
             return solution
         return Grid.empty()
 

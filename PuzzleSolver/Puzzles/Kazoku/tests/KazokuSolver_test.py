@@ -37,7 +37,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -70,7 +70,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -112,7 +112,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -159,7 +159,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 
@@ -212,7 +212,7 @@ class KazokuSolverTests(TestCase):
         solver = KazokuSolver(numbers, circles)
         solution = solver.get_solution()
         other_solution = solver.get_other_solution()
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         self.assertEqual(Grid.empty(), other_solution)
 

@@ -3,7 +3,7 @@
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Hidoku.HidokuSolver import HidokuSolver
 
-_ = HidokuSolver.empty
+_ = HidokuSolver.cell_empty
 
 
 class HidokuSolverTest(TestCase):

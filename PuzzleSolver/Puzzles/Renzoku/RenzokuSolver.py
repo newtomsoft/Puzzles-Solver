@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class RenzokuSolver(GameSolver):
     def __init__(self, grid: Grid, consecutive_positions: list[tuple[Position, Position]]):
+        super().__init__()
         self._grid: Grid = grid
         self._consecutive_positions: list[tuple[Position, Position]] = consecutive_positions
         self.rows_number = self._grid.rows_number
@@ -16,7 +17,6 @@ class RenzokuSolver(GameSolver):
         if self.rows_number < 4:
             raise ValueError("The grid must be at least 4x4")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution_grid: Grid | None = None
 

@@ -5,6 +5,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class HiroimonoSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._stones = []
         for r in range(grid.rows_number):
@@ -106,9 +107,8 @@ class HiroimonoSolver(GameSolver):
                 for k in intermediate:
                     model.add(order[k] < i).only_enforce_if(move_i)
 
-        solver = cp_model.CpSolver()
-        if solver.solve(model) in (cp_model.FEASIBLE, cp_model.OPTIMAL):
-            return [solver.value(next_stone[i]) for i in range(n)]
+        if self._solver.solve(model) in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            return [self._solver.value(next_stone[i]) for i in range(n)]
         return []
 
     def debug_graph(self):

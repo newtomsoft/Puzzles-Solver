@@ -1,13 +1,11 @@
 import unittest
 from unittest import TestCase
 
-from pygments.formatters import other
-
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.Knossos.KnossosSolver import KnossosSolver
 
-_ = KnossosSolver.empty
+_ = KnossosSolver.cell_empty
 
 
 class KnossosSolverTests(TestCase):

@@ -11,11 +11,11 @@ from PuzzleSolver.Board.PipeShapeTransition import PipeShapeTransition
 
 class PipesSolver(GameSolver):
     def __init__(self, grid: GridBase[Pipe]):
+        super().__init__()
         self._input_grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: GridBase | None = None
         self._previous_solution: GridBase[Pipe] | None = None
 

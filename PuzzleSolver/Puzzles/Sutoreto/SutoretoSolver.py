@@ -5,6 +5,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class SutoretoSolver(GameSolver):
     def __init__(self, numbers_grid: Grid[int], blacks_grid: Grid[bool]):
+        super().__init__()
         self._numbers_grid = numbers_grid
         self._blacks_grid = blacks_grid
         self._rows_number = self._numbers_grid.rows_number
@@ -30,10 +31,9 @@ class SutoretoSolver(GameSolver):
         return self._solve()
 
     def _solve(self) -> tuple[Grid, Grid]:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            matrix = [[solver.value(self._vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)]
+            matrix = [[self._solver.value(self._vars[r][c]) for c in range(self._columns_number)] for r in range(self._rows_number)]
             self._last_solution_matrix = matrix
             blank_grid = Grid([[False for c in range(self._columns_number)] for r in range(self._rows_number)])
             for r in range(self._rows_number):

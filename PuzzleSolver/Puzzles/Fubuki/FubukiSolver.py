@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class FubukiSolver(GameSolver):
     def __init__(self, grid: Grid, row_sums:list[int], column_sums:list[int]):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -22,7 +23,6 @@ class FubukiSolver(GameSolver):
             raise ValueError("initial numbers must be between 1 and 9")
         self._grid_z3 = None
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._previous_solution: Grid | None = None
         self._counter = 0
 

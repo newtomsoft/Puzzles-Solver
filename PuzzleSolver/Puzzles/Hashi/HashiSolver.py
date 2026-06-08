@@ -12,11 +12,11 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class HashiSolver(GameSolver):
     def __init__(self, grid: Grid):
+        super().__init__()
         self._input_grid = grid
         self._island_grid: IslandGrid | None = None
         self.init_island_grid()
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._island_bridges: Dict[Position, Dict[Direction, any]] = {}
         self._previous_solution: IslandGrid | None = None
 

@@ -2,7 +2,7 @@
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Island.IslandSolver import IslandSolver
 
-_ = IslandSolver.empty
+_ = IslandSolver.cell_empty
 c = IslandSolver.clue
 x = IslandSolver.sea
 o = IslandSolver.land

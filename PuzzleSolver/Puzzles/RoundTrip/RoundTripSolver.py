@@ -12,12 +12,12 @@ class RoundTripSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, grid: Grid, clues: dict[Direction, list[int]]):
+        super().__init__()
         self.input_grid = grid
         self._rows_number, self._columns_number = grid.rows_number, grid.columns_number
         self._clues = clues
         self._island_grid: IslandGrid | None = None
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: dict[Position, dict[Direction, cp_model.BoolVar]] | None = None
         self._previous_solution: IslandGrid | None = None
         self._initialized = False
@@ -164,7 +164,7 @@ class RoundTripSolver(GameSolver):
         for direction, range_line, positions_func in directions__range_line__positions_func:
             for i in range_line:
                 positions = positions_func(i)
-                if (clue_size := self._clues[direction][i]) == self.empty:
+                if (clue_size := self._clues[direction][i]) == self.cell_empty:
                     continue
                 self._add_clue_segment_length_constraint(direction, clue_size, positions)
 

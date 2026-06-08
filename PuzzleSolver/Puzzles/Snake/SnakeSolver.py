@@ -6,13 +6,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class SnakeSolver(GameSolver):
     def __init__(self, grid: Grid, row_sums: list[int], column_sums: list[int]):
+        super().__init__()
         self._grid = grid
         self._row_sums = row_sums
         self._column_sums = column_sums
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 

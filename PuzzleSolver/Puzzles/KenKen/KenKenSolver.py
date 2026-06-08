@@ -9,6 +9,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class KenKenSolver(GameSolver):
     def __init__(self, regions_operators_results: list):
+        super().__init__()
         self._regions_operators_results = regions_operators_results
         self.rows_number, self.columns_number = self._get_rows_columns_number()
         if self.rows_number != self.columns_number:
@@ -23,12 +24,11 @@ class KenKenSolver(GameSolver):
         return self._compute_solution()
 
     def _compute_solution(self) -> Grid:
-        solver = cp_model.CpSolver()
-        status = solver.solve(self._model)
+        status = self._solver.solve(self._model)
         if status not in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             return Grid.empty()
 
-        self._previous_solution = Grid([[solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
+        self._previous_solution = Grid([[self._solver.value(self._grid_vars.value(i, j)) for j in range(self.columns_number)] for i in range(self.rows_number)])
         return self._previous_solution
 
     def get_other_solution(self):

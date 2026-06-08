@@ -10,6 +10,7 @@ class KakurasuSolver(GameSolver):
     cell_empty = None
 
     def __init__(self, data_or_grid: Union[Grid, dict[str, List[int]]]):
+        super().__init__()
         if isinstance(data_or_grid, Grid):
             self._grid = data_or_grid
             self.rows_number = self._grid.rows_number
@@ -32,7 +33,6 @@ class KakurasuSolver(GameSolver):
             raise ValueError("The grid must be square")
 
         self._model = None
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._status = None
 
@@ -84,11 +84,11 @@ class KakurasuSolver(GameSolver):
     def _add_rows_constraints(self):
         for r in range(self.rows_number):
             target = self._rows_targets[r]
-            if target != self.empty:
+            if target != self.cell_empty:
                 self._model.add(sum([(c + 1) * self._grid_vars[r][c] for c in range(self.columns_number)]) == target)
 
     def _add_columns_constraints(self):
         for c in range(self.columns_number):
             target = self._columns_targets[c]
-            if target != self.empty:
+            if target != self.cell_empty:
                 self._model.add(sum([(r + 1) * self._grid_vars[r][c] for r in range(self.rows_number)]) == target)

@@ -8,6 +8,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class StitchesSolver(GameSolver):
     def __init__(self, grid: Grid, dots_by_column_row: dict[str, list[int]], regions_connections_count: int):
+        super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
@@ -26,7 +27,6 @@ class StitchesSolver(GameSolver):
         if len(self._dots_by_column) != self.columns_number or len(self._dots_by_row) != self.rows_number:
             raise ValueError("The dots count must have the same size as the columns")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_connexion_var: Grid | None = None
         self._previous_solution_grid: Grid | None = None
 

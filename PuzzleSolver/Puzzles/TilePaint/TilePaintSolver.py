@@ -7,6 +7,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class TilePaintSolver(GameSolver):
     def __init__(self, grid: Grid, row_sums: list[int], column_sums: list[int]):
+        super().__init__()
         self._grid = grid
         self.row_sums = row_sums
         self._column_sums = column_sums
@@ -20,7 +21,6 @@ class TilePaintSolver(GameSolver):
         if len(self._tiles) < 2:
             raise ValueError("The grid must have at least 2 regions")
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars = None
         self._previous_solution = None
 

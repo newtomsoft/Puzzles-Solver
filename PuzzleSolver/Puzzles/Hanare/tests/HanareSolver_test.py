@@ -4,7 +4,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.Hanare.HanareSolver import HanareSolver
 
-_ = HanareSolver.empty
+_ = HanareSolver.cell_empty
 
 
 class HanareSolverTests(unittest.TestCase):

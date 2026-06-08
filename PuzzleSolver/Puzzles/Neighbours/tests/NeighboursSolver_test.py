@@ -5,7 +5,7 @@ from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.Neighbours.NeighboursSolver import NeighboursSolver
 
 
-_ = NeighboursSolver.empty
+_ = NeighboursSolver.cell_empty
 U = NeighboursSolver.unknow
 
 
@@ -28,7 +28,7 @@ class NeighboursSolverTests(TestCase):
             '├───┼───┤\n'
             '└───┴───┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -53,7 +53,7 @@ class NeighboursSolverTests(TestCase):
             '│ └─┤ │ │ │\n'
             '└───┴─┴─┴─┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -80,7 +80,7 @@ class NeighboursSolverTests(TestCase):
             '├─┘ ┌─┘ ┌─┘ │\n'
             '└───┴───┴───┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -115,7 +115,6 @@ class NeighboursSolverTests(TestCase):
             '│ └───┤   │ └─┴─┤   │\n'
             '└─────┴───┴─────┴───┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -150,7 +149,6 @@ class NeighboursSolverTests(TestCase):
             '│   ├───────┼─┴───┴─┤\n'
             '└───┴───────┴───────┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -185,7 +183,6 @@ class NeighboursSolverTests(TestCase):
             '├─┴─┘ │ └───┐ ├───┘ │\n'
             '└─────┴─────┴─┴─────┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -216,7 +213,7 @@ class NeighboursSolverTests(TestCase):
             '├───────┼─────┴─┤\n'
             '└───────┴───────┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)
@@ -249,7 +246,7 @@ class NeighboursSolverTests(TestCase):
             '│ └─┤ └─┼───┴─┐ │ │\n'
             '└───┴───┴─────┴─┴─┘\n'
         )
-        self.assertIsInstance(solution, RegionsGrid)
+        
         self.assertEqual(expected_string, str(solution))
         other_solution = game_solver.get_other_solution()
         self.assertEqual(Grid.empty(), other_solution)

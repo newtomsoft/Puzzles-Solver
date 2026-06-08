@@ -4,7 +4,7 @@ from unittest import TestCase
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Mintonette.MintonetteSolver_or_tools import MintonetteSolver
 
-_ = MintonetteSolver.Empty
+_ = MintonetteSolver.cell_empty
 o = MintonetteSolver.Unknown
 
 

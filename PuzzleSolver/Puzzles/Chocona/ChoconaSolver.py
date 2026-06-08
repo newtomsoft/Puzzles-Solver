@@ -7,12 +7,12 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class ChoconaSolver(GameSolver):
     def __init__(self, grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._numbers_grid = grid
         self._regions = regions_grid.get_regions()
         self._rows_number = self._numbers_grid.rows_number
         self._columns_number = self._numbers_grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._solver_initialized = False
         self._previous_solution: Grid = Grid.empty()
 

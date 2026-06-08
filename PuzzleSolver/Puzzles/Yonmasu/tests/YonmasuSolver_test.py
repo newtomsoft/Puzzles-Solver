@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.Yonmasu.YonmasuSolver import YonmasuSolver
 
-_ = YonmasuSolver.empty
+_ = YonmasuSolver.cell_empty
 X = YonmasuSolver.forbidden
 o = YonmasuSolver.circle
 

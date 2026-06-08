@@ -46,15 +46,15 @@ class NeighboursSolver(GameSolver):
     }
 
     def __init__(self, clues_clues_grid: Grid):
+        super().__init__()
         self._clues_grid = clues_clues_grid
         self._rows_number = clues_clues_grid.rows_number
         self._columns_number = clues_clues_grid.columns_number
         self._model = cp_model.CpModel()
         self._grid_ortools: Grid | None = None
-        self._clue_by_position = dict([(position, value) for position, value in self._clues_grid if value != NeighboursSolver.empty])
+        self._clue_by_position = dict([(position, value) for position, value in self._clues_grid if value != NeighboursSolver.cell_empty])
         self._clue_position_by_region_id = {index + 1: position for index, position in enumerate(self._clue_by_position.keys())}
         self._regions_count = len(self._clue_by_position)
-        self._solver = cp_model.CpSolver()
 
     def get_solution(self) -> RegionsGrid:
         self._grid_ortools = Grid([[self._model.new_int_var(1, self._regions_count, f"grid_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])

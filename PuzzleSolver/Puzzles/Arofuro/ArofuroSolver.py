@@ -8,7 +8,7 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class ArofuroSolver(GameSolver):
-    Empty = None
+    cell_empty = None
     Black = 'B'
     up = 1
     down = 2
@@ -16,6 +16,7 @@ class ArofuroSolver(GameSolver):
     left = 4
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows_number = grid.rows_number
         self._columns_number = grid.columns_number
@@ -24,7 +25,6 @@ class ArofuroSolver(GameSolver):
         self._region_id_vars = Grid.empty()
         self._rank_vars = Grid.empty()
         self._previous_solution = Grid.empty()
-        self._solver: CpSolver | None = None
 
     def _init_solver(self):
         self._grid_vars = Grid([[self._model.new_int_var(0, 4, f"cell_{r}_{c}") for c in range(self._columns_number)] for r in range(self._rows_number)])
@@ -35,7 +35,7 @@ class ArofuroSolver(GameSolver):
 
         self.value_by_region_id = {}
         self._region_id_by_position = {}
-        for index, (position, val) in enumerate([(position, val) for position, val in self._grid if val not in {self.Black, self.Empty}]):
+        for index, (position, val) in enumerate([(position, val) for position, val in self._grid if val not in {self.Black, self.cell_empty}]):
             self.value_by_region_id[index] = val
             self._region_id_by_position[position] = index
 
@@ -64,7 +64,6 @@ class ArofuroSolver(GameSolver):
     def get_solution(self) -> Grid:
         self._init_solver()
 
-        self._solver = cp_model.CpSolver()
         status = self._solver.solve(self._model)
 
         if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
@@ -99,7 +98,7 @@ class ArofuroSolver(GameSolver):
 
     def _add_input_constraints(self):
         for position, val in self._grid:
-            if val == self.Empty:
+            if val == self.cell_empty:
                 self._add_input_empty_constraint(position)
                 continue
 
@@ -124,7 +123,7 @@ class ArofuroSolver(GameSolver):
         self._model.add(self._region_id_vars[position] == self._region_id_by_position[position])
 
     def _add_neighbors_constraints(self):
-        for position in [position for position, value in self._grid if value == self.Empty]:
+        for position in [position for position, value in self._grid if value == self.cell_empty]:
             if (position_right := position.right) in self._grid:
                 self._model.add(self._grid_vars[position] != self._grid_vars[position_right])
             if (position_down := position.down) in self._grid:

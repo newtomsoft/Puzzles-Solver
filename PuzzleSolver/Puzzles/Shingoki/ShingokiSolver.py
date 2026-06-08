@@ -1,4 +1,4 @@
-﻿from ortools.sat.python.cp_model import CpModel, CpSolver
+﻿from ortools.sat.python.cp_model import CpModel
 
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Board.Grid import Grid
@@ -13,8 +13,8 @@ class ShingokiSolver(GameSolver):
         self.input_grid = grid
         self._island_grid: IslandGrid | None = None
         self._init_island_grid()
+        super().__init__()
         self._model = CpModel()
-        self._solver = CpSolver()
         self._island_bridges_ortools: dict[Position, dict[Direction, any]] = {}
         self._previous_solution: IslandGrid | None = None
 

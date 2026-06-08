@@ -3,7 +3,7 @@ import unittest
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Kurodoko.KurodokoSolver import KurodokoSolver
 
-_ = KurodokoSolver.empty
+_ = KurodokoSolver.cell_empty
 
 
 class KurodokoSolverTests(unittest.TestCase):

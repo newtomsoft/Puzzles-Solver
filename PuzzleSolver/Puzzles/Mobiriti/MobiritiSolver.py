@@ -9,11 +9,11 @@ class MobiritiSolver(GameSolver):
     black = 'b'
 
     def __init__(self, grid: Grid):
+        super().__init__()
         self._grid = grid
         self._rows = grid.rows_number
         self._cols = grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._color_vars = {}
         self._circle_positions = set()
         for r in range(self._rows):

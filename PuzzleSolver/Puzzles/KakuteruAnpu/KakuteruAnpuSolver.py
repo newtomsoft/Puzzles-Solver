@@ -7,13 +7,13 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 class KakuteruAnpuSolver(GameSolver):
     def __init__(self, numbers_grid: Grid, regions_grid: Grid):
+        super().__init__()
         self._numbers_grid = numbers_grid
         self._regions_grid = regions_grid
         self._regions = self._regions_grid.get_regions()
         self.rows_number = self._numbers_grid.rows_number
         self.columns_number = self._numbers_grid.columns_number
         self._model = cp_model.CpModel()
-        self._solver = cp_model.CpSolver()
         self._grid_vars: Grid | None = None
         self._previous_solution: Grid | None = None
 
