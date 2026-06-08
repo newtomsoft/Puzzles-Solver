@@ -99,6 +99,13 @@ class RegionsGrid(Grid):
 
         return "".join(result)
 
+    def normalize_regions(self) -> 'RegionsGrid':
+        regions = self.get_regions()
+        old_ids = sorted(regions.keys())
+        id_map = {old_id: new_id for new_id, old_id in enumerate(old_ids)}
+        new_matrix = [[id_map[value] for value in row] for row in self._matrix]
+        return RegionsGrid(new_matrix)
+
     @staticmethod
     def empty() -> 'RegionsGrid':
         return RegionsGrid([[]])
