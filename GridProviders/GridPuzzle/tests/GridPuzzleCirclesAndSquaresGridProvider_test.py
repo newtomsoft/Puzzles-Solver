@@ -6,7 +6,7 @@ from PuzzleSolver.Puzzles.CirclesAndSquares.CirclesAndSquaresSolver import Circl
 
 B = CirclesAndSquaresSolver.Black
 W = CirclesAndSquaresSolver.White
-_ = CirclesAndSquaresSolver.Empty
+_ = CirclesAndSquaresSolver.cell_empty
 
 class GridPuzzleCirclesAndSquaresGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock_3n2qr(self):

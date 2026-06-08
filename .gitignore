@@ -12,10 +12,13 @@ build/
 .benchmarks/
 .ruff_cache/
 
-# Virtual environments
+# Virtual environments (shared at root: .venv / .venvlinux)
 .venv/
 .venv*/
+.venvlinux/
+.venvlinux*/
 venv/
+venv*/
 ENV/
 env/
 

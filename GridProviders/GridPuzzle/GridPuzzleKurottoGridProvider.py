@@ -20,7 +20,7 @@ class GridPuzzleKurottoGridProvider(PlaywrightGridProvider, GridPuzzleTagProvide
             if 'num_cell' in classes:
                 text = cell.get_text(strip=True)
                 if text == '?':
-                    matrix[row][col] = KurottoSolver.unknown
+                    matrix[row][col] = KurottoSolver.cell_unknown
                     continue
                 matrix[row][col] = int(text)
             else:

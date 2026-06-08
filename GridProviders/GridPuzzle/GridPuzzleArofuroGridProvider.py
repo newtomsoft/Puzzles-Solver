@@ -26,5 +26,5 @@ class GridPuzzleArofuroGridProvider(PlaywrightGridProvider, GridPuzzleTagProvide
         if text == '#':
             return ArofuroSolver.Black
         if text == '':
-            return ArofuroSolver.Empty
+            return ArofuroSolver.cell_empty
         return int(text)
