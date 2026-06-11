@@ -1,26 +1,7 @@
-from PuzzleSolver.Puzzles.Foseruzu.SameSizeRegionsSolver import SameSizeRegionsSolver
+from .shapes import ALL_SHAPES, REGION_SIZE
+from .SameSizeRegionsSolver import SameSizeRegionsSolver
 
 
 class FoseruzuSolver(SameSizeRegionsSolver):
-    REGION_SIZE = 4
-    ALL_SHAPES = [
-        [(0, 0), (0, 1), (0, 2), (0, 3)],
-        [(0, 0), (1, 0), (2, 0), (3, 0)],
-        [(0, 0), (0, 1), (1, 0), (1, 1)],
-        [(0, 0), (0, 1), (0, 2), (1, 1)],
-        [(0, 1), (1, 0), (1, 1), (2, 1)],
-        [(0, 1), (1, 0), (1, 1), (1, 2)],
-        [(0, 0), (1, 0), (1, 1), (2, 0)],
-        [(0, 0), (1, 0), (2, 0), (2, 1)],
-        [(0, 0), (0, 1), (0, 2), (1, 0)],
-        [(0, 0), (0, 1), (1, 1), (2, 1)],
-        [(0, 2), (1, 0), (1, 1), (1, 2)],
-        [(0, 1), (1, 1), (2, 0), (2, 1)],
-        [(0, 0), (1, 0), (1, 1), (1, 2)],
-        [(0, 0), (0, 1), (1, 0), (2, 0)],
-        [(0, 0), (0, 1), (0, 2), (1, 2)],
-        [(0, 1), (0, 2), (1, 0), (1, 1)],
-        [(0, 0), (1, 0), (1, 1), (2, 1)],
-        [(0, 0), (0, 1), (1, 1), (1, 2)],
-        [(0, 1), (1, 0), (1, 1), (2, 0)],
-    ]
+    REGION_SIZE = REGION_SIZE
+    ALL_SHAPES = ALL_SHAPES
