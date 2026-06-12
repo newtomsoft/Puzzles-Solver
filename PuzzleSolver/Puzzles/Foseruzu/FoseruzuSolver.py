@@ -5,3 +5,6 @@ from .SameSizeRegionsSolver import SameSizeRegionsSolver
 class FoseruzuSolver(SameSizeRegionsSolver):
     REGION_SIZE = REGION_SIZE
     ALL_SHAPES = ALL_SHAPES
+
+    def _add_specific_constraints(self):
+        pass

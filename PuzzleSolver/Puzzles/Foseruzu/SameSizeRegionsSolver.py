@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
@@ -11,6 +13,7 @@ class SameSizeRegionsSolver(GameSolver):
 
     def __init__(self, grid: Grid, clues: dict[str, list[int]] | None = None):
         super().__init__()
+        self._solver_initialized = None
         self._grid = grid
         self._clues = clues or {}
         self._rows = grid.rows_number
@@ -41,8 +44,12 @@ class SameSizeRegionsSolver(GameSolver):
     def _init_fast_path(self):
         self._placements = self._generate_placements()
         self._use = [self._model.new_bool_var(f'use_{p}') for p in range(len(self._placements))]
+        self._add_constraints()
+
+    def _add_constraints(self):
         self._add_cover_constraints()
         self._add_wall_constraints()
+        self._add_specific_constraints()
 
     def _generate_placements(self) -> list[list[tuple[int, int]]]:
         placements = []
@@ -198,3 +205,8 @@ class SameSizeRegionsSolver(GameSolver):
         _, _, use_vals, _ = self._previous_solution
         self._add_blocking_constraint_use(use_vals)
         return self.get_solution()
+
+    @abstractmethod
+    def _add_specific_constraints(self):
+        ...
+

@@ -43,40 +43,6 @@ class FoseruzuSolverTests(TestCase):
         self.assertEqual(expected_solution_str, str(solution))
         self.assertTrue(game_solver.get_other_solution().is_empty())
 
-    def test_6x6_evil_16d40(self):
-        """https://gridpuzzle.com/foseruzu/16d40"""
-        grid = Grid([
-            [_, _, _, _, _, _],
-            [_, _, _, _, _, _],
-            [2, _, 2, 3, _, 1],
-            [_, _, _, _, _, _],
-            [2, _, 1, 2, _, 3],
-            [_, _, _, _, _, _],
-        ])
-
-        game_solver = FoseruzuSolver(grid)
-        solution = game_solver.get_solution()
-        self.assertFalse(solution.is_empty())
-        self.assertTrue(game_solver.get_other_solution().is_empty())
-
-    def test_8x8_evil_0pm0w(self):
-        """https://gridpuzzle.com/foseruzu/0pm0w"""
-        grid = Grid([
-            [_, _, _, _, _, _, _, _],
-            [1, _, _, _, 1, _, _, 2],
-            [_, 3, _, _, _, _, _, _],
-            [3, _, 2, _, _, 2, _, _],
-            [_, _, _, _, _, 2, _, _],
-            [_, _, _, _, 2, _, 3, 2],
-            [_, 3, _, _, _, _, _, _],
-            [_, _, _, 2, 3, 2, _, 2],
-        ])
-
-        game_solver = FoseruzuSolver(grid)
-        solution = game_solver.get_solution()
-        self.assertFalse(solution.is_empty())
-        self.assertTrue(game_solver.get_other_solution().is_empty())
-
     def test_4x4_evil_0x95w(self):
         """https://gridpuzzle.com/foseruzu/0x95w"""
         grid = Grid([
@@ -97,6 +63,63 @@ class FoseruzuSolverTests(TestCase):
         )
         self.assertEqual(expected_solution_str, str(solution))
         self.assertTrue(game_solver.get_other_solution().is_empty())
+
+    def test_6x6_evil_16d40(self):
+        """https://gridpuzzle.com/foseruzu/16d40"""
+        grid = Grid([
+            [_, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [2, _, 2, 3, _, 1],
+            [_, _, _, _, _, _],
+            [2, _, 1, 2, _, 3],
+            [_, _, _, _, _, _],
+        ])
+
+        expected_solution_str = (
+            '┌───────┬───┐\n'
+            '├─┬───┬─┘ ┌─┤\n'
+            '│ └─┐ └─┬─┘ │\n'
+            '├─┐ ├─┬─┴─┐ │\n'
+            '│ ├─┘ │   ├─┤\n'
+            '│ └─┐ ├───┘ │\n'
+            '└───┴─┴─────┘\n'
+        )
+
+        game_solver = FoseruzuSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        self.assertTrue(game_solver.get_other_solution().is_empty())
+
+    def test_8x8_evil_0pm0w(self):
+        """https://gridpuzzle.com/foseruzu/0pm0w"""
+        grid = Grid([
+            [_, _, _, _, _, _, _, _],
+            [1, _, _, _, 1, _, _, 2],
+            [_, 3, _, _, _, _, _, _],
+            [3, _, 2, _, _, 2, _, _],
+            [_, _, _, _, _, 2, _, _],
+            [_, _, _, _, 2, _, 3, 2],
+            [_, 3, _, _, _, _, _, _],
+            [_, _, _, 2, 3, 2, _, 2],
+        ])
+
+        expected_solution_str = (
+            '┌─┬─────┬─┬─┬───┐\n'
+            '│ └─┐ ┌─┘ │ └─┐ │\n'
+            '│ ┌─┴─┴─┐ │ ┌─┤ │\n'
+            '├─┴───┐ ├─┴─┘ ├─┤\n'
+            '├───┐ ├─┴─────┤ │\n'
+            '├─┐ ├─┴───┬─┬─┘ │\n'
+            '│ │ ├───┐ │ ├───┤\n'
+            '│ └─┤   ├─┘ │   │\n'
+            '└───┴───┴───┴───┘\n'
+        )
+
+        game_solver = FoseruzuSolver(grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        self.assertTrue(game_solver.get_other_solution().is_empty())
+
 
 if __name__ == '__main__':
     unittest.main()
