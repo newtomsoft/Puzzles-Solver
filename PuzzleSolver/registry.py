@@ -125,6 +125,7 @@ from PuzzleSolver.Puzzles.StarBattle.StarBattleSolver import StarBattleSolver
 from PuzzleSolver.Puzzles.StarsAndArrows.StarsAndArrowsSolver import StarsAndArrowsSolver
 from PuzzleSolver.Puzzles.Stitches.StitchesSolver import StitchesSolver
 from PuzzleSolver.Puzzles.Str8ts.Str8tsSolver import Str8tsSolver
+from PuzzleSolver.Puzzles.Yakazu.YakazuSolver import YakazuSolver
 from PuzzleSolver.Puzzles.Sudoku.JigsawSudoku.JigsawSudokuSolver import JigsawSudokuSolver
 from PuzzleSolver.Puzzles.Sudoku.KillerSudoku.KillerSudokuSolver import KillerSudokuSolver
 from PuzzleSolver.Puzzles.Sudoku.Sudoku.SudokuSolver import SudokuSolver
@@ -282,6 +283,7 @@ SOLVERS: dict[str, type] = {
     "starsandarrows": StarsAndArrowsSolver,
     "stitches": StitchesSolver,
     "str8ts": Str8tsSolver,
+    "yakazu": YakazuSolver,
     "sudoku": SudokuSolver,
     "summandum": SummandumSolver,
     "sumplete": SumpleteSolver,

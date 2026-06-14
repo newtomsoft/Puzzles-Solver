@@ -11,7 +11,8 @@ _SEED_MAX = 2**31 - 1 # max int32 pour or-tools
 
 class GameSolver(ABC):
     cell_empty = None
-    cell_blocked = '#'
+    cell_outside = '#'
+    cell_blocked = '🛇'
 
     def __init__(self, *args, **kwargs):
         super().__init__()
