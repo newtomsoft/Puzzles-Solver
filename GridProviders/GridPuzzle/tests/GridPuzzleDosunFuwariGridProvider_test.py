@@ -7,7 +7,7 @@ from GridProviders.GridPuzzle.GridPuzzleDosunFuwariGridProvider import GridPuzzl
 
 class GridPuzzleDosunFuwariGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):
-        _ = DosunFuwariSolver.empty
+        _ = DosunFuwariSolver.cell_empty
         expected_grid = Grid([
             [1, 1, 1, 2, 2],
             [3, 3, 4, 4, 5],

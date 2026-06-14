@@ -53,7 +53,7 @@ class PuzzleSlantGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvider)
         
         clue_rows = rows_number + 1
         clue_cols = rows_number + 1
-        clues_matrix = [[SlantSolver.empty for _ in range(clue_cols)] for _ in range(clue_rows)]
+        clues_matrix = [[SlantSolver.cell_empty for _ in range(clue_cols)] for _ in range(clue_rows)]
 
         clue_candidates = [d for d in element_data if 'task' in d['class'] or (d['text'].strip().isdigit() and 'cell' not in d['class'])]
 

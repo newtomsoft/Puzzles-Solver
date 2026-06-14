@@ -2,7 +2,7 @@ from PuzzleSolver.Board.Grid import Grid
 from GridPlayers.Base.PlaywrightPlayer import PlaywrightPlayer
 
 
-class GridPuzzleYakuzuPlayer(PlaywrightPlayer):
+class GridPuzzleYakazuPlayer(PlaywrightPlayer):
     game_name = "yakazu"
     async def play(self, solution: tuple[Grid, Grid]):
         grid_solution, grid_blank = solution

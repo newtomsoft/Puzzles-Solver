@@ -7,7 +7,7 @@ from GridProviders.GridPuzzle.GridPuzzleBorderBlockGridProvider import GridPuzzl
 
 class GridPuzzleBorderBlockGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):
-        _ = BorderBlockSolver.empty
+        _ = BorderBlockSolver.cell_empty
         expected_grid = Grid([
             [_, 3, _, 3, _],
             [_, 3, 6, 5, _],

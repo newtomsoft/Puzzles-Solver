@@ -18,7 +18,7 @@ class GridPuzzleHanareGridProvider(PlaywrightGridProvider, GridPuzzleTagProvider
         soup, row_count, column_count, matrix, matrix_cells = self._get_grid_data(html_page)
 
         opened_grid_matrix = [[set(Direction.orthogonal_directions()) for _ in range(column_count)] for _ in range(row_count)]
-        clues_matrix = [[HanareSolver.empty for _ in range(column_count)] for _ in range(row_count)]
+        clues_matrix = [[HanareSolver.cell_empty for _ in range(column_count)] for _ in range(row_count)]
 
         for i, cell in enumerate(matrix_cells):
             row = i // column_count

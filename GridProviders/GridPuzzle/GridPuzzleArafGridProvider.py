@@ -5,7 +5,7 @@ from PuzzleSolver.Puzzles.Araf.ArafSolver import ArafSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
-_ = ArafSolver.empty
+_ = ArafSolver.cell_empty
 
 
 class GridPuzzleArafGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
@@ -25,7 +25,7 @@ class GridPuzzleArafGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasPro
         """
         pqq_string_list, size = self._get_canvas_data(html_page)
 
-        matrix = [[ArafSolver.empty for _c in range(size)] for _r in range(size)]
+        matrix = [[ArafSolver.cell_empty for _c in range(size)] for _r in range(size)]
         for i, cell_str in enumerate(pqq_string_list):
             if i >= size * size:
                 break

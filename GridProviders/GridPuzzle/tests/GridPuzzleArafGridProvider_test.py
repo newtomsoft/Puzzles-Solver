@@ -5,7 +5,7 @@ from GridProviders.GridPuzzle.GridPuzzleArafGridProvider import GridPuzzleArafGr
 from PuzzleSolver.Puzzles.Araf.ArafSolver import ArafSolver
 from GridProviders.GridPuzzle.tests.base_test import GridPuzzleProviderTestBase
 
-_ = ArafSolver.empty
+_ = ArafSolver.cell_empty
 
 
 class GridPuzzleArafGridProviderTests(GridPuzzleProviderTestBase):

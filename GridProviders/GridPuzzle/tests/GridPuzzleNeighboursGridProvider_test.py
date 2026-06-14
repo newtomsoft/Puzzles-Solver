@@ -7,10 +7,10 @@ class GridPuzzleNeighboursGridProviderTests(GridPuzzleProviderTestBase):
     async def test_scrap_grid_with_mock(self):
         _ = None
         expected_grid = Grid([
-            ['NeighboursSolver.empty', 'NeighboursSolver.empty', 'NeighboursSolver.empty', 2],
-            [2, 3, 3, 'NeighboursSolver.empty'],
-            [4, 'NeighboursSolver.empty', 'NeighboursSolver.empty', 4],
-            ['NeighboursSolver.empty', 2, 'NeighboursSolver.empty', 2],
+            ['NeighboursSolver.cell_empty', 'NeighboursSolver.cell_empty', 'NeighboursSolver.cell_empty', 2],
+            [2, 3, 3, 'NeighboursSolver.cell_empty'],
+            [4, 'NeighboursSolver.cell_empty', 'NeighboursSolver.cell_empty', 4],
+            ['NeighboursSolver.cell_empty', 2, 'NeighboursSolver.cell_empty', 2],
         ])
         grid = await self.run_scrap_test(GridPuzzleNeighboursGridProvider, "neighbours_sample.html", "scrap_grid")
         self.assert_grid_equals(expected_grid, grid)

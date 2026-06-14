@@ -23,7 +23,7 @@ class SameSizeRegionsSolver(GameSolver):
         self._active: set[tuple[int, int]] = set()
         for i in range(self._rows):
             for j in range(self._cols):
-                if grid[(i, j)] == self.__class__.cell_blocked:
+                if grid[(i, j)] == self.__class__.cell_outside:
                     self._blocked.add((i, j))
                 else:
                     self._active.add((i, j))

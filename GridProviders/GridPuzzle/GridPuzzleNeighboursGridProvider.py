@@ -23,5 +23,5 @@ class GridPuzzleNeighboursGridProvider(PlaywrightGridProvider, GridPuzzleGridCan
         if data == '?':
             return NeighboursSolver.unknow
         if data == '':
-            return NeighboursSolver.empty
+            return NeighboursSolver.cell_empty
         return int(data)

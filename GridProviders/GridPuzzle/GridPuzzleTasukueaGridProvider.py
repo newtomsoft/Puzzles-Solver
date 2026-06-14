@@ -18,14 +18,14 @@ class GridPuzzleTasukueaGridProvider(PlaywrightGridProvider, GridPuzzleTagProvid
             row = i // column_count
             col = i % column_count
             text = cell.text
-            matrix[row][col] = self.convert(text) if text != '' else TasukueaSolver.empty
+            matrix[row][col] = self.convert(text) if text != '' else TasukueaSolver.cell_empty
 
         return Grid(matrix)
 
     @staticmethod
     def convert(text: str):
         if text == '':
-            return TasukueaSolver.empty
+            return TasukueaSolver.cell_empty
         elif text == '?':
             return TasukueaSolver.unknown
         else:

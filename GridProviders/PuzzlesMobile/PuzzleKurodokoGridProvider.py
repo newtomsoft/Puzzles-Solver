@@ -36,7 +36,7 @@ class PuzzleKurodokoGridProvider(PlaywrightGridProvider, PuzzlesMobileGridProvid
              if columns_number * rows_number != cells_count:
                  raise ValueError(f"Grid parsing error: {rows_number}x{columns_number} != {cells_count}")
 
-        numbers = [int(inner_text) if (inner_text := cell_div.get_text()) else KurodokoSolver.empty for cell_div in cell_divs]
+        numbers = [int(inner_text) if (inner_text := cell_div.get_text()) else KurodokoSolver.cell_empty for cell_div in cell_divs]
 
         matrix = []
         for i in range(0, cells_count, columns_number):

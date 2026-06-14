@@ -18,6 +18,6 @@ class GridPuzzleMinesweeperGridProvider(PlaywrightGridProvider, GridPuzzleTagPro
             row = i // column_count
             col = i % column_count
             text = cell.text
-            matrix[row][col] = int(text) if text != '' else MinesweeperSolver.empty
+            matrix[row][col] = int(text) if text != '' else MinesweeperSolver.cell_empty
 
         return Grid(matrix)

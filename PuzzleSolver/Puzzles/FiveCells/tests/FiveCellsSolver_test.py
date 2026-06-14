@@ -5,7 +5,7 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.FiveCells.FiveCellsSolver import FiveCellsSolver
 
 _ = FiveCellsSolver.cell_empty
-X = FiveCellsSolver.cell_blocked
+X = FiveCellsSolver.cell_outside
 
 class FiveCellsSolverTests(TestCase):
     def test_5x5_multiple(self):

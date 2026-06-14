@@ -19,7 +19,7 @@ class GridPuzzleBalanceLoopGridProvider(PlaywrightGridProvider, GridPuzzleGridCa
     @staticmethod
     def convert_value(value: str) -> str:
         if value == '':
-            return BalanceLoopSolver.empty
+            return BalanceLoopSolver.cell_empty
 
         if value == '200':
             return BalanceLoopSolver.black + '0'

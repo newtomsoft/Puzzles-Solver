@@ -5,7 +5,7 @@ from PuzzleSolver.Puzzles.Knossos.KnossosSolver import KnossosSolver
 from GridProviders.GridPuzzle.Base.GridPuzzleCanvasProvider import GridPuzzleGridCanvasProvider
 from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
-_ = KnossosSolver.empty
+_ = KnossosSolver.cell_empty
 
 
 class GridPuzzleKnossosGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasProvider):
@@ -25,7 +25,7 @@ class GridPuzzleKnossosGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvas
         """
         pqq_string_list, size = self._get_canvas_data(html_page)
 
-        matrix = [[KnossosSolver.empty for _c in range(size)] for _r in range(size)]
+        matrix = [[KnossosSolver.cell_empty for _c in range(size)] for _r in range(size)]
         for i, cell_str in enumerate(pqq_string_list):
             if i >= size * size:
                 break

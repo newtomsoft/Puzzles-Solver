@@ -4,7 +4,7 @@ from PuzzleSolver.Board.Grid import Grid
 from GridProviders.GridPuzzle.GridPuzzleKnossosGridProvider import GridPuzzleKnossosGridProvider
 from PuzzleSolver.Puzzles.Knossos.KnossosSolver import KnossosSolver
 
-_ = KnossosSolver.empty
+_ = KnossosSolver.cell_empty
 
 
 class GridPuzzleKnossosGridProviderTests(GridPuzzleProviderTestBase):

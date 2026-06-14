@@ -24,11 +24,11 @@ class GridPuzzleHanareGridProviderTests(GridPuzzleProviderTestBase):
         self.assertEqual(regions_grid_expected.matrix, regions_grid.matrix)
 
         clues_expected = Grid([
-            [3, HanareSolver.empty, HanareSolver.empty, 2, HanareSolver.empty],
-            [HanareSolver.empty, HanareSolver.empty, HanareSolver.empty, HanareSolver.empty, HanareSolver.empty],
-            [HanareSolver.empty, HanareSolver.empty, 3, HanareSolver.empty, 4],
-            [HanareSolver.empty, 5, HanareSolver.empty, HanareSolver.empty, HanareSolver.empty],
-            [HanareSolver.empty, HanareSolver.empty, HanareSolver.empty, HanareSolver.empty, HanareSolver.empty],
+            [3, HanareSolver.cell_empty, HanareSolver.cell_empty, 2, HanareSolver.cell_empty],
+            [HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty],
+            [HanareSolver.cell_empty, HanareSolver.cell_empty, 3, HanareSolver.cell_empty, 4],
+            [HanareSolver.cell_empty, 5, HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty],
+            [HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty, HanareSolver.cell_empty],
         ])
 
         self.assertEqual(clues_expected.matrix, clues_grid.matrix)

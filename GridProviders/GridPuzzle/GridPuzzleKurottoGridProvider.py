@@ -24,6 +24,6 @@ class GridPuzzleKurottoGridProvider(PlaywrightGridProvider, GridPuzzleTagProvide
                     continue
                 matrix[row][col] = int(text)
             else:
-                matrix[row][col] = KurottoSolver.empty
+                matrix[row][col] = KurottoSolver.cell_empty
 
         return Grid(matrix)

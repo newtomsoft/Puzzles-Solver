@@ -37,5 +37,5 @@ class GridPuzzleDetourGridProvider(PlaywrightGridProvider, GridPuzzleGridCanvasP
 
     @staticmethod
     def convert(value: str):
-        return int(value) if value != '' else DetourSolver.empty
+        return int(value) if value != '' else DetourSolver.cell_empty
 
