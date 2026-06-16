@@ -5,6 +5,7 @@ from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.Position import Position
+from PuzzleSolver.Board.GridMask import resolve_outside
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from Utils.utils import is_perfect_square
 
@@ -15,6 +16,7 @@ class SudokuBaseSolver(GameSolver):
     def __init__(self, grid: Grid):
         super().__init__()
         self._grid = grid
+        self._outside = resolve_outside(grid)
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
         self._sub_square_row_number = 0
@@ -43,7 +45,19 @@ class SudokuBaseSolver(GameSolver):
             raise ValueError("initial numbers must be different in sub squares")
 
     def get_solution(self) -> Grid:
-        self._grid_vars = Grid([[self._model.new_int_var(1, self.rows_number, f"grid_{r}_{c}") for c in range(self._grid.columns_number)] for r in range(self._grid.rows_number)])
+        self._grid_vars = Grid(
+            [
+                [
+                    self._model.new_int_var(
+                        0 if (r, c) in self._outside else 1,
+                        0 if (r, c) in self._outside else self.rows_number,
+                        f"grid_{r}_{c}",
+                    )
+                    for c in range(self._grid.columns_number)
+                ]
+                for r in range(self._grid.rows_number)
+            ]
+        )
         self._add_constraints()
         self._add_specific_constraints()
 
@@ -87,22 +101,41 @@ class SudokuBaseSolver(GameSolver):
         return self._previous_solution
 
     def _add_constraints(self):
+        self._add_outside_constraints()
         self._initials_constraints()
         self._add_distinct_in_rows_and_columns_constraints()
+
+    def _add_outside_constraints(self):
+        for r, c in self._outside:
+            self._model.add(self._grid_vars[r][c] == 0)
 
     @abstractmethod
     def _add_specific_constraints(self):
         pass
 
     def _initials_constraints(self):
-        for position, value in [(position, value) for position, value in self._grid if value !=self.cell_empty]:
+        for position, value in self._grid:
+            if value == self.cell_empty or value == GameSolver.cell_outside:
+                continue
             self._model.add(self._grid_vars[position] == value)
 
     def _add_distinct_in_rows_and_columns_constraints(self):
         for r in range(self.rows_number):
-            self._model.add_all_different([self._grid_vars[Position(r, c)] for c in range(self.columns_number)])
+            active = [
+                self._grid_vars[Position(r, c)]
+                for c in range(self.columns_number)
+                if (r, c) not in self._outside
+            ]
+            if len(active) > 1:
+                self._model.add_all_different(active)
         for c in range(self.columns_number):
-            self._model.add_all_different([self._grid_vars[Position(r, c)] for r in range(self.rows_number)])
+            active = [
+                self._grid_vars[Position(r, c)]
+                for r in range(self.rows_number)
+                if (r, c) not in self._outside
+            ]
+            if len(active) > 1:
+                self._model.add_all_different(active)
 
     def _add_distinct_in_sub_squares_constraints(self):
         for sub_square_row in range(0, self.rows_number, self._sub_square_row_number):
@@ -110,8 +143,12 @@ class SudokuBaseSolver(GameSolver):
                 cells = []
                 for r in range(self._sub_square_row_number):
                     for c in range(self._sub_square_column_number):
+                        pos = (sub_square_row + r, sub_square_column + c)
+                        if pos in self._outside:
+                            continue
                         cells.append(self._grid_vars.value(sub_square_row + r, sub_square_column + c))
-                self._model.add_all_different(cells)
+                if len(cells) > 1:
+                    self._model.add_all_different(cells)
 
     def _are_initial_numbers_different_in_row_and_column(self):
         seen_in_rows = [set() for _ in range(self.rows_number)]
@@ -119,7 +156,7 @@ class SudokuBaseSolver(GameSolver):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
                 value = self._grid[Position(r, c)]
-                if value ==self.cell_empty:
+                if value == self.cell_empty or value == GameSolver.cell_outside or (r, c) in self._outside:
                     continue
                 if value in seen_in_rows[r] or value in seen_in_columns[c]:
                     return False
@@ -133,8 +170,9 @@ class SudokuBaseSolver(GameSolver):
                 seen_in_sub_square = set()
                 for r in range(self._sub_square_row_number):
                     for c in range(self._sub_square_column_number):
+                        pos = (sub_square_row + r, sub_square_column + c)
                         value = self._grid.value(sub_square_row + r, sub_square_column + c)
-                        if value ==self.cell_empty:
+                        if value == self.cell_empty or value == GameSolver.cell_outside or pos in self._outside:
                             continue
                         if value in seen_in_sub_square:
                             return False
@@ -143,7 +181,10 @@ class SudokuBaseSolver(GameSolver):
 
     def _are_initial_numbers_between_1_and_nxn(self):
         return all(
-            self._grid.value(r, c) ==self.cell_empty or 1 <= self._grid.value(r, c) <= self.rows_number
+            (r, c) in self._outside
+            or self._grid.value(r, c) == self.cell_empty
+            or self._grid.value(r, c) == GameSolver.cell_outside
+            or 1 <= self._grid.value(r, c) <= self.rows_number
             for r in range(self.rows_number)
             for c in range(self.columns_number)
         )
