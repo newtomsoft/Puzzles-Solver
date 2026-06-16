@@ -6,12 +6,17 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class NorinoriSolver(GameSolver):
-    def __init__(self, grid: Grid):
+    def __init__(
+        self,
+        grid: Grid,
+        outside: set[tuple[int, int]] | frozenset[tuple[int, int]] | None = None,
+    ):
         super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
 
+        self._outside: frozenset[tuple[int, int]] = frozenset(outside or ())
         self._regions = self._grid.get_regions()
 
         if len(self._regions) == 0:
@@ -73,11 +78,17 @@ class NorinoriSolver(GameSolver):
     def _add_constraint_dominoes(self):
         for r in range(self.rows_number):
             for c in range(self.columns_number):
+                if (r, c) in self._outside:
+                    self._model.add(self.queen(Position(r, c)) == 0)
+                    continue
                 p = Position(r, c)
                 neighbors = self._grid.neighbors_positions(p)
-                neighbor_vars = [self.queen(n) for n in neighbors]
+                neighbor_vars = [self.queen(n) for n in neighbors if (n.r, n.c) not in self._outside]
                 self._model.add(sum(neighbor_vars) == 1).only_enforce_if(self.queen(p))
 
     def _add_constraint_regions(self):
         for region in self._regions.values():
-            self._model.add(sum([self.queen(position) for position in region]) == 2)
+            positions = [position for position in region if (position.r, position.c) not in self._outside]
+            if len(positions) < 2:
+                continue
+            self._model.add(sum([self.queen(position) for position in positions]) == 2)
