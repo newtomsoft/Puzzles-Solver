@@ -1,6 +1,7 @@
 from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.GridMask import resolve_outside
 from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
@@ -10,13 +11,14 @@ class NorinoriSolver(GameSolver):
         self,
         grid: Grid,
         outside: set[tuple[int, int]] | frozenset[tuple[int, int]] | None = None,
+        clues_grid: Grid | None = None,
     ):
         super().__init__()
         self._grid = grid
         self.rows_number = self._grid.rows_number
         self.columns_number = self._grid.columns_number
 
-        self._outside: frozenset[tuple[int, int]] = frozenset(outside or ())
+        self._outside = resolve_outside(clues_grid, outside)
         self._regions = self._grid.get_regions()
 
         if len(self._regions) == 0:

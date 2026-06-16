@@ -1,6 +1,7 @@
 from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.GridMask import is_outside_region, resolve_outside
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
@@ -10,9 +11,14 @@ class MarutaringuSolver(GameSolver):
         self._regions_grid = regions_grid
         self.rows = regions_grid.rows_number
         self.cols = regions_grid.columns_number
+        self._outside = resolve_outside(clues_grid)
 
         regions_dict = regions_grid.get_regions()
-        self.regions = [[(pos.r, pos.c) for pos in cells] for _, cells in regions_dict.items()]
+        self.regions = [
+            [(pos.r, pos.c) for pos in cells]
+            for _, cells in regions_dict.items()
+            if not is_outside_region(cells, self._outside)
+        ]
 
         self.clues = {}
         if clues_grid is not None:
@@ -21,7 +27,7 @@ class MarutaringuSolver(GameSolver):
                 for r, c in cells:
                     pos_to_region_idx[(r, c)] = idx
             for position, value in clues_grid:
-                if value != 0:
+                if value != 0 and value != GameSolver.cell_outside:
                     self.clues[pos_to_region_idx[(position.r, position.c)]] = value
 
         self.model = cp_model.CpModel()
@@ -32,22 +38,29 @@ class MarutaringuSolver(GameSolver):
             for c in range(self.cols):
                 self.b[r, c] = self.model.NewBoolVar(f'b_{r}_{c}')
 
+        self._add_outside_constraints()
         self._add_degree_constraints()
         self._add_rectangle_constraints()
         self._add_no_2x2_constraint()
         self._previous_solution = None
 
+    def _add_outside_constraints(self):
+        for r, c in self._outside:
+            self.model.Add(self.b[r, c] == 0)
+
     def _add_degree_constraints(self):
         for r in range(self.rows):
             for c in range(self.cols):
+                if (r, c) in self._outside:
+                    continue
                 neighbors = []
-                if r > 0:
+                if r > 0 and (r - 1, c) not in self._outside:
                     neighbors.append(self.b[r - 1, c])
-                if r < self.rows - 1:
+                if r < self.rows - 1 and (r + 1, c) not in self._outside:
                     neighbors.append(self.b[r + 1, c])
-                if c > 0:
+                if c > 0 and (r, c - 1) not in self._outside:
                     neighbors.append(self.b[r, c - 1])
-                if c < self.cols - 1:
+                if c < self.cols - 1 and (r, c + 1) not in self._outside:
                     neighbors.append(self.b[r, c + 1])
 
                 # If b[r,c] is True, exactly 2 neighbors are True

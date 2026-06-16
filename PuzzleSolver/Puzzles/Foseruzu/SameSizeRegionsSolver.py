@@ -19,12 +19,12 @@ class SameSizeRegionsSolver(GameSolver):
         self._rows = grid.rows_number
         self._cols = grid.columns_number
 
-        self._blocked: set[tuple[int, int]] = set()
+        self._outside: set[tuple[int, int]] = set()
         self._active: set[tuple[int, int]] = set()
         for i in range(self._rows):
             for j in range(self._cols):
-                if grid[(i, j)] == self.__class__.cell_outside:
-                    self._blocked.add((i, j))
+                if grid[(i, j)] == self.cell_outside:
+                    self._outside.add((i, j))
                 else:
                     self._active.add((i, j))
         self._active_count = len(self._active)
@@ -59,7 +59,7 @@ class SameSizeRegionsSolver(GameSolver):
             for i in range(self._rows - max_r):
                 for j in range(self._cols - max_c):
                     cells = [(i + dr, j + dc) for dr, dc in shape]
-                    if any(c in self._blocked for c in cells):
+                    if any(c in self._outside for c in cells):
                         continue
                     placements.append(cells)
         return placements
@@ -74,7 +74,7 @@ class SameSizeRegionsSolver(GameSolver):
         for i in range(self._rows):
             for j in range(self._cols):
                 covering = [self._use[p] for p, cells in enumerate(self._placements) if (i, j) in cells]
-                if (i, j) in self._blocked:
+                if (i, j) in self._outside:
                     self._model.add(sum(covering) == 0)
                 else:
                     self._model.add(sum(covering) == 1)
@@ -82,8 +82,8 @@ class SameSizeRegionsSolver(GameSolver):
     def _add_wall_constraints(self):
         for i in range(self._rows):
             for j in range(self._cols - 1):
-                left_blocked = (i, j) in self._blocked
-                right_blocked = (i, j + 1) in self._blocked
+                left_blocked = (i, j) in self._outside
+                right_blocked = (i, j + 1) in self._outside
                 if left_blocked or right_blocked:
                     self._model.add(self._right[(i, j)] == 1)
                 else:
@@ -91,8 +91,8 @@ class SameSizeRegionsSolver(GameSolver):
                     self._model.add(self._right[(i, j)] == 1 - sum(covering_both))
         for i in range(self._rows - 1):
             for j in range(self._cols):
-                top_blocked = (i, j) in self._blocked
-                bottom_blocked = (i + 1, j) in self._blocked
+                top_blocked = (i, j) in self._outside
+                bottom_blocked = (i + 1, j) in self._outside
                 if top_blocked or bottom_blocked:
                     self._model.add(self._bottom[(i, j)] == 1)
                 else:
@@ -124,27 +124,27 @@ class SameSizeRegionsSolver(GameSolver):
     def _add_cell_constraints(self):
         for position, value in self._grid:
             i, j = position.r, position.c
-            if value == GameSolver.cell_empty or (i, j) in self._blocked:
+            if value == GameSolver.cell_empty or (i, j) in self._outside:
                 continue
 
             edge_terms = []
 
-            if i == 0 or (i - 1, j) in self._blocked:
+            if i == 0 or (i - 1, j) in self._outside:
                 edge_terms.append(1)
             else:
                 edge_terms.append(self._bottom[(i - 1, j)])
 
-            if i == self._rows - 1 or (i + 1, j) in self._blocked:
+            if i == self._rows - 1 or (i + 1, j) in self._outside:
                 edge_terms.append(1)
             else:
                 edge_terms.append(self._bottom[(i, j)])
 
-            if j == 0 or (i, j - 1) in self._blocked:
+            if j == 0 or (i, j - 1) in self._outside:
                 edge_terms.append(1)
             else:
                 edge_terms.append(self._right[(i, j - 1)])
 
-            if j == self._cols - 1 or (i, j + 1) in self._blocked:
+            if j == self._cols - 1 or (i, j + 1) in self._outside:
                 edge_terms.append(1)
             else:
                 edge_terms.append(self._right[(i, j)])
@@ -173,12 +173,12 @@ class SameSizeRegionsSolver(GameSolver):
         region_id = 0
         for i in range(self._rows):
             for j in range(self._cols):
-                if (i, j) in self._blocked or region_matrix[i][j] != -1:
+                if (i, j) in self._outside or region_matrix[i][j] != -1:
                     continue
                 stack = [(i, j)]
                 while stack:
                     ci, cj = stack.pop()
-                    if (ci, cj) in self._blocked or region_matrix[ci][cj] != -1:
+                    if (ci, cj) in self._outside or region_matrix[ci][cj] != -1:
                         continue
                     region_matrix[ci][cj] = region_id
                     if cj + 1 < self._cols and r[(ci, cj)] == 0 and region_matrix[ci][cj + 1] == -1:
@@ -190,7 +190,7 @@ class SameSizeRegionsSolver(GameSolver):
                     if ci - 1 >= 0 and b[(ci - 1, cj)] == 0 and region_matrix[ci - 1][cj] == -1:
                         stack.append((ci - 1, cj))
                 region_id += 1
-        for (i, j) in self._blocked:
+        for (i, j) in self._outside:
             region_matrix[i][j] = region_id
             region_id += 1
         return RegionsGrid(region_matrix)

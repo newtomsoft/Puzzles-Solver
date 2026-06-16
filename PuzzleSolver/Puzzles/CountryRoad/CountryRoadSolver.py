@@ -2,6 +2,7 @@ from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.GridMask import is_outside_region, resolve_outside
 from PuzzleSolver.Board.Island import Island
 from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from PuzzleSolver.Board.Position import Position
@@ -13,6 +14,7 @@ class CountryRoadSolver(GameSolver):
     def __init__(self, grid: Grid, regions_grid: Grid):
         super().__init__()
         self._numbers_grid = grid
+        self._outside = resolve_outside(grid)
         self._regions = regions_grid.get_regions()
         self._rows_number = self._numbers_grid.rows_number
         self._columns_number = self._numbers_grid.columns_number
@@ -118,11 +120,18 @@ class CountryRoadSolver(GameSolver):
             bridges_count_vars = list(directions_bridges.values())
             s = self._model.new_int_var(0, 4, f"sum_{position.r}_{position.c}")
             self._model.add(s == sum(bridges_count_vars))
-            self._model.add_allowed_assignments([s], [(0,), (2,)])
+            if (position.r, position.c) in self._outside:
+                self._model.add_allowed_assignments([s], [(0,)])
+                for var in bridges_count_vars:
+                    self._model.add(var == 0)
+            else:
+                self._model.add_allowed_assignments([s], [(0,), (2,)])
 
     def _add_crossed_cell_by_region_numbers_constraints(self):
         numbers_by_position = {position: number for position, number in self._numbers_grid if number is not None}
         for region_id, positions in self._regions.items():
+            if is_outside_region(positions, self._outside):
+                continue
             for position in [position for position in positions if position in numbers_by_position]:
                 number = numbers_by_position[position]
                 if number is not None:
@@ -134,6 +143,8 @@ class CountryRoadSolver(GameSolver):
 
     def _add_single_path_by_region_constraints(self):
         for region_positions in self._regions.values():
+            if is_outside_region(region_positions, self._outside):
+                continue
             region_edges_positions = [position for position in ShapeGenerator.edges(region_positions) if position in self._island_bridges_z3]
             out_directions = []
             for pos in region_edges_positions:
@@ -151,8 +162,16 @@ class CountryRoadSolver(GameSolver):
 
     def _add_no_adjacent_empty_cell_between_regions_constraints(self):
         for region_positions in self._regions.values():
+            if is_outside_region(region_positions, self._outside):
+                continue
             for position in region_positions:
-                neighbors_positions = [position for position in self._numbers_grid.neighbors_positions(position) if position not in region_positions]
+                if (position.r, position.c) in self._outside:
+                    continue
+                neighbors_positions = [
+                    neighbor
+                    for neighbor in self._numbers_grid.neighbors_positions(position)
+                    if neighbor not in region_positions and (neighbor.r, neighbor.c) not in self._outside
+                ]
                 for neighbor_position in neighbors_positions:
                     sum_neighbor = sum(self._island_bridges_z3[neighbor_position][direction] for direction in Direction.orthogonal_directions())
                     sum_position = sum(self._island_bridges_z3[position][direction] for direction in Direction.orthogonal_directions())

@@ -1,5 +1,6 @@
 from ortools.sat.python import cp_model
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.GridMask import is_outside_region, resolve_outside
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
@@ -8,6 +9,7 @@ class ShimaguniSolver(GameSolver):
         super().__init__()
         self._values_grid = values_grid
         self._regions_grid = regions_grid
+        self._outside = resolve_outside(values_grid)
         self._regions_positions_by_id = regions_grid.get_regions()
         self.rows_number = self._values_grid.rows_number
         self.columns_number = self._values_grid.columns_number
@@ -23,10 +25,14 @@ class ShimaguniSolver(GameSolver):
 
     def _create_variables(self):
         for position, _ in self._values_grid:
+            if (position.r, position.c) in self._outside:
+                continue
             self._grid_vars[position] = self._model.new_bool_var(f'cell_{position.r}_{position.c}')
 
         for region_id, positions in self._regions_positions_by_id.items():
-            region_vars = [self._grid_vars[p] for p in positions]
+            if is_outside_region(positions, self._outside):
+                continue
+            region_vars = [self._grid_vars[p] for p in positions if p in self._grid_vars]
             # Constraint 1 (part A): Each region must have at least 1 black cell (or the clue count)
             rc = self._model.new_int_var(1, len(positions), f'count_region_{region_id}')
             self._model.add(rc == sum(region_vars))
@@ -40,6 +46,8 @@ class ShimaguniSolver(GameSolver):
     def _add_region_clue_and_connectivity_constraints(self):
         """Constraint 1: Match clues and ensure connectivity within each region."""
         for region_id, positions in self._regions_positions_by_id.items():
+            if is_outside_region(positions, self._outside):
+                continue
             clue = self._get_region_clue(positions)
             
             if clue is not None and clue > 0:
@@ -51,12 +59,15 @@ class ShimaguniSolver(GameSolver):
 
     def _get_region_clue(self, positions):
         for p in positions:
-            if self._values_grid[p] is not None:
-                return self._values_grid[p]
+            value = self._values_grid[p]
+            if value is not None and value != GameSolver.cell_outside:
+                return value
         return None
 
     def _add_adjacent_regions_different_counts_constraints(self):
         for region_id, positions in self._regions_positions_by_id.items():
+            if is_outside_region(positions, self._outside):
+                continue
             adjacent_region_ids = self._get_adjacent_region_ids(region_id, positions)
             for other_id in adjacent_region_ids:
                 if other_id > region_id:
@@ -73,8 +84,14 @@ class ShimaguniSolver(GameSolver):
 
     def _add_no_cross_region_adjacency_constraints(self):
         for position, _ in self._values_grid:
+            if (position.r, position.c) in self._outside:
+                continue
+            if position not in self._grid_vars:
+                continue
             region_p = self._regions_grid[position]
             for neighbor in self._values_grid.neighbors_positions(position):
+                if (neighbor.r, neighbor.c) in self._outside or neighbor not in self._grid_vars:
+                    continue
                 if self._regions_grid[neighbor] != region_p:
                     self._model.add(self._grid_vars[position] + self._grid_vars[neighbor] <= 1).WithName(f'no_adj_{position.r}_{position.c}_{neighbor.r}_{neighbor.c}')
 

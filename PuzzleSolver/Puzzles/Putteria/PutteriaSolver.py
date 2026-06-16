@@ -1,6 +1,7 @@
 from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.GridMask import is_outside_region, resolve_outside
 from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
@@ -13,6 +14,7 @@ class PutteriaSolver(GameSolver):
         super().__init__()
         self._regions_grid = regions_grid
         self._clues_grid = clues_grid
+        self._outside = resolve_outside(clues_grid)
         self.rows_number = self._regions_grid.rows_number
         self.columns_number = self._regions_grid.columns_number
         self._regions = self._regions_grid.get_regions()
@@ -63,6 +65,7 @@ class PutteriaSolver(GameSolver):
         return Grid(matrix)
 
     def _add_constraints(self):
+        self._add_outside_constraints()
         self._add_clue_constraints()
         self._add_cross_constraints()
         self._add_one_number_per_region_constraints()
@@ -70,8 +73,16 @@ class PutteriaSolver(GameSolver):
         self._add_no_duplicate_in_row_constraints()
         self._add_no_duplicate_in_column_constraints()
 
+    def _add_outside_constraints(self):
+        for r, c in self._outside:
+            self._model.add(self._grid_vars[r][c] == 0)
+
     def _add_clue_constraints(self):
-        for position, value in [(position, value) for position, value in self._clues_grid if value != self.cell_empty and value != self.cross]:
+        for position, value in [
+            (position, value)
+            for position, value in self._clues_grid
+            if value != self.cell_empty and value != self.cross and value != GameSolver.cell_outside
+        ]:
             expected_size = self._region_sizes[self._cell_region[position]]
             if value != expected_size:
                 raise ValueError(f"Clue at {position} has value {value}, but region size is {expected_size}")
@@ -83,11 +94,18 @@ class PutteriaSolver(GameSolver):
 
     def _add_one_number_per_region_constraints(self):
         for region_id, cells in self._regions.items():
-            self._model.add(sum(self._grid_vars[pos.r][pos.c] for pos in cells) == 1)
+            if is_outside_region(cells, self._outside):
+                self._model.add(sum(self._grid_vars[pos.r][pos.c] for pos in cells) == 0)
+            else:
+                self._model.add(sum(self._grid_vars[pos.r][pos.c] for pos in cells) == 1)
 
     def _add_no_adjacent_numbers_constraints(self):
         for position, _ in self._regions_grid:
+            if (position.r, position.c) in self._outside:
+                continue
             for neighbor in self._regions_grid.neighbors_positions(position):
+                if (neighbor.r, neighbor.c) in self._outside:
+                    continue
                 if neighbor.r > position.r or neighbor.c > position.c:
                     self._model.add(self._grid_vars[position.r][position.c] + self._grid_vars[neighbor.r][neighbor.c] <= 1)
 
@@ -95,6 +113,8 @@ class PutteriaSolver(GameSolver):
         for r in range(self.rows_number):
             cells_by_size = {}
             for c in range(self.columns_number):
+                if (r, c) in self._outside:
+                    continue
                 pos = Position(r, c)
                 size = self._region_sizes[self._cell_region[pos]]
                 cells_by_size.setdefault(size, []).append(pos)
@@ -106,6 +126,8 @@ class PutteriaSolver(GameSolver):
         for c in range(self.columns_number):
             cells_by_size = {}
             for r in range(self.rows_number):
+                if (r, c) in self._outside:
+                    continue
                 pos = Position(r, c)
                 size = self._region_sizes[self._cell_region[pos]]
                 cells_by_size.setdefault(size, []).append(pos)
