@@ -15,10 +15,7 @@ def outside_from_grid(grid: Grid | None) -> frozenset[tuple[int, int]]:
     return frozenset(outside)
 
 
-def resolve_outside(
-    grid: Grid | None = None,
-    outside: set[tuple[int, int]] | frozenset[tuple[int, int]] | None = None,
-) -> frozenset[tuple[int, int]]:
+def resolve_outside(grid: Grid | None = None, outside: set[tuple[int, int]] | frozenset[tuple[int, int]] | None = None) -> frozenset[tuple[int, int]]:
     result = set(outside or ())
     result.update(outside_from_grid(grid))
     return frozenset(result)

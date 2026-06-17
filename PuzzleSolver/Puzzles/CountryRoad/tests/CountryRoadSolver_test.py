@@ -5,12 +5,12 @@ from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Board.IslandsGrid import IslandGrid
 from PuzzleSolver.Puzzles.CountryRoad.CountryRoadSolver import CountryRoadSolver
 
-_ = None
-
+_ = CountryRoadSolver.cell_empty
+x = CountryRoadSolver.cell_outside
 
 class CountryRoadSolverTests(TestCase):
     def test_basic_grid(self):
-        numbers_grid = Grid([
+        clues_grid = Grid([
             [3, 3, _],
             [_, _, _],
             [2, _, _]
@@ -25,7 +25,7 @@ class CountryRoadSolverTests(TestCase):
             ' └──┐  │ \n'
             ' ·  └──┘ '
         )
-        game_solver = CountryRoadSolver(numbers_grid, regions_grid)
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -33,7 +33,7 @@ class CountryRoadSolverTests(TestCase):
 
     def test_solution_4x4_easy_3nd9w(self):
         """https://gridpuzzle.com/country-road/3nd9w"""
-        numbers_grid = Grid([
+        clues_grid = Grid([
             [4, _, _, _],
             [_, 1, _, 3],
             [1, 2, 1, _],
@@ -52,7 +52,7 @@ class CountryRoadSolverTests(TestCase):
             ' └──┐  ·  │ \n'
             ' ·  └─────┘ '
         )
-        game_solver = CountryRoadSolver(numbers_grid, regions_grid)
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -60,7 +60,7 @@ class CountryRoadSolverTests(TestCase):
 
     def test_solution_4x4_evil_3nd9w(self):
         """https://gridpuzzle.com/country-road/316n9"""
-        numbers_grid = Grid([
+        clues_grid = Grid[int | None]([
             [_, _, _, _],
             [1, _, _, _],
             [_, _, 1, _],
@@ -79,7 +79,7 @@ class CountryRoadSolverTests(TestCase):
             ' └──┐  │  · \n'
             ' ·  └──┘  · '
         )
-        game_solver = CountryRoadSolver(numbers_grid, regions_grid)
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -87,7 +87,7 @@ class CountryRoadSolverTests(TestCase):
 
     def test_solution_8x8_medium_1pew0(self):
         """https://gridpuzzle.com/country-road/1pew0"""
-        numbers_grid = Grid([
+        clues_grid = Grid([
             [3, 2, 3, _, _, _, _, _],
             [_, _, _, 2, 2, _, 2, _],
             [_, _, 4, _, _, _, _, _],
@@ -118,7 +118,7 @@ class CountryRoadSolverTests(TestCase):
             ' │  ┌─────┘  │  ·  │  · \n'
             ' └──┘  ·  ·  └─────┘  · '
         )
-        game_solver = CountryRoadSolver(numbers_grid, regions_grid)
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
@@ -126,7 +126,7 @@ class CountryRoadSolverTests(TestCase):
 
     def test_solution_12x12_evil_0vdpg(self):
         """https://gridpuzzle.com/country-road/0vdpg"""
-        numbers_grid = Grid([
+        clues_grid = Grid([
             [10, _, 3, _, _, _, 2, _, _, _, _, _],
             [_, _, _, _, _, _, _, _, _, _, _, _],
             [_, _, _, _, 5, _, _, _, _, _, _, _],
@@ -169,7 +169,40 @@ class CountryRoadSolverTests(TestCase):
            ' ·  │  ·  ·  ┌──┘  ┌──┘  ·  ┌─────┘ \n'
            ' ·  └────────┘  ·  └────────┘  ·  · '
         )
-        game_solver = CountryRoadSolver(numbers_grid, regions_grid)
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
+        solution = game_solver.get_solution()
+        self.assertEqual(expected_solution_str, str(solution))
+        other_solution = game_solver.get_other_solution()
+        self.assertEqual(IslandGrid.empty(), other_solution)
+
+    def test_solution_6x6_greek_cross_6x6(self):
+        clues_grid = Grid[int | None | str]([
+            [x, x, 1, _, x, x],
+            [x, x, _, 3, x, x],
+            [2, _, _, _, _, _],
+            [_, _, _, _, _, _],
+            [x, x, _, _, x, x],
+            [x, x, _, _, x, x],
+        ])
+        
+        regions_grid = Grid([
+            [x, x, 1, 1, x, x],
+            [x, x, 1, 2, x, x],
+            [3, 3, 3, 2, 2, 2],
+            [3, 4, 4, 5, 5, 2],
+            [x, x, 6, 5, x, x],
+            [x, x, 6, 5, x, x],
+        ])
+
+        expected_solution_str = (
+            ' ·  ·  ·  ·  ·  · \n'
+            ' ·  ·  ┌──┐  ·  · \n'
+            ' ·  ┌──┘  └──┐  · \n'
+            ' ·  └──┐  ┌──┘  · \n'
+            ' ·  ·  │  │  ·  · \n'
+            ' ·  ·  └──┘  ·  · '
+        )
+        game_solver = CountryRoadSolver(clues_grid, regions_grid)
         solution = game_solver.get_solution()
         self.assertEqual(expected_solution_str, str(solution))
         other_solution = game_solver.get_other_solution()
