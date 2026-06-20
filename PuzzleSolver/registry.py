@@ -32,6 +32,7 @@ from PuzzleSolver.Puzzles.EverySecondTurn.EverySecondTurnSolver import EverySeco
 from PuzzleSolver.Puzzles.Factorism.FactorismSolver import FactorismSolver
 from PuzzleSolver.Puzzles.Fillomino.FillominoSolver import FillominoSolver
 from PuzzleSolver.Puzzles.FiveCells.FiveCellsSolver import FiveCellsSolver
+from PuzzleSolver.Puzzles.FourSixOneTwo.FourSixOneTwoSolver import FourSixOneTwoSolver
 from PuzzleSolver.Puzzles.Fobidoshi.FobidoshiSolver import FobidoshiSolver
 from PuzzleSolver.Puzzles.Foseruzu.FoseruzuSolver import FoseruzuSolver
 from PuzzleSolver.Puzzles.From1ToX.From1ToXSolver import From1ToXSolver
@@ -187,6 +188,7 @@ SOLVERS: dict[str, type] = {
     "factorism": FactorismSolver,
     "fillomino": FillominoSolver,
     "fivecells": FiveCellsSolver,
+    "fivesixonetwo": FourSixOneTwoSolver,
     "fobidoshi": FobidoshiSolver,
     "foseruzu": FoseruzuSolver,
     "from1tox": From1ToXSolver,

@@ -10,7 +10,7 @@ class HekiSolver(SameSizeRegionsSolver):
     ALL_SHAPES = ALL_SHAPES
 
     def __init__(self, grid: Grid):
-        border_clues_grid = Grid([[4 - val if val != self.cell_empty and val != self.cell_empty else val for val in row] for row in grid.matrix])
+        border_clues_grid = Grid([[4 - val if val != self.cell_empty and val != self.cell_outside else val for val in row] for row in grid.matrix])
         super().__init__(border_clues_grid)
 
     def _add_specific_constraints(self):

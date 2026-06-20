@@ -1,7 +1,6 @@
 import unittest
 from unittest import TestCase
 
-from PuzzleSolver.Board import RegionsGrid
 from PuzzleSolver.Board.Grid import Grid
 from PuzzleSolver.Puzzles.Heki.HekiSolver import HekiSolver
 
@@ -9,7 +8,7 @@ _ = HekiSolver.cell_empty
 
 
 class HekiSolverTests(TestCase):
-    def test_unique_solution(self):
+    def test_3x6(self):
         grid = Grid([
             [1, _, 2, _, _, _],
             [2, _, 1, _, 3, _],
