@@ -2,12 +2,12 @@ import unittest
 from unittest import TestCase
 
 from PuzzleSolver.Board.Grid import Grid
-from PuzzleSolver.Puzzles.FourSixOneTwo.FourSixOneTwoSolver import FourSixOneTwoSolver
+from PuzzleSolver.Puzzles.OneFourTwoSix.OneFourTwoSixSolver import OneFourTwoSixSolver
 
-_ = FourSixOneTwoSolver.cell_empty
+_ = OneFourTwoSixSolver.cell_empty
 
 
-class FourSixOneTwoSolverTests(TestCase):
+class OneFourTwoSixSolverTests(TestCase):
     def test_5x6_unique_solution(self):
         grid = Grid([
             [3, _, 3, _, _, _],
@@ -18,7 +18,7 @@ class FourSixOneTwoSolverTests(TestCase):
             [_, 3, _, _, _, 3]
         ])
 
-        solver = FourSixOneTwoSolver(grid)
+        solver = OneFourTwoSixSolver(grid)
         solution = solver.get_solution()
         self.assertFalse(solution.is_empty())
 
