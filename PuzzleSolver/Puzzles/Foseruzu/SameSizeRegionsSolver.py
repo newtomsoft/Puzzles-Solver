@@ -11,11 +11,17 @@ class SameSizeRegionsSolver(GameSolver):
     REGION_SIZE = 0
     ALL_SHAPES = []
 
-    def __init__(self, grid: Grid, clues: dict[str, list[int]] | None = None):
+    def __init__(
+        self,
+        grid: Grid,
+        clues: dict[str, list[int]] | None = None,
+        segment_clues: dict[str, int] | None = None,
+    ):
         super().__init__()
         self._solver_initialized = None
         self._grid = grid
         self._clues = clues or {}
+        self._segment_clues = segment_clues or {}
         self._rows = grid.rows_number
         self._cols = grid.columns_number
 
@@ -49,7 +55,27 @@ class SameSizeRegionsSolver(GameSolver):
     def _add_constraints(self):
         self._add_cover_constraints()
         self._add_wall_constraints()
+        self._add_segment_clues_constraints()
         self._add_specific_constraints()
+
+    def _add_segment_clues_constraints(self):
+        for key, value in self._segment_clues.items():
+            edge, i, j = self._parse_segment_key(key)
+            if edge == "r":
+                if (i, j) not in self._right:
+                    continue
+                self._model.add(self._right[(i, j)] == value)
+            elif edge == "b":
+                if (i, j) not in self._bottom:
+                    continue
+                self._model.add(self._bottom[(i, j)] == value)
+
+    @staticmethod
+    def _parse_segment_key(key: str) -> tuple[str, int, int]:
+        parts = key.split(":")
+        if len(parts) != 3 or parts[0] not in ("r", "b"):
+            raise ValueError(f"Invalid segment clue key: {key!r} (expected 'r:i:j' or 'b:i:j')")
+        return parts[0], int(parts[1]), int(parts[2])
 
     def _generate_placements(self) -> list[list[tuple[int, int]]]:
         placements = []
