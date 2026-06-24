@@ -4,6 +4,7 @@ from ortools.sat.python import cp_model
 
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
@@ -15,13 +16,13 @@ class SameSizeRegionsSolver(GameSolver):
         self,
         grid: Grid,
         clues: dict[str, list[int]] | None = None,
-        segment_clues: dict[str, int] | None = None,
+        segment_clues: list[tuple[Position, str]] | None = None,
     ):
         super().__init__()
         self._solver_initialized = None
         self._grid = grid
         self._clues = clues or {}
-        self._segment_clues = segment_clues or {}
+        self._segment_clues = segment_clues or []
         self._rows = grid.rows_number
         self._cols = grid.columns_number
 
@@ -59,23 +60,12 @@ class SameSizeRegionsSolver(GameSolver):
         self._add_specific_constraints()
 
     def _add_segment_clues_constraints(self):
-        for key, value in self._segment_clues.items():
-            edge, i, j = self._parse_segment_key(key)
-            if edge == "r":
-                if (i, j) not in self._right:
-                    continue
-                self._model.add(self._right[(i, j)] == value)
-            elif edge == "b":
-                if (i, j) not in self._bottom:
-                    continue
-                self._model.add(self._bottom[(i, j)] == value)
-
-    @staticmethod
-    def _parse_segment_key(key: str) -> tuple[str, int, int]:
-        parts = key.split(":")
-        if len(parts) != 3 or parts[0] not in ("r", "b"):
-            raise ValueError(f"Invalid segment clue key: {key!r} (expected 'r:i:j' or 'b:i:j')")
-        return parts[0], int(parts[1]), int(parts[2])
+        for position, edge in self._segment_clues:
+            i, j = position.r, position.c
+            if edge == "r" and (i, j) in self._right:
+                self._model.add(self._right[(i, j)] == 1)
+            elif edge == "b" and (i, j) in self._bottom:
+                self._model.add(self._bottom[(i, j)] == 1)
 
     def _generate_placements(self) -> list[list[tuple[int, int]]]:
         placements = []
