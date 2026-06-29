@@ -62,9 +62,9 @@ class SameSizeRegionsSolver(GameSolver):
     def _add_segment_clues_constraints(self):
         for position, edge in self._segment_clues:
             i, j = position.r, position.c
-            if edge == "r" and (i, j) in self._right:
+            if edge == self.RIGHT_EDGE and (i, j) in self._right:
                 self._model.add(self._right[(i, j)] == 1)
-            elif edge == "b" and (i, j) in self._bottom:
+            elif edge == self.BOTTOM_EDGE and (i, j) in self._bottom:
                 self._model.add(self._bottom[(i, j)] == 1)
 
     def _generate_placements(self) -> list[list[tuple[int, int]]]:

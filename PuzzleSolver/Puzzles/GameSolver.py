@@ -13,6 +13,8 @@ class GameSolver(ABC):
     cell_empty = None
     cell_outside = '#'
     cell_blocked = '🛇'
+    RIGHT_EDGE = 'r'
+    BOTTOM_EDGE = 'b'
 
     def __init__(self, *args, **kwargs):
         super().__init__()

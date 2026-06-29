@@ -2,7 +2,7 @@ from .shapes import ALL_SHAPES, REGION_SIZE
 from PuzzleSolver.Puzzles.Foseruzu.SameSizeRegionsSolver import SameSizeRegionsSolver
 
 
-class OneFourTwoSixSolver(SameSizeRegionsSolver):
+class ShirokuSolver(SameSizeRegionsSolver):
     REGION_SIZE = REGION_SIZE
     ALL_SHAPES = ALL_SHAPES
 
