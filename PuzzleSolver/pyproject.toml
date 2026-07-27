@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PuzzleSolver"
+version = "1.0.0"
+description = "Puzzle solver and board infrastructure"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["PuzzleSolver*"]
+
+
