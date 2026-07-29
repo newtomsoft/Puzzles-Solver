@@ -45,6 +45,7 @@ from PuzzleSolver.Puzzles.GrandTour.GrandTourSolver import GrandTourSolver
 from PuzzleSolver.Puzzles.Gyokuseki.GyokusekiSolver import GyokusekiSolver
 from PuzzleSolver.Puzzles.Hakoiri.HakoiriSolver import HakoiriSolver
 from PuzzleSolver.Puzzles.Heki.HekiSolver import HekiSolver
+from PuzzleSolver.Puzzles.Herugolf.HerugolfSolver import HerugolfSolver
 from PuzzleSolver.Puzzles.Hanare.HanareSolver import HanareSolver
 from PuzzleSolver.Puzzles.Hashi.HashiSolver import HashiSolver
 from PuzzleSolver.Puzzles.Heyablock.HeyablockSolver import HeyablockSolver
@@ -201,6 +202,7 @@ SOLVERS: dict[str, type] = {
     "gyokuseki": GyokusekiSolver,
     "hakoiri": HakoiriSolver,
     "heki": HekiSolver,
+    "herugolf": HerugolfSolver,
     "hanare": HanareSolver,
     "hashi": HashiSolver,
     "heyablock": HeyablockSolver,

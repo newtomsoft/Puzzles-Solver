@@ -34,6 +34,7 @@ import Run.Games.GrandTourConfig
 import Run.Games.GyokusekiConfig
 import Run.Games.HakoiriConfig
 import Run.Games.HanareConfig
+import Run.Games.HerugolfConfig
 import Run.Games.HashiConfig
 import Run.Games.HeyablockConfig
 import Run.Games.HeyawakeConfig
@@ -188,6 +189,7 @@ class UrlPatternMatcher:
         Run.Games.GyokusekiConfig.register()
         Run.Games.HakoiriConfig.register()
         Run.Games.HanareConfig.register()
+        Run.Games.HerugolfConfig.register()
         Run.Games.HashiConfig.register()
         Run.Games.HeyablockConfig.register()
         Run.Games.HeyawakeConfig.register()
