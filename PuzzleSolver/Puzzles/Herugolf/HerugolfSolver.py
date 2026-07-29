@@ -8,15 +8,22 @@ from PuzzleSolver.Puzzles.GameSolver import GameSolver
 
 
 class HerugolfSolver(GameSolver):
-    cell_empty = 0
-    cell_water = -2
-    cell_hole = -3
+    cell_empty = None
+    cell_water = 'W'
+    cell_hole = 'H'
 
     _DIR_DELTAS = {
         1: (1, 0),
         2: (0, 1),
         3: (-1, 0),
         4: (0, -1),
+    }
+
+    _DIR_ARROWS = {
+        1: '↓',
+        2: '→',
+        3: '↑',
+        4: '←',
     }
 
     def __init__(self, grid: Grid):
@@ -38,8 +45,8 @@ class HerugolfSolver(GameSolver):
         for r in range(self._grid.rows_number):
             for c in range(self._grid.columns_number):
                 val = self._grid.value(r, c)
-                if val is not None and val > 0:
-                    balls.append((Position(r, c), int(val)))
+                if isinstance(val, int) and val > 0:
+                    balls.append((Position(r, c), val))
                 elif val == self.cell_hole:
                     holes.append((r, c))
 
@@ -159,7 +166,7 @@ class HerugolfSolver(GameSolver):
                     model.Add(path_vars[i] == 0)
 
         solver = cp_model.CpSolver()
-        solver.parameters.random_seed = random.randint(0, 2**31 - 1)
+        solver.parameters.random_seed = 42
         if solver.Solve(model) not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
             return Grid.empty()
 
@@ -168,7 +175,7 @@ class HerugolfSolver(GameSolver):
             if solver.Value(path_vars[i]):
                 for code, seg in path:
                     r, c = seg[0]
-                    out[r][c] = code
+                    out[r][c] = self._DIR_ARROWS[code]
 
         solution_grid = Grid(out)
         self._previous_solution = solution_grid
