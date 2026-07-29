@@ -16,10 +16,15 @@ class HerugolfSolverTests(TestCase):
             [_, 1, H],
             [_, H, _],
         ])
+        expected_str = (
+            "↓ _ W\n"
+            "↓ → H\n"
+            "→ H _"
+        )
+        
         solver = HerugolfSolver(grid)
         solution = solver.get_solution()
         self.assertFalse(solution.is_empty())
-        expected_str = "↓ _ W\n_ → H\n→ H _"
         self.assertEqual(expected_str, str(solution))
 
     def test_solver_with_puzzlink_13x12_grid(self):
@@ -38,21 +43,22 @@ class HerugolfSolverTests(TestCase):
             [H, _, _, _, _, _, _, _, _, _, _, _, _],
             [5, _, _, _, _, _, _, _, _, _, _, _, _],
         ])
+        expected_str = (
+            "→ → → ↓ _ _ _ _ _ _ H ↓ _\n"
+            "H ← _ ↓ _ _ _ _ → → ↑ ↓ _\n"
+            "_ ↑ _ H ↓ ← ← ← ↓ _ _ ↓ _\n"
+            "_ ↑ _ _ ↓ _ _ _ ↓ H ← ← _\n"
+            "_ ↑ _ H ← _ _ H ← H _ _ _\n"
+            "_ ↑ _ _ _ _ _ _ _ ↑ ← ← _\n"
+            "_ ↑ ↓ _ _ _ _ _ _ _ _ ↑ _\n"
+            "_ _ ↓ _ _ W W _ _ _ _ ↑ _\n"
+            "_ _ ↓ _ _ W W _ _ _ _ ↑ _\n"
+            "↓ ← ← _ _ _ _ _ _ _ _ H ←\n"
+            "H _ _ _ _ _ _ _ _ _ _ _ ↑\n"
+            "→ → → → → → → → → → → → ↑"
+        )
+        
         solver = HerugolfSolver(grid)
         solution = solver.get_solution()
         self.assertFalse(solution.is_empty())
-        expected_str = (
-            "→ _ _ ↓ _ _ _ _ _ _ H ↓ _\n"
-            "H ← _ _ _ _ _ _ → _ ↑ _ _\n"
-            "_ _ _ H ↓ _ _ ← ↓ _ _ _ _\n"
-            "_ ↑ _ _ _ _ _ _ _ H _ ← _\n"
-            "_ _ _ H ← _ _ H ← H _ _ _\n"
-            "_ _ _ _ _ _ _ _ _ ↑ _ ← _\n"
-            "_ ↑ ↓ _ _ _ _ _ _ _ _ _ _\n"
-            "_ _ _ _ _ W W _ _ _ _ _ _\n"
-            "_ _ _ _ _ W W _ _ _ _ ↑ _\n"
-            "↓ _ ← _ _ _ _ _ _ _ _ H ←\n"
-            "H _ _ _ _ _ _ _ _ _ _ _ _\n"
-            "→ _ _ _ _ → _ _ _ → _ _ ↑"
-        )
         self.assertEqual(expected_str, str(solution))

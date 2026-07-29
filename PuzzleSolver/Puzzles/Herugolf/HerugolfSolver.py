@@ -174,8 +174,9 @@ class HerugolfSolver(GameSolver):
         for i, (ball_idx, _, path, _) in enumerate(all_paths):
             if solver.Value(path_vars[i]):
                 for code, seg in path:
-                    r, c = seg[0]
-                    out[r][c] = self._DIR_ARROWS[code]
+                    for r, c in seg:
+                        if self._grid.value(r, c) != self.cell_hole:
+                            out[r][c] = self._DIR_ARROWS[code]
 
         solution_grid = Grid(out)
         self._previous_solution = solution_grid
