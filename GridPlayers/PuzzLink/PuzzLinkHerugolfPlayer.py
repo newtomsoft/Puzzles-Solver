@@ -97,16 +97,10 @@ class PuzzLinkHerugolfPlayer(PlaywrightPlayer):
                 coords = [self._cell_center(painter_info, r, c) for r, c in path_cells]
                 sx, sy = coords[0]
                 await page.mouse.move(sx, sy)
-                # await asyncio.sleep(0.01)
                 await page.mouse.down()
-                # await asyncio.sleep(0.01)
                 for cx, cy in coords[1:]:
                     await page.mouse.move(cx, cy, steps=5)
-                    # await asyncio.sleep(0.01)
                 await page.mouse.up()
-                # await asyncio.sleep(0.03)
-
-            # await page.wait_for_timeout(100)
 
         await self.close()
         await self._process_video(video, video_rect, 0)
