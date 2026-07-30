@@ -7,6 +7,12 @@ class PuzzLinkHerugolfGridProvider(PlaywrightGridProvider):
     _BITS = [16, 8, 4, 2, 1]
 
     async def scrap_grid(self, browser, url):
+        if len(browser.pages) == 0:
+            page = await browser.new_page()
+        else:
+            page = browser.pages[0]
+
+        await page.goto(url)
         return self._parse_url(url)
 
     @staticmethod
