@@ -6,16 +6,6 @@ from ortools.sat.python import cp_model
 
 
 class SashiganeSolver(GameSolver):
-    """CP-SAT solver for Sashigane (L‑shaped regions covering the grid).
-
-    Input grid values:
-      * None      – no clue
-      * Direction – arrow pointing toward the bend of the L
-      * int >= 0  – circle at the bend (0 = unnumbered, > 0 = region size)
-
-    Output is a RegionsGrid where all cells of the same L share the same id.
-    """
-
     cell_empty = None
 
     def __init__(self, grid: Grid):
