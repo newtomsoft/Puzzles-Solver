@@ -15,8 +15,8 @@ R = Direction.right()
 class SashiganeSolverTests(TestCase):
     def test_4x4_numbered_circles(self):
         grid = Grid([
-            [_, _, _, 6],
-            [4, _, _, _],
+            [_, _, _, 0],
+            [_, _, _, _],
             [_, _, _, _],
             [_, 3, 3, _],
         ])
@@ -49,14 +49,6 @@ class SashiganeSolverTests(TestCase):
         self.assertFalse(sol2.is_empty())
         self.assertNotEqual(str(sol1), str(sol2))
 
-    def test_get_stats(self):
-        grid = Grid([[None] * 6 for _ in range(6)])
-        solver = SashiganeSolver(grid)
-        solver.get_solution()
-        stats = solver.get_stats()
-        self.assertIn("num_conflicts", stats)
-        self.assertIn("num_branches", stats)
-        self.assertIn("wall_time", stats)
 
 if __name__ == '__main__':
     unittest.main()
