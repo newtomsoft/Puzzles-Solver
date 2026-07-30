@@ -62,6 +62,45 @@ class SashiganeSolverTests(TestCase):
         self.assertEqual(expected_solution_str, str(sol))
         self.assertTrue(solver.get_other_solution().is_empty())
 
+
+    def test_12x12_evil(self):
+        """https://gridpuzzle.com/sashigane/0jwd1"""
+        grid = Grid([
+            [7, _, _, _, _, R, _, _, _, _, _, D],
+            [_, _, _, _, _, _, _, 0, _, _, _, _],
+            [_, _, _, _, _, 7, _, _, D, _, _, _],
+            [_, 6, _, _, _, _, U, U, _, _, _, _],
+            [_, _, _, _, _, _, _, _, _, _, _, D],
+            [_, _, _, D, _, _, _, _, _, 7, _, _],
+            [_, _, _, _, U, _, _, _, _, _, 8, _],
+            [6, _, _, _, _, _, 6, _, 5, _, _, _],
+            [_, _, 5, _, _, L, _, _, _, _, _, _],
+            [_, _, _, _, 7, _, _, _, _, _, _, _],
+            [_, _, _, _, _, _, _, 7, _, _, _, _],
+            [_, _, L, _, _, _, _, _, _, _, L, _],
+        ])
+        expected_solution_str = (
+            '┌─────────┬───────────┬─┐\n'
+            '│ ┌─┬─────┴───┬─────┐ │ │\n'
+            '│ │ ├───────┐ │ ┌─┬─┤ │ │\n'
+            '├─┤ └─────┐ │ │ │ │ ├─┘ │\n'
+            '│ ├───────┤ ├─┴─┘ │ ├─┬─┤\n'
+            '│ ├───┬─┐ │ ├─────┘ │ │ │\n'
+            '│ │ ┌─┤ │ ├─┴───────┘ │ │\n'
+            '│ └─┤ │ ├─┴───┬─┬─────┤ │\n'
+            '├───┘ │ └───┐ │ │ ┌───┘ │\n'
+            '├─────┴───┬─┤ │ │ ├─────┤\n'
+            '├─┬─────┐ │ │ │ └─┴───┐ │\n'
+            '│ └───┐ │ │ └─┴───────┤ │\n'
+            '└─────┴─┴─┴───────────┴─┘\n'
+        )
+
+        solver = SashiganeSolver(grid)
+        sol = solver.get_solution()
+        self.assertEqual(expected_solution_str, str(sol))
+        self.assertTrue(solver.get_other_solution().is_empty())
+
+ 
     def test_3x3_no_solution(self):
         grid = Grid([[None] * 3 for _ in range(3)])
         solver = SashiganeSolver(grid)
