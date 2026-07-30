@@ -31,17 +31,45 @@ class SashiganeSolverTests(TestCase):
         solver = SashiganeSolver(grid)
         sol = solver.get_solution()
         self.assertEqual(expected_solution_str, str(sol))
-        other_sol = solver.get_other_solution()
-        self.assertEqual(Grid.empty(), other_sol)
+        self.assertTrue(solver.get_other_solution().is_empty())
+
+    def test_8x8_evil(self):
+        """https://gridpuzzle.com/sashigane/2yx4d"""
+        grid = Grid([
+            [_, _, _, R, _, _, _, 7],
+            [_, _, _, _, _, _, _, _],
+            [_, _, 0, _, L, _, _, _],
+            [_, 7, _, _, _, _, _, _],
+            [6, _, _, _, _, _, 6, _],
+            [_, _, 0, _, _, _, _, _],
+            [_, _, _, _, _, _, _, _],
+            [6, _, _, _, 5, _, _, _],
+        ])
+        expected_solution_str = (
+            '┌─┬─┬─┬─────────┐\n'
+            '│ │ │ ├─────┬─┐ │\n'
+            '│ │ │ └───┐ │ │ │\n'
+            '│ │ └─────┤ │ ├─┤\n'
+            '│ └─┬─┬─┬─┴─┘ │ │\n'
+            '├─┬─┘ │ ├─┬───┘ │\n'
+            '│ ├───┘ │ ├─────┤\n'
+            '│ └─────┤ └───┐ │\n'
+            '└───────┴─────┴─┘\n'
+        )
+
+        solver = SashiganeSolver(grid)
+        sol = solver.get_solution()
+        self.assertEqual(expected_solution_str, str(sol))
+        self.assertTrue(solver.get_other_solution().is_empty())
 
     def test_3x3_no_solution(self):
-        grid = Grid([[_] * 3 for _ in range(3)])
+        grid = Grid([[None] * 3 for _ in range(3)])
         solver = SashiganeSolver(grid)
         sol = solver.get_solution()
         self.assertTrue(sol.is_empty())
 
     def test_other_solution(self):
-        grid = Grid([[_] * 6 for _ in range(6)])
+        grid = Grid([[None] * 6 for _ in range(6)])
         solver = SashiganeSolver(grid)
         sol1 = solver.get_solution()
         self.assertFalse(sol1.is_empty())

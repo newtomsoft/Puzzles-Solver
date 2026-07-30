@@ -1,5 +1,6 @@
 from PuzzleSolver.Board.Direction import Direction
 from PuzzleSolver.Board.Grid import Grid
+from PuzzleSolver.Board.Position import Position
 from PuzzleSolver.Board.RegionsGrid import RegionsGrid
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from ortools.sat.python import cp_model
@@ -209,15 +210,23 @@ class SashiganeSolver(GameSolver):
                 if val == Direction.up():
                     self._model.add(self._pivot_rows.value(pos) < r)
                     self._model.add(self._pivot_cols.value(pos) == c)
+                    if r < self.rows - 1:
+                        self._add_different_pivot_constraint(pos, Position(r + 1, c))
                 elif val == Direction.down():
                     self._model.add(self._pivot_rows.value(pos) > r)
                     self._model.add(self._pivot_cols.value(pos) == c)
+                    if r > 0:
+                        self._add_different_pivot_constraint(pos, Position(r - 1, c))
                 elif val == Direction.left():
                     self._model.add(self._pivot_rows.value(pos) == r)
                     self._model.add(self._pivot_cols.value(pos) < c)
+                    if c < self.cols - 1:
+                        self._add_different_pivot_constraint(pos, Position(r, c + 1))
                 elif val == Direction.right():
                     self._model.add(self._pivot_rows.value(pos) == r)
                     self._model.add(self._pivot_cols.value(pos) > c)
+                    if c > 0:
+                        self._add_different_pivot_constraint(pos, Position(r, c - 1))
 
             elif isinstance(val, int) and val >= 0:
                 self._model.add(self._is_pivot.value(pos) == 1)
@@ -227,6 +236,25 @@ class SashiganeSolver(GameSolver):
                 if val > 0:
                     assigned = self._all_assigned_to(r, c)
                     self._model.add(sum(assigned) == val)
+
+    def _add_different_pivot_constraint(self, pos: Position, opposite: Position):
+        """Enforce that `opposite` does NOT share its pivot with `pos`.
+
+        Used for arrow clues: the cell behind the arrow must belong to a
+        different L (the arrow cell is at the extreme end of its arm).
+        """
+        r, c = pos.r, pos.c
+        or_, oc = opposite.r, opposite.c
+
+        same_row = self._model.new_bool_var(f'nsr_{or_}_{oc}_{r}_{c}')
+        same_col = self._model.new_bool_var(f'nsc_{or_}_{oc}_{r}_{c}')
+
+        self._model.add(self._pivot_rows.value(or_, oc) == self._pivot_rows.value(pos)).only_enforce_if(same_row)
+        self._model.add(self._pivot_rows.value(or_, oc) != self._pivot_rows.value(pos)).only_enforce_if(~same_row)
+        self._model.add(self._pivot_cols.value(or_, oc) == self._pivot_cols.value(pos)).only_enforce_if(same_col)
+        self._model.add(self._pivot_cols.value(or_, oc) != self._pivot_cols.value(pos)).only_enforce_if(~same_col)
+
+        self._model.add_bool_or(~same_row, ~same_col)
 
     # ── helpers ────────────────────────────────────────────────────────
 
