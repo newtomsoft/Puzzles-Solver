@@ -28,7 +28,7 @@ Repository = "https://github.com/newtomsoft/Puzzle"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["PuzzleSolver*", "Utils*"]
+include = ["PuzzleSolver*", "Utils*", "GridPlayers*", "GridBuilders*", "GridProviders*", "Run*"]
 
 [tool.ruff]
 exclude = [
