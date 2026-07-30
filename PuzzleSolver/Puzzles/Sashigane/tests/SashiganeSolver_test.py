@@ -35,13 +35,13 @@ class SashiganeSolverTests(TestCase):
         self.assertEqual(Grid.empty(), other_sol)
 
     def test_3x3_no_solution(self):
-        grid = Grid([[None] * 3 for _ in range(3)])
+        grid = Grid([[_] * 3 for _ in range(3)])
         solver = SashiganeSolver(grid)
         sol = solver.get_solution()
         self.assertTrue(sol.is_empty())
 
     def test_other_solution(self):
-        grid = Grid([[None] * 6 for _ in range(6)])
+        grid = Grid([[_] * 6 for _ in range(6)])
         solver = SashiganeSolver(grid)
         sol1 = solver.get_solution()
         self.assertFalse(sol1.is_empty())
