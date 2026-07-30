@@ -14,6 +14,35 @@ class PuzzLinkHerugolfPlayer(PlaywrightPlayer):
         '←': (0, -1),  # LEFT
     }
 
+    @staticmethod
+    async def _get_painter_info(page) -> dict:
+        return await page.evaluate("""
+            () => {
+                const painter = ui.puzzle.painter;
+                const rect = painter.context.canvas.getBoundingClientRect();
+                return {
+                    x0: painter.x0,
+                    y0: painter.y0,
+                    bw: painter.bw,
+                    bh: painter.bh,
+                    canvasX: rect.x,
+                    canvasY: rect.y,
+                    canvasW: rect.width,
+                    canvasH: rect.height,
+                    cols: ui.puzzle.board.cols,
+                    rows: ui.puzzle.board.rows,
+                };
+            }
+        """)
+
+    def _cell_center(self, info, r, c):
+        bx = c * 2 + 1
+        by = r * 2 + 1
+        return (
+            info['canvasX'] + info['x0'] + bx * info['bw'],
+            info['canvasY'] + info['y0'] + by * info['bh'],
+        )
+
     async def play(self, solution) -> PlayStatus:
         page = self.browser.pages[0]
         await page.wait_for_selector("#divques svg", state="visible")
@@ -24,50 +53,60 @@ class PuzzLinkHerugolfPlayer(PlaywrightPlayer):
         video, viewport_rect = await self._get_data_video_viewport(page)
         video_rect = None
 
-        cols = solution.columns_number
-        rows = solution.rows_number
-
-        svg = await page.wait_for_selector("#divques svg")
-        bbox = await svg.bounding_box()
-        x0 = bbox['x']
-        y0 = bbox['y']
-
-        viewbox_w = cols * 36 + 11
-        viewbox_h = rows * 36 + 11
+        painter_info = await self._get_painter_info(page)
 
         if viewport_rect is not None:
-            x1 = x0 - 36 * bbox['width'] / viewbox_w
-            x2 = x0 + bbox['width'] + 36 * bbox['width'] / viewbox_w
-            video_rect = Rectangle(Point(int(x1), viewport_rect.y1), Point(int(x2), viewport_rect.y2))
+            board_left = painter_info['canvasX'] + painter_info['x0']
+            board_right = board_left + (painter_info['cols'] * 2 + 1) * painter_info['bw']
+            x1 = int(board_left - painter_info['bw'])
+            x2 = int(board_right + painter_info['bw'])
+            video_rect = Rectangle(Point(x1, viewport_rect.y1), Point(x2, viewport_rect.y2))
 
-        def cell_center(r, c):
-            x = x0 + (23.5 + c * 36) * bbox['width'] / viewbox_w
-            y = y0 + (23.5 + r * 36) * bbox['height'] / viewbox_h
-            return x, y
+        rows = solution.rows_number
+        cols = solution.columns_number
 
-        arrows = []
-        for position, value in solution:
-            dr, dc = self._ARROW_TO_DIR.get(value, (0, 0))
-            if dr == 0 and dc == 0:
-                continue
-            r, c = position.r, position.c
-            tr, tc = r + dr, c + dc
-            arrows.append((r, c, tr, tc))
+        paths = []
+        visited = [[False] * cols for _ in range(rows)]
+        for r in range(rows):
+            for c in range(cols):
+                v = solution.value(r, c)
+                if not isinstance(v, str) or v not in self._ARROW_TO_DIR:
+                    continue
+                if visited[r][c]:
+                    continue
+                path_cells = [(r, c)]
+                visited[r][c] = True
+                cr, cc = r, c
+                while True:
+                    arrow = solution.value(cr, cc)
+                    dr, dc = self._ARROW_TO_DIR[arrow]
+                    nr, nc = cr + dr, cc + dc
+                    if not (0 <= nr < rows and 0 <= nc < cols):
+                        break
+                    path_cells.append((nr, nc))
+                    visited[nr][nc] = True
+                    next_val = solution.value(nr, nc)
+                    if isinstance(next_val, str) and next_val in self._ARROW_TO_DIR:
+                        cr, cc = nr, nc
+                    else:
+                        break
+                paths.append(path_cells)
 
-        if arrows:
-            for r, c, tr, tc in arrows:
-                sx, sy = cell_center(r, c)
-                tx, ty = cell_center(tr, tc)
+        if paths:
+            for path_cells in paths:
+                coords = [self._cell_center(painter_info, r, c) for r, c in path_cells]
+                sx, sy = coords[0]
                 await page.mouse.move(sx, sy)
-                await asyncio.sleep(0.01)
+                # await asyncio.sleep(0.01)
                 await page.mouse.down()
-                await asyncio.sleep(0.01)
-                await page.mouse.move(tx, ty, steps=5)
-                await asyncio.sleep(0.01)
+                # await asyncio.sleep(0.01)
+                for cx, cy in coords[1:]:
+                    await page.mouse.move(cx, cy, steps=5)
+                    # await asyncio.sleep(0.01)
                 await page.mouse.up()
-                await asyncio.sleep(0.03)
+                # await asyncio.sleep(0.03)
 
-            await page.wait_for_timeout(100)
+            # await page.wait_for_timeout(100)
 
         await self.close()
         await self._process_video(video, video_rect, 0)
