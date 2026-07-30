@@ -32,6 +32,9 @@ class Grid[T](GridBase[T]):
             return '\n'.join(''.join(str(cell) for cell in row) for row in self._matrix)
         return '\n'.join(' '.join(str(cell) if cell is not None else '_' for cell in row) for row in self._matrix)
 
+    def __str__(self) -> str:
+        return '\n'.join(' '.join(str(cell) if cell is not None else '_' for cell in row) for row in self._matrix)
+
     def __hash__(self):
         return hash(str(self._matrix))
 
