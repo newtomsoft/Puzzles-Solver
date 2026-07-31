@@ -112,6 +112,7 @@ from PuzzleSolver.Puzzles.Renkatsu.RenkatsuSolver import RenkatsuSolver
 from PuzzleSolver.Puzzles.Renzoku.RenzokuSolver import RenzokuSolver
 from PuzzleSolver.Puzzles.Rimotoejji.RimotoejjiSolver import RimotoejjiSolver
 from PuzzleSolver.Puzzles.RoundTrip.RoundTripSolver import RoundTripSolver
+from PuzzleSolver.Puzzles.Sashigane.SashiganeSolver import SashiganeSolver
 from PuzzleSolver.Puzzles.Sashikazune.SashikazuneSolver import SashikazuneSolver
 from PuzzleSolver.Puzzles.SeeThrough.SeeThroughSolver import SeeThroughSolver
 from PuzzleSolver.Puzzles.Shakashaka.ShakashakaSolver import ShakashakaSolver
@@ -271,6 +272,7 @@ SOLVERS: dict[str, type] = {
     "renzoku": RenzokuSolver,
     "rimotoejji": RimotoejjiSolver,
     "roundtrip": RoundTripSolver,
+    "sashigane": SashiganeSolver,
     "sashikazune": SashikazuneSolver,
     "seethrough": SeeThroughSolver,
     "shakashaka": ShakashakaSolver,
