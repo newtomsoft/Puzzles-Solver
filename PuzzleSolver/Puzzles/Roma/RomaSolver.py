@@ -13,8 +13,8 @@ class RomaSolver(GameSolver):
     right = 3
     left = 4
 
-    _value_by_letter = {'U': up, 'D': down, 'R': right, 'L': left}
-    _letter_by_value = {0: Goal, up: 'U', down: 'D', right: 'R', left: 'L'}
+    _value_by_letter = {'↑': up, '↓': down, '→': right, '←': left}
+    _letter_by_value = {0: Goal, up: '↑', down: '↓', right: '→', left: '←'}
     _value_by_direction = {
         Direction.up(): up,
         Direction.down(): down,

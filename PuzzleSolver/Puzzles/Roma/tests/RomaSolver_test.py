@@ -12,8 +12,8 @@ class RomaSolverTests(TestCase):
 
     def test_solution_3x3_invalid(self):
         clues_grid = Grid([
-            ['R', 'L', 'L'],
-            ['D', 'D', _],
+            ['→', '←', '←'],
+            ['↓', '↓', _],
             [_, _, G],
         ])
 
@@ -28,8 +28,8 @@ class RomaSolverTests(TestCase):
 
     def test_solution_3x3_basic(self):
         clues_grid = Grid([
-            ['R', _, 'L'],
-            ['D', 'D', _],
+            ['→', _, '←'],
+            ['↓', '↓', _],
             [_, _, G],
         ])
 
@@ -40,9 +40,9 @@ class RomaSolverTests(TestCase):
         ])
 
         expected_solution = Grid([
-            ['R', 'D', 'L'],
-            ['D', 'D', 'U'],
-            ['R', 'R', G],
+            ['→', '↓', '←'],
+            ['↓', '↓', '↑'],
+            ['→', '→', G],
         ])
 
         solver = RomaSolver(clues_grid, regions_grid)

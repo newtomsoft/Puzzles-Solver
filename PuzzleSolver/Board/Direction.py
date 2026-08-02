@@ -65,13 +65,13 @@
 
     def __str__(self):
         if self._value == Direction._DOWN:
-            return '⊓'
+            return '↓'
         if self._value == Direction._RIGHT:
-            return '⊏'
+            return '→'
         if self._value == Direction._UP:
-            return '⊔'
+            return '↑'
         if self._value == Direction._LEFT:
-            return '⊐'
+            return '←'
         return 'x'
 
     def __eq__(self, other):

@@ -18,8 +18,8 @@ class PuzzLinkRomaGridProviderTests(unittest.TestCase):
         self.assertEqual(3, regions_grid.columns_number)
 
         expected_arrows = Grid([
-            ['R', _, 'L'],
-            ['D', 'D', _],
+            ['→', _, '←'],
+            ['↓', '↓', _],
             [_, _, 'G'],
         ])
 

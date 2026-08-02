@@ -7,10 +7,10 @@ from GridProviders.PlaywrightGridProvider import PlaywrightGridProvider
 
 
 _ARROW_MAP = {
-    1: 'U',
-    2: 'D',
-    3: 'L',
-    4: 'R',
+    1: '↑',
+    2: '↓',
+    3: '←',
+    4: '→',
 }
 
 
