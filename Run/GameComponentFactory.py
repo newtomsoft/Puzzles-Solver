@@ -2,6 +2,7 @@
 
 from PuzzleSolver.Puzzles.GameSolver import GameSolver
 from GridPlayers.Base.GridPlayer import GridPlayer
+from Run.GameRegistry import GameRegistry
 from Run.UrlPatternMatcher import UrlPatternMatcher
 
 
@@ -10,6 +11,7 @@ class GameComponentFactory:
         self._url_matcher = UrlPatternMatcher()
 
     async def create_components_from_url(self, url: str) -> tuple[type[GameSolver], Any, GridPlayer | None, Any, Any]:
+        url = GameRegistry.normalize_url(url.strip())
         game_class, grid_provider_class, player_class = self._url_matcher.get_components_for_url(url)
         grid_provider = grid_provider_class()
         print("getting grid...")
