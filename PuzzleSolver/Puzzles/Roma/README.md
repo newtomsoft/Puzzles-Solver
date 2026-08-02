@@ -10,8 +10,8 @@ Roma est un puzzle logique publié par Nikoli. La grille est divisée en zones (
 
 ## Encodage de la grille
 
-- `'U'`, `'D'`, `'L'`, `'R'` : flèches données (haut, bas, gauche, droite)
-- `'C'` : cellule cerclée (objectif)
+- `'↑'`, `'↓'`, `'←'`, `'→'` : flèches données (haut, bas, gauche, droite)
+- `'G'` : cellule cerclée (objectif)
 - `None` : cellule vide à remplir
 
 La grille de régions indique l'identifiant de la zone de chaque cellule.
@@ -20,9 +20,9 @@ La grille de régions indique l'identifiant de la zone de chaque cellule.
 
 Grille :
 ```
-R _ L
-D D _
-_ _ C
+→ _ ←
+↓ ↓ _
+_ _ G
 ```
 
 Régions :
@@ -34,7 +34,7 @@ Régions :
 
 Solution :
 ```
-R D L
-D D U
-R R C
+→ ↓ ←
+↓ ↓ ↑
+→ → G
 ```
